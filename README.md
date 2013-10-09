@@ -8,10 +8,13 @@ time, based on its environment (in this respect, programming is often
 closer to gardening than engineering).
 
 Baobab is inspired by Common Lisp, Scheme and Clojure. It will include
-a npm style package manager, and everything, even the standard
-library, will just be a package. The languages aims to be maximally
-hackable, focusing the full gamut of macros (unhygenic and macros) and
-excellent interactive development (SLIME style with pervasive docstrings).
+a npm style package manager (equivalent to Python's virtualenv being
+included by default), and everything, even the standard library, will
+just be a package. The languages aims to be maximally hackable,
+focusing the full gamut of macros (unhygenic and macros) and excellent
+interactive development (SLIME style with pervasive docstrings). Names
+are chosen to be self-documenting and clear to users of other
+scripting languages.
 
 A new programming language should really have a good answer to 'how do
 I run it in the browser?', 'how do I scale it to multiple cores?' and
