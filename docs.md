@@ -23,11 +23,17 @@ second third fourth fifth
 
 map for-each length empty? append append! push!
 
+get-index set-index!
+
 All lists are proper.
 
 ### Boolean
 
 bool? truth? when unless not or and
+
+### Null
+
+null?
 
 ### Math
 
