@@ -135,4 +135,4 @@ Sockets and other network functionality. About (Python: `sys.version`)
 
 `set-as` (CL: `setf`), `let-as` (elisp: `destructuring-bind`)
 
-Explore freezing and unfreezingn for list, vector, string
+Explore freezing and unfreezing for list, vector, string
