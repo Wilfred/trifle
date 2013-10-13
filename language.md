@@ -110,6 +110,15 @@ byte-seq byte-seq? equal?
 join-path split-path SOURCE-PATH (Python: `__FILE__`) exists? file?
 directory? readable? writable? directory-contents parent-directory
 
+### Functions
+
+function? set-function!
+
+`set-function!` is important -- if function objects are mutable, it's
+possible to implement Emacs-style advice even if there are multiple
+references to a function (cf. the difficulty with monkey-patching in
+Python which depends on how things were imported).
+
 ### Syntactic Sugar
 
 `'` quote
