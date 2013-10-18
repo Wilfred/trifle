@@ -17,15 +17,20 @@ without pairing up each binding, similar to Clojure) `while`
 
 ### List
 
-list? list first (CL: `car`) rest (CL: `cdr`) set-first! set-rest!
+A dynamic array, not a linked list.
+
+list? list first rest
 
 second third fourth fifth
 
-map for-each length empty? append append! push!
+map for-each length empty? equal? append append! push! pop!
 
 get-index set-index!
 
-All lists are proper.
+List literals are mutable, so the following is valid:
+
+    (let (x '(1 2 3))
+       (push! x 4))
 
 ### Boolean
 
@@ -54,15 +59,9 @@ ALPHABET ALPHANUMERIC
 substring length append string? equal? ->bytes (Python: `.encode`)
 format
 
-### Vector
-
-A dynamic array supporting heterogeneous types.
-
-vector? vector set-at! value-at length push! pop append append! equal?
-
 ### Sequence
 
-Generic functions that handle lists, vectors, strings or hash-sets.
+Generic functions that handle lists, strings or hash-sets.
 
 all? any? sequence?
 
@@ -126,7 +125,6 @@ backquote
 `,` unquote
 `,@` unquote-splicing (TODO: can we do better?)
 `"foo"` string (can contain newlines)
-`[1 2]` vector
 `{a 1 b 2}` hash-map
 `~` make-unique-symbol (Clojure feature)
 
