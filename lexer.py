@@ -33,7 +33,10 @@ def lex(text):
             match = rsre_core.match(regexp, text)
             if match:
                 found_match = True
-                lexed_tokens.append((token, text[:match.match_end]))
+
+                if token != WHITESPACE:
+                    lexed_tokens.append((token, text[:match.match_end]))
+                
                 text = text[match.match_end:]
                 break
 
