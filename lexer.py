@@ -100,8 +100,8 @@ def entry_point(argv):
             return 0
             
     print """Usage:
-./lexer-c -i <code snippet>
-./lexer-c <path to script>"""
+./baobab -i <code snippet>
+./baobab <path to script>"""
     return 1
         
 
