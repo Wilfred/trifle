@@ -33,7 +33,11 @@ def lex(text):
                 found_match = True
                 lexed_tokens.append((token, text[:match.match_end]))
                 text = text[match.match_end:]
-                continue
+                break
+
+        if not text:
+            # successfully lexed everything
+            break
 
         if not found_match:
             print "Could not lex remainder: '%s'" % text
