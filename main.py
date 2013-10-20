@@ -2,6 +2,7 @@ import sys
 import os
 
 from lexer import lex
+from parser import parse
 
 
 def get_contents(filename):
@@ -36,16 +37,18 @@ def entry_point(argv):
         
         code = get_contents(filename)
         lexed_tokens = lex(code)
+        parse_tree = parse(lexed_tokens)
         
-        print "tokens: %s" % lexed_tokens
+        print "parse tree:" % parse_tree.as_string()
         return 0
     
     elif len(argv) == 3:
         if argv[1] == '-i':
             code_snippet = argv[2]
             lexed_tokens = lex(code_snippet)
+            parse_tree = parse(lexed_tokens)
 
-            print "tokens: %s" % lexed_tokens
+            print "parse tree: %s" % parse_tree.as_string()
             return 0
             
     print """Usage:
