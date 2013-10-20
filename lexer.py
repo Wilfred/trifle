@@ -1,4 +1,6 @@
 import sys
+import os
+
 # Sadly, re isn't available in rpython.
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
@@ -45,14 +47,55 @@ def lex(text):
 
     return lexed_tokens
 
+def get_contents(filename):
+    # todo: programs should be UTF-8 only
+    fp = os.open(filename, os.O_RDONLY, 0777)
+
+    program_contents = ""
+    while True:
+        read = os.read(fp, 4096)
+        if len(read) == 0:
+            break
+        program_contents += read
+    os.close(fp)
+
+    return program_contents
+
 
 def entry_point(argv):
-    if len(argv) != 2:
-        print "Usage: lexer <code snippet>"
-        return 1
+    """We support either a filename or inline code passed with -i.
 
-    print 'tokens: %s' % lex(argv[1])
-    return 0
+    $ ./lexer-c ~/files/foo.bao
+    $ ./lexer-c -i '1 2'
+
+    """
+    if len(argv) == 2:
+        # open the file
+        filename = argv[1]
+
+        if not os.path.exists(filename):
+            print 'No such file: %s' % filename
+            return 2
+        
+        code = get_contents(filename)
+        lexed_tokens = lex(code)
+        
+        print "tokens: %s" % lexed_tokens
+        return 0
+    
+    elif len(argv) == 3:
+        if argv[1] == '-i':
+            code_snippet = argv[2]
+            lexed_tokens = lex(code_snippet)
+
+            print "tokens: %s" % lexed_tokens
+            return 0
+            
+    print """Usage:
+./lexer-c -i <code snippet>
+./lexer-c <path to script>"""
+    return 1
+        
 
 
 def target(*args):
