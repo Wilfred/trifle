@@ -9,9 +9,9 @@ pypy: pypy-2.1-src.tar.bz2
 	rm pypy-2.1-src.tar
 	mv pypy-2.1-src pypy
 
-baobab: pypy
-	./rpython lexer.py
-	mv lexer-c baobab
+baobab: pypy main.py
+	./rpython main.py
+	mv main-c baobab
 
 clean:
 	rm -f pypy-2.1-src.tar.bz2
