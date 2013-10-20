@@ -11,7 +11,13 @@ INTEGER = 'integer'
 
 
 TOKENS = {
-    WHITESPACE: get_code(r"\s+")
+    WHITESPACE: get_code(r"\s+"),
+    OPEN_PAREN: get_code(r"\("),
+    CLOSE_PAREN: get_code(r"\)"),
+
+    # todo: it'd be nice to allow number literals with underscores,
+    # e.g. 1_000_000
+    INTEGER: get_code('[1-9][0-9]*')
 }
 
 
