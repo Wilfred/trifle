@@ -21,9 +21,16 @@ def get_contents(filename):
 
 
 def read_line(prefix):
-    """Equivalent to raw_input, which isn't available on RPython."""
-    sys.stdout.write(prefix)
-    return sys.stdin.readline()[:-1] # discard the trailing last newline
+    """Equivalent to raw_input, which isn't available on RPython. Assumes
+    the input is no more than 1024 characters.
+
+    Based on http://stackoverflow.com/a/9244639
+
+    """
+    STDIN = 0
+    STDOUT = 1
+    os.write(STDOUT, prefix)
+    return os.read(STDIN, 1024)[:-1] # discard the trailing last newline
 
 
 def entry_point(argv):
