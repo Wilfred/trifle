@@ -20,14 +20,37 @@ def get_contents(filename):
     return program_contents
 
 
-def entry_point(argv):
-    """We support either a filename or inline code passed with -i.
+def read_line(prefix):
+    """Equivalent to raw_input, which isn't available on RPython."""
+    sys.stdout.write(prefix)
+    return sys.stdin.readline()[:-1] # discard the trailing last newline
 
-    $ ./lexer-c ~/files/foo.bao
-    $ ./lexer-c -i '1 2'
+
+def entry_point(argv):
+    """Either a file name:
+    $ ./baobab ~/files/foo.bao
+
+    A code snippet:
+    $ ./baobab -i '1 2'
+
+    Or a REPL:
+    $ ./baobob
 
     """
-    if len(argv) == 2:
+    if len(argv) == 1:
+        # REPL. Ultimately we will rewrite this as a Baobab program.
+        print "Baobab 0.1 interpreter. Press Ctrl-C to exit."
+        while True:
+            try:
+                user_input = read_line('> ')
+                lexed_tokens = lex(user_input)
+                parse_tree = parse(lexed_tokens)
+                print parse_tree.as_string()
+            except KeyboardInterrupt:
+                print
+                return 0
+    
+    elif len(argv) == 2:
         # open the file
         filename = argv[1]
 
@@ -52,6 +75,7 @@ def entry_point(argv):
             return 0
             
     print """Usage:
+./baobab
 ./baobab -i <code snippet>
 ./baobab <path to script>"""
     return 1

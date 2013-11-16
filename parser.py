@@ -28,7 +28,7 @@ class Leaf(Tree):
         self.value = value
 
     def as_string(self):
-        return '%s' % self.value
+        return '%s' % (self.value,)
 
 
 def parse_inner(tokens, top_level):
