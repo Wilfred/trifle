@@ -11,7 +11,7 @@ pypy: pypy-src.tar.bz2
 	rm pypy-src.tar
 	mv pypy-$(PYPY_VERSION)-src pypy
 
-baobab: pypy main.py lexer.py baobab_types.py parser.py
+baobab: pypy main.py lexer.py baobab_types.py parser.py evaluator.py
 	./rpython main.py
 	mv main-c baobab
 

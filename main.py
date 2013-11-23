@@ -3,6 +3,8 @@ import os
 
 from lexer import lex
 from parser import parse
+from evaluator import evaluate
+from baobab_types import Integer
 
 
 def get_contents(filename):
@@ -52,7 +54,9 @@ def entry_point(argv):
                 user_input = read_line('> ')
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
-                print parse_tree.as_string()
+
+                for expression in parse_tree.values:
+                    print evaluate(expression)
             except KeyboardInterrupt:
                 print
                 return 0
@@ -64,12 +68,13 @@ def entry_point(argv):
         if not os.path.exists(filename):
             print 'No such file: %s' % filename
             return 2
-        
+
         code = get_contents(filename)
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
+        for expression in parse_tree.values:
+            print evaluate(expression)
         
-        print "parse tree:" % parse_tree.as_string()
         return 0
     
     elif len(argv) == 3:
@@ -78,7 +83,8 @@ def entry_point(argv):
             lexed_tokens = lex(code_snippet)
             parse_tree = parse(lexed_tokens)
 
-            print "parse tree: %s" % parse_tree.as_string()
+            for expression in parse_tree.values:
+                print evaluate(expression)
             return 0
             
     print """Usage:
