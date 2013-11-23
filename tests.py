@@ -11,9 +11,23 @@ no effort has been made to make them RPython friendly.
 """
 
 class IntegerLex(unittest.TestCase):
-    def test_lex_number(self):
+    def test_lex_positive_number(self):
         self.assertEqual(
             lex("123")[0], Integer(123))
+
+        self.assertEqual(
+            lex("0123")[0], Integer(123))
+
+    def test_lex_negative_number(self):
+        self.assertEqual(
+            lex("-123")[0], Integer(-123))
+
+    def test_lex_zero(self):
+        self.assertEqual(
+            lex("0")[0], Integer(0))
+
+        self.assertEqual(
+            lex("-0")[0], Integer(0))
 
 
 class Parsing(unittest.TestCase):

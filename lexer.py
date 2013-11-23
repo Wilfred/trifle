@@ -13,18 +13,18 @@ INTEGER = 'integer'
 SYMBOL = 'symbol'
 
 
-TOKENS = {
-    WHITESPACE: get_code(r"\s+"),
-    COMMENT: get_code(";[^\n]*"),
-    OPEN_PAREN: get_code(r"\("),
-    CLOSE_PAREN: get_code(r"\)"),
+TOKENS = [
+    (WHITESPACE, get_code(r"\s+")),
+    (COMMENT, get_code(";[^\n]*")),
+    (OPEN_PAREN, get_code(r"\(")),
+    (CLOSE_PAREN, get_code(r"\)")),
 
     # todo: it'd be nice to allow number literals with underscores,
     # e.g. 1_000_000
-    INTEGER: get_code('[1-9][0-9]*'),
+    (INTEGER, get_code('-?[0-9]+')),
 
-    SYMBOL: get_code('[a-z*/+-]+'),
-}
+    (SYMBOL, get_code('[a-z*/+-]+')),
+]
 
 
 def lex(text):
@@ -33,7 +33,7 @@ def lex(text):
     while True:
         found_match = False
     
-        for token, regexp in TOKENS.iteritems():
+        for token, regexp in TOKENS:
             match = rsre_core.match(regexp, text)
             if match:
                 found_match = True
