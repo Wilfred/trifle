@@ -1,0 +1,3 @@
+#!/bin/bash
+
+PYTHONPATH=pypy python2 tests.py
