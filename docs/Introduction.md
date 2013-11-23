@@ -9,4 +9,4 @@ otherwise.
 
 ## Table Of Contents
 
-1. [[Numbers.md]]
+1. [Numbers](Numbers.md)
