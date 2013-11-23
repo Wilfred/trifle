@@ -56,7 +56,7 @@ def entry_point(argv):
                 parse_tree = parse(lexed_tokens)
 
                 for expression in parse_tree.values:
-                    print evaluate(expression)
+                    print evaluate(expression).value
             except KeyboardInterrupt:
                 print
                 return 0
@@ -73,7 +73,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         for expression in parse_tree.values:
-            print evaluate(expression)
+            print evaluate(expression).value
         
         return 0
     
@@ -84,7 +84,7 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             for expression in parse_tree.values:
-                print evaluate(expression)
+                print evaluate(expression).value
             return 0
             
     print """Usage:
