@@ -48,7 +48,7 @@ def entry_point(argv):
     """
     if len(argv) == 1:
         # REPL. Ultimately we will rewrite this as a Baobab program.
-        print "Baobab 0.1 interpreter. Press Ctrl-C to exit."
+        print "Baobab interpreter. Press Ctrl-C to exit."
         while True:
             try:
                 user_input = read_line('> ')
