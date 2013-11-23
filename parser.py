@@ -1,4 +1,4 @@
-from lexer import OPEN_PAREN, CLOSE_PAREN
+from baobab_types import OpenParen, CloseParen
 
 class ParsingError(Exception): pass
 
@@ -36,18 +36,18 @@ def parse_inner(tokens, top_level):
     saw_closing_paren = False
 
     while tokens:
-        token_type, token = tokens.pop(0)
+        token = tokens.pop(0)
 
-        if token_type == OPEN_PAREN:
+        if isinstance(token, OpenParen):
             parse_tree.append(parse_inner(tokens, top_level=False))
-        elif token_type == CLOSE_PAREN:
+        elif isinstance(token, CloseParen):
             if top_level:
                 raise ParsingError('Closing paren does not have matching open paren.')
             else:
                 saw_closing_paren = True
                 break
         else:
-            parse_tree.append(Leaf((token_type, token)))
+            parse_tree.append(Leaf(token))
 
     if not top_level and not saw_closing_paren:
         raise ParsingError('Open paren was not closed.')

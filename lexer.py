@@ -2,6 +2,8 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
+from baobab_types import OpenParen, CloseParen, Integer, Symbol
+
 
 WHITESPACE = 'whitespace'
 COMMENT = 'comment'
@@ -36,8 +38,18 @@ def lex(text):
             if match:
                 found_match = True
 
-                if token not in [WHITESPACE, COMMENT]:
-                    lexed_tokens.append((token, text[:match.match_end]))
+                if token in [WHITESPACE, COMMENT]:
+                    pass
+                elif token == OPEN_PAREN:
+                    lexed_tokens.append(OpenParen())
+                elif token == CLOSE_PAREN:
+                    lexed_tokens.append(CloseParen())
+                elif token == INTEGER:
+                    lexed_tokens.append(Integer(text[:match.match_end]))
+                elif token == SYMBOL:
+                    lexed_tokens.append(Symbol(text[:match.match_end]))
+                else:
+                    assert False, "Unrecognised token '%s'" % token
                 
                 text = text[match.match_end:]
                 break
