@@ -33,8 +33,8 @@ def evaluate_list(node):
         for argument in arguments:
             total += argument.value
         return Integer(total)
-    # else:
-    #     assert False, "Can only evaluate calls to +"
+    else:
+        assert False, "Can only evaluate calls to +"
 
 
 def evaluate_value(leaf):
