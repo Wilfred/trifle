@@ -1,7 +1,7 @@
 import unittest
 
 from lexer import lex
-from parser import Node, Leaf, parse
+from parser import Node, Leaf, parse, parse_one
 from baobab_types import Integer
 
 """Baobab unit tests. These are intended to be run with CPython, and
@@ -18,14 +18,12 @@ class IntegerLex(unittest.TestCase):
 class Parsing(unittest.TestCase):
     def test_parse_list(self):
         expected_parse_tree = Node()
+        expected_parse_tree.append(Leaf(Integer(1)))
+        expected_parse_tree.append(Leaf(Integer(2)))
 
-        simple_list = Node()
-        simple_list.append(Leaf(Integer(1)))
-        simple_list.append(Leaf(Integer(2)))
+        self.assertEqual(parse_one(lex("(1 2)")),
+                         expected_parse_tree)
 
-        expected_parse_tree.append(simple_list)
-
-        self.assertEqual(parse(lex("(1 2)")), expected_parse_tree)
 
 if __name__ == '__main__':
     unittest.main()

@@ -69,3 +69,11 @@ def parse_inner(tokens, top_level):
 
 def parse(tokens):
     return parse_inner(tokens, True)
+
+
+def parse_one(tokens):
+    """Only return the first expression parsed. Useful when parsing short
+    code snippets.
+
+    """
+    return parse(tokens).values[0]
