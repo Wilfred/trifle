@@ -14,7 +14,6 @@ def evaluate(expression):
 # todo: error if we try to call something that isn't a lambda or built-in function
 # todo: error on evaluating an empty list
 # todoc: we evaluate functions left-to-right
-# todoc: + function
 def evaluate_list(node):
     list_elements = node.values
     function = list_elements[0]

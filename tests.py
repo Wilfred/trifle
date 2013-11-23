@@ -28,6 +28,12 @@ class Parsing(unittest.TestCase):
 
 class Evaluating(unittest.TestCase):
     def test_eval_addition(self):
+        self.assertEqual(evaluate(parse_one(lex("(+)"))),
+                         Integer(0))
+        
+        self.assertEqual(evaluate(parse_one(lex("(+ 1)"))),
+                         Integer(1))
+        
         self.assertEqual(evaluate(parse_one(lex("(+ 1 2)"))),
                          Integer(3))
         
