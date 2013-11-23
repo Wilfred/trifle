@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# Run the Baobab interpreter from normal Python, to test changes
+# Run the Trifle interpreter from normal Python, to test changes
 # without recompiling.
 PYTHONPATH=pypy python2 main.py "$@"

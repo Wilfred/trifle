@@ -1,16 +1,16 @@
 """Note that types in the python standard library, so we're forced to
-name this file baobab_types.
+name this file trifle_types.
 
 RPython ignores magic methods (except __init__) but we implement them
 for convenience when testing.
 
 """
 
-class BaobabType(object):
+class TrifleType(object):
     pass
 
 
-class Integer(BaobabType):
+class Integer(TrifleType):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.value)
 
@@ -24,7 +24,7 @@ class Integer(BaobabType):
         self.value = value
 
 
-class Symbol(BaobabType):
+class Symbol(TrifleType):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
 
@@ -43,9 +43,9 @@ for consistency when boxing values from the lexer.
 
 """
 
-class OpenParen(BaobabType):
+class OpenParen(TrifleType):
     pass
 
 
-class CloseParen(BaobabType):
+class CloseParen(TrifleType):
     pass

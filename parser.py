@@ -1,4 +1,4 @@
-from baobab_types import OpenParen, CloseParen
+from trifle_types import OpenParen, CloseParen
 
 class ParsingError(Exception): pass
 

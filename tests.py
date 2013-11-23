@@ -2,10 +2,10 @@ import unittest
 
 from lexer import lex
 from parser import Node, Leaf, parse, parse_one
-from baobab_types import Integer
+from trifle_types import Integer
 from evaluator import evaluate
 
-"""Baobab unit tests. These are intended to be run with CPython, and
+"""Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
 
 """

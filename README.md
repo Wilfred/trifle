@@ -1,21 +1,21 @@
-# Baobab Lisp
-#### *A friendly modular lisp*
+# Trifle Lisp
+#### *A sweet and friendly lisp*
 
 Current status: Very very litle implemented.
 
-Baobab is:
+Trifle is:
 
 ### Modular
 
-Baobab actively avoids including a standard library. Instead, it opts
+Trifle actively avoids including a standard library. Instead, it opts
 for including a package manager so that each package can evolve
 separately. Packages use [semantic versioning](http://semver.org/) and
 declare their dependencies.
 
 ### Self-documenting
 
-Baobab seeks to make code understandable, when looking at both
-individual pieces of code or the high-level overview. Baobab supports
+Trifle seeks to make code understandable, when looking at both
+individual pieces of code or the high-level overview. Trifle supports
 docstrings and cross-references to package documentation.
 
 Names are chosen to be clear, self-explanatory and minimally
@@ -24,12 +24,12 @@ instead of very short names.
 
 ### Expressive
 
-Baobab features closures, unhygenic macros and reader macros.
+Trifle features closures, unhygenic macros and reader macros.
 
 ### Friendly
 
-The Baobab community strives to be friendly and helpful. We have a
-code of conduct that applies to all official Baobab communication
+The Trifle community strives to be friendly and helpful. We have a
+code of conduct that applies to all official Trifle communication
 channels.
 
 The language and its libraries are developed in the open on
@@ -38,7 +38,7 @@ coexist.
 
 ### Fast Enough
 
-The Baobab interpreter is implemented in RPython so gets a JIT for
+The Trifle interpreter is implemented in RPython so gets a JIT for
 free. The language provides also provides basic TCO.
 
 ## Licensing

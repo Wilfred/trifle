@@ -1,5 +1,5 @@
 from parser import Node, Leaf
-from baobab_types import Symbol, Integer
+from trifle_types import Symbol, Integer
 
 
 # todo: define an environment

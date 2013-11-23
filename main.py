@@ -4,7 +4,7 @@ import os
 from lexer import lex
 from parser import parse
 from evaluator import evaluate
-from baobab_types import Integer
+from trifle_types import Integer
 
 
 def get_contents(filename):
@@ -37,18 +37,18 @@ def read_line(prefix):
 
 def entry_point(argv):
     """Either a file name:
-    $ ./baobab ~/files/foo.bao
+    $ ./trifle ~/files/foo.bao
 
     A code snippet:
-    $ ./baobab -i '1 2'
+    $ ./trifle -i '1 2'
 
     Or a REPL:
     $ ./baobob
 
     """
     if len(argv) == 1:
-        # REPL. Ultimately we will rewrite this as a Baobab program.
-        print "Baobab interpreter. Press Ctrl-C to exit."
+        # REPL. Ultimately we will rewrite this as a Trifle program.
+        print "Trifle interpreter. Press Ctrl-C to exit."
         while True:
             try:
                 user_input = read_line('> ')
@@ -88,9 +88,9 @@ def entry_point(argv):
             return 0
             
     print """Usage:
-./baobab
-./baobab -i <code snippet>
-./baobab <path to script>"""
+./trifle
+./trifle -i <code snippet>
+./trifle <path to script>"""
     return 1
         
 

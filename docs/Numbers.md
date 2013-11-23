@@ -1,6 +1,6 @@
 # Numbers
 
-Baobab currently only supports integers.
+Trifle currently only supports integers.
 
 Integer literals are strings of digits. Example integers are `0`,
 `1234` and `-999999`.

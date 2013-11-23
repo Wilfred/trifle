@@ -1,4 +1,4 @@
-all: baobab
+all: trifle
 
 PYPY_VERSION=2.2
 
@@ -11,9 +11,9 @@ pypy: pypy-src.tar.bz2
 	rm pypy-src.tar
 	mv pypy-$(PYPY_VERSION)-src pypy
 
-baobab: pypy main.py lexer.py baobab_types.py parser.py evaluator.py
+trifle: pypy main.py lexer.py trifle_types.py parser.py evaluator.py
 	./rpython main.py
-	mv main-c baobab
+	mv main-c trifle
 
 clean:
 	rm -f pypy-src.tar.bz2

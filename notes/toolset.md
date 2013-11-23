@@ -3,7 +3,7 @@ relatively stable before we can build a sophisticated toolset.
 
 ## REPL
 
-Baobab aboslutely needs a basic REPL. This should be just another
+Trifle aboslutely needs a basic REPL. This should be just another
 package, so it can evolve separately or be replaced by other
 implementations as the user wishes.
 
@@ -27,7 +27,7 @@ installed elsewhere.
 
 ### Extension: Versioning
 
-Baobab packages should support semver dependencies, allowing and
+Trifle packages should support semver dependencies, allowing and
 encouraging users to specify what their project depends on. It should
 make it easy to say 'I depend on foo 1.2+, but less that 2.0'.
 
@@ -56,7 +56,7 @@ using the same package only requires downloading once.
 
 ## Editor
 
-Baobab would benefit from a built-in editor. This should be strongly
+Trifle would benefit from a built-in editor. This should be strongly
 Emacs influenced, and similarly start with a conservative default
 configuration (e.g. C-c, C-x, C-v clipboard, paredit disabled).
 

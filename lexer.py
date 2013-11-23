@@ -2,7 +2,7 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from baobab_types import OpenParen, CloseParen, Integer, Symbol
+from trifle_types import OpenParen, CloseParen, Integer, Symbol
 
 
 WHITESPACE = 'whitespace'
