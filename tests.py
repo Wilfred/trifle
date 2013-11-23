@@ -3,6 +3,7 @@ import unittest
 from lexer import lex
 from parser import Node, Leaf, parse, parse_one
 from baobab_types import Integer
+from evaluator import evaluate
 
 """Baobab unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -25,5 +26,10 @@ class Parsing(unittest.TestCase):
                          expected_parse_tree)
 
 
+class Evaluating(unittest.TestCase):
+    def test_eval_addition(self):
+        self.assertEqual(evaluate(parse_one(lex("(+ 1 2)"))),
+                         Integer(3))
+        
 if __name__ == '__main__':
     unittest.main()
