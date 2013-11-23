@@ -20,8 +20,8 @@ class Parsing(unittest.TestCase):
         expected_parse_tree = Node()
 
         simple_list = Node()
-        simple_list.append(Leaf(Integer("1")))
-        simple_list.append(Leaf(Integer("2")))
+        simple_list.append(Leaf(Integer(1)))
+        simple_list.append(Leaf(Integer(2)))
 
         expected_parse_tree.append(simple_list)
 

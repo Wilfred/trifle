@@ -45,7 +45,7 @@ def lex(text):
                 elif token == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
                 elif token == INTEGER:
-                    lexed_tokens.append(Integer(text[:match.match_end]))
+                    lexed_tokens.append(Integer.from_string(text[:match.match_end]))
                 elif token == SYMBOL:
                     lexed_tokens.append(Symbol(text[:match.match_end]))
                 else:

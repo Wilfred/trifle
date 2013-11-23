@@ -15,8 +15,12 @@ class BaobabType(object):
 
 
 class Integer(BaobabType):
-    def __init__(self, value_as_string):
-        self.value = int(value_as_string)
+    @classmethod
+    def from_string(cls, value_as_string):
+        return Integer(int(value_as_string))
+    
+    def __init__(self, value):
+        self.value = value
 
 
 class Symbol(BaobabType):
