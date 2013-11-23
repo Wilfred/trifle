@@ -18,6 +18,12 @@ class Node(Tree):
     def append(self, value):
         self.values.append(value)
 
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            return False
+        else:
+            return self.values == other.values
+
     def as_string(self):
         value_reprs = [value.as_string() for value in self.values]
         return '[%s]' % ' '.join(value_reprs)
@@ -26,6 +32,12 @@ class Node(Tree):
 class Leaf(Tree):
     def __init__(self, value):
         self.value = value
+
+    def __eq__(self, other):
+        if not isinstance(other, Leaf):
+            return False
+        else:
+            return self.value == other.value
 
     def as_string(self):
         return '%s' % (self.value,)
