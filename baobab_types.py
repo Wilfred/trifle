@@ -25,6 +25,9 @@ class Integer(BaobabType):
 
 
 class Symbol(BaobabType):
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
+
     def __eq__(self, other):
         if self.__class__ != other.__class__:
             return False
