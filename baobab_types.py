@@ -15,10 +15,6 @@ class BaobabType(object):
 
 
 class Integer(BaobabType):
-    @classmethod
-    def from_string(cls, value_as_string):
-        return Integer(int(value_as_string))
-    
     def __init__(self, value):
         self.value = value
 
