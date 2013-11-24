@@ -12,6 +12,12 @@ for including a package manager so that each package can evolve
 separately. Packages use [semantic versioning](http://semver.org/) and
 declare their dependencies.
 
+### Iterating
+
+The Trifle standard is not set in stone. Major versions may break
+backwards compatibility. The featureset will change over time to
+maximise readability and expressiveness.
+
 ### Self-documenting
 
 Trifle seeks to make code understandable, when looking at both
@@ -25,6 +31,14 @@ instead of very short names.
 ### Expressive
 
 Trifle features closures, unhygenic macros and reader macros.
+
+### Re-Examined
+
+Trifle re-considers traditional lisp features. There is no built-in
+Cons cell (lists are vectors). Some common functions have been renamed
+(car) and others have different behaviours to other lisps (last
+returns the last element in a list). Trailing parentheses are
+encouraged to aid readability.
 
 ### Friendly
 
