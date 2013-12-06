@@ -28,6 +28,14 @@ Names are chosen to be clear, self-explanatory and minimally
 abbreviated. Code should be concise through well-chosen abstraction
 instead of very short names.
 
+### Documented
+
+Trifle seeks to be clearly and thoroughly documented. Documentation
+should include examples wherever possible. Each page in the
+documentation should have a small and well-defined purpose, with each
+function on a separate page. Users should be able to leave comments on
+the documentation for later readers.
+
 ### Expressive
 
 Trifle features closures, unhygenic macros and reader macros.
