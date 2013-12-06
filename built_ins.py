@@ -8,7 +8,6 @@ class Addition(Function):
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
                 # todoc: this error
-                # todo: unit test
                 raise TrifleTypeError(
                     "%s is not a number." % arg.repr())
 

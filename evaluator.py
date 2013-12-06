@@ -34,7 +34,6 @@ def evaluate_list(node, environment):
         return function.call(arguments)
     else:
         # todoc: this error
-        # todo: add unit test
         raise TrifleTypeError("%s isn't a function." % function.repr())
 
 

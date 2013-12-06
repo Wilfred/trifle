@@ -4,7 +4,7 @@ from lexer import lex
 from parser import Node, Leaf, parse_one
 from trifle_types import Integer
 from evaluator import evaluate, evaluate_with_built_ins
-from errors import UnboundVariable
+from errors import UnboundVariable, TrifleTypeError
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -42,7 +42,13 @@ class Parsing(unittest.TestCase):
 
 
 class Evaluating(unittest.TestCase):
-    def test_eval_addition(self):
+    def test_invalid_function(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(1)")))
+
+
+class Addition(unittest.TestCase):
+    def test_addition(self):
         self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+)"))),
                          Integer(0))
         
@@ -51,6 +57,10 @@ class Evaluating(unittest.TestCase):
         
         self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+ 1 2)"))),
                          Integer(3))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(+ +)")))
 
 
 class Environment(unittest.TestCase):
