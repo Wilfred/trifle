@@ -7,12 +7,17 @@ for convenience when testing.
 """
 
 class TrifleType(object):
-    pass
+    def __repr__(self):
+        """We can't override __repr__ in rpython, so this is only useful when
+        debugging with CPython.
+
+        """
+        return "<%s: %s>" % (self.__class__.__name__, self.repr())
 
 
 class Integer(TrifleType):
-    def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.value)
+    def repr(self):
+        return "%s" % self.value
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -25,6 +30,9 @@ class Integer(TrifleType):
 
 
 class Symbol(TrifleType):
+    def repr(self):
+        return self.symbol_name
+
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
 
