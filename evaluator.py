@@ -52,7 +52,5 @@ def evaluate_value(leaf, environment):
         else:
             raise UnboundVariable("No such variable defined: '%s'"
                                   % symbol_name)
-            # todo: proper error handling
-            assert False, "Unbound variable"
     else:
         assert False, "I don't know how to evaluate that value."
