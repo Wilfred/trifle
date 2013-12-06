@@ -4,7 +4,6 @@ import os
 from lexer import lex
 from parser import parse
 from evaluator import evaluate
-from trifle_types import Integer
 
 
 def get_contents(filename):
@@ -56,7 +55,7 @@ def entry_point(argv):
                 parse_tree = parse(lexed_tokens)
 
                 for expression in parse_tree.values:
-                    print evaluate(expression).value
+                    print evaluate(expression, {}).value
             except KeyboardInterrupt:
                 print
                 return 0
@@ -73,7 +72,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         for expression in parse_tree.values:
-            print evaluate(expression).value
+            print evaluate(expression, {}).value
         
         return 0
     
@@ -84,7 +83,7 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             for expression in parse_tree.values:
-                print evaluate(expression).value
+                print evaluate(expression, {}).value
             return 0
             
     print """Usage:

@@ -1,8 +1,8 @@
 import unittest
 
 from lexer import lex
-from parser import Node, Leaf, parse, parse_one
-from trifle_types import Integer
+from parser import Node, Leaf, parse_one
+from trifle_types import Integer, Symbol
 from evaluator import evaluate
 
 """Trifle unit tests. These are intended to be run with CPython, and
@@ -42,14 +42,24 @@ class Parsing(unittest.TestCase):
 
 class Evaluating(unittest.TestCase):
     def test_eval_addition(self):
-        self.assertEqual(evaluate(parse_one(lex("(+)"))),
+        self.assertEqual(evaluate(parse_one(lex("(+)")), {}),
                          Integer(0))
         
-        self.assertEqual(evaluate(parse_one(lex("(+ 1)"))),
+        self.assertEqual(evaluate(parse_one(lex("(+ 1)")), {}),
                          Integer(1))
         
-        self.assertEqual(evaluate(parse_one(lex("(+ 1 2)"))),
+        self.assertEqual(evaluate(parse_one(lex("(+ 1 2)")), {}),
                          Integer(3))
+
+
+class Environment(unittest.TestCase):
+    def test_evaluate_variable(self):
+        env = {
+            'x': Integer(1),
+        }
+        self.assertEqual(evaluate(parse_one(lex("x")), env),
+                         Integer(1))
+
         
 if __name__ == '__main__':
     unittest.main()
