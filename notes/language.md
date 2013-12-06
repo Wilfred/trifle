@@ -149,3 +149,12 @@ Sockets and other network functionality. About (Python: `sys.version`)
 `set-as` (CL: `setf`), `let-as` (elisp: `destructuring-bind`)
 
 Explore freezing and unfreezing for list, vector, string
+
+## Reflection
+
+Be reflective wherever possible, it makes the language more
+expressive.
+
+CL's condition system allows you to inspect 'exception handlers' at
+runtime. JavaScript allows you to inspect the current stack, making
+building a debugger straightforward.
