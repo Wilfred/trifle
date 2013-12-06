@@ -4,7 +4,7 @@ import os
 from lexer import lex
 from parser import parse
 from evaluator import evaluate_with_built_ins
-from errors import UnboundVariable
+from errors import TrifleError
 
 
 def get_contents(filename):
@@ -58,8 +58,8 @@ def entry_point(argv):
 
                 for expression in parse_tree.values:
                     print evaluate_with_built_ins(expression).repr()
-            except UnboundVariable as e:
-                print e
+            except TrifleError as e:
+                print "Error: %s" % e
             except KeyboardInterrupt:
                 print
                 return 0
@@ -78,8 +78,8 @@ def entry_point(argv):
         try:
             for expression in parse_tree.values:
                 print evaluate_with_built_ins(expression).repr()
-        except UnboundVariable as e:
-            print e
+        except TrifleError as e:
+            print "Error: %s" % e
             return 1
         
         return 0
@@ -93,8 +93,8 @@ def entry_point(argv):
             try:
                 for expression in parse_tree.values:
                     print evaluate_with_built_ins(expression).repr()
-            except UnboundVariable as e:
-                print e
+            except TrifleError as e:
+                print "Error: %s" % e
                 return 1
             return 0
             
