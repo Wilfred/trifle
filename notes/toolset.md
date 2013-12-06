@@ -20,6 +20,8 @@ Ideally the REPL would persist its state to disk when the session is
 closed, so starting the REPL again later would let the dev continue
 where he/she left off.
 
+Functions should know which line they were defined on.
+
 ## Packaging
 
 The user should be able to package up groups of files that can be
