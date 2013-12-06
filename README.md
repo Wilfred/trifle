@@ -12,7 +12,16 @@ for including a package manager so that each package can evolve
 separately. Packages use [semantic versioning](http://semver.org/) and
 declare their dependencies.
 
-Influences: Scheme's small core, CLOS as a library, npm
+Trifle takes an 'open implementation' approach. Wherever possible,
+functionality is built on top of the core, to encourage
+experimentation and to minimise the amount of non-Trifle code users
+must read. Where non-essential functions are written in RPython for
+performance, an equivalent Trifle implementation will be included.
+
+That said, the Trifle community will promote a set of defaults, so new
+users have a standard set of tools to get started with.
+
+Influences: Scheme's small core, CLOS as a library, npm, Smalltalk
 
 ### Iterating
 
