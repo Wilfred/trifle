@@ -1,5 +1,5 @@
-"""Note that types in the python standard library, so we're forced to
-name this file trifle_types.
+"""Note that 'types' is part of the python standard library, so we're
+forced to name this file trifle_types.
 
 RPython ignores magic methods (except __init__) but we implement them
 for convenience when testing.
