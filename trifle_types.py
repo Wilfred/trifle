@@ -46,6 +46,16 @@ class Symbol(TrifleType):
         self.symbol_name = symbol_name
 
 
+class Function(TrifleType):
+    """A function provided by the interpreter. Subclasses must provide a
+    call method. Arguments are passed in after being evaluated.
+
+    """
+    def repr(self):
+        # todo: we can be more helpful than this
+        return "<function>"
+
+
 """Our parenthesis classes aren't exposed to the user, but we add them
 for consistency when boxing values from the lexer.
 

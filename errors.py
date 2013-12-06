@@ -7,3 +7,8 @@ class TrifleError(Exception):
 
 class UnboundVariable(TrifleError):
     pass
+
+
+# Python already has a 'TypeError' exception
+class TrifleTypeError(TrifleError):
+    pass

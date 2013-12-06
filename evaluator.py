@@ -1,6 +1,14 @@
 from parser import Node, Leaf
-from trifle_types import Symbol, Integer
-from errors import UnboundVariable
+from trifle_types import Symbol, Integer, Function
+from errors import UnboundVariable, TrifleTypeError
+from built_ins import Addition
+
+
+def evaluate_with_built_ins(expression):
+    built_ins = {
+        '+': Addition()
+    }
+    return evaluate(expression, built_ins)
 
 
 def evaluate(expression, environment):
@@ -10,30 +18,24 @@ def evaluate(expression, environment):
         return evaluate_value(expression, environment)
 
 
-# todo: error if we try to call something that isn't a lambda or built-in function
 # todo: error on evaluating an empty list
-# todoc: we evaluate functions left-to-right
 def evaluate_list(node, environment):
-    list_elements = node.values
+    raw_list_elements = node.values
+
+    # todoc: we evaluate functions left-to-right
+    # todo: handle forms where we don't evaluate their arguments
+    list_elements = [
+        evaluate(el, environment) for el in raw_list_elements]
+    
     function = list_elements[0]
-    raw_arguments = list_elements[1:]
+    arguments = list_elements[1:]
 
-    if isinstance(function, Leaf) and \
-       isinstance(function.value, Symbol):
-        if function.value.symbol_name == "+":
-            # evaluate arguments.
-            # todo: a generic way of specifying forms where we need to evaluate their arguments.
-            # todo: we should only pass the global env here
-            arguments = [evaluate(arg, environment) for arg in raw_arguments]
-
-            # todo: we will eventually need to check that all arguments
-            # are numbers, but we don't support any other types yet.
-            total = 0
-            for argument in arguments:
-                total += argument.value
-            return Integer(total)
-            
-    assert False, "I don't know how to evaluate that."
+    if isinstance(function, Function):
+        return function.call(arguments)
+    else:
+        # todoc: this error
+        # todo: add unit test
+        raise TrifleTypeError("%s isn't a function." % function.repr())
 
 
 def evaluate_value(leaf, environment):
@@ -41,7 +43,10 @@ def evaluate_value(leaf, environment):
     if isinstance(raw_value, Integer):
         # Integers evaluate to themselves
         return raw_value
-    if isinstance(raw_value, Symbol):
+    elif isinstance(raw_value, Function):
+        # Functions evaluate to themselves
+        return raw_value
+    elif isinstance(raw_value, Symbol):
         symbol_name = raw_value.symbol_name
         if symbol_name in environment:
             return environment[symbol_name]

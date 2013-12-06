@@ -3,7 +3,7 @@ import unittest
 from lexer import lex
 from parser import Node, Leaf, parse_one
 from trifle_types import Integer
-from evaluator import evaluate
+from evaluator import evaluate, evaluate_with_built_ins
 from errors import UnboundVariable
 
 """Trifle unit tests. These are intended to be run with CPython, and
@@ -43,13 +43,13 @@ class Parsing(unittest.TestCase):
 
 class Evaluating(unittest.TestCase):
     def test_eval_addition(self):
-        self.assertEqual(evaluate(parse_one(lex("(+)")), {}),
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+)"))),
                          Integer(0))
         
-        self.assertEqual(evaluate(parse_one(lex("(+ 1)")), {}),
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+ 1)"))),
                          Integer(1))
         
-        self.assertEqual(evaluate(parse_one(lex("(+ 1 2)")), {}),
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+ 1 2)"))),
                          Integer(3))
 
 
@@ -63,7 +63,7 @@ class Environment(unittest.TestCase):
 
     def test_unbound_variable(self):
         with self.assertRaises(UnboundVariable):
-            evaluate(parse_one(lex("x")), {})
+            evaluate_with_built_ins(parse_one(lex("x")))
 
         
 if __name__ == '__main__':
