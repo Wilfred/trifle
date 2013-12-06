@@ -56,7 +56,7 @@ def entry_point(argv):
                 parse_tree = parse(lexed_tokens)
 
                 for expression in parse_tree.values:
-                    print evaluate_with_built_ins(expression).value
+                    print evaluate_with_built_ins(expression).repr()
             except UnboundVariable as e:
                 print e
             except KeyboardInterrupt:
@@ -76,7 +76,7 @@ def entry_point(argv):
         parse_tree = parse(lexed_tokens)
         try:
             for expression in parse_tree.values:
-                print evaluate_with_built_ins(expression).value
+                print evaluate_with_built_ins(expression).repr()
         except UnboundVariable as e:
             print e
             return 1
@@ -91,7 +91,7 @@ def entry_point(argv):
 
             try:
                 for expression in parse_tree.values:
-                    print evaluate_with_built_ins(expression).value
+                    print evaluate_with_built_ins(expression).repr()
             except UnboundVariable as e:
                 print e
                 return 1
