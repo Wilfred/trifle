@@ -74,8 +74,12 @@ def entry_point(argv):
         code = get_contents(filename)
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
-        for expression in parse_tree.values:
-            print evaluate(expression, {}).value
+        try:
+            for expression in parse_tree.values:
+                print evaluate(expression, {}).value
+        except UnboundVariable as e:
+            print e
+            return 1
         
         return 0
     
@@ -85,8 +89,12 @@ def entry_point(argv):
             lexed_tokens = lex(code_snippet)
             parse_tree = parse(lexed_tokens)
 
-            for expression in parse_tree.values:
-                print evaluate(expression, {}).value
+            try:
+                for expression in parse_tree.values:
+                    print evaluate(expression, {}).value
+            except UnboundVariable as e:
+                print e
+                return 1
             return 0
             
     print """Usage:
