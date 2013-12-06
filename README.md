@@ -12,11 +12,15 @@ for including a package manager so that each package can evolve
 separately. Packages use [semantic versioning](http://semver.org/) and
 declare their dependencies.
 
+Influences: Scheme's small core, CLOS as a library, npm
+
 ### Iterating
 
 The Trifle standard is not set in stone. Major versions may break
 backwards compatibility. The featureset will change over time to
 maximise readability and expressiveness.
+
+Influences: Python 3 cleaning up semantics
 
 ### Self-documenting
 
@@ -28,6 +32,8 @@ Names are chosen to be clear, self-explanatory and minimally
 abbreviated. Code should be concise through well-chosen abstraction
 instead of very short names.
 
+Influences: Python's readability
+
 ### Documented
 
 Trifle seeks to be clearly and thoroughly documented. Documentation
@@ -36,9 +42,13 @@ documentation should have a small and well-defined purpose, with each
 function on a separate page. Users should be able to leave comments on
 the documentation for later readers.
 
+Influences: PHP docs, clojuredocs
+
 ### Expressive
 
 Trifle features closures, unhygenic macros and reader macros.
+
+Influences: Common Lisp
 
 ### Re-Examined
 
@@ -47,6 +57,8 @@ Cons cell (lists are vectors). Some common functions have been renamed
 (car) and others have different behaviours to other lisps (last
 returns the last element in a list). Trailing parentheses are
 encouraged to aid readability.
+
+Influences: Clojure
 
 ### Friendly
 
@@ -58,10 +70,14 @@ The language and its libraries are developed in the open on
 GitHub. The package manager allows different forks of libraries to
 coexist.
 
+Influences: Rust/CoffeeScript on GitHub
+
 ### Fast Enough
 
 The Trifle interpreter is implemented in RPython so gets a JIT for
 free. The language provides also provides basic TCO.
+
+Influences: Pypy, Scheme
 
 ## Licensing
 
