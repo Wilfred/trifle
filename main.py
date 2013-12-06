@@ -43,7 +43,7 @@ def entry_point(argv):
     $ ./trifle -i '1 2'
 
     Or a REPL:
-    $ ./baobob
+    $ ./trifle
 
     """
     if len(argv) == 1:
