@@ -12,7 +12,7 @@ CLOSE_PAREN = 'close-paren'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 
-
+# todo: 'foo1' should be a valid symbol
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
