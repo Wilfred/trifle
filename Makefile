@@ -18,3 +18,4 @@ trifle: pypy main.py lexer.py trifle_types.py parser.py evaluator.py
 clean:
 	rm -f pypy-src.tar.bz2
 	rm -rf pypy
+	rm -f trifle
