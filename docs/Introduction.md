@@ -9,4 +9,17 @@ otherwise.
 
 ## Table Of Contents
 
-1. [Numbers](Numbers.md)
+### Usage
+
+1.1. [Interpreter](Interpreter.md)
+
+### Language
+
+2.1. [Numbers](Numbers.md)
+2.2. Evaluation
+
+### Contributing
+
+3.1. [Source code](https://github.com/wilfred/trifle)
+3.2. [Bugs](https://github.com/wilfred/trifle/issues)
+3.3. Building
