@@ -35,6 +35,7 @@ def read_line(prefix):
     return os.read(STDIN, 1024)[:-1] # discard the trailing last newline
 
 
+# todo: some unit tests to ensure the top level works
 def entry_point(argv):
     """Either a file name:
     $ ./trifle ~/files/foo.bao
