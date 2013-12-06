@@ -4,6 +4,7 @@ import os
 from lexer import lex
 from parser import parse
 from evaluator import evaluate
+from errors import UnboundVariable
 
 
 def get_contents(filename):
@@ -56,6 +57,8 @@ def entry_point(argv):
 
                 for expression in parse_tree.values:
                     print evaluate(expression, {}).value
+            except UnboundVariable as e:
+                print e
             except KeyboardInterrupt:
                 print
                 return 0

@@ -1,5 +1,6 @@
 from parser import Node, Leaf
 from trifle_types import Symbol, Integer
+from errors import UnboundVariable
 
 
 def evaluate(expression, environment):
@@ -45,6 +46,8 @@ def evaluate_value(leaf, environment):
         if symbol_name in environment:
             return environment[symbol_name]
         else:
+            raise UnboundVariable("No such variable defined: '%s'"
+                                  % symbol_name)
             # todo: proper error handling
             assert False, "Unbound variable"
     else:

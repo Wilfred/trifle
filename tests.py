@@ -2,8 +2,9 @@ import unittest
 
 from lexer import lex
 from parser import Node, Leaf, parse_one
-from trifle_types import Integer, Symbol
+from trifle_types import Integer
 from evaluator import evaluate
+from errors import UnboundVariable
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -59,6 +60,10 @@ class Environment(unittest.TestCase):
         }
         self.assertEqual(evaluate(parse_one(lex("x")), env),
                          Integer(1))
+
+    def test_unbound_variable(self):
+        with self.assertRaises(UnboundVariable):
+            evaluate(parse_one(lex("x")), {})
 
         
 if __name__ == '__main__':
