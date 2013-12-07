@@ -12,7 +12,6 @@ CLOSE_PAREN = 'close-paren'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 
-# todo: 'foo1' should be a valid symbol
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
@@ -23,7 +22,7 @@ TOKENS = [
     # e.g. 1_000_000
     (INTEGER, get_code('-?[0-9]+')),
 
-    (SYMBOL, get_code('[a-z*/+-]+')),
+    (SYMBOL, get_code('[a-z*/+?-][a-z0-9*/+?-]*')),
 ]
 
 

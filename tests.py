@@ -2,7 +2,7 @@ import unittest
 
 from lexer import lex
 from parser import Node, Leaf, parse_one
-from trifle_types import Integer
+from trifle_types import Integer, Symbol
 from evaluator import evaluate, evaluate_with_built_ins
 from errors import UnboundVariable, TrifleTypeError
 
@@ -29,6 +29,16 @@ class IntegerLex(unittest.TestCase):
 
         self.assertEqual(
             lex("-0")[0], Integer(0))
+
+    def test_lex_symbol(self):
+        self.assertEqual(
+            lex("x")[0], Symbol('x'))
+
+        self.assertEqual(
+            lex("x1")[0], Symbol('x1'))
+
+        self.assertEqual(
+            lex("foo?")[0], Symbol('foo?'))
 
 
 class Parsing(unittest.TestCase):
