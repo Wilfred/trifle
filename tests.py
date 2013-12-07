@@ -2,7 +2,7 @@ import unittest
 
 from lexer import lex
 from parser import Node, Leaf, parse_one
-from trifle_types import Integer, Symbol
+from trifle_types import Integer, Symbol, TRUE, FALSE
 from evaluator import evaluate, evaluate_with_built_ins
 from errors import UnboundVariable, TrifleTypeError, LexFailed
 
@@ -47,6 +47,23 @@ class SymbolLex(unittest.TestCase):
             lex("\\")
 
 
+class BooleanLex(unittest.TestCase):
+    def test_lex_boolean(self):
+        self.assertEqual(
+            lex("true")[0], TRUE)
+
+        self.assertEqual(
+            lex("false")[0], FALSE)
+
+    def test_lex_symbol_leading_bool(self):
+        """Ensure that a symbol which starts with a valid boolean literal, is
+        still a valid symbol.
+
+        """
+        self.assertEqual(
+            lex("true-foo")[0], Symbol('true-foo'))
+
+
 class Parsing(unittest.TestCase):
     def test_parse_list(self):
         expected_parse_tree = Node()
@@ -61,6 +78,18 @@ class Evaluating(unittest.TestCase):
     def test_invalid_function(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_built_ins(parse_one(lex("(1)")))
+
+
+# todo: test evaluating numbers
+class EvaluatingLiterals(unittest.TestCase):
+    def test_eval_boolean(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("true"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("false"))),
+            FALSE)
 
 
 class Addition(unittest.TestCase):

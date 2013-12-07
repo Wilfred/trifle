@@ -15,6 +15,29 @@ class TrifleType(object):
         return "<%s: %s>" % (self.__class__.__name__, self.repr())
 
 
+class Boolean(TrifleType):
+    def repr(self):
+        if self.value:
+            return "true"
+        else:
+            return "false"
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.value == other.value
+
+    def __init__(self, value):
+        self.value = value
+
+
+TRUE = Boolean(True)
+
+
+FALSE = Boolean(False)
+
+
 class Integer(TrifleType):
     def repr(self):
         return "%s" % self.value

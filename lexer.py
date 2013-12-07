@@ -2,7 +2,7 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import OpenParen, CloseParen, Integer, Symbol
+from trifle_types import OpenParen, CloseParen, Boolean, Integer, Symbol, TRUE, FALSE
 from errors import LexFailed
 
 
@@ -10,6 +10,7 @@ WHITESPACE = 'whitespace'
 COMMENT = 'comment'
 OPEN_PAREN = 'open-paren'
 CLOSE_PAREN = 'close-paren'
+BOOLEAN = 'boolean'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 
@@ -23,6 +24,7 @@ TOKENS = [
     # e.g. 1_000_000
     (INTEGER, get_code('-?[0-9]+')),
 
+    # note this captures 'true' and 'false' too
     (SYMBOL, get_code('[a-z*/+?-][a-z0-9*/+?-]*')),
 ]
 
@@ -47,7 +49,12 @@ def lex(text):
                 elif token == INTEGER:
                     lexed_tokens.append(Integer(int(text[:match.match_end])))
                 elif token == SYMBOL:
-                    lexed_tokens.append(Symbol(text[:match.match_end]))
+                    if text[:match.match_end] == 'true':
+                        lexed_tokens.append(TRUE)
+                    elif text[:match.match_end] == 'false':
+                        lexed_tokens.append(FALSE)
+                    else:
+                        lexed_tokens.append(Symbol(text[:match.match_end]))
                 else:
                     assert False, "Unrecognised token '%s'" % token
                 

@@ -1,5 +1,5 @@
 from parser import Node
-from trifle_types import Symbol, Integer, Function
+from trifle_types import Symbol, Integer, Function, Boolean
 from errors import UnboundVariable, TrifleTypeError
 from built_ins import Addition, Subtraction
 
@@ -42,6 +42,9 @@ def evaluate_value(leaf, environment):
     raw_value = leaf.value
     if isinstance(raw_value, Integer):
         # Integers evaluate to themselves
+        return raw_value
+    if isinstance(raw_value, Boolean):
+        # Booleans evaluate to themselves
         return raw_value
     elif isinstance(raw_value, Function):
         # Functions evaluate to themselves
