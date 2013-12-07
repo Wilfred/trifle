@@ -1,13 +1,14 @@
 from parser import Node
 from trifle_types import Symbol, Integer, Function, Boolean
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import Addition, Subtraction
+from built_ins import Addition, Subtraction, Same
 
 
 def evaluate_with_built_ins(expression):
     built_ins = {
         '+': Addition(),
         '-': Subtraction(),
+        'same?': Same(),
     }
     return evaluate(expression, built_ins)
 

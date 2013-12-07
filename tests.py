@@ -124,6 +124,37 @@ class Subtraction(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(- -)")))
 
 
+class Same(unittest.TestCase):
+    def test_booleans_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? true true)"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? false false)"))),
+            TRUE)
+
+    def test_booleans_different(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? true false)"))),
+            FALSE)
+
+    def test_integers_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? 1 1)"))),
+            TRUE)
+
+    def test_integers_different(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? 1 2)"))),
+            FALSE)
+
+    def test_different_types(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? true 1)"))),
+            FALSE)
+
+
 class Environment(unittest.TestCase):
     def test_evaluate_variable(self):
         env = {
