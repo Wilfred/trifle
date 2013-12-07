@@ -16,7 +16,8 @@ otherwise.
 ### Language
 
 2.1. [Numbers](Numbers.md)
-2.2. Evaluation
+2.2. [Symbols](Symbols.md)
+2.3. Evaluation
 
 ### Contributing
 
