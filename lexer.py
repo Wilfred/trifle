@@ -30,7 +30,7 @@ TOKENS = [
 def lex(text):
     lexed_tokens = []
 
-    while True:
+    while text:
         found_match = False
     
         for token, regexp in TOKENS:
@@ -53,10 +53,6 @@ def lex(text):
                 
                 text = text[match.match_end:]
                 break
-
-        if not text:
-            # successfully lexed everything
-            break
 
         if not found_match:
             raise LexFailed("Could not lex remainder: '%s'" % text)
