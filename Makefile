@@ -1,6 +1,6 @@
 all: trifle
 
-PYPY_VERSION=2.2
+PYPY_VERSION=2.2.1
 
 pypy-src.tar.bz2:
 	wget https://bitbucket.org/pypy/pypy/downloads/pypy-$(PYPY_VERSION)-src.tar.bz2 -O pypy-src.tar.bz2
