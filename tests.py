@@ -2,9 +2,9 @@ import unittest
 
 from lexer import lex
 from parser import Node, Leaf, parse_one
-from trifle_types import Integer
+from trifle_types import Integer, Symbol
 from evaluator import evaluate, evaluate_with_built_ins
-from errors import UnboundVariable, TrifleTypeError
+from errors import UnboundVariable, TrifleTypeError, LexFailed
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -29,6 +29,20 @@ class IntegerLex(unittest.TestCase):
 
         self.assertEqual(
             lex("-0")[0], Integer(0))
+
+    def test_lex_symbol(self):
+        self.assertEqual(
+            lex("x")[0], Symbol('x'))
+
+        self.assertEqual(
+            lex("x1")[0], Symbol('x1'))
+
+        self.assertEqual(
+            lex("foo?")[0], Symbol('foo?'))
+
+    def test_lex_invalid_symbol(self):
+        with self.assertRaises(LexFailed):
+            lex("\\")
 
 
 class Parsing(unittest.TestCase):
@@ -61,6 +75,22 @@ class Addition(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_built_ins(parse_one(lex("(+ +)")))
+
+
+class Subtraction(unittest.TestCase):
+    def test_subtraction(self):
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(-)"))),
+                         Integer(0))
+        
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(- 1)"))),
+                         Integer(-1))
+        
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(- 5 2)"))),
+                         Integer(3))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(- -)")))
 
 
 class Environment(unittest.TestCase):

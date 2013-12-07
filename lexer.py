@@ -3,6 +3,7 @@ from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
 from trifle_types import OpenParen, CloseParen, Integer, Symbol
+from errors import LexFailed
 
 
 WHITESPACE = 'whitespace'
@@ -12,7 +13,6 @@ CLOSE_PAREN = 'close-paren'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 
-# todo: 'foo1' should be a valid symbol
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
@@ -23,14 +23,14 @@ TOKENS = [
     # e.g. 1_000_000
     (INTEGER, get_code('-?[0-9]+')),
 
-    (SYMBOL, get_code('[a-z*/+-]+')),
+    (SYMBOL, get_code('[a-z*/+?-][a-z0-9*/+?-]*')),
 ]
 
 
 def lex(text):
     lexed_tokens = []
 
-    while True:
+    while text:
         found_match = False
     
         for token, regexp in TOKENS:
@@ -54,12 +54,7 @@ def lex(text):
                 text = text[match.match_end:]
                 break
 
-        if not text:
-            # successfully lexed everything
-            break
-
         if not found_match:
-            print "Could not lex remainder: '%s'" % text
-            break
+            raise LexFailed("Could not lex remainder: '%s'" % text)
 
     return lexed_tokens
