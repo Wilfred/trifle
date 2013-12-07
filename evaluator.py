@@ -1,12 +1,13 @@
-from parser import Node, Leaf
+from parser import Node
 from trifle_types import Symbol, Integer, Function
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import Addition
+from built_ins import Addition, Subtraction
 
 
 def evaluate_with_built_ins(expression):
     built_ins = {
-        '+': Addition()
+        '+': Addition(),
+        '-': Subtraction(),
     }
     return evaluate(expression, built_ins)
 

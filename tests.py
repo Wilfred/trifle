@@ -77,6 +77,22 @@ class Addition(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(+ +)")))
 
 
+class Subtraction(unittest.TestCase):
+    def test_subtraction(self):
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(-)"))),
+                         Integer(0))
+        
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(- 1)"))),
+                         Integer(-1))
+        
+        self.assertEqual(evaluate_with_built_ins(parse_one(lex("(- 5 2)"))),
+                         Integer(3))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(- -)")))
+
+
 class Environment(unittest.TestCase):
     def test_evaluate_variable(self):
         env = {

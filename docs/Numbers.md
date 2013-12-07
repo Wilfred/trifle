@@ -8,3 +8,4 @@ Integer literals are strings of digits. Example integers are `0`,
 ## Number functions
 
 1: [+](Numbers-Plus.md)
+2: [-](Numbers-Minus.md)
