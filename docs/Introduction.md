@@ -15,9 +15,10 @@ otherwise.
 
 ### Language
 
-2.1. [Numbers](Numbers.md)
-2.2. [Symbols](Symbols.md)
-2.3. Evaluation
+2.1. [Booleans](Booleans.md)
+2.2. [Numbers](Numbers.md)
+2.3. [Symbols](Symbols.md)
+2.4. Evaluation
 
 ### Contributing
 
