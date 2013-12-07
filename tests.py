@@ -30,6 +30,8 @@ class IntegerLex(unittest.TestCase):
         self.assertEqual(
             lex("-0")[0], Integer(0))
 
+
+class SymbolLex(unittest.TestCase):
     def test_lex_symbol(self):
         self.assertEqual(
             lex("x")[0], Symbol('x'))
