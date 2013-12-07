@@ -5,6 +5,12 @@
 class TrifleError(Exception):
     pass
 
+
+class LexFailed(TrifleError):
+    pass
+
+    
+
 class UnboundVariable(TrifleError):
     pass
 

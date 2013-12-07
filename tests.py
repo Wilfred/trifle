@@ -4,7 +4,7 @@ from lexer import lex
 from parser import Node, Leaf, parse_one
 from trifle_types import Integer, Symbol
 from evaluator import evaluate, evaluate_with_built_ins
-from errors import UnboundVariable, TrifleTypeError
+from errors import UnboundVariable, TrifleTypeError, LexFailed
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -39,6 +39,10 @@ class IntegerLex(unittest.TestCase):
 
         self.assertEqual(
             lex("foo?")[0], Symbol('foo?'))
+
+    def test_lex_invalid_symbol(self):
+        with self.assertRaises(LexFailed):
+            lex("\\")
 
 
 class Parsing(unittest.TestCase):

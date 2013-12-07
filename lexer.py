@@ -3,6 +3,7 @@ from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
 from trifle_types import OpenParen, CloseParen, Integer, Symbol
+from errors import LexFailed
 
 
 WHITESPACE = 'whitespace'
@@ -58,7 +59,6 @@ def lex(text):
             break
 
         if not found_match:
-            print "Could not lex remainder: '%s'" % text
-            break
+            raise LexFailed("Could not lex remainder: '%s'" % text)
 
     return lexed_tokens
