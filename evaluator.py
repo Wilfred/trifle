@@ -24,7 +24,6 @@ def evaluate(expression, environment):
 def evaluate_list(node, environment):
     raw_list_elements = node.values
 
-    # todoc: we evaluate functions left-to-right
     # todo: handle forms where we don't evaluate their arguments
     list_elements = [
         evaluate(el, environment) for el in raw_list_elements]
