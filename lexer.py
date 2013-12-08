@@ -2,7 +2,7 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import OpenParen, CloseParen, Boolean, Integer, Symbol, TRUE, FALSE
+from trifle_types import OpenParen, CloseParen, Integer, Symbol, TRUE, FALSE
 from errors import LexFailed
 
 
