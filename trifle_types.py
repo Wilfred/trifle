@@ -76,12 +76,15 @@ class List(TrifleType):
     def append(self, value):
         self.values.append(value)
 
+    def repr(self):
+        element_reprs = [element.repr() for element in self.values]
+        return "(%s)" % " ".join(element_reprs)
+
     def __eq__(self, other):
         if not isinstance(other, List):
             return False
         else:
             return self.values == other.values
-
 
 
 class Function(TrifleType):
@@ -92,6 +95,16 @@ class Function(TrifleType):
     def repr(self):
         # todo: we can be more helpful than this
         return "<function>"
+
+
+class Macro(TrifleType):
+    """As with Function, subclasses must provide a call method. Arguments
+    are passed unevaluated.
+
+    """
+    def repr(self):
+        # todo: we can be more helpful than this
+        return "<macro>"
 
 
 """Our parenthesis classes aren't exposed to the user, but we add them

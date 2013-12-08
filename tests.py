@@ -92,6 +92,15 @@ class EvaluatingLiterals(unittest.TestCase):
             FALSE)
 
 
+class Quote(unittest.TestCase):
+    def test_eval_boolean(self):
+        expected = parse_one(lex("(+ 1 2)"))
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(quote (+ 1 2))"))),
+            expected)
+
+
 class Addition(unittest.TestCase):
     def test_addition(self):
         self.assertEqual(evaluate_with_built_ins(parse_one(lex("(+)"))),

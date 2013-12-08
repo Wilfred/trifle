@@ -1,6 +1,6 @@
-from trifle_types import List, Symbol, Integer, Function, Boolean
+from trifle_types import List, Symbol, Integer, Function, Macro, Boolean
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import Addition, Subtraction, Same
+from built_ins import Addition, Subtraction, Same, Quote
 
 
 def evaluate_with_built_ins(expression):
@@ -8,6 +8,7 @@ def evaluate_with_built_ins(expression):
         '+': Addition(),
         '-': Subtraction(),
         'same?': Same(),
+        'quote': Quote(),
     }
     return evaluate(expression, built_ins)
 
@@ -21,20 +22,20 @@ def evaluate(expression, environment):
 
 # todo: error on evaluating an empty list
 def evaluate_list(node, environment):
-    raw_list_elements = node.values
-
-    # todo: handle forms where we don't evaluate their arguments
-    list_elements = [
-        evaluate(el, environment) for el in raw_list_elements]
-    
-    function = list_elements[0]
-    arguments = list_elements[1:]
+    list_elements = node.values
+    function = evaluate(list_elements[0], environment)
+    raw_arguments = list_elements[1:]
 
     if isinstance(function, Function):
+        arguments = [
+            evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
+    elif isinstance(function, Macro):
+        return function.call(raw_arguments)
     else:
         # todoc: this error
-        raise TrifleTypeError("%s isn't a function." % function.repr())
+        raise TrifleTypeError("%s isn't a function or macro."
+                              % function.repr())
 
 
 def evaluate_value(value, environment):
@@ -46,6 +47,9 @@ def evaluate_value(value, environment):
         return value
     elif isinstance(value, Function):
         # Functions evaluate to themselves
+        return value
+    elif isinstance(value, Macro):
+        # Macros evaluate to themselves
         return value
     elif isinstance(value, Symbol):
         symbol_name = value.symbol_name

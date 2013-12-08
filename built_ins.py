@@ -1,5 +1,16 @@
-from trifle_types import Function, Integer, Boolean, TRUE, FALSE
+from trifle_types import Function, Macro, Integer, Boolean, TRUE, FALSE
 from errors import TrifleTypeError
+
+
+class Quote(Macro):
+    def call(self, args):
+        if len(args) != 1:
+            # todoc: this error
+            # todo: print the actual arguments given
+            raise TrifleTypeError(
+                "quote takes 1 argument, but got %d." % len(args))
+
+        return args[0]
 
 
 class Same(Function):
