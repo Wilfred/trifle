@@ -24,10 +24,6 @@ class Node(Tree):
         else:
             return self.values == other.values
 
-    def as_string(self):
-        value_reprs = [value.as_string() for value in self.values]
-        return '[%s]' % ' '.join(value_reprs)
-
 
 class Leaf(Tree):
     def __init__(self, value):
@@ -38,9 +34,6 @@ class Leaf(Tree):
             return False
         else:
             return self.value == other.value
-
-    def as_string(self):
-        return '%s' % (self.value,)
 
 
 def parse_inner(tokens, top_level):
