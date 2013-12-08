@@ -1,5 +1,4 @@
-from parser import Node
-from trifle_types import Symbol, Integer, Function, Boolean
+from trifle_types import List, Symbol, Integer, Function, Boolean
 from errors import UnboundVariable, TrifleTypeError
 from built_ins import Addition, Subtraction, Same
 
@@ -14,7 +13,7 @@ def evaluate_with_built_ins(expression):
 
 
 def evaluate(expression, environment):
-    if isinstance(expression, Node):
+    if isinstance(expression, List):
         return evaluate_list(expression, environment)
     else:
         return evaluate_value(expression, environment)
@@ -38,19 +37,18 @@ def evaluate_list(node, environment):
         raise TrifleTypeError("%s isn't a function." % function.repr())
 
 
-def evaluate_value(leaf, environment):
-    raw_value = leaf.value
-    if isinstance(raw_value, Integer):
+def evaluate_value(value, environment):
+    if isinstance(value, Integer):
         # Integers evaluate to themselves
-        return raw_value
-    if isinstance(raw_value, Boolean):
+        return value
+    if isinstance(value, Boolean):
         # Booleans evaluate to themselves
-        return raw_value
-    elif isinstance(raw_value, Function):
+        return value
+    elif isinstance(value, Function):
         # Functions evaluate to themselves
-        return raw_value
-    elif isinstance(raw_value, Symbol):
-        symbol_name = raw_value.symbol_name
+        return value
+    elif isinstance(value, Symbol):
+        symbol_name = value.symbol_name
         if symbol_name in environment:
             return environment[symbol_name]
         else:

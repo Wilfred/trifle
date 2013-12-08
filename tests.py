@@ -1,8 +1,8 @@
 import unittest
 
 from lexer import lex
-from parser import Node, Leaf, parse_one
-from trifle_types import Integer, Symbol, TRUE, FALSE
+from parser import parse_one
+from trifle_types import List, Integer, Symbol, TRUE, FALSE
 from evaluator import evaluate, evaluate_with_built_ins
 from errors import UnboundVariable, TrifleTypeError, LexFailed
 
@@ -66,9 +66,9 @@ class BooleanLex(unittest.TestCase):
 
 class Parsing(unittest.TestCase):
     def test_parse_list(self):
-        expected_parse_tree = Node()
-        expected_parse_tree.append(Leaf(Integer(1)))
-        expected_parse_tree.append(Leaf(Integer(2)))
+        expected_parse_tree = List()
+        expected_parse_tree.append(Integer(1))
+        expected_parse_tree.append(Integer(2))
 
         self.assertEqual(parse_one(lex("(1 2)")),
                          expected_parse_tree)

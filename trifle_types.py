@@ -69,6 +69,21 @@ class Symbol(TrifleType):
         self.symbol_name = symbol_name
 
 
+class List(TrifleType):
+    def __init__(self):
+        self.values = []
+
+    def append(self, value):
+        self.values.append(value)
+
+    def __eq__(self, other):
+        if not isinstance(other, List):
+            return False
+        else:
+            return self.values == other.values
+
+
+
 class Function(TrifleType):
     """A function provided by the interpreter. Subclasses must provide a
     call method. Arguments are passed in after being evaluated.

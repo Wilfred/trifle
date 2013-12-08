@@ -1,43 +1,10 @@
-from trifle_types import OpenParen, CloseParen
+from trifle_types import List, OpenParen, CloseParen
 
 class ParsingError(Exception): pass
 
-class Tree(object):
-    """In order to appease RPython's type checker, we can't have an
-    arbitrarily nested Python list. Instead, we have an explicit Tree
-    type.
-
-    """
-    pass
-
-
-class Node(Tree):
-    def __init__(self):
-        self.values = []
-
-    def append(self, value):
-        self.values.append(value)
-
-    def __eq__(self, other):
-        if not isinstance(other, Node):
-            return False
-        else:
-            return self.values == other.values
-
-
-class Leaf(Tree):
-    def __init__(self, value):
-        self.value = value
-
-    def __eq__(self, other):
-        if not isinstance(other, Leaf):
-            return False
-        else:
-            return self.value == other.value
-
 
 def parse_inner(tokens, top_level):
-    parse_tree = Node()
+    parse_tree = List()
     saw_closing_paren = False
 
     while tokens:
@@ -52,7 +19,7 @@ def parse_inner(tokens, top_level):
                 saw_closing_paren = True
                 break
         else:
-            parse_tree.append(Leaf(token))
+            parse_tree.append(token)
 
     if not top_level and not saw_closing_paren:
         raise ParsingError('Open paren was not closed.')
