@@ -14,6 +14,7 @@ BOOLEAN = 'boolean'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 
+# todoc: exactly what syntax we accept for numbers and symbols
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
@@ -25,7 +26,7 @@ TOKENS = [
     (INTEGER, get_code('-?[0-9]+')),
 
     # note this captures 'true' and 'false' too
-    (SYMBOL, get_code('[a-z*/+?-][a-z0-9*/+?-]*')),
+    (SYMBOL, get_code('[a-z*/+?!-][a-z0-9*/+?!-]*')),
 ]
 
 
