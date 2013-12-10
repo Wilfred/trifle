@@ -34,7 +34,7 @@ List literals are mutable, so the following is valid:
 
 ### Boolean
 
-bool? truth? when unless not or and
+bool? truthy? when unless not or and
 
 ### Null
 
