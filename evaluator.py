@@ -1,14 +1,41 @@
+from copy import copy
+
 from trifle_types import List, Symbol, Integer, Function, Macro, Boolean
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import BUILT_INS
+from built_ins import fresh_environment
 
 
+def evaluate_all_with_built_ins(expressions):
+    """Evaluate a trfle List of expressions, starting with a fresh environment
+    containing only the built-in functions and macros.
 
+    """
+    return evaluate_all(expressions, fresh_environment())
+
+
+# todo: remove this, it's only used in tests
 def evaluate_with_built_ins(expression):
-    return evaluate(expression, BUILT_INS)
+    return evaluate(expression, fresh_environment())
+
+
+def evaluate_all(expressions, environment):
+    """Evaluate a trfle List of expressions, starting with a fresh environment
+    containing only the built-in functions and macros.
+
+    """
+    # todo: null instead
+    result = Integer(0)
+    
+    for expression in expressions.values:
+        result = evaluate(expression, environment)
+
+    return result
 
 
 def evaluate(expression, environment):
+    """Evaluate the given expression in the given environment.
+
+    """
     if isinstance(expression, List):
         return evaluate_list(expression, environment)
     else:

@@ -114,13 +114,17 @@ class Subtraction(Function):
         return Integer(total)
 
 
-BUILT_INS = {
-    '+': Addition(),
-    '-': Subtraction(),
-    'same?': Same(),
-    'quote': Quote(),
-    'set!': Set(),
-    'do': Do(),
-}
+def fresh_environment():
+    """Return a new environment that only contains the built-ins.
+
+    """
+    return {
+        '+': Addition(),
+        '-': Subtraction(),
+        'same?': Same(),
+        'quote': Quote(),
+        'set!': Set(),
+        'do': Do(),
+    }
 
     

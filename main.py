@@ -3,8 +3,9 @@ import os
 
 from lexer import lex
 from parser import parse
-from evaluator import evaluate_with_built_ins
+from evaluator import evaluate_all_with_built_ins, evaluate_all
 from errors import TrifleError
+from built_ins import fresh_environment
 
 
 def get_contents(filename):
@@ -50,14 +51,15 @@ def entry_point(argv):
     if len(argv) == 1:
         # REPL. Ultimately we will rewrite this as a Trifle program.
         print "Trifle interpreter. Press Ctrl-C to exit."
+
+        env = fresh_environment()
         while True:
             try:
                 user_input = read_line('> ')
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
 
-                for expression in parse_tree.values:
-                    print evaluate_with_built_ins(expression).repr()
+                print evaluate_all(parse_tree, env).repr()
             except TrifleError as e:
                 print "Error: %s" % e
             except KeyboardInterrupt:
@@ -76,8 +78,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            for expression in parse_tree.values:
-                print evaluate_with_built_ins(expression).repr()
+            print evaluate_all_with_built_ins(parse_tree).repr()
         except TrifleError as e:
             print "Error: %s" % e
             return 1
@@ -91,8 +92,7 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             try:
-                for expression in parse_tree.values:
-                    print evaluate_with_built_ins(expression).repr()
+                print evaluate_all_with_built_ins(parse_tree).repr()
             except TrifleError as e:
                 print "Error: %s" % e
                 return 1
