@@ -112,3 +112,15 @@ class Subtraction(Function):
         for arg in args[1:]:
             total -= arg.value
         return Integer(total)
+
+
+BUILT_INS = {
+    '+': Addition(),
+    '-': Subtraction(),
+    'same?': Same(),
+    'quote': Quote(),
+    'set!': Set(),
+    'do': Do(),
+}
+
+    

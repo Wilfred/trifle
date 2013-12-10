@@ -1,18 +1,11 @@
 from trifle_types import List, Symbol, Integer, Function, Macro, Boolean
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import Addition, Subtraction, Same, Quote, Set, Do
+from built_ins import BUILT_INS
+
 
 
 def evaluate_with_built_ins(expression):
-    built_ins = {
-        '+': Addition(),
-        '-': Subtraction(),
-        'same?': Same(),
-        'quote': Quote(),
-        'set!': Set(),
-        'do': Do(),
-    }
-    return evaluate(expression, built_ins)
+    return evaluate(expression, BUILT_INS)
 
 
 def evaluate(expression, environment):
