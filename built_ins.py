@@ -2,6 +2,19 @@ from trifle_types import Function, Macro, Integer, Boolean, TRUE, FALSE
 from errors import TrifleTypeError
 
 
+# todoc: what it does, and the return value
+class Do(Macro):
+    def call(self, args, env):
+        # todo: use null instead, and test for this
+        last_value = Integer(0)
+
+        from evaluator import evaluate
+        for arg in args:
+            last_value = evaluate(arg, env)
+
+        return last_value
+
+
 class Quote(Macro):
     def call(self, args, env):
         if len(args) != 1:
