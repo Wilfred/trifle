@@ -55,6 +55,26 @@ class Quote(Macro):
         return args[0]
 
 
+class If(Macro):
+    def call(self, args, env):
+        if len(args) not in [2, 3]:
+            # todoc: this error
+            # todo: print the actual arguments given
+            # todo: unit test error
+            raise TrifleTypeError(
+                "if takes 2 or 3 arguments, but got %d." % len(args))
+
+        from evaluator import evaluate
+        if Truthy().call([args[0]]) == TRUE:
+            return evaluate(args[1], env)
+        else:
+            if len(args) == 2:
+                return evaluate(args[2], env)
+            else:
+                # todo: use null instead
+                return Integer(0)
+
+        
 class Truthy(Function):
     def call(self, args):
         if len(args) != 1:
@@ -150,6 +170,5 @@ def fresh_environment():
         'quote': Quote(),
         'set!': Set(),
         'do': Do(),
+        'if': If(),
     }
-
-    

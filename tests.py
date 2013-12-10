@@ -153,6 +153,26 @@ class Subtraction(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(- -)")))
 
 
+class If(unittest.TestCase):
+    def test_if_one_arg(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(if true 1)"))),
+            Integer(1))
+
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(if false 1)"))),
+            Integer(0))
+
+    def test_if_two_args(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(if true 2 3)"))),
+            Integer(2))
+
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(if false 4 5)"))),
+            Integer(5))
+
+
 class Truthy(unittest.TestCase):
     def test_truthy(self):
         self.assertEqual(
