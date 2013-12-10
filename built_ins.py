@@ -7,6 +7,7 @@ class Quote(Macro):
         if len(args) != 1:
             # todoc: this error
             # todo: print the actual arguments given
+            # todo: unit test error
             raise TrifleTypeError(
                 "quote takes 1 argument, but got %d." % len(args))
 
@@ -18,6 +19,7 @@ class Same(Function):
         if len(args) != 2:
             # todoc: this error
             # todo: print the actual arguments given
+            # todo: unit test error
             raise TrifleTypeError(
                 "same? takes 2 arguments, but got %d." % len(args))
 
