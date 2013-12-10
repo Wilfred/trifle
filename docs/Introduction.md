@@ -19,6 +19,7 @@ otherwise.
 2.2. [Numbers](Numbers.md)
 2.3. [Symbols](Symbols.md)
 2.4. [Evaluation](Evaluation.md)
+2.5. [Macros](Macros.md)
 
 ### Contributing
 
