@@ -1,9 +1,10 @@
 import unittest
 
 from lexer import lex
-from parser import parse_one
+from parser import parse_one, parse
 from trifle_types import List, Integer, Symbol, TRUE, FALSE
-from evaluator import evaluate, evaluate_with_built_ins
+from evaluator import (evaluate, evaluate_with_built_ins,
+                       evaluate_all_with_built_ins)
 from errors import UnboundVariable, TrifleTypeError, LexFailed
 
 """Trifle unit tests. These are intended to be run with CPython, and
@@ -106,8 +107,8 @@ class Do(unittest.TestCase):
 class Set(unittest.TestCase):
     def test_set(self):
         self.assertEqual(
-            evaluate_with_built_ins(
-                parse_one(lex("(do (set! x 1) x)"))),
+            evaluate_all_with_built_ins(
+                parse(lex("(set! x 1) x"))),
             Integer(1))
 
 
