@@ -31,7 +31,7 @@ def evaluate_list(node, environment):
             evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
     elif isinstance(function, Macro):
-        return function.call(raw_arguments)
+        return function.call(raw_arguments, environment)
     else:
         # todoc: this error
         raise TrifleTypeError("%s isn't a function or macro."

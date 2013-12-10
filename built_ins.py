@@ -3,7 +3,7 @@ from errors import TrifleTypeError
 
 
 class Quote(Macro):
-    def call(self, args):
+    def call(self, args, env):
         if len(args) != 1:
             # todoc: this error
             # todo: print the actual arguments given
@@ -71,4 +71,3 @@ class Subtraction(Function):
         for arg in args[1:]:
             total -= arg.value
         return Integer(total)
-
