@@ -1,5 +1,3 @@
-from copy import copy
-
 from trifle_types import List, Symbol, Integer, Function, Macro, Boolean
 from errors import UnboundVariable, TrifleTypeError
 from built_ins import fresh_environment

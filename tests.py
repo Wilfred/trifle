@@ -152,6 +152,33 @@ class Subtraction(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(- -)")))
 
 
+class Truthy(unittest.TestCase):
+    def test_truthy(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? 2)"))),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? 0)"))),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? false)"))),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? true)"))),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? (quote ()))"))),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(truthy? (quote (1)))"))),
+            TRUE)
+        
+
 class Same(unittest.TestCase):
     def test_booleans_same(self):
         self.assertEqual(

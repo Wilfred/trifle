@@ -5,4 +5,5 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 
 ## Boolean functions
 
-1. [same?](Boolean-Same.md)
+1. [truthy?](Boolean-Truthy.md)
+2. [same?](Boolean-Same.md)

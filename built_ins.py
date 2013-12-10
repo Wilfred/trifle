@@ -1,4 +1,4 @@
-from trifle_types import (Function, Macro, Integer,
+from trifle_types import (Function, Macro, Integer, List,
                           Boolean, TRUE, FALSE, Symbol)
 from errors import TrifleTypeError
 
@@ -53,6 +53,30 @@ class Quote(Macro):
                 "quote takes 1 argument, but got %d." % len(args))
 
         return args[0]
+
+
+class Truthy(Function):
+    def call(self, args):
+        if len(args) != 1:
+            # todoc: this error
+            # todo: print the actual arguments given
+            # todo: unit test error
+            raise TrifleTypeError(
+                "truthy? takes 1 arguments, but got %d." % len(args))
+
+        if isinstance(args[0], Boolean):
+            if args[0] == FALSE:
+                return FALSE
+
+        if isinstance(args[0], Integer):
+            if args[0].value == 0:
+                return FALSE
+
+        if isinstance(args[0], List):
+            if len(args[0].values) == 0:
+                return FALSE
+
+        return TRUE
 
 
 class Same(Function):
@@ -122,6 +146,7 @@ def fresh_environment():
         '+': Addition(),
         '-': Subtraction(),
         'same?': Same(),
+        'truthy?': Truthy(),
         'quote': Quote(),
         'set!': Set(),
         'do': Do(),
