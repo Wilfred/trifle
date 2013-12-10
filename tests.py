@@ -103,6 +103,14 @@ class Do(unittest.TestCase):
             Integer(2))
 
 
+class Set(unittest.TestCase):
+    def test_set(self):
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("(do (set! x 1) x)"))),
+            Integer(1))
+
+
 class Quote(unittest.TestCase):
     def test_eval_boolean(self):
         expected = parse_one(lex("(+ 1 2)"))
