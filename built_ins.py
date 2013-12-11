@@ -1,5 +1,5 @@
 from trifle_types import (Function, Macro, Integer, List,
-                          Boolean, TRUE, FALSE, Symbol)
+                          Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
 
 
@@ -26,8 +26,7 @@ class Set(Macro):
         from evaluator import evaluate
         env[variable_name.symbol_name] = evaluate(variable_value, env)
 
-        # todo: return null
-        return Integer(0)
+        return NULL
 
 
 # todoc: what it does, and the return value
@@ -71,8 +70,7 @@ class If(Macro):
             if len(args) == 3:
                 return evaluate(args[2], env)
             else:
-                # todo: use null instead
-                return Integer(0)
+                return NULL
 
         
 class Truthy(Function):

@@ -123,6 +123,12 @@ class Set(unittest.TestCase):
                 parse(lex("(set! x 1) x"))),
             Integer(1))
 
+    def test_set_returns_null(self):
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("(set! x 1)"))),
+            NULL)
+
 
 class Quote(unittest.TestCase):
     def test_eval_boolean(self):
@@ -173,7 +179,7 @@ class If(unittest.TestCase):
 
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("(if false 1)"))),
-            Integer(0))
+            NULL)
 
     def test_if_two_args(self):
         self.assertEqual(

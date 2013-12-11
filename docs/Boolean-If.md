@@ -7,7 +7,7 @@ The macro `if` takes two or three arguments. If the condition is
 [truthy](Boolean-Truthy.md), the THEN expression is evaluated and
 returned. Otherwise, the ELSE expression is evaluated and returned.
 
-If no ELSE expression is given, `if` returns `0`.
+If no ELSE expression is given, `if` returns `null`.
 
 Examples:
 
@@ -20,3 +20,5 @@ Examples:
     > (if (quote (foo)) 1 2)
     1
 
+    > (if false 1)
+    null
