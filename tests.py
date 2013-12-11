@@ -115,6 +115,12 @@ class Do(unittest.TestCase):
                 parse_one(lex("(do 1 2)"))),
             Integer(2))
 
+    def test_do_no_args(self):
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("(do)"))),
+            NULL)
+
 
 class Set(unittest.TestCase):
     def test_set(self):
