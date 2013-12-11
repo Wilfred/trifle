@@ -2,7 +2,8 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import OpenParen, CloseParen, Integer, Symbol, TRUE, FALSE
+from trifle_types import (OpenParen, CloseParen, Integer, Symbol,
+                          TRUE, FALSE, NULL)
 from errors import LexFailed
 
 
@@ -54,6 +55,8 @@ def lex(text):
                         lexed_tokens.append(TRUE)
                     elif text[:match.match_end] == 'false':
                         lexed_tokens.append(FALSE)
+                    elif text[:match.match_end] == 'null':
+                        lexed_tokens.append(NULL)
                     else:
                         lexed_tokens.append(Symbol(text[:match.match_end]))
                 else:

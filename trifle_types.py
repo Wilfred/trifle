@@ -38,6 +38,14 @@ TRUE = Boolean(True)
 FALSE = Boolean(False)
 
 
+class Null(TrifleType):
+    def repr(self):
+        return "null"
+
+
+NULL = Null()
+
+
 class Integer(TrifleType):
     def repr(self):
         return "%s" % self.value

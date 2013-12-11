@@ -2,7 +2,8 @@ import unittest
 
 from lexer import lex
 from parser import parse_one, parse
-from trifle_types import List, Integer, Symbol, TRUE, FALSE
+from trifle_types import (List, Integer, Symbol,
+                          TRUE, FALSE, NULL)
 from evaluator import (evaluate, evaluate_with_built_ins,
                        evaluate_all_with_built_ins)
 from errors import UnboundVariable, TrifleTypeError, LexFailed
@@ -66,6 +67,12 @@ class BooleanLex(unittest.TestCase):
         """
         self.assertEqual(
             lex("true-foo")[0], Symbol('true-foo'))
+
+
+class NullLex(unittest.TestCase):
+    def test_lex_boolean(self):
+        self.assertEqual(
+            lex("null")[0], NULL)
 
 
 class Parsing(unittest.TestCase):
