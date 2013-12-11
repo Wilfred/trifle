@@ -29,7 +29,6 @@ class Set(Macro):
         return NULL
 
 
-# todoc: what it does, and the return value
 class Do(Function):
     def call(self, args):
         if args:
