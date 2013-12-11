@@ -1,4 +1,5 @@
-from trifle_types import List, Symbol, Integer, Function, Macro, Boolean
+from trifle_types import (List, Symbol, Integer, Null,
+                          Function, Macro, Boolean)
 from errors import UnboundVariable, TrifleTypeError
 from built_ins import fresh_environment
 
@@ -62,8 +63,11 @@ def evaluate_value(value, environment):
     if isinstance(value, Integer):
         # Integers evaluate to themselves
         return value
-    if isinstance(value, Boolean):
+    elif isinstance(value, Boolean):
         # Booleans evaluate to themselves
+        return value
+    elif isinstance(value, Null):
+        # Null evaluates to itself
         return value
     elif isinstance(value, Function):
         # Functions evaluate to themselves

@@ -102,6 +102,11 @@ class EvaluatingLiterals(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("false"))),
             FALSE)
 
+    def test_eval_null(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("null"))),
+            NULL)
+
 
 class Do(unittest.TestCase):
     def test_do(self):
