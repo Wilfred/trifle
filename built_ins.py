@@ -68,7 +68,7 @@ class If(Macro):
         if Truthy().call([args[0]]) == TRUE:
             return evaluate(args[1], env)
         else:
-            if len(args) == 2:
+            if len(args) == 3:
                 return evaluate(args[2], env)
             else:
                 # todo: use null instead
