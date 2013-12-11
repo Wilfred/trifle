@@ -17,3 +17,7 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 2. then `b` is evaluated,
 3. then `c` is evaluated,
 4. finally the function is called with the arguments.
+
+## Evaluation functions
+
+1. [do](Evaluation-Do.md)
