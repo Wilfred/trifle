@@ -91,7 +91,6 @@ class Evaluating(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(1)")))
 
 
-# todo: test evaluating numbers
 class EvaluatingLiterals(unittest.TestCase):
     def test_eval_boolean(self):
         self.assertEqual(
@@ -101,6 +100,11 @@ class EvaluatingLiterals(unittest.TestCase):
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("false"))),
             FALSE)
+
+    def test_eval_integer(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("123"))),
+            Integer(123))
 
     def test_eval_null(self):
         self.assertEqual(
