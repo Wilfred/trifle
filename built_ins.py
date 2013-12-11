@@ -60,13 +60,33 @@ class If(Macro):
                 "if takes 2 or 3 arguments, but got %d." % len(args))
 
         from evaluator import evaluate
-        if Truthy().call([args[0]]) == TRUE:
+        if is_truthy(args[0]) == TRUE:
             return evaluate(args[1], env)
         else:
             if len(args) == 3:
                 return evaluate(args[2], env)
             else:
                 return NULL
+
+
+def is_truthy(value):
+    """Convert the value to the trifle values `true` or `false`
+    depending on its truthiness.
+
+    """
+    if isinstance(value, Boolean):
+        if value == FALSE:
+            return FALSE
+
+    if isinstance(value, Integer):
+        if value.value == 0:
+            return FALSE
+
+    if isinstance(value, List):
+        if len(value.values) == 0:
+            return FALSE
+
+    return TRUE
 
         
 class Truthy(Function):
@@ -78,19 +98,7 @@ class Truthy(Function):
             raise TrifleTypeError(
                 "truthy? takes 1 arguments, but got %d." % len(args))
 
-        if isinstance(args[0], Boolean):
-            if args[0] == FALSE:
-                return FALSE
-
-        if isinstance(args[0], Integer):
-            if args[0].value == 0:
-                return FALSE
-
-        if isinstance(args[0], List):
-            if len(args[0].values) == 0:
-                return FALSE
-
-        return TRUE
+        return is_truthy(args[0])
 
 
 class Same(Function):
