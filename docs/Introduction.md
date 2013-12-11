@@ -17,10 +17,11 @@ otherwise.
 
 2.1. [Booleans](Booleans.md)
 2.2. [Numbers](Numbers.md)
-2.3. [Symbols](Symbols.md)
-2.4. [Null](Null.md)
-2.5. [Evaluation](Evaluation.md)
-2.6. [Macros](Macros.md)
+2.3. [Null](Null.md)
+2.4. [Symbols](Symbols.md)
+2.5. [Variables](Variables.md)
+2.6. [Evaluation](Evaluation.md)
+2.7. [Macros](Macros.md)
 
 ### Contributing
 

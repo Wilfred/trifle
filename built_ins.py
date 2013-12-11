@@ -3,7 +3,6 @@ from trifle_types import (Function, Macro, Integer, List,
 from errors import TrifleTypeError
 
 
-# todoc: what it does, and the return value
 # todo: rewrite this as a macro that calls set-symbol!
 class Set(Macro):
     def call(self, args, env):
@@ -11,6 +10,7 @@ class Set(Macro):
             # todoc: this error
             # todo: print the actual arguments given
             # todo: unit test error
+            # todo: separate error for argument number vs type
             raise TrifleTypeError(
                 "set! takes 2 arguments, but got %d." % len(args))
 
