@@ -1,5 +1,7 @@
 # Evaluation
 
+Every expression in Trifle lisp returns a value.
+
 A function call in Trifle lisp is written as a list, where the first
 item in the list is the function, and the other items are the function
 arguments.
