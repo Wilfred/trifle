@@ -16,11 +16,18 @@ class Environment(object):
     def get(self, variable_name):
         # Note this raises KeyError if the variable name is not
         # present, unlike .get on dict objects.
-        return self.scopes[0][variable_name]
+
+        # We search scopes starting at the innermost.
+        for scope in reversed(self.scopes):
+            if variable_name in scope:
+                return scope[variable_name]
+
+        raise KeyError("Could not find %r in environment" % variable_name)
 
     def set(self, variable_name, value):
-        self.scopes[0][variable_name] = value
+        self.scopes[-1][variable_name] = value
 
+    # todo: search all scopes
     def contains(self, variable_name):
         return variable_name in self.scopes[0]
 
