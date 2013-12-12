@@ -179,6 +179,31 @@ class Subtraction(Function):
         return Integer(total)
 
 
+class LessThan(Function):
+    def call(self, args):
+        if len(args) < 2:
+            # todoc: this error
+            # todo: print the actual arguments given
+            raise TrifleTypeError(
+                "< takes at least 2 arguments, but got %d." % len(args))
+        
+        for arg in args:
+            # todo: we will want other numeric types
+            if not isinstance(arg, Integer):
+                # todoc: this error
+                raise TrifleTypeError(
+                    "%s is not a number." % arg.repr())
+
+        previous_arg = args[0]
+        for arg in args[1:]:
+            if not previous_arg.value < arg.value:
+                return FALSE
+
+            previous_arg = arg
+
+        return TRUE
+
+
 def fresh_environment():
     """Return a new environment that only contains the built-ins.
 
@@ -186,6 +211,7 @@ def fresh_environment():
     return {
         '+': Addition(),
         '-': Subtraction(),
+        '<': LessThan(),
         'same?': Same(),
         'truthy?': Truthy(),
         'quote': Quote(),

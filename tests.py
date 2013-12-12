@@ -279,6 +279,28 @@ class Same(unittest.TestCase):
             FALSE)
 
 
+class LessThan(unittest.TestCase):
+    def test_less_than(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(< 1 2)"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(< 3 2)"))),
+            FALSE)
+
+    def test_less_than_typeerror(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(< true false)")))
+
+    def test_less_than_insufficient_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(<)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(< 1)")))
+
+
 class Environment(unittest.TestCase):
     def test_evaluate_variable(self):
         env = {
