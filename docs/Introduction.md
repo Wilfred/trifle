@@ -11,21 +11,21 @@ otherwise.
 
 ### Usage
 
-1.1. [Interpreter](Interpreter.md)
+1.1. [Interpreter](Interpreter.md)  
 
 ### Language
 
-2.1. [Booleans](Booleans.md)
-2.2. [Numbers](Numbers.md)
-2.3. [Null](Null.md)
-2.4. [Symbols](Symbols.md)
-2.5. [Variables](Variables.md)
-2.6. [Loops](Loops.md)
-2.7. [Evaluation](Evaluation.md)
-2.8. [Macros](Macros.md)
+2.1. [Booleans](Booleans.md)  
+2.2. [Numbers](Numbers.md)  
+2.3. [Null](Null.md)  
+2.4. [Symbols](Symbols.md)  
+2.5. [Variables](Variables.md)  
+2.6. [Loops](Loops.md)  
+2.7. [Evaluation](Evaluation.md)  
+2.8. [Macros](Macros.md)  
 
 ### Contributing
 
-3.1. [Source code](https://github.com/wilfred/trifle)
-3.2. [Bugs](https://github.com/wilfred/trifle/issues)
-3.3. Building
+3.1. [Source code](https://github.com/wilfred/trifle)  
+3.2. [Bugs](https://github.com/wilfred/trifle/issues)  
+3.3. Building  
