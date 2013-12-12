@@ -5,7 +5,7 @@ from lexer import lex
 from parser import parse
 from evaluator import evaluate_all_with_built_ins, evaluate_all
 from errors import TrifleError
-from built_ins import fresh_environment
+from environment import fresh_environment
 
 
 def get_contents(filename):

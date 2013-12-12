@@ -1,7 +1,7 @@
 from trifle_types import (List, Symbol, Integer, Null,
                           Function, Macro, Boolean)
 from errors import UnboundVariable, TrifleTypeError
-from built_ins import fresh_environment
+from environment import fresh_environment
 
 
 def evaluate_all_with_built_ins(expressions):
