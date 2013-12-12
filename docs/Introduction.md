@@ -28,4 +28,5 @@ otherwise.
 
 3.1. [Source code](https://github.com/wilfred/trifle)  
 3.2. [Bugs](https://github.com/wilfred/trifle/issues)  
+3.2. [License](License.md)  
 3.3. Building  

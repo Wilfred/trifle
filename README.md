@@ -89,13 +89,6 @@ free. The language provides also provides basic TCO.
 
 Influences: Pypy, Scheme
 
-## Licensing
-
-All code in this repository is LGPLv3. All documentation (including
-feature proposals is CC-BY. The only exception is the code of conduct,
-which is
-[under a separate license](https://twitter.com/brian_curtin/status/389752035169423361).
-
 ## Missing Features
 
 A new programming language should really have a good answer to 'how do
