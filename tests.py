@@ -47,6 +47,9 @@ class SymbolLex(unittest.TestCase):
         self.assertEqual(
             lex("foo!")[0], Symbol('foo!'))
 
+        self.assertEqual(
+            lex("<=")[0], Symbol('<='))
+
     def test_lex_invalid_symbol(self):
         with self.assertRaises(LexFailed):
             lex("\\")

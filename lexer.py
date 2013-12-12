@@ -27,7 +27,7 @@ TOKENS = [
     (INTEGER, get_code('-?[0-9]+')),
 
     # note this captures 'true' and 'false' too
-    (SYMBOL, get_code('[a-z*/+?!-][a-z0-9*/+?!-]*')),
+    (SYMBOL, get_code('[a-z*/+?!<>=-][a-z0-9*/+?!<>=-]*')),
 ]
 
 
