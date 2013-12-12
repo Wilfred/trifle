@@ -77,8 +77,8 @@ def evaluate_value(value, environment):
         return value
     elif isinstance(value, Symbol):
         symbol_name = value.symbol_name
-        if symbol_name in environment:
-            return environment[symbol_name]
+        if environment.contains(symbol_name):
+            return environment.get(symbol_name)
         else:
             raise UnboundVariable("No such variable defined: '%s'"
                                   % symbol_name)

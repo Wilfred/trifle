@@ -24,7 +24,7 @@ class Set(Macro):
                 % variable_name.repr())
 
         from evaluator import evaluate
-        env[variable_name.symbol_name] = evaluate(variable_value, env)
+        env.set(variable_name.symbol_name, evaluate(variable_value, env))
 
         return NULL
 

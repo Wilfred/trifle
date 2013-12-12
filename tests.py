@@ -7,6 +7,7 @@ from trifle_types import (List, Integer, Symbol,
 from evaluator import (evaluate, evaluate_with_built_ins,
                        evaluate_all_with_built_ins)
 from errors import UnboundVariable, TrifleTypeError, LexFailed
+from environment import Environment
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -301,11 +302,11 @@ class LessThan(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(< 1)")))
 
 
-class Environment(unittest.TestCase):
+class EnvironmentVariables(unittest.TestCase):
     def test_evaluate_variable(self):
-        env = {
+        env = Environment({
             'x': Integer(1),
-        }
+        })
         self.assertEqual(evaluate(parse_one(lex("x")), env),
                          Integer(1))
 
