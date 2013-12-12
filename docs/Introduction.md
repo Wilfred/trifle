@@ -20,8 +20,9 @@ otherwise.
 2.3. [Null](Null.md)
 2.4. [Symbols](Symbols.md)
 2.5. [Variables](Variables.md)
-2.6. [Evaluation](Evaluation.md)
-2.7. [Macros](Macros.md)
+2.6. [Loops](Loops.md)
+2.7. [Evaluation](Evaluation.md)
+2.8. [Macros](Macros.md)
 
 ### Contributing
 

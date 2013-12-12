@@ -100,6 +100,26 @@ class Truthy(Function):
         return is_truthy(args[0])
 
 
+class While(Macro):
+    def call(self, args, env):
+        if not args:
+            # todoc: this error
+            # todo: unit test error
+            raise TrifleTypeError(
+                "while takes at least one argument.")
+
+        from evaluator import evaluate
+        while True:
+            condition = evaluate(args[0], env)
+            if is_truthy(condition) == FALSE:
+                break
+
+            for arg in args[1:]:
+                evaluate(arg, env)
+
+        return NULL
+
+
 class Same(Function):
     def call(self, args):
         if len(args) != 2:
@@ -172,4 +192,5 @@ def fresh_environment():
         'set!': Set(),
         'do': Do(),
         'if': If(),
+        'while': While(),
     }

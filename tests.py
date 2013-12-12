@@ -226,6 +226,23 @@ class Truthy(unittest.TestCase):
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("(truthy? (quote (1)))"))),
             TRUE)
+
+
+class While(unittest.TestCase):
+    def test_while_false_condition(self):
+        # `(while)` is an error, but this should work as while should
+        # not evaluate the body here.
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(while false (while))"))),
+            NULL)
+
+    def test_while_true_condition(self):
+        # `(while)` is an error, but this should work as while should
+        # not evaluate the body here.
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex(
+                "(set! x true) (set! y 1) (while x (set! x false) (set! y 2)) y"))),
+            Integer(2))
         
 
 class Same(unittest.TestCase):
