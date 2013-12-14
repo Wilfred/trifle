@@ -24,8 +24,15 @@ class Environment(object):
 
         raise KeyError("Could not find '%s' in environment" % variable_name)
 
-    # todo: should use outer scopes, if the variable is already defined
     def set(self, variable_name, value):
+        # If the variable is already defined, update it in the
+        # innermost scope that it is defined in.
+        for scope in reversed(self.scopes):
+            if variable_name in scope:
+                scope[variable_name] = value
+                return
+
+        # Otherwise, define and set it in the very innermost scope.
         self.scopes[-1][variable_name] = value
 
     def contains(self, variable_name):

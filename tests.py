@@ -131,6 +131,30 @@ class EvaluatingLambda(unittest.TestCase):
                         "Expected a lambda object but got a %s" % lambda_obj.__class__)
 
 
+    def test_lambda_scope_doesnt_leak(self):
+        """Ensure that defining a variable inside a lambda is accessible
+        inside the body, but doesn't leak outside.
+
+        """
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("((lambda () (set! x 2) x))"))),
+            Integer(2))
+
+        with self.assertRaises(UnboundVariable):
+            evaluate_with_built_ins(
+                parse_one(lex("((lambda () (set! x 2)) x)")))
+
+    def test_closure_variables(self):
+        """Ensure that we can update closure variables inside a lambda.
+
+        """
+        self.assertEqual(
+            evaluate_all_with_built_ins(
+                parse(lex("(set! x 1) ((lambda () (set! x 2))) x"))),
+            Integer(2))
+
+
 class Do(unittest.TestCase):
     def test_do(self):
         self.assertEqual(
