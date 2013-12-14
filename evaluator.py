@@ -19,7 +19,7 @@ def evaluate_with_built_ins(expression):
 
 
 def evaluate_all(expressions, environment):
-    """Evaluate a trfle List of expressions, starting with a fresh environment
+    """Evaluate a trifle List of expressions, starting with a fresh environment
     containing only the built-in functions, special expressions and macros.
 
     """
