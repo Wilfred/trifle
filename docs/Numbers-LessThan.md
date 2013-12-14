@@ -5,6 +5,8 @@
 The function `<` compares numbers, returning `true` if each argument
 is less than the next argument.
 
+`<` raises an error if any of its arguments are not numbers.
+
 Examples:
 
     > (< 1 2)

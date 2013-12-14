@@ -1,5 +1,7 @@
 # same?
 
+`(same VALUE VALUE)`
+
 The function `same?` returns `true` if both arguments are of the same
 type and represent the same value.
 

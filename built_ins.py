@@ -7,7 +7,6 @@ from errors import TrifleTypeError
 class Set(Special):
     def call(self, args, env):
         if len(args) != 2:
-            # todoc: this error
             # todo: print the actual arguments given
             # todo: separate error for argument number vs type
             raise TrifleTypeError(
@@ -17,7 +16,6 @@ class Set(Special):
         variable_value = args[1]
 
         if not isinstance(variable_name, Symbol):
-            # todoc: this error
             raise TrifleTypeError(
                 "The first argument to set! must be a symbol, but got %s."
                 % variable_name.repr())
@@ -33,19 +31,16 @@ class LambdaFactory(Special):
 
     def call(self, args, env):
         if not args:
-            # todoc: this error
             # todo: separate error for argument number vs type
             raise TrifleTypeError(
                 "lambda takes at least 1 one argument, but got 0.")
 
         parameters = args[0]
         if not isinstance(parameters, List):
-            # todoc: this error
             raise TrifleTypeError(
                 "The first argument to lambda should be a list, but got %s" %
                 parameters.repr())
 
-        # todoc: this error
         for param in parameters.values:
             if not isinstance(param, Symbol):
                 raise TrifleTypeError(
@@ -70,7 +65,6 @@ class Do(Function):
 class Quote(Special):
     def call(self, args, env):
         if len(args) != 1:
-            # todoc: this error
             # todo: print the actual arguments given
             raise TrifleTypeError(
                 "quote takes 1 argument, but got %d." % len(args))
@@ -81,7 +75,6 @@ class Quote(Special):
 class If(Special):
     def call(self, args, env):
         if len(args) not in [2, 3]:
-            # todoc: this error
             # todo: print the actual arguments given
             raise TrifleTypeError(
                 "if takes 2 or 3 arguments, but got %d." % len(args))
@@ -130,7 +123,6 @@ class Truthy(Function):
 class While(Special):
     def call(self, args, env):
         if not args:
-            # todoc: this error
             raise TrifleTypeError(
                 "while takes at least one argument.")
 
@@ -149,7 +141,6 @@ class While(Special):
 class Same(Function):
     def call(self, args):
         if len(args) != 2:
-            # todoc: this error
             # todo: print the actual arguments given
             raise TrifleTypeError(
                 "same? takes 2 arguments, but got %d." % len(args))
@@ -173,7 +164,6 @@ class Addition(Function):
         for arg in args:
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                # todoc: this error
                 raise TrifleTypeError(
                     "%s is not a number." % arg.repr())
 
@@ -188,7 +178,6 @@ class Subtraction(Function):
         for arg in args:
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                # todoc: this error
                 raise TrifleTypeError(
                     "%s is not a number." % arg.repr())
 
@@ -207,7 +196,6 @@ class Subtraction(Function):
 class LessThan(Function):
     def call(self, args):
         if len(args) < 2:
-            # todoc: this error
             # todo: print the actual arguments given
             raise TrifleTypeError(
                 "< takes at least 2 arguments, but got %d." % len(args))
@@ -215,7 +203,6 @@ class LessThan(Function):
         for arg in args:
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                # todoc: this error
                 raise TrifleTypeError(
                     "%s is not a number." % arg.repr())
 

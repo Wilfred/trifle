@@ -1,6 +1,9 @@
 # quote
 
-The special expression `quote` takes a single argument, and returns it unevaluated.
+`(quote EXPRESSION)`
+
+The special expression `quote` takes a single argument, and returns it
+unevaluated.
 
 Examples:
 
