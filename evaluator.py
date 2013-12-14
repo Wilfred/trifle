@@ -51,6 +51,30 @@ def evaluate_list(node, environment):
         arguments = [
             evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
+        
+    elif isinstance(function, Macro):
+        # Ensure we have the right number of arguments:
+        # TODO: optional and variable arguments
+        if len(raw_arguments) != len(function.arguments.values):
+            # todo: unit test this error
+            # todo: we should try to find a name for lambda functions,
+            # or at least say where they were defined
+            raise TrifleTypeError("this macro takes %d arguments, but got %d" %
+                                  (len(function.arguments.values), len(raw_arguments)))
+            
+        # Build a new environment to evaluate with.
+        inner_scope = {}
+        for variable, value in zip(function.arguments.values, raw_arguments):
+            inner_scope[variable.symbol_name] = value
+
+        macro_env = environment.globals_only().with_nested_scope(inner_scope)
+
+        # Evaluate the macro body, returning an expression
+        expression = evaluate_all(function.body, macro_env)
+
+        # Evaluate the expanded expression
+        return evaluate(expression, environment)
+
     elif isinstance(function, Special):
         return function.call(raw_arguments, environment)
 

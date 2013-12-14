@@ -414,6 +414,15 @@ class EnvironmentVariables(unittest.TestCase):
         with self.assertRaises(UnboundVariable):
             evaluate_with_built_ins(parse_one(lex("x")))
 
+
+class EvaluatingMacros(unittest.TestCase):
+    def test_macro(self):
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex(
+                "(macro just-x (ignored-arg) (quote x)) (set! x 1) (just-x y)"))),
+            Integer(1)
+        )
+
         
 if __name__ == '__main__':
     unittest.main()

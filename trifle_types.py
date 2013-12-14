@@ -127,6 +127,10 @@ class Macro(TrifleType):
     intepreter to evaluate at run time.
 
     """
+    def __init__(self, arguments, body):
+        self.arguments = arguments
+        self.body = body
+
     def repr(self):
         # todo: we can be more helpful than this
         return "<macro>"

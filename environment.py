@@ -1,5 +1,6 @@
 from built_ins import (Addition, Subtraction, LessThan, Same, Truthy,
-                       Quote, Set, Do, If, While, LambdaFactory)
+                       Quote, Set, Do, If, While, LambdaFactory,
+                       DefineMacro)
 
 
 class Environment(object):
@@ -24,6 +25,13 @@ class Environment(object):
 
         raise KeyError("Could not find '%s' in environment" % variable_name)
 
+    def globals_only(self):
+        """Return a new environment that only includes variables defined
+        globally.
+
+        """
+        return Environment([self.scopes[0]])
+
     def set(self, variable_name, value):
         # If the variable is already defined, update it in the
         # innermost scope that it is defined in.
@@ -34,6 +42,9 @@ class Environment(object):
 
         # Otherwise, define and set it in the very innermost scope.
         self.scopes[-1][variable_name] = value
+
+    def set_global(self, variable_name, value):
+        self.scopes[0][variable_name] = value
 
     def contains(self, variable_name):
         for scope in reversed(self.scopes):
@@ -66,4 +77,5 @@ def fresh_environment():
         'if': If(),
         'while': While(),
         'lambda': LambdaFactory(),
+        'macro': DefineMacro(),
     }])

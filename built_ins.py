@@ -1,4 +1,4 @@
-from trifle_types import (Function, Lambda, Special, Integer, List,
+from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
 
@@ -52,6 +52,56 @@ class LambdaFactory(Special):
             lambda_body.append(arg)
         
         return Lambda(parameters, lambda_body, env)
+
+
+# todo: unit test
+# todo: do we want to support anonymous macros, similar to lambda?
+# todo: expose macro expand functions to the user
+# todo: support docstrings
+# todoc
+class DefineMacro(Special):
+    """Create a new macro object and bind it to the variable name given,
+    in the global scope.
+
+    """
+
+    def call(self, args, env):
+        if len(args) < 2:
+            # todo: separate error for argument number vs type
+            raise TrifleTypeError(
+                "macro takes at least 2 arguments, but got %d." % len(args))
+
+        macro_name = args[0]
+        parameters = args[1]
+        
+        # todo: unit test this error
+        if not isinstance(parameters, List):
+            raise TrifleTypeError(
+                "The first argument to macro should be a list, but got %s" %
+                parameters.repr())
+
+        # todo: unit test this error
+        parameters = args[1]
+        if not isinstance(parameters, List):
+            raise TrifleTypeError(
+                "macro parameters should be a list, but got %s" %
+                parameters.repr())
+
+        # todo: unit test this error
+        for param in parameters.values:
+            if not isinstance(param, Symbol):
+                raise TrifleTypeError(
+                    "The list of parameters to macro must only contain symbols, but got %s" %
+                    param.repr())
+
+        macro_body = List()
+        for arg in args[2:]:
+            macro_body.append(arg)
+
+        env.set_global(macro_name.symbol_name,
+                       Macro(parameters, macro_body))
+
+        return NULL
 
 
 class Do(Function):
