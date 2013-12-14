@@ -27,9 +27,12 @@ class Environment(object):
     def set(self, variable_name, value):
         self.scopes[-1][variable_name] = value
 
-    # todo: search all scopes
     def contains(self, variable_name):
-        return variable_name in self.scopes[0]
+        for scope in reversed(self.scopes):
+            if variable_name in scope:
+                return True
+
+        return False
 
 
 def fresh_environment():
