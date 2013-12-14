@@ -1,4 +1,4 @@
-from trifle_types import (List, Symbol, Integer, Null,
+from trifle_types import (List, Symbol, Integer, Null, NULL,
                           Function, Lambda, Macro, Special, Boolean)
 from errors import UnboundVariable, TrifleTypeError
 from environment import fresh_environment
@@ -23,8 +23,7 @@ def evaluate_all(expressions, environment):
     containing only the built-in functions, special expressions and macros.
 
     """
-    # todo: null instead
-    result = Integer(0)
+    result = NULL
     
     for expression in expressions.values:
         result = evaluate(expression, environment)
