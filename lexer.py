@@ -51,6 +51,11 @@ def lex(text):
                 elif token == INTEGER:
                     lexed_tokens.append(Integer(int(text[:match.match_end])))
                 elif token == SYMBOL:
+                    # We deliberately treat `true`, `false` and `null`
+                    # as literals rather than just variables defined.
+                    # Otherwise, an expression may print `true` as its
+                    # result but evaluating `true` may not give
+                    # `true`, which is confusing.
                     if text[:match.match_end] == 'true':
                         lexed_tokens.append(TRUE)
                     elif text[:match.match_end] == 'false':
