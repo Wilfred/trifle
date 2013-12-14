@@ -9,6 +9,9 @@ class TrifleError(Exception):
 class LexFailed(TrifleError):
     pass
 
+
+class ParseFailed(TrifleError):
+    pass
     
 
 class UnboundVariable(TrifleError):

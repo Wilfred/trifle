@@ -1,6 +1,5 @@
 from trifle_types import List, OpenParen, CloseParen
-
-class ParsingError(Exception): pass
+from errors import ParseFailed
 
 
 def parse_inner(tokens, top_level):
@@ -14,7 +13,7 @@ def parse_inner(tokens, top_level):
             parse_tree.append(parse_inner(tokens, top_level=False))
         elif isinstance(token, CloseParen):
             if top_level:
-                raise ParsingError('Closing paren does not have matching open paren.')
+                raise ParseFailed('Closing paren does not have matching open paren.')
             else:
                 saw_closing_paren = True
                 break
@@ -22,7 +21,7 @@ def parse_inner(tokens, top_level):
             parse_tree.append(token)
 
     if not top_level and not saw_closing_paren:
-        raise ParsingError('Open paren was not closed.')
+        raise ParseFailed('Open paren was not closed.')
 
     return parse_tree
 
