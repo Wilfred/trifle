@@ -29,7 +29,6 @@ class Set(Special):
         return NULL
 
 
-# todoc
 class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 
