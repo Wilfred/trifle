@@ -8,6 +8,6 @@ Examples:
 
     ;; todo
 
-## Variable macros
+## Variable special expressions
 
 1. [Set](Variables-Set.md)

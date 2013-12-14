@@ -1,6 +1,6 @@
 # quote
 
-The macro `quote` takes a single argument, and returns it unevaluated.
+The special expression `quote` takes a single argument, and returns it unevaluated.
 
 Examples:
 

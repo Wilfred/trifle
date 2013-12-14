@@ -7,7 +7,7 @@ from almost_python import zip
 
 def evaluate_all_with_built_ins(expressions):
     """Evaluate a trfle List of expressions, starting with a fresh environment
-    containing only the built-in functions and macros.
+    containing only the built-in functions, special expressions and macros.
 
     """
     return evaluate_all(expressions, fresh_environment())
@@ -20,7 +20,7 @@ def evaluate_with_built_ins(expression):
 
 def evaluate_all(expressions, environment):
     """Evaluate a trfle List of expressions, starting with a fresh environment
-    containing only the built-in functions and macros.
+    containing only the built-in functions, special expressions and macros.
 
     """
     # todo: null instead

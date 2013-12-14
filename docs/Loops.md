@@ -1,8 +1,8 @@
 # Loops
 
-Loops are macros in Trifle lisp that evaluate their arguments multiple
+Loops are special expressions in Trifle lisp that evaluate their arguments multiple
 times.
 
-## Loop macros
+## Loop special expressions
 
 1. [while](Loops-While.md)

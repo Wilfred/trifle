@@ -22,6 +22,6 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 
 1. [do](Evaluation-Do.md)
 
-## Evaluation macros
+## Evaluation special expressions
 
 1. [quote](Evaluation-Quote.md)
