@@ -22,7 +22,8 @@ otherwise.
 2.5. [Variables](Variables.md)  
 2.6. [Loops](Loops.md)  
 2.7. [Evaluation](Evaluation.md)  
-2.8. [Macros](Macros.md)  
+2.8. [Special Expressions](Special-Expressions.md)  
+2.9. [Macros](Macros.md)  
 
 ### Contributing
 

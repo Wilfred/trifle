@@ -1,5 +1,5 @@
 from trifle_types import (List, Symbol, Integer, Null,
-                          Function, Macro, Boolean)
+                          Function, Macro, Special, Boolean)
 from errors import UnboundVariable, TrifleTypeError
 from environment import fresh_environment
 
@@ -52,6 +52,9 @@ def evaluate_list(node, environment):
             evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
     elif isinstance(function, Macro):
+        # fixme: should call evaluate afterwards
+        return function.call(raw_arguments, environment)
+    elif isinstance(function, Special):
         return function.call(raw_arguments, environment)
     else:
         # todoc: this error

@@ -1,10 +1,10 @@
-from trifle_types import (Function, Macro, Integer, List,
+from trifle_types import (Function, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
 
 
 # todo: rewrite this as a macro that calls set-symbol!
-class Set(Macro):
+class Set(Special):
     def call(self, args, env):
         if len(args) != 2:
             # todoc: this error
@@ -37,7 +37,7 @@ class Do(Function):
             return NULL
 
 
-class Quote(Macro):
+class Quote(Special):
     def call(self, args, env):
         if len(args) != 1:
             # todoc: this error
@@ -49,7 +49,7 @@ class Quote(Macro):
         return args[0]
 
 
-class If(Macro):
+class If(Special):
     def call(self, args, env):
         if len(args) not in [2, 3]:
             # todoc: this error
@@ -100,7 +100,7 @@ class Truthy(Function):
         return is_truthy(args[0])
 
 
-class While(Macro):
+class While(Special):
     def call(self, args, env):
         if not args:
             # todoc: this error

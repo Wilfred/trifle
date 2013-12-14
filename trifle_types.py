@@ -106,13 +106,24 @@ class Function(TrifleType):
 
 
 class Macro(TrifleType):
-    """As with Function, subclasses must provide a call method. Arguments
-    are passed unevaluated.
+    """As with Function, subclasses must provide a call method. Macros are
+    evaluated at compile time, and should return an expression for the
+    intepreter to evaluate at run time.
 
     """
     def repr(self):
         # todo: we can be more helpful than this
         return "<macro>"
+
+
+class Special(TrifleType):
+    """A special expression is an expression whose arguments are passed
+    unevaluated, but at run time.
+
+    """
+    def repr(self):
+        # todo: we can be more helpful than this
+        return "<special expression>"
 
 
 """Our parenthesis classes aren't exposed to the user, but we add them
