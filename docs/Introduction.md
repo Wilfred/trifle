@@ -31,5 +31,5 @@ otherwise.
 3.1. [Source code](https://github.com/wilfred/trifle)  
 3.2. [Bugs](https://github.com/wilfred/trifle/issues)  
 3.3. [License](License.md)  
-3.4. Building
+3.4. [Building](Building.md)  
 3.5. [Conventions](Conventions.md)  
