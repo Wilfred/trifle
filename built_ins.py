@@ -9,7 +9,6 @@ class Set(Special):
         if len(args) != 2:
             # todoc: this error
             # todo: print the actual arguments given
-            # todo: unit test error
             # todo: separate error for argument number vs type
             raise TrifleTypeError(
                 "set! takes 2 arguments, but got %d." % len(args))
@@ -35,7 +34,6 @@ class LambdaFactory(Special):
     def call(self, args, env):
         if not args:
             # todoc: this error
-            # todo: unit test error
             # todo: separate error for argument number vs type
             raise TrifleTypeError(
                 "lambda takes at least 1 one argument, but got 0.")
@@ -61,7 +59,6 @@ class Quote(Special):
         if len(args) != 1:
             # todoc: this error
             # todo: print the actual arguments given
-            # todo: unit test error
             raise TrifleTypeError(
                 "quote takes 1 argument, but got %d." % len(args))
 
@@ -73,7 +70,6 @@ class If(Special):
         if len(args) not in [2, 3]:
             # todoc: this error
             # todo: print the actual arguments given
-            # todo: unit test error
             raise TrifleTypeError(
                 "if takes 2 or 3 arguments, but got %d." % len(args))
 
@@ -112,9 +108,8 @@ class Truthy(Function):
         if len(args) != 1:
             # todoc: this error
             # todo: print the actual arguments given
-            # todo: unit test error
             raise TrifleTypeError(
-                "truthy? takes 1 arguments, but got %d." % len(args))
+                "truthy? takes 1 argument, but got %d." % len(args))
 
         return is_truthy(args[0])
 
@@ -123,7 +118,6 @@ class While(Special):
     def call(self, args, env):
         if not args:
             # todoc: this error
-            # todo: unit test error
             raise TrifleTypeError(
                 "while takes at least one argument.")
 
@@ -144,7 +138,6 @@ class Same(Function):
         if len(args) != 2:
             # todoc: this error
             # todo: print the actual arguments given
-            # todo: unit test error
             raise TrifleTypeError(
                 "same? takes 2 arguments, but got %d." % len(args))
 

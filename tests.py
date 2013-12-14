@@ -129,6 +129,11 @@ class EvaluatingLambda(unittest.TestCase):
                 parse_one(lex("((lambda (x) x) 1)"))),
             Integer(1))
 
+    def test_lambda_wrong_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(lambda)")))
+
     def test_evaluate_lambda(self):
         lambda_obj = evaluate_with_built_ins(
             parse_one(lex("(lambda (x) x)")))
@@ -182,6 +187,11 @@ class Set(unittest.TestCase):
                 parse(lex("(set! x 1) x"))),
             Integer(1))
 
+    def test_set_wrong_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(set! x 1 2)")))
+
     def test_set_returns_null(self):
         self.assertEqual(
             evaluate_with_built_ins(
@@ -190,12 +200,16 @@ class Set(unittest.TestCase):
 
 
 class Quote(unittest.TestCase):
-    def test_eval_boolean(self):
+    def test_quote(self):
         expected = parse_one(lex("(+ 1 2)"))
         
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("(quote (+ 1 2))"))),
             expected)
+
+    def test_quote_wrong_number_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex("(quote foo bar)")))
 
 
 class Addition(unittest.TestCase):
@@ -249,6 +263,15 @@ class If(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(if false 4 5)"))),
             Integer(5))
 
+    def test_if_wrong_number_of_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(if)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(if 1 2 3 4)")))
+
 
 class Truthy(unittest.TestCase):
     def test_truthy(self):
@@ -276,6 +299,15 @@ class Truthy(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(truthy? (quote (1)))"))),
             TRUE)
 
+    def test_if_wrong_number_of_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(truthy?)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(truthy? 1 2)")))
+
 
 class While(unittest.TestCase):
     def test_while_false_condition(self):
@@ -293,6 +325,11 @@ class While(unittest.TestCase):
                 "(set! x true) (set! y 1) (while x (set! x false) (set! y 2)) y"))),
             Integer(2))
         
+    def test_while_wrong_number_of_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(while)")))
+
 
 class Same(unittest.TestCase):
     def test_booleans_same(self):
@@ -324,6 +361,14 @@ class Same(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(same? true 1)"))),
             FALSE)
 
+    def test_same_wrong_number_of_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(same? 1)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(same? 1 2 3)")))
 
 class LessThan(unittest.TestCase):
     def test_less_than(self):
