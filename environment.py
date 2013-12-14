@@ -1,5 +1,5 @@
 from built_ins import (Addition, Subtraction, LessThan, Same, Truthy,
-                       Quote, Set, Do, If, While)
+                       Quote, Set, Do, If, While, LambdaFactory)
 
 
 class Environment(object):
@@ -24,6 +24,7 @@ class Environment(object):
 
         raise KeyError("Could not find '%s' in environment" % variable_name)
 
+    # todo: should use outer scopes, if the variable is already defined
     def set(self, variable_name, value):
         self.scopes[-1][variable_name] = value
 
@@ -33,6 +34,13 @@ class Environment(object):
                 return True
 
         return False
+
+    def with_nested_scope(self, inner_scope):
+        """Return a new environment that shares all the outer scopes with this
+        environment, but has an additional inner scope.
+
+        """
+        return Environment(self.scopes + [inner_scope])
 
 
 def fresh_environment():
@@ -50,4 +58,5 @@ def fresh_environment():
         'do': Do(),
         'if': If(),
         'while': While(),
+        'lambda': LambdaFactory(),
     }])

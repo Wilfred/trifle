@@ -1,5 +1,5 @@
 from trifle_types import (List, Symbol, Integer, Null,
-                          Function, Macro, Special, Boolean)
+                          Function, Lambda, Macro, Special, Boolean)
 from errors import UnboundVariable, TrifleTypeError
 from environment import fresh_environment
 
@@ -53,6 +53,32 @@ def evaluate_list(node, environment):
         return function.call(arguments)
     elif isinstance(function, Special):
         return function.call(raw_arguments, environment)
+
+    elif isinstance(function, Lambda):
+        # First, evaluate the arguments to this lambda.
+        arguments = [
+            evaluate(el, environment) for el in raw_arguments]
+
+        # Ensure we have the right number of arguments:
+        # TODO: optional and variable arguments
+        if len(arguments) != len(function.arguments.values):
+            # todo: unit test this error
+            # todo: we should try to find a name for lambda functions,
+            # or at least say where they were defined
+            raise TrifleTypeError("lambda expression takes %d arguments, but got %d" %
+                                  (len(function.arguments), len(arguments)))
+
+        # TODO: instantiating a Lambda should ensure the list of
+        # arguments are all symbols
+        # Build a new environment to evaluate with.
+        inner_scope = {}
+        for variable, value in zip(function.arguments.values, arguments):
+            inner_scope[variable.symbol_name] = value
+
+        lambda_env = function.env.with_nested_scope(inner_scope)
+
+        # Evaluate the lambda's body in our new environment.
+        return evaluate_all(function.body, lambda_env)
     else:
         # todoc: this error
         raise TrifleTypeError("%s isn't a function or macro."

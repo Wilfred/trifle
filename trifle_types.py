@@ -105,6 +105,22 @@ class Function(TrifleType):
         return "<function>"
 
 
+# todo: could we define interpreter Function classes in terms of Lambda?
+class Lambda(TrifleType):
+    """A user defined function. Holds a reference to the current lexical
+    environment, so we support closures.
+
+    """
+    def __init__(self, arguments, body, env):
+        self.arguments = arguments
+        self.body = body
+        self.env = env
+
+    def repr(self):
+        # todo: we can be more helpful than this
+        return "<lambda>"
+
+
 class Macro(TrifleType):
     """As with Function, subclasses must provide a call method. Macros are
     evaluated at compile time, and should return an expression for the

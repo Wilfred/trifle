@@ -1,4 +1,4 @@
-from trifle_types import (Function, Special, Integer, List,
+from trifle_types import (Function, Lambda, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
 
@@ -27,6 +27,26 @@ class Set(Special):
         env.set(variable_name.symbol_name, evaluate(variable_value, env))
 
         return NULL
+
+
+# todoc
+class LambdaFactory(Special):
+    """Return a fresh Lambda object every time it's called."""
+
+    def call(self, args, env):
+        if not args:
+            # todoc: this error
+            # todo: unit test error
+            # todo: separate error for argument number vs type
+            raise TrifleTypeError(
+                "lambda takes at least 1 one argument, but got 0.")
+
+        lambda_arguments = args[0]
+        lambda_body = List()
+        for arg in args[1:]:
+            lambda_body.append(arg)
+        
+        return Lambda(lambda_arguments, lambda_body, env)
 
 
 class Do(Function):

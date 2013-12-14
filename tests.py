@@ -2,7 +2,7 @@ import unittest
 
 from lexer import lex
 from parser import parse_one, parse
-from trifle_types import (List, Integer, Symbol,
+from trifle_types import (List, Integer, Symbol, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import (evaluate, evaluate_with_built_ins,
                        evaluate_all_with_built_ins)
@@ -114,6 +114,21 @@ class EvaluatingLiterals(unittest.TestCase):
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("null"))),
             NULL)
+
+
+class EvaluatingLambda(unittest.TestCase):
+    def test_call_lambda(self):
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("((lambda (x) x) 1)"))),
+            Integer(1))
+
+    def test_evaluate_lambda(self):
+        lambda_obj = evaluate_with_built_ins(
+            parse_one(lex("(lambda (x) x)")))
+
+        self.assertTrue(isinstance(lambda_obj, Lambda),
+                        "Expected a lambda object but got a %s" % lambda_obj.__class__)
 
 
 class Do(unittest.TestCase):
