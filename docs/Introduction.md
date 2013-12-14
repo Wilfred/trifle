@@ -25,6 +25,7 @@ otherwise.
 2.8. [Evaluation](Evaluation.md)  
 2.9. [Special Expressions](Special-Expressions.md)  
 2.10. [Macros](Macros.md)  
+2.11. [Comments](Comments.md)  
 
 ### Contributing
 
