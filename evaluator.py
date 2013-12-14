@@ -2,6 +2,7 @@ from trifle_types import (List, Symbol, Integer, Null,
                           Function, Lambda, Macro, Special, Boolean)
 from errors import UnboundVariable, TrifleTypeError
 from environment import fresh_environment
+from almost_python import zip
 
 
 def evaluate_all_with_built_ins(expressions):
@@ -66,7 +67,7 @@ def evaluate_list(node, environment):
             # todo: we should try to find a name for lambda functions,
             # or at least say where they were defined
             raise TrifleTypeError("lambda expression takes %d arguments, but got %d" %
-                                  (len(function.arguments), len(arguments)))
+                                  (len(function.arguments.values), len(arguments)))
 
         # TODO: instantiating a Lambda should ensure the list of
         # arguments are all symbols

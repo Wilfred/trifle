@@ -6,6 +6,7 @@ from parser import parse
 from evaluator import evaluate_all_with_built_ins, evaluate_all
 from errors import TrifleError
 from environment import fresh_environment
+from almost_python import raw_input
 
 
 def get_contents(filename):
@@ -21,19 +22,6 @@ def get_contents(filename):
     os.close(fp)
 
     return program_contents
-
-
-def read_line(prefix):
-    """Equivalent to raw_input, which isn't available on RPython. Assumes
-    the input is no more than 1024 characters.
-
-    Based on http://stackoverflow.com/a/9244639
-
-    """
-    STDIN = 0
-    STDOUT = 1
-    os.write(STDOUT, prefix)
-    return os.read(STDIN, 1024)[:-1] # discard the trailing last newline
 
 
 # todo: some unit tests to ensure the top level works
@@ -55,7 +43,7 @@ def entry_point(argv):
         env = fresh_environment()
         while True:
             try:
-                user_input = read_line('> ')
+                user_input = raw_input('> ')
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
 
