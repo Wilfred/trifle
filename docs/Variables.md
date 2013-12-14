@@ -6,7 +6,32 @@ variable in the innermost scope where it is defined.
 
 Examples:
 
-    ;; todo
+Defining a variable in global scope:
+
+```lisp
+> (set! x 1)
+null
+> x
+1
+```
+
+Defining a variable in a function's scope:
+
+```lisp
+> ((lambda () (set! x 1) x))
+1
+```
+
+If a variable is already defined in a outer scope, it will be updated:
+
+```lisp
+> (set! x 1)
+null
+> ((lambda () (set! x 2)))
+null
+> x
+2
+```
 
 ## Variable special expressions
 
