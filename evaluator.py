@@ -51,9 +51,6 @@ def evaluate_list(node, environment):
         arguments = [
             evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
-    elif isinstance(function, Macro):
-        # fixme: should call evaluate afterwards
-        return function.call(raw_arguments, environment)
     elif isinstance(function, Special):
         return function.call(raw_arguments, environment)
     else:

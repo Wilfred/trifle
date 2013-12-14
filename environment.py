@@ -22,7 +22,7 @@ class Environment(object):
             if variable_name in scope:
                 return scope[variable_name]
 
-        raise KeyError("Could not find %r in environment" % variable_name)
+        raise KeyError("Could not find '%s' in environment" % variable_name)
 
     def set(self, variable_name, value):
         self.scopes[-1][variable_name] = value
