@@ -9,8 +9,8 @@ class Environment(object):
 
     """
     
-    def __init__(self, initial):
-        self.scopes = [initial]
+    def __init__(self, scopes):
+        self.scopes = scopes
 
     # we can't use __get__ and __set__ in RPython, so we use normal methods
     def get(self, variable_name):
@@ -39,7 +39,7 @@ def fresh_environment():
     """Return a new environment that only contains the built-ins.
 
     """
-    return Environment({
+    return Environment([{
         '+': Addition(),
         '-': Subtraction(),
         '<': LessThan(),
@@ -50,4 +50,4 @@ def fresh_environment():
         'do': Do(),
         'if': If(),
         'while': While(),
-    })
+    }])

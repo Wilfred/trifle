@@ -304,9 +304,9 @@ class LessThan(unittest.TestCase):
 
 class EnvironmentVariables(unittest.TestCase):
     def test_evaluate_variable(self):
-        env = Environment({
+        env = Environment([{
             'x': Integer(1),
-        })
+        }])
         self.assertEqual(evaluate(parse_one(lex("x")), env),
                          Integer(1))
 
