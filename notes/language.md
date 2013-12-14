@@ -118,15 +118,15 @@ possible to implement Emacs-style advice even if there are multiple
 references to a function (cf. the difficulty with monkey-patching in
 Python which depends on how things were imported).
 
-### Syntactic Sugar
+### Syntax and Syntactic Sugar
 
-`'` quote
-backquote
-`,` unquote
-`,@` unquote-splicing (TODO: can we do better?)
+`no-eval` (lisp: `backquote`)
+`eval` (lisp: `unquote`)
+`eval*` (lips: `unquote-splicing`)
+
 `"foo"` string (can contain newlines)
 `{a 1 b 2}` hash-map
-`~` make-unique-symbol (Clojure feature)
+make-unique-symbol (Clojure feature)
 
 `#set(1 2)` hash-set reader syntax
 `#bytes(254 254 255)` byte sequence reader syntax
