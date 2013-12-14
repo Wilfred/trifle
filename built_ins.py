@@ -38,12 +38,25 @@ class LambdaFactory(Special):
             raise TrifleTypeError(
                 "lambda takes at least 1 one argument, but got 0.")
 
-        lambda_arguments = args[0]
+        parameters = args[0]
+        if not isinstance(parameters, List):
+            # todoc: this error
+            raise TrifleTypeError(
+                "The first argument to lambda should be a list, but got %s" %
+                parameters.repr())
+
+        # todoc: this error
+        for param in parameters.values:
+            if not isinstance(param, Symbol):
+                raise TrifleTypeError(
+                    "The list of parameters to a lambda must only contain symbols, but got %s" %
+                    param.repr())
+
         lambda_body = List()
         for arg in args[1:]:
             lambda_body.append(arg)
         
-        return Lambda(lambda_arguments, lambda_body, env)
+        return Lambda(parameters, lambda_body, env)
 
 
 class Do(Function):

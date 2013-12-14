@@ -134,6 +134,16 @@ class EvaluatingLambda(unittest.TestCase):
             evaluate_with_built_ins(
                 parse_one(lex("(lambda)")))
 
+    def test_lambda_params_not_list(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(lambda foo bar)")))
+
+    def test_lambda_params_not_symbols(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("(lambda (1 2) bar)")))
+
     def test_evaluate_lambda(self):
         lambda_obj = evaluate_with_built_ins(
             parse_one(lex("(lambda (x) x)")))
