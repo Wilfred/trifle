@@ -68,8 +68,6 @@ def evaluate_list(node, environment):
             raise TrifleTypeError("lambda expression takes %d arguments, but got %d" %
                                   (len(function.arguments.values), len(arguments)))
 
-        # TODO: instantiating a Lambda should ensure the list of
-        # arguments are all symbols
         # Build a new environment to evaluate with.
         inner_scope = {}
         for variable, value in zip(function.arguments.values, arguments):
