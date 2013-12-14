@@ -14,6 +14,12 @@ no effort has been made to make them RPython friendly.
 
 """
 
+class CommentLex(unittest.TestCase):
+    def test_lex_comment(self):
+        self.assertEqual(
+            lex("1 ; 2 \n 3"), [Integer(1), Integer(3)])
+
+
 class IntegerLex(unittest.TestCase):
     def test_lex_positive_number(self):
         self.assertEqual(
