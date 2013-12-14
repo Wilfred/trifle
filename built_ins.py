@@ -33,7 +33,7 @@ class LambdaFactory(Special):
         if not args:
             # todo: separate error for argument number vs type
             raise TrifleTypeError(
-                "lambda takes at least 1 one argument, but got 0.")
+                "lambda takes at least 1 argument, but got 0.")
 
         parameters = args[0]
         if not isinstance(parameters, List):
