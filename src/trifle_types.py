@@ -101,6 +101,7 @@ class List(TrifleType):
     def append(self, value):
         self.values.append(value)
 
+    # todo: fix infinite loop for lists that contain themselves
     def repr(self):
         element_reprs = [element.repr() for element in self.values]
         return "(%s)" % " ".join(element_reprs)
