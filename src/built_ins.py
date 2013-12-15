@@ -58,7 +58,6 @@ class LambdaFactory(Special):
 # todo: do we want to support anonymous macros, similar to lambda?
 # todo: expose macro expand functions to the user
 # todo: support docstrings
-# todoc
 class DefineMacro(Special):
     """Create a new macro object and bind it to the variable name given,
     in the global scope.
