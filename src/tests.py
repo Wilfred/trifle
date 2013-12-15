@@ -233,6 +233,27 @@ class Quote(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_built_ins(parse_one(lex("(quote foo bar)")))
 
+    def test_unquote(self):
+        expected = List()
+        expected.append(Symbol('x'))
+        expected.append(Integer(1))
+        
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex(
+                "(set! x 1) (quote (x (unquote x)))"))),
+            expected)
+
+    def test_unquote_star(self):
+        expected = List()
+        expected.append(Symbol('baz'))
+        expected.append(Symbol('foo'))
+        expected.append(Symbol('bar'))
+        
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex(
+                "(set! x (quote (foo bar))) (quote (baz (unquote* x)))"))),
+            expected)
+
 
 class Addition(unittest.TestCase):
     def test_addition(self):

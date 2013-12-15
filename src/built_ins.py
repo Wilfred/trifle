@@ -1,6 +1,7 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
+from copy import deepcopy, copy
 
 
 # todo: rewrite this as a macro that calls set-symbol!
@@ -108,14 +109,82 @@ class Do(Function):
             return NULL
 
 
+# todo: it would be nice to define this as a trifle macro using a quote primitive
+# (e.g. elisp defines backquote in terms of quote)
+# todoc: unquote, unquote*
 class Quote(Special):
+    def is_unquote(self, expression):
+        """Is this expression of the form (unquote expression)?"""
+        if not isinstance(expression, List):
+            return False
+
+        if not expression.values:
+            return False
+
+        list_head = expression.values[0]
+        if not isinstance(list_head, Symbol):
+            return False
+
+        if not list_head.symbol_name == 'unquote':
+            return False
+
+        return True
+
+    def is_unquote_star(self, expression):
+        """Is this expression of the form (unquote* expression)?"""
+        if not isinstance(expression, List):
+            return False
+
+        if not expression.values:
+            return False
+
+        list_head = expression.values[0]
+        if not isinstance(list_head, Symbol):
+            return False
+
+        if not list_head.symbol_name == 'unquote*':
+            return False
+
+        return True
+    
+    # todo: fix the potential stack overflow
+    # todo: throw errors on (unquote two arguments!) and (unquote)
+    def evaluate_unquote_calls(self, expression, env):
+        expression = deepcopy(expression)
+
+        from evaluator import evaluate
+        if isinstance(expression, List):
+            for index, item in enumerate(copy(expression.values)):
+                if self.is_unquote(item):
+                    unquote_argument = item.values[1]
+                    expression.values[index] = evaluate(unquote_argument, env)
+                    
+                elif self.is_unquote_star(item):
+                    unquote_argument = item.values[1]
+                    values_list = evaluate(unquote_argument, env)
+
+                    # todo: unit test this error
+                    if not isinstance(values_list, List):
+                        raise TrifleTypeError(
+                            "unquote* must be used with a list, but got a %s" % values_list.repr())
+
+                    # Splice in the result of evaluating the unquote* argument
+                    expression.values = expression.values[:index] + values_list.values + expression.values[index+1:]
+
+                elif isinstance(item, List):
+                    # recurse the nested list
+                    self.evaluate_unquote_calls(item, env)
+
+        return expression
+                        
+    
     def call(self, args, env):
         if len(args) != 1:
             # todo: print the actual arguments given
             raise TrifleTypeError(
                 "quote takes 1 argument, but got %d." % len(args))
 
-        return args[0]
+        return self.evaluate_unquote_calls(args[0], env)
 
 
 class If(Special):
