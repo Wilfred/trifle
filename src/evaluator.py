@@ -42,6 +42,26 @@ def evaluate(expression, environment):
         return evaluate_value(expression, environment)
 
 
+def build_scope(parameters, values):
+    """Build a single scope where every value in values (a python list) is bound to a
+    symbol according to the parameters List given.
+
+    """
+    # Ensure we have the right number of arguments:
+    # TODO: optional and variable arguments
+    if len(parameters.values) != len(values):
+        # todo: unit test this error for both lambda and macros
+        # todo: say what parameters we expected
+        raise TrifleTypeError("expected %d arguments, but got %d" %
+                              (len(parameters.values), len(values)))
+    
+    scope = {}
+    for variable, value in zip(parameters.values, values):
+        scope[variable.symbol_name] = value
+
+    return scope
+
+
 # todo: error on evaluating an empty list
 def evaluate_list(node, environment):
     list_elements = node.values
@@ -54,19 +74,8 @@ def evaluate_list(node, environment):
         return function.call(arguments)
         
     elif isinstance(function, Macro):
-        # Ensure we have the right number of arguments:
-        # TODO: optional and variable arguments
-        if len(raw_arguments) != len(function.arguments.values):
-            # todo: unit test this error
-            # todo: we should try to find a name for lambda functions,
-            # or at least say where they were defined
-            raise TrifleTypeError("this macro takes %d arguments, but got %d" %
-                                  (len(function.arguments.values), len(raw_arguments)))
-            
         # Build a new environment to evaluate with.
-        inner_scope = {}
-        for variable, value in zip(function.arguments.values, raw_arguments):
-            inner_scope[variable.symbol_name] = value
+        inner_scope = build_scope(function.arguments, raw_arguments)
 
         macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
@@ -84,19 +93,8 @@ def evaluate_list(node, environment):
         arguments = [
             evaluate(el, environment) for el in raw_arguments]
 
-        # Ensure we have the right number of arguments:
-        # TODO: optional and variable arguments
-        if len(arguments) != len(function.arguments.values):
-            # todo: unit test this error
-            # todo: we should try to find a name for lambda functions,
-            # or at least say where they were defined
-            raise TrifleTypeError("lambda expression takes %d arguments, but got %d" %
-                                  (len(function.arguments.values), len(arguments)))
-
         # Build a new environment to evaluate with.
-        inner_scope = {}
-        for variable, value in zip(function.arguments.values, arguments):
-            inner_scope[variable.symbol_name] = value
+        inner_scope = build_scope(function.arguments, arguments)
 
         lambda_env = function.env.with_nested_scope(inner_scope)
 
