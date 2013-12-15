@@ -126,6 +126,11 @@ class EvaluatingLiterals(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("null"))),
             NULL)
 
+    def test_eval_keyword(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex(":foo"))),
+            Keyword("foo"))
+
 
 class EvaluatingLambda(unittest.TestCase):
     def test_call_lambda(self):

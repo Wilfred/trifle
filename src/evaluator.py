@@ -1,5 +1,6 @@
 from trifle_types import (List, Symbol, Integer, Null, NULL,
-                          Function, Lambda, Macro, Special, Boolean)
+                          Function, Lambda, Macro, Special, Boolean,
+                          Keyword)
 from errors import UnboundVariable, TrifleTypeError
 from environment import fresh_environment
 from almost_python import zip
@@ -116,6 +117,9 @@ def evaluate_value(value, environment):
         return value
     elif isinstance(value, Null):
         # Null evaluates to itself
+        return value
+    elif isinstance(value, Keyword):
+        # Keywords evaluate to themselves
         return value
     elif isinstance(value, Function):
         # Functions evaluate to themselves
