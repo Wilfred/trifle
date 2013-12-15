@@ -1,7 +1,7 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
-from copy import deepcopy, copy
+from almost_python import deepcopy, copy
 
 
 # todo: rewrite this as a macro that calls set-symbol!
@@ -154,7 +154,7 @@ class Quote(Special):
 
         from evaluator import evaluate
         if isinstance(expression, List):
-            for index, item in enumerate(copy(expression.values)):
+            for index, item in enumerate(copy(expression).values):
                 if self.is_unquote(item):
                     unquote_argument = item.values[1]
                     expression.values[index] = evaluate(unquote_argument, env)
