@@ -465,5 +465,23 @@ class EvaluatingMacros(unittest.TestCase):
             Integer(1)
         )
 
+    def test_macro_bad_args(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex(
+                "(macro foo)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex(
+                "(macro foo bar)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex(
+                "(macro foo (1))")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(parse_one(lex(
+                "(macro 123 (bar))")))
+
+
 if __name__ == '__main__':
     unittest.main()

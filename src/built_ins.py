@@ -73,20 +73,17 @@ class DefineMacro(Special):
         macro_name = args[0]
         parameters = args[1]
         
-        # todo: unit test this error
-        if not isinstance(parameters, List):
+        if not isinstance(macro_name, Symbol):
             raise TrifleTypeError(
-                "The first argument to macro should be a list, but got %s" %
+                "macro name should be a symbol, but got %s" %
                 parameters.repr())
 
-        # todo: unit test this error
         parameters = args[1]
         if not isinstance(parameters, List):
             raise TrifleTypeError(
                 "macro parameters should be a list, but got %s" %
                 parameters.repr())
 
-        # todo: unit test this error
         for param in parameters.values:
             if not isinstance(param, Symbol):
                 raise TrifleTypeError(
