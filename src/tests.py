@@ -208,7 +208,9 @@ class Set(unittest.TestCase):
                 parse_one(lex("(set! x 1)"))),
             NULL)
 
-
+# todo: decide whether quote should construct fresh values each time
+# i.e. (function foo () (set! x (quote ())) (push! x 1) x)
+# what does (do (foo) (foo)) evlauate to?
 class Quote(unittest.TestCase):
     def test_quote(self):
         expected = parse_one(lex("(+ 1 2)"))
@@ -423,6 +425,5 @@ class EvaluatingMacros(unittest.TestCase):
             Integer(1)
         )
 
-        
 if __name__ == '__main__':
     unittest.main()
