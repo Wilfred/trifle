@@ -2,7 +2,7 @@ import unittest
 
 from lexer import lex
 from parser import parse_one, parse
-from trifle_types import (List, Integer, Symbol, Lambda,
+from trifle_types import (List, Integer, Symbol, Keyword, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import (evaluate, evaluate_with_built_ins,
                        evaluate_all_with_built_ins)
@@ -61,6 +61,11 @@ class SymbolLex(unittest.TestCase):
         with self.assertRaises(LexFailed):
             lex("\\")
 
+
+class KeywordLex(unittest.TestCase):
+    def test_lex_keyword(self):
+        self.assertEqual(
+            lex(":x")[0], Keyword('x'))
 
 class BooleanLex(unittest.TestCase):
     def test_lex_boolean(self):

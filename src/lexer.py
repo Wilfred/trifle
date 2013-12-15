@@ -2,18 +2,19 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import (OpenParen, CloseParen, Integer, Symbol,
+from trifle_types import (OpenParen, CloseParen, Integer, Symbol, Keyword,
                           TRUE, FALSE, NULL)
 from errors import LexFailed
 
 
+# Note this an incomplete list.
 WHITESPACE = 'whitespace'
 COMMENT = 'comment'
 OPEN_PAREN = 'open-paren'
 CLOSE_PAREN = 'close-paren'
-BOOLEAN = 'boolean'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
+KEYWORD = 'keyword'
 
 # todoc: exactly what syntax we accept for numbers and symbols
 TOKENS = [
@@ -28,6 +29,8 @@ TOKENS = [
 
     # note this captures 'true' and 'false' too
     (SYMBOL, get_code('[a-z*/+?!<>=-][a-z0-9*/+?!<>=-]*')),
+    
+    (KEYWORD, get_code(':[a-z*/+?!<>=-][a-z0-9*/+?!<>=-]*')),
 ]
 
 
@@ -64,6 +67,9 @@ def lex(text):
                         lexed_tokens.append(NULL)
                     else:
                         lexed_tokens.append(Symbol(text[:match.match_end]))
+                elif token == KEYWORD:
+                    # todoc
+                    lexed_tokens.append(Keyword(text[1:match.match_end]))
                 else:
                     assert False, "Unrecognised token '%s'" % token
                 

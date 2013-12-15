@@ -77,6 +77,23 @@ class Symbol(TrifleType):
         self.symbol_name = symbol_name
 
 
+class Keyword(TrifleType):
+    def repr(self):
+        return ":%s" % self.symbol_name
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.symbol_name == other.symbol_name
+
+    def __init__(self, symbol_name):
+        self.symbol_name = symbol_name
+
+
 class List(TrifleType):
     def __init__(self):
         self.values = []
