@@ -368,6 +368,36 @@ class Same(unittest.TestCase):
             evaluate_with_built_ins(parse_one(lex("(same? 1 2)"))),
             FALSE)
 
+    def test_null_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? null null)"))),
+            TRUE)
+
+    def test_symbol_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? (quote a) (quote a))"))),
+            TRUE)
+
+    def test_list_same(self):
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex("(set! x (quote ())) (same? x x)"))),
+            TRUE)
+
+    def test_function_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? same? same?)"))),
+            TRUE)
+
+    def test_lambda_same(self):
+        self.assertEqual(
+            evaluate_all_with_built_ins(parse(lex("(set! x (lambda () 1)) (same? x x)"))),
+            TRUE)
+
+    def test_special_same(self):
+        self.assertEqual(
+            evaluate_with_built_ins(parse_one(lex("(same? if if)"))),
+            TRUE)
+
     def test_different_types(self):
         self.assertEqual(
             evaluate_with_built_ins(parse_one(lex("(same? true 1)"))),

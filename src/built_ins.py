@@ -196,17 +196,24 @@ class Same(Function):
                 "same? takes 2 arguments, but got %d." % len(args))
 
         # Sadly, we can't access .__class__ in RPython.
-        if isinstance(args[0], Boolean):
-            if isinstance(args[1], Boolean):
-                if args[0].value == args[1].value:
+        if isinstance(args[0], Symbol):
+            if isinstance(args[1], Symbol):
+                if args[0].symbol_name == args[1].symbol_name:
                     return TRUE
+
+            return FALSE
 
         if isinstance(args[0], Integer):
             if isinstance(args[1], Integer):
                 if args[0].value == args[1].value:
                     return TRUE
 
-        return FALSE
+            return FALSE
+
+        if args[0] is args[1]:
+            return TRUE
+        else:
+            return FALSE
 
 
 class Addition(Function):
