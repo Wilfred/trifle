@@ -139,6 +139,20 @@ class EvaluatingLambda(unittest.TestCase):
                 parse_one(lex("((lambda (x) x) 1)"))),
             Integer(1))
 
+    def test_call_lambda_variable_arguments(self):
+        expected = List()
+        expected.values = [Integer(1), Integer(2), Integer(3), Integer(4)]
+        
+        self.assertEqual(
+            evaluate_with_built_ins(
+                parse_one(lex("((lambda (:rest args) args) 1 2 3 4)"))),
+            expected)
+
+    def test_call_lambda_too_few_variable_arguments(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_built_ins(
+                parse_one(lex("((lambda (x y :rest args) x))")))
+
     def test_lambda_wrong_arg_number(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_built_ins(

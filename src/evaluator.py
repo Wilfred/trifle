@@ -43,21 +43,49 @@ def evaluate(expression, environment):
 
 
 def build_scope(parameters, values):
-    """Build a single scope where every value in values (a python list) is bound to a
-    symbol according to the parameters List given.
+    """Build a single scope where every value in values (a python list) is
+    bound to a symbol according to the parameters List given.
+
+    If the parameters list contains `:rest foo`, any remaining arguments
+    are passed a list in the named parameter.
 
     """
+    varargs = False
+    if len(parameters.values) >= 2:
+        if isinstance(parameters.values[-2], Keyword) and \
+           parameters.values[-2].symbol_name == 'rest':
+            varargs = True
+
+    if varargs:
+        normal_parameters = parameters.values[:-2]
+    else:
+        normal_parameters = parameters.values
+    
     # Ensure we have the right number of arguments:
-    # TODO: optional and variable arguments
-    if len(parameters.values) != len(values):
+    # TODO: optional arguments
+    if len(normal_parameters) > len(values):
         # todo: unit test this error for both lambda and macros
         # todo: say what parameters we expected
-        raise TrifleTypeError("expected %d arguments, but got %d" %
-                              (len(parameters.values), len(values)))
-    
+        if varargs:
+            raise TrifleTypeError("expected at least %d arguments, but got %d" %
+                                  (len(normal_parameters), len(values)))
+        else:
+            raise TrifleTypeError("expected %d arguments, but got %d" %
+                                  (len(normal_parameters), len(values)))
+
     scope = {}
-    for variable, value in zip(parameters.values, values):
+    for variable, value in zip(normal_parameters, values):
         scope[variable.symbol_name] = value
+
+    # todoc: varargs on macros
+    # todo: consistently use the terms 'parameters' and 'arguments'
+    if varargs:
+        # Create a Trifle list of any remaining arguments.
+        remaining_args = List()
+        remaining_args.values = values[len(normal_parameters):]
+
+        # Assign it to the variable args symbol.
+        scope[parameters.values[-1].symbol_name] = remaining_args
 
     return scope
 
