@@ -3,7 +3,10 @@
 # errors at runtime
 
 class TrifleError(Exception):
-    pass
+    # .message isn't available in RPython, so we manually assign it.
+    # todo: file a pypy to improve their docs
+    def __init__(self, message):
+        self.message = message
 
 
 class LexFailed(TrifleError):

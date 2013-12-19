@@ -49,7 +49,7 @@ def entry_point(argv):
 
                 print evaluate_all(parse_tree, env).repr()
             except TrifleError as e:
-                print "Error: %s" % e
+                print "Error: %s" % e.message
             except KeyboardInterrupt:
                 print
                 return 0
@@ -68,7 +68,7 @@ def entry_point(argv):
         try:
             print evaluate_all_with_built_ins(parse_tree).repr()
         except TrifleError as e:
-            print "Error: %s" % e
+            print "Error: %s" % e.message
             return 1
         
         return 0
@@ -82,7 +82,7 @@ def entry_point(argv):
             try:
                 print evaluate_all_with_built_ins(parse_tree).repr()
             except TrifleError as e:
-                print "Error: %s" % e
+                print "Error: %s" % e.message
                 return 1
             return 0
             
