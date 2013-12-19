@@ -2,21 +2,7 @@ from trifle_types import (List, Symbol, Integer, Null, NULL,
                           Function, Lambda, Macro, Special, Boolean,
                           Keyword)
 from errors import UnboundVariable, TrifleTypeError
-from environment import fresh_environment
 from almost_python import zip
-
-
-def evaluate_all_with_built_ins(expressions):
-    """Evaluate a trifle List of expressions, starting with a fresh environment
-    containing only the built-in functions, special expressions and macros.
-
-    """
-    return evaluate_all(expressions, fresh_environment())
-
-
-# todo: remove this, it's only used in tests
-def evaluate_with_built_ins(expression):
-    return evaluate(expression, fresh_environment())
 
 
 def evaluate_all(expressions, environment):
