@@ -1,5 +1,5 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
-                          Boolean, TRUE, FALSE, NULL, Symbol)
+                          Boolean, TRUE, FALSE, NULL, Symbol, Keyword)
 from errors import TrifleTypeError
 from almost_python import deepcopy, copy
 
@@ -42,11 +42,18 @@ class LambdaFactory(Special):
                 "The first argument to lambda should be a list, but got %s" %
                 parameters.repr())
 
-        for param in parameters.values:
-            if not isinstance(param, Symbol):
-                raise TrifleTypeError(
-                    "The list of parameters to a lambda must only contain symbols, but got %s" %
-                    param.repr())
+        for index, param in enumerate(parameters.values):
+            if isinstance(param, Symbol):
+                continue
+
+            if isinstance(param, Keyword):
+                if param.symbol_name == 'rest':
+                    if index == len(parameters.values) - 2:
+                        continue
+
+            raise TrifleTypeError(
+                "Invalid parameter specified for lambda: %s" %
+                param.repr())
 
         lambda_body = List()
         for arg in args[1:]:
