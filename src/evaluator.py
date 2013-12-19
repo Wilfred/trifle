@@ -57,7 +57,9 @@ def build_scope(parameters, values):
             varargs = True
 
     if varargs:
-        normal_parameters = parameters.values[:-2]
+        # The only negative slice supported by RPython is -1, so we
+        # have to do it twice.
+        normal_parameters = parameters.values[:-1][:-1]
     else:
         normal_parameters = parameters.values
     
