@@ -1,0 +1,5 @@
+language: python
+python:
+  - 2.7
+install: cd src; make pypy
+script: src/run_tests
