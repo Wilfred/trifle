@@ -42,7 +42,7 @@ Names are chosen to be clear, self-explanatory and minimally
 abbreviated. Code should be concise through well-chosen abstraction
 instead of very short names.
 
-Influences: Python's readability
+Influences: Python's readability, Python doctests, Elisp docstrings
 
 ### Documented
 
