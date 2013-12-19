@@ -1,0 +1,5 @@
+
+; todo: write a `function` macro
+(set! list
+  (lambda (:rest items) items)
+)

@@ -3,7 +3,7 @@ import os
 
 from lexer import lex
 from parser import parse
-from evaluator import evaluate_all_with_built_ins, evaluate_all
+from evaluator import evaluate_all
 from errors import TrifleError
 from environment import fresh_environment
 from almost_python import raw_input
@@ -24,6 +24,23 @@ def get_contents(filename):
     return program_contents
 
 
+def env_with_prelude():
+    """Return a fresh environment where the prelude has already been
+    evaluated.
+
+    """
+    # todo: this will break if the binary isn't run in src/. We need a
+    # Trifle equivalent of PYTHONPATH.
+    code = get_contents("prelude.tfl")
+    lexed_tokens = lex(code)
+    parse_tree = parse(lexed_tokens)
+
+    env = fresh_environment()
+    evaluate_all(parse_tree, env)
+
+    return env
+
+
 # todo: some unit tests to ensure the top level works
 def entry_point(argv):
     """Either a file name:
@@ -40,7 +57,7 @@ def entry_point(argv):
         # REPL. Ultimately we will rewrite this as a Trifle program.
         print "Trifle interpreter. Press Ctrl-C to exit."
 
-        env = fresh_environment()
+        env = env_with_prelude()
         while True:
             try:
                 user_input = raw_input('> ')
@@ -62,11 +79,12 @@ def entry_point(argv):
             print 'No such file: %s' % filename
             return 2
 
+        env = env_with_prelude()
         code = get_contents(filename)
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            print evaluate_all_with_built_ins(parse_tree).repr()
+            print evaluate_all(parse_tree, env).repr()
         except TrifleError as e:
             print "Error: %s" % e.message
             return 1
@@ -75,12 +93,13 @@ def entry_point(argv):
     
     elif len(argv) == 3:
         if argv[1] == '-i':
+            env = env_with_prelude()
             code_snippet = argv[2]
             lexed_tokens = lex(code_snippet)
             parse_tree = parse(lexed_tokens)
 
             try:
-                print evaluate_all_with_built_ins(parse_tree).repr()
+                print evaluate_all(parse_tree, env).repr()
             except TrifleError as e:
                 print "Error: %s" % e.message
                 return 1
