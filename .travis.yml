@@ -1,5 +1,5 @@
 language: python
 python:
   - 2.7
-install: cd src; make pypy
-script: src/run_tests
+install: make -C src pypy
+script: PYTHONPATH=src/pypy python2 src/tests.py
