@@ -343,3 +343,37 @@ class LessThan(Function):
             previous_arg = arg
 
         return TRUE
+
+
+# todoc
+# todo: unit test
+# todo: support negative indexes
+class GetIndex(Function):
+    def call(self, args):
+        if len(args) != 2:
+            raise TrifleTypeError(
+                "get-index takes at 2 arguments, but got: %s" % args.repr())
+
+        some_list = args[0]
+        index = args[1]
+
+        # todo: unit test this error
+        if not isinstance(some_list, List):
+            raise TrifleTypeError(
+                "the first argument to get-index must be a list, but got: %s"
+                % some_list.repr())
+
+        # todo: unit test this error
+        if not isinstance(index, Integer):
+            raise TrifleTypeError(
+                "the second argument to get-index must be an integer, but got: %s"
+                % index.repr())
+
+        # todo: unit test this error
+        # todo: separate error class
+        if index.value < 0 or index.value >= len(some_list.values):
+            raise TrifleTypeError(
+                "the list has %d items, but you asked for index %d"
+                % (len(some_list.values), index.value))
+
+        return some_list.values[index.value]

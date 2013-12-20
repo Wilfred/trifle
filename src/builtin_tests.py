@@ -494,6 +494,13 @@ class LessThan(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(< 1)")))
 
 
+class GetIndex(unittest.TestCase):
+    def test_less_than(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) 0)"))),
+            Integer(2))
+
+
 class EnvironmentVariables(unittest.TestCase):
     def test_evaluate_variable(self):
         env = Environment([{

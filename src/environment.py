@@ -1,6 +1,6 @@
 from built_ins import (Addition, Subtraction, LessThan, Same, Truthy,
                        Quote, Set, Do, If, While, LambdaFactory,
-                       DefineMacro)
+                       DefineMacro, GetIndex)
 
 
 class Environment(object):
@@ -69,6 +69,7 @@ def fresh_environment():
         '+': Addition(),
         '-': Subtraction(),
         '<': LessThan(),
+        'get-index': GetIndex(),
         'same?': Same(),
         'truthy?': Truthy(),
         'quote': Quote(),
