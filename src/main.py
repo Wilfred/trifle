@@ -29,9 +29,13 @@ def env_with_prelude():
     evaluated.
 
     """
-    # todo: this will break if the binary isn't run in src/. We need a
+    # todo: document TRIFLEPATH
+    # todo: should we inline the prelude, so changing TRIFLEPATH doens't break this?
+    trifle_path = os.getenv("TRIFLEPATH", ".")
+    prelude_path = os.path.join(trifle_path, "prelude.tfl")
+    
     # Trifle equivalent of PYTHONPATH.
-    code = get_contents("prelude.tfl")
+    code = get_contents(prelude_path)
     lexed_tokens = lex(code)
     parse_tree = parse(lexed_tokens)
 

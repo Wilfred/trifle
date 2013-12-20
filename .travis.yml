@@ -2,4 +2,4 @@ language: python
 python:
   - 2.7
 install: make -C src pypy
-script: PYTHONPATH=src/pypy python2 src/tests.py
+script: PYTHONPATH=src/pypy TRIFLEPATH=src python2 src/tests.py
