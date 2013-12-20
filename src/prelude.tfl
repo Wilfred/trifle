@@ -1,3 +1,4 @@
+; todo: we should document whether functions are built-in or in the prelude.
 
 ; todo: write a `function` macro
 (set! list
