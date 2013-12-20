@@ -15,6 +15,8 @@ trifle: pypy main.py lexer.py trifle_types.py parser.py evaluator.py built_ins.p
 	./rpython main.py
 	mv main-c trifle
 
+.PHONY: clean
+
 clean:
 	rm -f pypy-src.tar.bz2
 	rm -rf pypy
