@@ -292,13 +292,13 @@ class Same(Function):
             return FALSE
 
 
-class Addition(Function):
+class Add(Function):
     def call(self, args):
         for arg in args:
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
                 raise TrifleTypeError(
-                    "%s is not a number." % arg.repr())
+                    "+ requires numbers, but got: %s." % arg.repr())
 
         total = 0
         for arg in args:
@@ -306,13 +306,13 @@ class Addition(Function):
         return Integer(total)
 
 
-class Subtraction(Function):
+class Subtract(Function):
     def call(self, args):
         for arg in args:
             # todo: we will want other numeric types
             if not isinstance(arg, Integer):
                 raise TrifleTypeError(
-                    "%s is not a number." % arg.repr())
+                    "- requires numbers, but got: %s." % arg.repr())
 
         if not args:
             return Integer(0)

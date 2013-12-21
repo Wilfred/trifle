@@ -283,8 +283,8 @@ class Quote(unittest.TestCase):
             expected)
 
 
-class Addition(unittest.TestCase):
-    def test_addition(self):
+class AddTest(unittest.TestCase):
+    def test_add(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(+)"))),
                          Integer(0))
         
@@ -299,8 +299,8 @@ class Addition(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(+ +)")))
 
 
-class Subtraction(unittest.TestCase):
-    def test_subtraction(self):
+class SubtractTest(unittest.TestCase):
+    def test_subtract(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(-)"))),
                          Integer(0))
         

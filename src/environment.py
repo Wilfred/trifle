@@ -1,4 +1,4 @@
-from built_ins import (Addition, Subtraction, Multiply, LessThan,
+from built_ins import (Add, Subtract, Multiply, LessThan,
                        Same, Truthy, Quote, Set, Do, If, While,
                        LambdaFactory, DefineMacro, Length, GetIndex,
                        SetIndex, Push)
@@ -67,8 +67,8 @@ def fresh_environment():
 
     """
     return Environment([{
-        '+': Addition(),
-        '-': Subtraction(),
+        '+': Add(),
+        '-': Subtract(),
         '*': Multiply(),
         '<': LessThan(),
         'length': Length(),
