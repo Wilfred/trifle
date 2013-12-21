@@ -3,6 +3,7 @@ from trifle_types import (List, Symbol, Integer, Null, NULL,
                           Keyword)
 from errors import UnboundVariable, TrifleTypeError
 from almost_python import zip
+from environment import Scope
 
 
 def evaluate_all(expressions, environment):
@@ -65,9 +66,9 @@ def build_scope(parameters, values):
                                    "s" if len(normal_parameters) > 1 else "",
                                    len(values)))
 
-    scope = {}
+    scope = Scope({})
     for variable, value in zip(normal_parameters, values):
-        scope[variable.symbol_name] = value
+        scope.set(variable.symbol_name,  value)
 
     # todoc: varargs on macros
     # todo: consistently use the terms 'parameters' and 'arguments'
@@ -77,7 +78,7 @@ def build_scope(parameters, values):
         remaining_args.values = values[len(normal_parameters):]
 
         # Assign it to the variable args symbol.
-        scope[parameters.values[-1].symbol_name] = remaining_args
+        scope.set(parameters.values[-1].symbol_name, remaining_args)
 
     return scope
 

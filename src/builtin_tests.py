@@ -6,7 +6,7 @@ from trifle_types import (List, Integer, Symbol, Keyword, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
 from errors import UnboundVariable, TrifleTypeError, LexFailed
-from environment import Environment, fresh_environment
+from environment import Environment, Scope, fresh_environment
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -673,9 +673,9 @@ class PushTest(unittest.TestCase):
 
 class EnvironmentVariables(unittest.TestCase):
     def test_evaluate_variable(self):
-        env = Environment([{
+        env = Environment([Scope({
             'x': Integer(1),
-        }])
+        })])
         self.assertEqual(evaluate(parse_one(lex("x")), env),
                          Integer(1))
 
