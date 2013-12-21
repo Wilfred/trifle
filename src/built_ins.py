@@ -349,25 +349,25 @@ class LessThan(Function):
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
+            args_list = List()
+            args_list.values = args
+            
             raise TrifleTypeError(
-                "get-index takes at 2 arguments, but got: %s" % args.repr())
+                "get-index takes 2 arguments, but got: %s" % args_list.repr())
 
         some_list = args[0]
         index = args[1]
 
-        # todo: unit test this error
         if not isinstance(some_list, List):
             raise TrifleTypeError(
                 "the first argument to get-index must be a list, but got: %s"
                 % some_list.repr())
 
-        # todo: unit test this error
         if not isinstance(index, Integer):
             raise TrifleTypeError(
                 "the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
-        # todo: unit test this error
         # todo: separate error class
         if index.value < 0 or index.value >= len(some_list.values):
             raise TrifleTypeError(
@@ -381,26 +381,26 @@ class GetIndex(Function):
 class SetIndex(Function):
     def call(self, args):
         if len(args) != 3:
+            args_list = List()
+            args_list.values = args
+            
             raise TrifleTypeError(
-                "set-index! takes at 2 arguments, but got: %s" % args.repr())
+                "set-index! takes 3 arguments, but got: %s" % args_list.repr())
 
         some_list = args[0]
         index = args[1]
         value = args[2]
 
-        # todo: unit test this error
         if not isinstance(some_list, List):
             raise TrifleTypeError(
                 "the first argument to set-index! must be a list, but got: %s"
                 % some_list.repr())
 
-        # todo: unit test this error
         if not isinstance(index, Integer):
             raise TrifleTypeError(
                 "the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
-        # todo: unit test this error
         # todo: separate error class
         if index.value < 0 or index.value >= len(some_list.values):
             raise TrifleTypeError(
@@ -409,5 +409,4 @@ class SetIndex(Function):
 
         some_list.values[index.value] = value
 
-        # todo: unit test this return value
         return NULL
