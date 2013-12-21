@@ -345,7 +345,6 @@ class LessThan(Function):
         return TRUE
 
 
-# todoc
 # todo: support negative indexes
 class GetIndex(Function):
     def call(self, args):
@@ -378,7 +377,6 @@ class GetIndex(Function):
         return some_list.values[index.value]
 
 
-# todoc
 # todo: support negative indexes
 class SetIndex(Function):
     def call(self, args):
