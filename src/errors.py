@@ -8,6 +8,10 @@ class TrifleError(Exception):
     def __init__(self, message):
         self.message = message
 
+    def __str__(self):
+        # Ignored by RPython, but useful for debugging
+        return self.message
+
 
 class LexFailed(TrifleError):
     pass
