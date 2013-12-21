@@ -55,11 +55,15 @@ def build_scope(parameters, values):
         # todo: unit test this error for both lambda and macros
         # todo: say what parameters we expected
         if varargs:
-            raise TrifleTypeError("expected at least %d arguments, but got %d" %
-                                  (len(normal_parameters), len(values)))
+            raise TrifleTypeError("expected at least %d argument%s, but got %d" %
+                                  (len(normal_parameters),
+                                   "s" if len(normal_parameters) > 1 else "",
+                                   len(values)))
         else:
-            raise TrifleTypeError("expected %d arguments, but got %d" %
-                                  (len(normal_parameters), len(values)))
+            raise TrifleTypeError("expected %d argument%s, but got %d" %
+                                  (len(normal_parameters),
+                                   "s" if len(normal_parameters) > 1 else "",
+                                   len(values)))
 
     scope = {}
     for variable, value in zip(normal_parameters, values):
