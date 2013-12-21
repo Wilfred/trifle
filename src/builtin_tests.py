@@ -503,10 +503,13 @@ class GetIndex(unittest.TestCase):
 
 class SetIndex(unittest.TestCase):
     def test_set_index(self):
+        expected = List()
+        expected.values = [Integer(1)]
+        
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote (1 2))) (set-index! x 0 5) (get-index x 0)"))),
-            Integer(5))
+                "(set! x (quote (0))) (set-index! x 0 1) x"))),
+            expected)
 
 
 class EnvironmentVariables(unittest.TestCase):
