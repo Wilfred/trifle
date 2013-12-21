@@ -315,6 +315,22 @@ class Subtraction(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(- -)")))
 
 
+class Multiply(unittest.TestCase):
+    def test_multiply(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(*)"))),
+                         Integer(1))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(* 2)"))),
+                         Integer(2))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(* 2 3)"))),
+                         Integer(6))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(* 1 null)")))
+
+
 class If(unittest.TestCase):
     def test_if_one_arg(self):
         self.assertEqual(

@@ -326,6 +326,21 @@ class Subtraction(Function):
         return Integer(total)
 
 
+class Multiply(Function):
+    def call(self, args):
+        for arg in args:
+            # todo: we will want other numeric types
+            if not isinstance(arg, Integer):
+                raise TrifleTypeError(
+                    "* requires numbers, but got: %s." % arg.repr())
+
+        product = 1
+        for arg in args:
+            product *= arg.value
+
+        return Integer(product)
+
+
 class LessThan(Function):
     def call(self, args):
         if len(args) < 2:
