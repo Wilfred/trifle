@@ -23,6 +23,18 @@ class ListTest(unittest.TestCase):
                      env_with_prelude()),
             expected)
 
+
+class MapTest(unittest.TestCase):
+    def test_map(self):
+        expected = List()
+        expected.values = [Integer(2), Integer(3), Integer(4)]
+
+        self.assertEqual(
+            evaluate(parse_one(lex("(map (lambda (x) (+ x 1)) (list 1 2 3))")),
+                     env_with_prelude()),
+            expected)
+
+
 class NthItemTest(unittest.TestCase):
     def test_first(self):
         self.assertEqual(

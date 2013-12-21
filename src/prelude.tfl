@@ -5,6 +5,20 @@
   (lambda (:rest items) items)
 )
 
+; todo: implement `let` and use it here
+; todo: write in terms of for-each
+(set! map
+  (lambda (func some-list)
+    (set! result (list))
+    (set! index 0)
+    (while (< index (length some-list))
+      (push! result (func (get-index some-list index)) index)
+      (set! index (+ index 1))
+    )
+    result
+  )
+)
+
 (set! first
   (lambda (list) (get-index list 0))
 )
