@@ -495,7 +495,7 @@ class LessThan(unittest.TestCase):
 
 
 class GetIndex(unittest.TestCase):
-    def test_less_than(self):
+    def test_get_index(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) 0)"))),
             Integer(2))

@@ -346,7 +346,6 @@ class LessThan(Function):
 
 
 # todoc
-# todo: unit test
 # todo: support negative indexes
 class GetIndex(Function):
     def call(self, args):
