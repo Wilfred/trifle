@@ -9,5 +9,5 @@ and updating.
 ## List functions
 
 1. [list](Lists-List.md)
-2. [get-item](Lists-GetItem.md)
-3. [set-item!](Lists-SetItem.md)
+2. [get-index](Lists-GetIndex.md)
+3. [set-index!](Lists-SetIndex.md)
