@@ -4,3 +4,19 @@
 (set! list
   (lambda (:rest items) items)
 )
+
+(set! first
+  (lambda (list) (get-index list 0))
+)
+(set! second
+  (lambda (list) (get-index list 1))
+)
+(set! third
+  (lambda (list) (get-index list 2))
+)
+(set! fourth
+  (lambda (list) (get-index list 3))
+)
+(set! fifth
+  (lambda (list) (get-index list 4))
+)

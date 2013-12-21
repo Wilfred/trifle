@@ -23,3 +23,34 @@ class ListTest(unittest.TestCase):
             evaluate(parse_one(lex("(list 1 2 3)")),
                      env_with_prelude()),
             expected)
+
+class NthItemTest(unittest.TestCase):
+    def test_first(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(first (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(1))
+        
+    def test_second(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(second (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(2))
+        
+    def test_third(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(third (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(3))
+        
+    def test_fourth(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(fourth (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(4))
+        
+    def test_fifth(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(fifth (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(5))
