@@ -376,3 +376,40 @@ class GetIndex(Function):
                 % (len(some_list.values), index.value))
 
         return some_list.values[index.value]
+
+
+# todoc
+# todo: support negative indexes
+class SetIndex(Function):
+    def call(self, args):
+        if len(args) != 3:
+            raise TrifleTypeError(
+                "set-index! takes at 2 arguments, but got: %s" % args.repr())
+
+        some_list = args[0]
+        index = args[1]
+        value = args[2]
+
+        # todo: unit test this error
+        if not isinstance(some_list, List):
+            raise TrifleTypeError(
+                "the first argument to set-index! must be a list, but got: %s"
+                % some_list.repr())
+
+        # todo: unit test this error
+        if not isinstance(index, Integer):
+            raise TrifleTypeError(
+                "the second argument to set-index! must be an integer, but got: %s"
+                % index.repr())
+
+        # todo: unit test this error
+        # todo: separate error class
+        if index.value < 0 or index.value >= len(some_list.values):
+            raise TrifleTypeError(
+                "the list has %d items, but you tried to set index %d"
+                % (len(some_list.values), index.value))
+
+        some_list.values[index.value] = value
+
+        # todo: unit test this return value
+        return NULL

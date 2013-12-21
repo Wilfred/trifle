@@ -501,6 +501,14 @@ class GetIndex(unittest.TestCase):
             Integer(2))
 
 
+class SetIndex(unittest.TestCase):
+    def test_set_index(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(set! x (quote (1 2))) (set-index! x 0 5) (get-index x 0)"))),
+            Integer(5))
+
+
 class EnvironmentVariables(unittest.TestCase):
     def test_evaluate_variable(self):
         env = Environment([{
