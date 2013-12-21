@@ -501,6 +501,24 @@ class LessThan(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(< 1)")))
 
 
+class Length(unittest.TestCase):
+    def test_length(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(length (quote (2 3)))"))),
+            Integer(2))
+
+    def test_length_typeerror(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(length 1)")))
+            
+    def test_length_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(length)")))
+            
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(length (quote ()) 1)")))
+            
+
 class GetIndex(unittest.TestCase):
     def test_get_index(self):
         self.assertEqual(

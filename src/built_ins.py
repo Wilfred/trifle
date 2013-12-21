@@ -381,6 +381,25 @@ class GetIndex(Function):
         return some_list.values[index.value]
 
 
+class Length(Function):
+    def call(self, args):
+        if len(args) != 1:
+            args_list = List()
+            args_list.values = args
+            
+            raise TrifleTypeError(
+                "length takes 1 argument, but got: %s" % args_list.repr())
+
+        some_list = args[0]
+
+        if not isinstance(some_list, List):
+            raise TrifleTypeError(
+                "the first argument to length must be a list, but got: %s"
+                % some_list.repr())
+
+        return Integer(len(some_list.values))
+
+
 # todo: support negative indexes
 class SetIndex(Function):
     def call(self, args):
