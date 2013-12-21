@@ -15,16 +15,16 @@ class Environment(object):
         self.scopes = scopes
 
     # we can't use __get__ and __set__ in RPython, so we use normal methods
-    def get(self, variable_name):
+    def get(self, symbol):
         # Note this raises KeyError if the variable name is not
         # present, unlike .get on dict objects.
 
         # We search scopes starting at the innermost.
         for scope in reversed(self.scopes):
-            if variable_name in scope:
-                return scope[variable_name]
+            if symbol in scope:
+                return scope[symbol]
 
-        raise KeyError("Could not find '%s' in environment" % variable_name)
+        raise KeyError("Could not find '%s' in environment" % symbol)
 
     def globals_only(self):
         """Return a new environment that only includes variables defined
@@ -44,12 +44,12 @@ class Environment(object):
         # Otherwise, define and set it in the very innermost scope.
         self.scopes[-1][variable_name] = value
 
-    def set_global(self, variable_name, value):
-        self.scopes[0][variable_name] = value
+    def set_global(self, symbol, value):
+        self.scopes[0][symbol] = value
 
-    def contains(self, variable_name):
+    def contains(self, symbol):
         for scope in reversed(self.scopes):
-            if variable_name in scope:
+            if symbol in scope:
                 return True
 
         return False
