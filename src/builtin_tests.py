@@ -334,6 +334,13 @@ class If(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(if false 4 5)"))),
             Integer(5))
 
+    def test_if_two_args_evals_condition(self):
+        self.assertEqual(
+            # An empty list is falsey.
+            evaluate_all_with_fresh_env(parse(lex(
+                "(set! x (quote ())) (if x 2 3)"))),
+            Integer(3))
+
     def test_if_wrong_number_of_args(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(

@@ -201,12 +201,16 @@ class If(Special):
             raise TrifleTypeError(
                 "if takes 2 or 3 arguments, but got %d." % len(args))
 
+        condition = args[0]
+        then = args[1]
+
         from evaluator import evaluate
-        if is_truthy(args[0]) == TRUE:
-            return evaluate(args[1], env)
+        if is_truthy(evaluate(condition, env)) == TRUE:
+            return evaluate(then, env)
         else:
             if len(args) == 3:
-                return evaluate(args[2], env)
+                otherwise = args[2]
+                return evaluate(otherwise, env)
             else:
                 return NULL
 
