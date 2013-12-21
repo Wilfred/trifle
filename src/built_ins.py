@@ -449,6 +449,7 @@ class SetIndex(Function):
         return NULL
 
 
+# todo: support negative indices
 class Push(Function):
     def call(self, args):
         if len(args) not in [2, 3]:
@@ -474,9 +475,19 @@ class Push(Function):
                 raise TrifleTypeError(
                     "the third argument to push! must be an integer, but got: %s"
                     % specified_index.repr())
+                
+            # todo: separate error class for index errors
+            if specified_index.value < 0 or specified_index.value > len(some_list.values):
+                raise TrifleTypeError(
+                    "the list has %d items, but you tried to push at index %d"
+                    % (len(some_list.values), specified_index.value))
 
             index = specified_index.value
 
-        some_list.values.insert(index, value)
+        # This if test is redundant, but it keeps RPython happy since
+        # it cannot prove that index is non-negative otherwise.
+        # todo: find a way to remove it but still compile
+        if index >= 0:
+            some_list.values.insert(index, value)
 
         return NULL

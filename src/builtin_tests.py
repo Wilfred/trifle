@@ -635,6 +635,15 @@ class PushTest(unittest.TestCase):
                 "(set! x (quote (3 4))) (push! x 10 1) x"))),
             expected)
 
+    def test_push_indexerror(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(push! (quote ()) 123 -1)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(push! (quote ()) 123 5)")))
+
     def test_push_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
