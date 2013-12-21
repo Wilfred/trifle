@@ -433,3 +433,36 @@ class SetIndex(Function):
         some_list.values[index.value] = value
 
         return NULL
+
+
+class Push(Function):
+    def call(self, args):
+        if len(args) not in [2, 3]:
+            args_list = List()
+            args_list.values = args
+            
+            raise TrifleTypeError(
+                "push! takes 2 or 3 arguments, but got: %s" % args_list.repr())
+
+        some_list = args[0]
+        value = args[1]
+
+        if not isinstance(some_list, List):
+            raise TrifleTypeError(
+                "the first argument to push! must be a list, but got: %s"
+                % some_list.repr())
+
+        index = 0
+        if len(args) == 3:
+            specified_index = args[2]
+
+            if not isinstance(specified_index, Integer):
+                raise TrifleTypeError(
+                    "the third argument to push! must be an integer, but got: %s"
+                    % specified_index.repr())
+
+            index = specified_index.value
+
+        some_list.values.insert(index, value)
+
+        return NULL
