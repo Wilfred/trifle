@@ -1,6 +1,6 @@
 import unittest
 
-from trifle_types import List, Integer
+from trifle_types import List, Integer, TRUE, FALSE
 from main import env_with_prelude
 from evaluator import evaluate
 from parser import parse_one
@@ -53,3 +53,27 @@ class NthItemTest(unittest.TestCase):
             evaluate(parse_one(lex("(fifth (list 1 2 3 4 5))")),
                      env_with_prelude()),
             Integer(5))
+
+
+class NotTest(unittest.TestCase):
+    def test_not_booleans(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(not true)")),
+                     env_with_prelude()),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex("(not false)")),
+                     env_with_prelude()),
+            TRUE)
+
+    def test_not_truthiness(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(not (list))")),
+                     env_with_prelude()),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex("(not 123)")),
+                     env_with_prelude()),
+            FALSE)

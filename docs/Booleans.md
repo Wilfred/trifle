@@ -7,6 +7,7 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 
 1. [truthy?](Boolean-Truthy.md)
 2. [same?](Boolean-Same.md)
+3. [not](Boolean-Not.md)
 
 ## Boolean special expressions
 

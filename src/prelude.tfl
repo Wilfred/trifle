@@ -20,3 +20,7 @@
 (set! fifth
   (lambda (list) (get-index list 4))
 )
+
+(set! not
+  (lambda (value) (if value false true))
+)
