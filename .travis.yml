@@ -4,4 +4,4 @@ python:
 install: make -C src pypy
 script:
   - PYTHONPATH=src/pypy TRIFLEPATH=src python2 src/tests.py
-  - make -C src trifle
+  - python2 src/pypy/rpython/bin/rpython --batch src/main.py
