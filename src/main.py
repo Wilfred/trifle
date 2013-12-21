@@ -1,6 +1,8 @@
 import sys
 import os
 
+from rpython.rtyper.module.ll_os_environ import getenv_llimpl
+
 from lexer import lex
 from parser import parse
 from evaluator import evaluate_all
@@ -31,7 +33,7 @@ def env_with_prelude():
     """
     # todo: document TRIFLEPATH
     # todo: should we inline the prelude, so changing TRIFLEPATH doens't break this?
-    trifle_path = os.getenv("TRIFLEPATH", ".")
+    trifle_path = getenv_llimpl("TRIFLEPATH") or "."
     prelude_path = os.path.join(trifle_path, "prelude.tfl")
     
     # Trifle equivalent of PYTHONPATH.
