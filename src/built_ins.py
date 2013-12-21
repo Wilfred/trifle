@@ -118,7 +118,6 @@ class Do(Function):
 
 # todo: it would be nice to define this as a trifle macro using a quote primitive
 # (e.g. elisp defines backquote in terms of quote)
-# todoc: unquote, unquote*
 class Quote(Special):
     def is_unquote(self, expression):
         """Is this expression of the form (unquote expression)?"""
