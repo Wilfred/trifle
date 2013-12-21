@@ -4,7 +4,7 @@
 `(if CONDITION THEN ELSE)`
 
 The macro `if` takes two or three arguments. If the condition
-evaluates to a [truthy](Boolean-Truthy.md) value, the THEN expression is
+evaluates to a [truthy](Booleans-Truthy.md) value, the THEN expression is
 evaluated and returned. Otherwise, the ELSE expression is evaluated
 and returned.
 
