@@ -7,12 +7,11 @@ from parser import parse_one
 from lexer import lex
 
 
-"""Unit tests for functions and macros in the prelude.
+"""Unit tests for functions and macros in the prelude. It's easier to
+test in Python than in Trifle, since Trifle code uses many parts of
+the prelude very often.
 
 """
-
-# todo: write a unit test library in trifle so we don't need to write
-# our tests in Python.
 
 class ListTest(unittest.TestCase):
     def test_list(self):
