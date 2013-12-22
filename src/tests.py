@@ -1,5 +1,5 @@
 import unittest
-from builtin_tests import *
+from built_in_tests import *
 from prelude_tests import *
 
 if __name__ == '__main__':
