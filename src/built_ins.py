@@ -27,6 +27,60 @@ class Set(Special):
         return NULL
 
 
+# todoc
+class Let(Special):
+    def call(self, args, env):
+        if not args:
+            # todo: could we pass list elements in List's constructor?
+            list_args = List()
+            list_args.values = args
+            
+            raise TrifleTypeError(
+                "let takes at least 1 argument, but got: %s" % list_args.repr())
+
+        bindings = args[0]
+        expressions = args[1:]
+
+        # todo: it would be easier if we passed List objects around,
+        # and implemented a slice method on them.
+        list_expressions = List()
+        list_expressions.values = expressions
+
+        if not isinstance(bindings, List):
+            raise TrifleTypeError(
+                "let requires a list as its first argument, but got: %s"
+                % bindings.repr()
+            )
+
+        for index, expression in enumerate(bindings.values):
+            if index % 2 == 0:
+                if not isinstance(expression, Symbol):
+                    raise TrifleTypeError(
+                        "Expected a symbol for a let-bound variable, but got: %s"
+                        % expression.repr()
+                    )
+
+        if len(bindings.values) % 2 == 1:
+            # todo: this should be an arity error
+            raise TrifleTypeError(
+                "no value given for let-bound variable: %s"
+                % bindings.values[-1].repr())
+
+        from evaluator import evaluate, evaluate_all
+
+        # Build a scope with the let variables
+        let_scope = {}
+        for i in range(len(bindings.values) / 2):
+            symbol = bindings.values[2 * i]
+            value = evaluate(bindings.values[2 * i + 1], env)
+            let_scope[symbol.symbol_name] = value
+
+        from environment import LetScope
+        let_env = env.with_nested_scope(LetScope(let_scope))
+
+        return evaluate_all(list_expressions, let_env)
+
+
 class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 

@@ -1,5 +1,5 @@
 from built_ins import (Add, Subtract, Multiply, LessThan,
-                       Same, Truthy, Quote, Set, Do, If, While,
+                       Same, Truthy, Quote, Set, Let, Do, If, While,
                        LambdaFactory, DefineMacro, Length, GetIndex,
                        SetIndex, Push)
 
@@ -18,6 +18,15 @@ class Scope(object):
 
     def set(self, symbol, value):
         self.bindings[symbol] = value
+
+
+class LetScope(Scope):
+    """Behaves as a normal function scope, but only allows variables to be
+    defined on instantiation.
+
+    """
+    def set(self, symbol, value):
+        assert symbol in self.bindings, "Can't define a variable in a let scope."
 
 
 class Environment(object):
@@ -57,8 +66,10 @@ class Environment(object):
                 scope.set(symbol, value)
                 return
 
-        # Otherwise, define and set it in the very innermost scope.
-        self.scopes[-1].set(symbol, value)
+        # Otherwise, define and set it in the very innermost scope that isn't a let scope.
+        for scope in reversed(self.scopes):
+            if not isinstance(scope, LetScope):
+                scope.set(symbol, value)
 
     def set_global(self, variable_name, value):
         self.scopes[0].set(variable_name, value)
@@ -95,6 +106,7 @@ def fresh_environment():
         'truthy?': Truthy(),
         'quote': Quote(),
         'set!': Set(),
+        'let': Let(),
         'do': Do(),
         'if': If(),
         'while': While(),

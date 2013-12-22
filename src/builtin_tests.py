@@ -246,6 +246,56 @@ class Set(unittest.TestCase):
                 parse_one(lex("(set! x 1)"))),
             NULL)
 
+
+class LetTest(unittest.TestCase):
+    def test_let(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(
+                parse(lex("(let (x 1) x)"))),
+            Integer(1))
+
+    def test_let_malformed_bindings(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(let (1 1) null)")))
+
+    def test_let_odd_bindings(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(let (x 1 y) null)")))
+
+    def test_let_not_bindings(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(let null null)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(let)")))
+
+    def test_let_shadowing(self):
+        """Ensure that variables defined in a let shadow outer variables with
+        the same name.
+
+        """
+        self.assertEqual(
+            evaluate_all_with_fresh_env(
+                parse(lex(
+                    "(set! x 1) (let (x 2) (set! x 3)) x"))),
+            Integer(1))
+
+    def test_let_not_function_scope(self):
+        """Ensure that variables defined with set! are still available outside
+        a let.
+
+        """
+        self.assertEqual(
+            evaluate_all_with_fresh_env(
+                parse(lex(
+                    "(let () (set! x 3)) x"))),
+            Integer(3))
+
+
 # todo: decide whether quote should construct fresh values each time
 # i.e. (function foo () (set! x (quote ())) (push! x 1) x)
 # what does (do (foo) (foo)) evaluate to?
