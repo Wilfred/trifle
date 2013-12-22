@@ -254,6 +254,12 @@ class LetTest(unittest.TestCase):
                 parse(lex("(let (x 1) x)"))),
             Integer(1))
 
+    def test_let_access_previous_bindings(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(
+                parse(lex("(let (x 1 y (+ x 1)) y)"))),
+            Integer(2))
+
     def test_let_malformed_bindings(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(

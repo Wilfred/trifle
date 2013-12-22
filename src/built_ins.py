@@ -66,17 +66,20 @@ class Let(Special):
                 "no value given for let-bound variable: %s"
                 % bindings.values[-1].repr())
 
+        # Fix circular import by importing here.
         from evaluator import evaluate, evaluate_all
+        from environment import LetScope
 
         # Build a scope with the let variables
-        let_scope = {}
+        let_scope = LetScope({})
+        let_env = env.with_nested_scope(let_scope)
+
+        # Bind each symbol to the result of evaluating each
+        # expression. We allow access to previous symbols in this let.
         for i in range(len(bindings.values) / 2):
             symbol = bindings.values[2 * i]
-            value = evaluate(bindings.values[2 * i + 1], env)
-            let_scope[symbol.symbol_name] = value
-
-        from environment import LetScope
-        let_env = env.with_nested_scope(LetScope(let_scope))
+            value = evaluate(bindings.values[2 * i + 1], let_env)
+            let_scope.set(symbol.symbol_name, value)
 
         return evaluate_all(list_expressions, let_env)
 

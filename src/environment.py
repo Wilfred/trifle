@@ -22,12 +22,10 @@ class Scope(object):
 
 class LetScope(Scope):
     """Behaves as a normal function scope, but only allows variables to be
-    defined on instantiation.
+    defined inside the first argument to `let`.
 
     """
-    def set(self, symbol, value):
-        assert symbol in self.bindings, "Can't define a variable in a let scope."
-
+    pass
 
 class Environment(object):
     """All variable bindings are stored in an environment. It handles
