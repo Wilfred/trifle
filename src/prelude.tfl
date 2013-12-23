@@ -5,15 +5,29 @@
   (lambda (:rest items) items)
 )
 
-; todo: write in terms of for-each
+; todo: docstring
+; todo: unit test
+; todoc
+(macro for-each (name some-list :rest body)
+  (let (index-var (fresh-symbol))
+    (quote
+      (let ((unquote index-var) 0)
+        (while (< (unquote index-var) (length (unquote some-list)))
+          (let ((unquote name) (get-index (unquote some-list) (unquote index-var)))
+            (unquote* body)
+          )
+          (set! (unquote index-var) (+ (unquote index-var) 1))
+        )
+      )
+    )
+  )
+)
+
 (set! map
   (lambda (func some-list)
-    (let (index 0
-          result (list)
-         )
-      (while (< index (length some-list))
-        (push! result (func (get-index some-list index)) index)
-        (set! index (+ index 1))
+    (let (result (list))
+      (for-each item some-list
+        (push! result (func item) (length result))
       )
       result
     )
