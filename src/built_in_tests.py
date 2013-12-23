@@ -767,6 +767,14 @@ class EvaluatingMacros(unittest.TestCase):
             Integer(1)
         )
 
+    def test_macro_rest_args(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)))))"
+                "(set! x 1) (when true (set! x 2)) x"))),
+            Integer(2)
+        )
+
     def test_macro_bad_args(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(

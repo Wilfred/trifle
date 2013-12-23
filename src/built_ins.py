@@ -127,7 +127,6 @@ class LambdaFactory(Special):
         return Lambda(parameters, lambda_body, env)
 
 
-# todo: unit test
 # todo: do we want to support anonymous macros, similar to lambda?
 # todo: expose macro expand functions to the user
 # todo: support docstrings
@@ -151,17 +150,9 @@ class DefineMacro(Special):
                 "macro name should be a symbol, but got %s" %
                 parameters.repr())
 
+        # todoc: variable number of arguments
         parameters = args[1]
-        if not isinstance(parameters, List):
-            raise TrifleTypeError(
-                "macro parameters should be a list, but got %s" %
-                parameters.repr())
-
-        for param in parameters.values:
-            if not isinstance(param, Symbol):
-                raise TrifleTypeError(
-                    "The list of parameters to macro must only contain symbols, but got %s" %
-                    param.repr())
+        check_parameters(parameters)
 
         macro_body = List()
         for arg in args[2:]:
