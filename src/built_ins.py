@@ -84,6 +84,29 @@ class Let(Special):
         return evaluate_all(list_expressions, let_env)
 
 
+def check_parameters(parameter_list):
+    """Ensure that parameter_list is a trifle list that only contains
+    variables, or :rest in the correct position.
+
+    """
+    if not isinstance(parameter_list, List):
+        raise TrifleTypeError(
+            "Parameter lists must be lists, but got: %s" % parameter_list.repr())
+    
+    for index, param in enumerate(parameter_list.values):
+        if isinstance(param, Symbol):
+            continue
+
+        if isinstance(param, Keyword):
+            if param.symbol_name == 'rest':
+                if index == len(parameter_list.values) - 2:
+                    continue
+
+        raise TrifleTypeError(
+            "Invalid parameter in parameter list: %s" %
+            param.repr())
+
+
 class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 
@@ -94,23 +117,8 @@ class LambdaFactory(Special):
                 "lambda takes at least 1 argument, but got 0.")
 
         parameters = args[0]
-        if not isinstance(parameters, List):
-            raise TrifleTypeError(
-                "The first argument to lambda should be a list, but got %s" %
-                parameters.repr())
 
-        for index, param in enumerate(parameters.values):
-            if isinstance(param, Symbol):
-                continue
-
-            if isinstance(param, Keyword):
-                if param.symbol_name == 'rest':
-                    if index == len(parameters.values) - 2:
-                        continue
-
-            raise TrifleTypeError(
-                "Invalid parameter specified for lambda: %s" %
-                param.repr())
+        check_parameters(parameters)
 
         lambda_body = List()
         for arg in args[1:]:
