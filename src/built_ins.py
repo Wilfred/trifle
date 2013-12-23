@@ -221,8 +221,6 @@ class Quote(Special):
     # todo: fix the potential stack overflow
     # todo: throw errors on (unquote two arguments!) and (unquote)
     def evaluate_unquote_calls(self, expression, env):
-        expression = deepcopy(expression)
-
         from evaluator import evaluate
         if isinstance(expression, List):
             for index, item in enumerate(copy(expression).values):
@@ -255,7 +253,7 @@ class Quote(Special):
             raise TrifleTypeError(
                 "quote takes 1 argument, but got %d." % len(args))
 
-        return self.evaluate_unquote_calls(args[0], env)
+        return self.evaluate_unquote_calls(deepcopy(args[0]), env)
 
 
 class If(Special):

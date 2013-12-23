@@ -341,16 +341,22 @@ class Quote(unittest.TestCase):
             expected)
 
     def test_unquote_star(self):
-        expected = List()
-        expected.append(Symbol('baz'))
-        expected.append(Symbol('foo'))
-        expected.append(Symbol('bar'))
+        expected = parse_one(lex("(baz foo bar)"))
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
                 "(set! x (quote (foo bar))) (quote (baz (unquote* x)))"))),
             expected)
 
+    def test_unquote_star_after_unquote(self):
+        expected = parse_one(lex("(if true (do 1 2))"))
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(set! x true) (set! y (quote (1 2)))"
+                "(quote (if (unquote x) (do (unquote* y))))"))),
+            expected)
+        
 
 class AddTest(unittest.TestCase):
     def test_add(self):
