@@ -214,6 +214,19 @@ class EvaluatingLambda(unittest.TestCase):
             Integer(2))
 
 
+class FreshSymbolTest(unittest.TestCase):
+    def test_fresh_symbol(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(
+                parse_one(lex("(fresh-symbol)"))),
+            Symbol("1-unnamed"))
+
+    def test_fresh_symbol_wrong_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(fresh-symbol 1)")))
+
+
 class Do(unittest.TestCase):
     def test_do(self):
         self.assertEqual(

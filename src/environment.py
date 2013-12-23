@@ -1,7 +1,7 @@
-from built_ins import (Add, Subtract, Multiply, LessThan,
-                       Same, Truthy, Quote, Set, Let, Do, If, While,
-                       LambdaFactory, DefineMacro, Length, GetIndex,
-                       SetIndex, Push)
+from built_ins import (Add, Subtract, Multiply, LessThan, Same,
+                       Truthy, Quote, Set, Let, Do, If, While,
+                       LambdaFactory, DefineMacro, FreshSymbol,
+                       Length, GetIndex, SetIndex, Push)
 
 
 class Scope(object):
@@ -110,4 +110,5 @@ def fresh_environment():
         'while': While(),
         'lambda': LambdaFactory(),
         'macro': DefineMacro(),
+        'fresh-symbol': FreshSymbol(),
     })])

@@ -348,6 +348,25 @@ class Same(Function):
             return FALSE
 
 
+class FreshSymbol(Function):
+    def __init__(self):
+        self.count = 1
+
+    def call(self, args):
+        if args:
+            args_list = List()
+            args_list.values = args
+            
+            # todo: print the actual arguments given
+            raise TrifleTypeError(
+                "fresh-symbol takes 0 arguments, but got: %s" % args_list.repr())
+
+        symbol_name = "%d-unnamed" % self.count
+        self.count += 1
+
+        return Symbol(symbol_name)
+
+
 class Add(Function):
     def call(self, args):
         for arg in args:
