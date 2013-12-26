@@ -13,6 +13,15 @@ the prelude very often.
 
 """
 
+class ForEachTest(unittest.TestCase):
+    def test_for_each(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("""(let (total 0 numbers (list 1 2 3 4))
+            (for-each number numbers (set! total (+ total number)))
+            total)""")), env_with_prelude()),
+            Integer(10))
+
+
 class ListTest(unittest.TestCase):
     def test_list(self):
         expected = List()
