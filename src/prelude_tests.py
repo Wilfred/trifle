@@ -2,8 +2,8 @@ import unittest
 
 from trifle_types import List, Integer, TRUE, FALSE
 from main import env_with_prelude
-from evaluator import evaluate
-from parser import parse_one
+from evaluator import evaluate, evaluate_all
+from parser import parse_one, parse
 from lexer import lex
 
 
@@ -12,6 +12,18 @@ test in Python than in Trifle, since Trifle code uses many parts of
 the prelude very often.
 
 """
+
+class IncTest(unittest.TestCase):
+    def test_inc(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(inc 5)")), env_with_prelude()),
+            Integer(6))
+
+    def test_inc_macro(self):
+        self.assertEqual(
+            evaluate_all(parse(lex("(set! x 2) (inc! x) x")), env_with_prelude()),
+            Integer(3))
+
 
 class ForEachTest(unittest.TestCase):
     def test_for_each(self):

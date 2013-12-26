@@ -11,3 +11,8 @@ Integer literals are strings of digits. Example integers are `0`,
 2. [-](Numbers-Subtract.md)
 3. [*](Numbers-Multiply.md)
 4. [>](Numbers-LessThan.md)
+5. [inc](Numbers-Inc.md)
+
+## Number macros
+
+1. [inc!](Numbers-IncMacro.md)
