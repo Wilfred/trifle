@@ -18,7 +18,6 @@
   (quote (set! (unquote x) (inc (unquote x))))
 )
 
-; todo: use inc!
 (macro for-each (name some-list :rest body)
   (let (index-var (fresh-symbol))
     (quote
@@ -27,7 +26,7 @@
           (let ((unquote name) (get-index (unquote some-list) (unquote index-var)))
             (unquote* body)
           )
-          (set! (unquote index-var) (+ (unquote index-var) 1))
+          (inc! (unquote index-var))
         )
       )
     )
