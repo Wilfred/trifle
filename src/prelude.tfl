@@ -1,11 +1,14 @@
-; todo: we should document whether functions are built-in or in the prelude.
+; todo: we should document whether functions are built-in or in the
+; prelude.
+; todo: the docs should have links to the source code where the
+; function/macro was defined.
+; todo: docstrings
 
 ; todo: write a `function` macro
 (set! list
   (lambda (:rest items) items)
 )
 
-; todo: docstring
 ; todo: use inc!
 (macro for-each (name some-list :rest body)
   (let (index-var (fresh-symbol))
