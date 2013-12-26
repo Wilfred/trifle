@@ -150,7 +150,6 @@ class DefineMacro(Special):
                 "macro name should be a symbol, but got %s" %
                 parameters.repr())
 
-        # todoc: variable number of arguments
         parameters = args[1]
         check_parameters(parameters)
 
