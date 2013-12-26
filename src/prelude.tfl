@@ -7,7 +7,6 @@
 
 ; todo: docstring
 ; todo: unit test
-; todoc
 (macro for-each (name some-list :rest body)
   (let (index-var (fresh-symbol))
     (quote

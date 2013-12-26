@@ -6,3 +6,7 @@ times.
 ## Loop special expressions
 
 1. [while](Loops-While.md)
+
+## Loop macros
+
+1. [for-each](Loops-ForEach.md)
