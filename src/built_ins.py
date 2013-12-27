@@ -163,6 +163,7 @@ class DefineMacro(Special):
         return NULL
 
 
+# todo: move to prelude
 class Do(Function):
     def call(self, args):
         if args:
