@@ -1,7 +1,7 @@
 from built_ins import (Add, Subtract, Multiply, LessThan, Same,
                        Truthy, Quote, Set, Let, Do, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
-                       Length, GetIndex, SetIndex, Push)
+                       Length, GetIndex, SetIndex, Push, Append)
 
 
 class Scope(object):
@@ -100,6 +100,7 @@ def fresh_environment():
         'get-index': GetIndex(),
         'set-index!': SetIndex(),
         'push!': Push(),
+        'append!': Append(),
         'same?': Same(),
         'truthy?': Truthy(),
         'quote': Quote(),

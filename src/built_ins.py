@@ -522,7 +522,29 @@ class SetIndex(Function):
         return NULL
 
 
-# todo: support negative indices
+class Append(Function):
+    def call(self, args):
+        if len(args) != 2:
+            args_list = List()
+            args_list.values = args
+            
+            raise TrifleTypeError(
+                "append! takes 2 arguments, but got: %s" % args_list.repr())
+
+        some_list = args[0]
+        value = args[1]
+
+        if not isinstance(some_list, List):
+            raise TrifleTypeError(
+                "the first argument to append! must be a list, but got: %s"
+                % some_list.repr())
+
+        some_list.values.append(value)
+
+        return NULL
+
+
+# todo: replace with a prelude function that uses append!
 class Push(Function):
     def call(self, args):
         if len(args) not in [2, 3]:

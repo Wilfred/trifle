@@ -691,6 +691,38 @@ class SetIndex(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(set-index! (quote (1)) 0 5 6)")))
 
 
+class AppendTest(unittest.TestCase):
+    def test_append(self):
+        expected = List()
+        expected.values = [Integer(1), Integer(2)]
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(set! x (quote (1))) (append! x 2) x"))),
+            expected)
+
+    def test_append_returns_null(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                "(append! (quote ()) 1)"))),
+            NULL)
+
+    def test_append_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(append! (quote ()))")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(append! (quote ()) 0 1)")))
+
+    def test_append_typeerror(self):
+        # first argument must be a list
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(append! null 0)")))
+
+
 class PushTest(unittest.TestCase):
     def test_push(self):
         expected = List()
