@@ -4,15 +4,21 @@
 ; function/macro was defined.
 ; todo: docstrings
 
-; todo: write a `function` macro
-(set! list
-  (lambda (:rest items) items)
+; todo: macros should probably check argument types to aid debugging
+; todoc
+; todo: unit test
+(macro function (name params :rest body)
+  (quote
+    (set! (unquote name)
+      (lambda (unquote params) (unquote* body))
+    )
+  )
 )
 
+(function list (:rest items) items)
+
 ; todo: dec and dec!
-(set! inc
-  (lambda (x) (+ x 1))
-)
+(function inc (x) (+ x 1))
 
 (macro inc! (x)
   (quote (set! (unquote x) (inc (unquote x))))
@@ -33,33 +39,31 @@
   )
 )
 
-(set! map
-  (lambda (func some-list)
-    (let (result (list))
-      (for-each item some-list
-        (push! result (func item) (length result))
-      )
-      result
+(function map (func some-list)
+  (let (result (list))
+    (for-each item some-list
+      (push! result (func item) (length result))
     )
+    result
   )
 )
 
-(set! first
-  (lambda (list) (get-index list 0))
+(function first (list)
+  (get-index list 0)
 )
-(set! second
-  (lambda (list) (get-index list 1))
+(function second (list)
+  (get-index list 1)
 )
-(set! third
-  (lambda (list) (get-index list 2))
+(function third (list)
+  (get-index list 2)
 )
-(set! fourth
-  (lambda (list) (get-index list 3))
+(function fourth (list)
+  (get-index list 3)
 )
-(set! fifth
-  (lambda (list) (get-index list 4))
+(function fifth (list)
+  (get-index list 4)
 )
 
-(set! not
-  (lambda (value) (if value false true))
+(function not (value)
+  (if value false true)
 )
