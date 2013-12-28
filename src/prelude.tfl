@@ -17,12 +17,15 @@
 
 (function list (:rest items) items)
 
-; todo: dec and dec!
 (function inc (x) (+ x 1))
 
 (macro inc! (x)
   (quote (set! (unquote x) (inc (unquote x))))
 )
+
+; todo: dec!
+; todoc
+(function dec (x) (- x 1))
 
 (macro for-each (name some-list :rest body)
   (let (index-var (fresh-symbol))
@@ -62,6 +65,11 @@
 )
 (function fifth (list)
   (get-index list 4)
+)
+
+; todoc, especially how it handles empty lists
+(function last (lst)
+  (get-index lst (dec (length lst)))
 )
 
 (function not (value)

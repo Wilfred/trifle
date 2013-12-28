@@ -25,6 +25,12 @@ class IncTest(unittest.TestCase):
             Integer(3))
 
 
+class DecTest(unittest.TestCase):
+    def test_dec(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(dec 5)")), env_with_prelude()),
+            Integer(4))
+
 class ForEachTest(unittest.TestCase):
     def test_for_each(self):
         self.assertEqual(
@@ -84,6 +90,14 @@ class NthItemTest(unittest.TestCase):
     def test_fifth(self):
         self.assertEqual(
             evaluate(parse_one(lex("(fifth (list 1 2 3 4 5))")),
+                     env_with_prelude()),
+            Integer(5))
+
+
+class LastTest(unittest.TestCase):
+    def test_last(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(last (list 1 2 3 4 5))")),
                      env_with_prelude()),
             Integer(5))
 
