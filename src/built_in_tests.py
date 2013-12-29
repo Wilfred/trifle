@@ -720,24 +720,6 @@ class PushTest(unittest.TestCase):
                 "(set! x (quote ())) (push! x 1) x"))),
             expected)
 
-    def test_push_specified_index(self):
-        expected = List()
-        expected.values = [Integer(3), Integer(10), Integer(4)]
-        
-        self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote (3 4))) (push! x 10 1) x"))),
-            expected)
-
-    def test_push_indexerror(self):
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(
-                "(push! (quote ()) 123 -1)")))
-
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(
-                "(push! (quote ()) 123 5)")))
-
     def test_push_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
@@ -751,18 +733,13 @@ class PushTest(unittest.TestCase):
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                "(push! (quote ()) 0 1 2)")))
+                "(push! (quote ()) 0 1)")))
 
     def test_push_typeerror(self):
         # first argument must be a list
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(push! null 0)")))
-
-        # third argument must be an integer
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(
-                "(push! (quote ()) 123 null)")))
 
 
 class EnvironmentVariables(unittest.TestCase):

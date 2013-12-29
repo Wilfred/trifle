@@ -538,12 +538,12 @@ class Append(Function):
 # todo: replace with a prelude function that uses append!
 class Push(Function):
     def call(self, args):
-        if len(args) not in [2, 3]:
+        if len(args) != 2:
             args_list = List()
             args_list.values = args
             
             raise TrifleTypeError(
-                "push! takes 2 or 3 arguments, but got: %s" % args_list.repr())
+                "push! takes 2 arguments, but got: %s" % args_list.repr())
 
         some_list = args[0]
         value = args[1]
@@ -553,27 +553,6 @@ class Push(Function):
                 "the first argument to push! must be a list, but got: %s"
                 % some_list.repr())
 
-        index = 0
-        if len(args) == 3:
-            specified_index = args[2]
-
-            if not isinstance(specified_index, Integer):
-                raise TrifleTypeError(
-                    "the third argument to push! must be an integer, but got: %s"
-                    % specified_index.repr())
-                
-            # todo: separate error class for index errors
-            if specified_index.value < 0 or specified_index.value > len(some_list.values):
-                raise TrifleTypeError(
-                    "the list has %d items, but you tried to push at index %d"
-                    % (len(some_list.values), specified_index.value))
-
-            index = specified_index.value
-
-        # This if test is redundant, but it keeps RPython happy since
-        # it cannot prove that index is non-negative otherwise.
-        # todo: find a way to remove it but still compile
-        if index >= 0:
-            some_list.values.insert(index, value)
+        some_list.values.insert(0, value)
 
         return NULL
