@@ -24,7 +24,6 @@
 )
 
 ; todo: dec!
-; todoc
 (function dec (x) (- x 1))
 
 (macro for-each (name some-list :rest body)

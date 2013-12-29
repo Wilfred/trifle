@@ -12,6 +12,7 @@ Integer literals are strings of digits. Example integers are `0`,
 3. [*](Numbers-Multiply.md)
 4. [>](Numbers-LessThan.md)
 5. [inc](Numbers-Inc.md)
+6. [dec](Numbers-Dec.md)
 
 ## Number macros
 
