@@ -3,7 +3,7 @@ from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
 from trifle_types import (OpenParen, CloseParen, Integer, Symbol, Keyword,
-                          TRUE, FALSE, NULL)
+                          String, TRUE, FALSE, NULL)
 from errors import LexFailed
 
 
@@ -15,6 +15,7 @@ CLOSE_PAREN = 'close-paren'
 INTEGER = 'integer'
 SYMBOL = 'symbol'
 KEYWORD = 'keyword'
+STRING = 'string'
 
 # todoc: exactly what syntax we accept for numbers and symbols
 TOKENS = [
@@ -22,6 +23,10 @@ TOKENS = [
     (COMMENT, get_code(";[^\n]*")),
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
+
+    # todoc
+    # todo: support single quoted strings
+    (STRING, get_code(r"\"[^\"\\]*\"")),
 
     # todo: it'd be nice to allow number literals with underscores,
     # e.g. 1_000_000
@@ -70,6 +75,9 @@ def lex(text):
                 elif token == KEYWORD:
                     # todoc
                     lexed_tokens.append(Keyword(text[1:match.match_end]))
+                elif token == STRING:
+                    # todoc
+                    lexed_tokens.append(String(text[1:match.match_end - 1]))
                 else:
                     assert False, "Unrecognised token '%s'" % token
                 

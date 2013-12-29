@@ -2,7 +2,7 @@ import unittest
 
 from lexer import lex
 from parser import parse_one, parse
-from trifle_types import (List, Integer, Symbol, Keyword, Lambda,
+from trifle_types import (List, Integer, Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
 from errors import UnboundVariable, TrifleTypeError, LexFailed
@@ -82,6 +82,13 @@ class KeywordLex(unittest.TestCase):
         self.assertEqual(
             lex(":x")[0], Keyword('x'))
 
+
+class StringLex(unittest.TestCase):
+    def test_lex_string(self):
+        self.assertEqual(
+            lex('"foo"')[0], String('foo'))
+
+
 class BooleanLex(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(
@@ -141,6 +148,11 @@ class EvaluatingLiterals(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(":foo"))),
             Keyword("foo"))
+
+    def test_eval_string(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex('"foo"'))),
+            String("foo"))
 
 
 class EvaluatingLambda(unittest.TestCase):

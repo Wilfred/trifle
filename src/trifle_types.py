@@ -94,6 +94,23 @@ class Keyword(TrifleType):
         self.symbol_name = symbol_name
 
 
+class String(TrifleType):
+    def repr(self):
+        return '"%s"' % self.string
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.string)
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.string == other.string
+
+    def __init__(self, string):
+        self.string = string
+
+
 class List(TrifleType):
     def __init__(self, values=None):
         if values is None:
