@@ -44,7 +44,7 @@
 (function map (func some-list)
   (let (result (list))
     (for-each item some-list
-      (push! result (func item) (length result))
+      (append! result (func item))
     )
     result
   )
