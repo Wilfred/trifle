@@ -77,7 +77,13 @@ def lex(text):
                     lexed_tokens.append(Keyword(text[1:match.match_end]))
                 elif token == STRING:
                     # todoc
-                    lexed_tokens.append(String(text[1:match.match_end - 1]))
+                    string_end = match.match_end - 1
+
+                    # This is always true, but RPython doesn't support
+                    # negative indexes on slices and can't prove the
+                    # slice is non-negative.
+                    if string_end >= 0:
+                        lexed_tokens.append(String(text[1:string_end]))
                 else:
                     assert False, "Unrecognised token '%s'" % token
                 
