@@ -72,6 +72,12 @@
   (get-index lst (dec (length lst)))
 )
 
+(function do (:rest args)
+  (if args
+    (last args)
+  )
+)
+
 (function not (value)
   (if value false true)
 )

@@ -1,6 +1,6 @@
 import unittest
 
-from trifle_types import List, Integer, TRUE, FALSE
+from trifle_types import List, Integer, TRUE, FALSE, NULL
 from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
 from parser import parse_one, parse
@@ -12,6 +12,18 @@ test in Python than in Trifle, since Trifle code uses many parts of
 the prelude very often.
 
 """
+
+class DoTest(unittest.TestCase):
+    def test_do(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(do 1 2)")), env_with_prelude()),
+            Integer(2))
+
+    def test_do_no_args(self):
+        self.assertEqual(
+            evaluate(parse_one(lex("(do)")), env_with_prelude()),
+            NULL)
+
 
 class IncTest(unittest.TestCase):
     def test_inc(self):

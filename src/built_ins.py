@@ -163,15 +163,6 @@ class DefineMacro(Special):
         return NULL
 
 
-# todo: move to prelude
-class Do(Function):
-    def call(self, args):
-        if args:
-            return args[-1]
-        else:
-            return NULL
-
-
 # todo: it would be nice to define this as a trifle macro using a quote primitive
 # (e.g. elisp defines backquote in terms of quote)
 class Quote(Special):

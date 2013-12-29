@@ -1,5 +1,5 @@
 from built_ins import (Add, Subtract, Multiply, LessThan, Same,
-                       Truthy, Quote, Set, Let, Do, If, While,
+                       Truthy, Quote, Set, Let, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
                        Length, GetIndex, SetIndex, Push, Append)
 
@@ -106,7 +106,6 @@ def fresh_environment():
         'quote': Quote(),
         'set!': Set(),
         'let': Let(),
-        'do': Do(),
         'if': If(),
         'while': While(),
         'lambda': LambdaFactory(),

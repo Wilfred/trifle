@@ -7,6 +7,7 @@ from trifle_types import (List, Integer, Symbol, Keyword, Lambda,
 from evaluator import evaluate, evaluate_all
 from errors import UnboundVariable, TrifleTypeError, LexFailed
 from environment import Environment, Scope, fresh_environment
+from main import env_with_prelude
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -225,20 +226,6 @@ class FreshSymbolTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
                 parse_one(lex("(fresh-symbol 1)")))
-
-
-class Do(unittest.TestCase):
-    def test_do(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(
-                parse_one(lex("(do 1 2)"))),
-            Integer(2))
-
-    def test_do_no_args(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(
-                parse_one(lex("(do)"))),
-            NULL)
 
 
 class Set(unittest.TestCase):
@@ -801,9 +788,9 @@ class EvaluatingMacros(unittest.TestCase):
 
     def test_macro_rest_args(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
+            evaluate_all(parse(lex(
                 "(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)))))"
-                "(set! x 1) (when true (set! x 2)) x"))),
+                "(set! x 1) (when true (set! x 2)) x")), env_with_prelude()),
             Integer(2)
         )
 
