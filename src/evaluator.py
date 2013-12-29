@@ -74,8 +74,7 @@ def build_scope(parameters, values):
     # todo: consistently use the terms 'parameters' and 'arguments'
     if varargs:
         # Create a Trifle list of any remaining arguments.
-        remaining_args = List()
-        remaining_args.values = values[len(normal_parameters):]
+        remaining_args = List(values[len(normal_parameters):])
 
         # Assign it to the variable args symbol.
         scope.set(parameters.values[-1].symbol_name, remaining_args)

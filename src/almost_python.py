@@ -37,11 +37,9 @@ def deepcopy(value):
 
     """
     if isinstance(value, List):
-        copied_list = List()
-        copied_list.values = [
+        return List([
             deepcopy(item) for item in value.values
-        ]
-        return copied_list
+        ])
     else:
         return value
 
@@ -51,10 +49,6 @@ def copy(value):
 
     """
     if isinstance(value, List):
-        copied_list = List()
-        copied_list.values = [
-            item for item in value.values
-        ]
-        return copied_list
+        return List([item for item in value.values])
     else:
         return value

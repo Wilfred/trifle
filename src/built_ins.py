@@ -31,20 +31,15 @@ class Set(Special):
 class Let(Special):
     def call(self, args, env):
         if not args:
-            # todo: could we pass list elements in List's constructor?
-            list_args = List()
-            list_args.values = args
-            
             raise TrifleTypeError(
-                "let takes at least 1 argument, but got: %s" % list_args.repr())
+                "let takes at least 1 argument, but got: %s" % List(args).repr())
 
         bindings = args[0]
         expressions = args[1:]
 
         # todo: it would be easier if we passed List objects around,
         # and implemented a slice method on them.
-        list_expressions = List()
-        list_expressions.values = expressions
+        list_expressions = List(expressions)
 
         if not isinstance(bindings, List):
             raise TrifleTypeError(
@@ -120,10 +115,7 @@ class LambdaFactory(Special):
 
         check_parameters(parameters)
 
-        lambda_body = List()
-        for arg in args[1:]:
-            lambda_body.append(arg)
-        
+        lambda_body = List(args[1:])
         return Lambda(parameters, lambda_body, env)
 
 
@@ -153,10 +145,7 @@ class DefineMacro(Special):
         parameters = args[1]
         check_parameters(parameters)
 
-        macro_body = List()
-        for arg in args[2:]:
-            macro_body.append(arg)
-
+        macro_body = List(args[2:])
         env.set_global(macro_name.symbol_name,
                        Macro(parameters, macro_body))
 
@@ -342,12 +331,8 @@ class FreshSymbol(Function):
 
     def call(self, args):
         if args:
-            args_list = List()
-            args_list.values = args
-            
-            # todo: print the actual arguments given
             raise TrifleTypeError(
-                "fresh-symbol takes 0 arguments, but got: %s" % args_list.repr())
+                "fresh-symbol takes 0 arguments, but got: %s" % List(args).repr())
 
         symbol_name = "%d-unnamed" % self.count
         self.count += 1
@@ -431,11 +416,8 @@ class LessThan(Function):
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
-            args_list = List()
-            args_list.values = args
-            
             raise TrifleTypeError(
-                "get-index takes 2 arguments, but got: %s" % args_list.repr())
+                "get-index takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         index = args[1]
@@ -462,11 +444,8 @@ class GetIndex(Function):
 class Length(Function):
     def call(self, args):
         if len(args) != 1:
-            args_list = List()
-            args_list.values = args
-            
             raise TrifleTypeError(
-                "length takes 1 argument, but got: %s" % args_list.repr())
+                "length takes 1 argument, but got: %s" % List(args).repr())
 
         some_list = args[0]
 
@@ -482,11 +461,8 @@ class Length(Function):
 class SetIndex(Function):
     def call(self, args):
         if len(args) != 3:
-            args_list = List()
-            args_list.values = args
-            
             raise TrifleTypeError(
-                "set-index! takes 3 arguments, but got: %s" % args_list.repr())
+                "set-index! takes 3 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         index = args[1]
@@ -516,11 +492,8 @@ class SetIndex(Function):
 class Append(Function):
     def call(self, args):
         if len(args) != 2:
-            args_list = List()
-            args_list.values = args
-            
             raise TrifleTypeError(
-                "append! takes 2 arguments, but got: %s" % args_list.repr())
+                "append! takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         value = args[1]
@@ -539,11 +512,8 @@ class Append(Function):
 class Push(Function):
     def call(self, args):
         if len(args) != 2:
-            args_list = List()
-            args_list.values = args
-            
             raise TrifleTypeError(
-                "push! takes 2 arguments, but got: %s" % args_list.repr())
+                "push! takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         value = args[1]

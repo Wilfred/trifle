@@ -107,12 +107,8 @@ class NullLex(unittest.TestCase):
 
 class Parsing(unittest.TestCase):
     def test_parse_list(self):
-        expected_parse_tree = List()
-        expected_parse_tree.append(Integer(1))
-        expected_parse_tree.append(Integer(2))
-
         self.assertEqual(parse_one(lex("(1 2)")),
-                         expected_parse_tree)
+                         List([Integer(1), Integer(2)]))
 
 
 class Evaluating(unittest.TestCase):
@@ -155,8 +151,7 @@ class EvaluatingLambda(unittest.TestCase):
             Integer(1))
 
     def test_call_lambda_variable_arguments(self):
-        expected = List()
-        expected.values = [Integer(1), Integer(2), Integer(3), Integer(4)]
+        expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
         
         self.assertEqual(
             evaluate_with_fresh_env(
@@ -318,9 +313,7 @@ class Quote(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(quote foo bar)")))
 
     def test_unquote(self):
-        expected = List()
-        expected.append(Symbol('x'))
-        expected.append(Integer(1))
+        expected = List([Symbol('x'), Integer(1)])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
@@ -633,8 +626,7 @@ class GetIndex(unittest.TestCase):
 
 class SetIndex(unittest.TestCase):
     def test_set_index(self):
-        expected = List()
-        expected.values = [Integer(1)]
+        expected = List([Integer(1)])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
@@ -680,8 +672,7 @@ class SetIndex(unittest.TestCase):
 
 class AppendTest(unittest.TestCase):
     def test_append(self):
-        expected = List()
-        expected.values = [Integer(1), Integer(2)]
+        expected = List([Integer(1), Integer(2)])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
@@ -712,8 +703,7 @@ class AppendTest(unittest.TestCase):
 
 class PushTest(unittest.TestCase):
     def test_push(self):
-        expected = List()
-        expected.values = [Integer(1)]
+        expected = List([Integer(1)])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(

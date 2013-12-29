@@ -95,8 +95,11 @@ class Keyword(TrifleType):
 
 
 class List(TrifleType):
-    def __init__(self):
-        self.values = []
+    def __init__(self, values=None):
+        if values is None:
+            self.values = []
+        else:
+            self.values = values
 
     def append(self, value):
         self.values.append(value)

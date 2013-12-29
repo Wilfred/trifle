@@ -54,8 +54,7 @@ class ForEachTest(unittest.TestCase):
 
 class ListTest(unittest.TestCase):
     def test_list(self):
-        expected = List()
-        expected.values = [Integer(1), Integer(2), Integer(3)]
+        expected = List([Integer(1), Integer(2), Integer(3)])
 
         self.assertEqual(
             evaluate(parse_one(lex("(list 1 2 3)")),
@@ -65,8 +64,7 @@ class ListTest(unittest.TestCase):
 
 class MapTest(unittest.TestCase):
     def test_map(self):
-        expected = List()
-        expected.values = [Integer(2), Integer(3), Integer(4)]
+        expected = List([Integer(2), Integer(3), Integer(4)])
 
         self.assertEqual(
             evaluate(parse_one(lex("(map (lambda (x) (+ x 1)) (list 1 2 3))")),
