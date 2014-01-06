@@ -35,4 +35,7 @@ null
 
 ## Variable special expressions
 
-1. [Set](Variables-Set.md)
+1. [set-symbol!](Variables-SetSymbol.md)
+
+## Variable macros
+1. [set!](Variables-Set.md)

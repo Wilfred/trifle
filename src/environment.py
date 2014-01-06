@@ -1,5 +1,5 @@
 from built_ins import (Add, Subtract, Multiply, LessThan, Same,
-                       Truthy, Quote, Set, Let, If, While,
+                       Truthy, Quote, Set, SetSymbol, Let, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
                        Length, GetIndex, SetIndex, Push, Append)
 
@@ -105,6 +105,7 @@ def fresh_environment():
         'truthy?': Truthy(),
         'quote': Quote(),
         'set!': Set(),
+        'set-symbol!': SetSymbol(),
         'let': Let(),
         'if': If(),
         'while': While(),

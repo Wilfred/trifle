@@ -4,6 +4,28 @@ from errors import TrifleTypeError
 from almost_python import deepcopy, copy
 
 
+class SetSymbol(Special):
+    def call(self, args, env):
+        if len(args) != 2:
+            # todo: separate error for argument number vs type
+            raise TrifleTypeError(
+                "set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
+
+        from evaluator import evaluate
+        variable_name = evaluate(args[0], env)
+        variable_value = evaluate(args[1], env)
+
+        if not isinstance(variable_name, Symbol):
+            raise TrifleTypeError(
+                "The first argument to set-symbol! must be a symbol, but got: %s"
+                % variable_name.repr())
+
+        from evaluator import evaluate
+        env.set(variable_name.symbol_name, evaluate(variable_value, env))
+
+        return NULL
+
+
 # todo: rewrite this as a macro that calls set-symbol!
 class Set(Special):
     def call(self, args, env):

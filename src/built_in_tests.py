@@ -261,6 +261,30 @@ class Set(unittest.TestCase):
             NULL)
 
 
+class SetSymbol(unittest.TestCase):
+    def test_set_symbol(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(
+                parse(lex("(set-symbol! (quote x) 1) x"))),
+            Integer(1))
+
+    def test_set_symbol_wrong_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(set-symbol! (quote x) 1 2)")))
+
+    def test_set_symbol_returns_null(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(
+                parse_one(lex("(set-symbol! (quote x) 1)"))),
+            NULL)
+
+    def test_set_symbol_first_arg_symbol(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(set-symbol! 1 2)")))
+
+
 class LetTest(unittest.TestCase):
     def test_let(self):
         self.assertEqual(
