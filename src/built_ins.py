@@ -1,7 +1,8 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
-                          Boolean, TRUE, FALSE, NULL, Symbol, Keyword)
+                          Boolean, TRUE, FALSE, NULL, Symbol)
 from errors import TrifleTypeError
 from almost_python import deepcopy, copy
+from parameters import validate_parameters
 
 
 class SetSymbol(Special):
@@ -77,29 +78,6 @@ class Let(Special):
         return evaluate_all(list_expressions, let_env)
 
 
-def check_parameters(parameter_list):
-    """Ensure that parameter_list is a trifle list that only contains
-    variables, or :rest in the correct position.
-
-    """
-    if not isinstance(parameter_list, List):
-        raise TrifleTypeError(
-            "Parameter lists must be lists, but got: %s" % parameter_list.repr())
-    
-    for index, param in enumerate(parameter_list.values):
-        if isinstance(param, Symbol):
-            continue
-
-        if isinstance(param, Keyword):
-            if param.symbol_name == 'rest':
-                if index == len(parameter_list.values) - 2:
-                    continue
-
-        raise TrifleTypeError(
-            "Invalid parameter in parameter list: %s" %
-            param.repr())
-
-
 class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 
@@ -111,7 +89,7 @@ class LambdaFactory(Special):
 
         parameters = args[0]
 
-        check_parameters(parameters)
+        validate_parameters(parameters)
 
         lambda_body = List(args[1:])
         return Lambda(parameters, lambda_body, env)
@@ -141,7 +119,7 @@ class DefineMacro(Special):
                 parameters.repr())
 
         parameters = args[1]
-        check_parameters(parameters)
+        validate_parameters(parameters)
 
         macro_body = List(args[2:])
         env.set_global(macro_name.symbol_name,
