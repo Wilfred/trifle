@@ -47,6 +47,10 @@ class IntegerLex(unittest.TestCase):
         self.assertEqual(
             lex("-123")[0], Integer(-123))
 
+    def test_lex_number_with_underscores(self):
+        self.assertEqual(
+            lex("1_000")[0], Integer(1000))
+
     def test_lex_zero(self):
         self.assertEqual(
             lex("0")[0], Integer(0))

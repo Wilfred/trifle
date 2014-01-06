@@ -3,7 +3,8 @@
 Trifle currently only supports integers.
 
 Integer literals are strings of digits. Example integers are `0`,
-`1234` and `-999999`.
+`1234` and `-999999`. You may also use underscores to group digits,
+e.g. `1_000_000`.
 
 ## Number functions
 

@@ -28,9 +28,9 @@ TOKENS = [
     # todo: support single quoted strings
     (STRING, get_code(r"\"[^\"\\]*\"")),
 
-    # todo: it'd be nice to allow number literals with underscores,
-    # e.g. 1_000_000
-    (INTEGER, get_code('-?[0-9]+')),
+    # todoc: underscores
+    # todo: support 0x123, 0o123
+    (INTEGER, get_code('-?[0-9_]+')),
 
     # note this captures 'true' and 'false' too
     (SYMBOL, get_code('[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
@@ -57,7 +57,13 @@ def lex(text):
                 elif token == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
                 elif token == INTEGER:
-                    lexed_tokens.append(Integer(int(text[:match.match_end])))
+                    integer_chars = []
+                    for char in text[:match.match_end]:
+                        if char != '_':
+                            integer_chars.append(char)
+
+                    integer_string = "".join(integer_chars)
+                    lexed_tokens.append(Integer(int(integer_string)))
                 elif token == SYMBOL:
                     # We deliberately treat `true`, `false` and `null`
                     # as literals rather than just variables defined.
