@@ -13,6 +13,20 @@ the prelude very often.
 
 """
 
+class Set(unittest.TestCase):
+    def test_set(self):
+        self.assertEqual(
+            evaluate_all(
+                parse(lex("(set! x 1) x")), env_with_prelude()),
+            Integer(1))
+
+    def test_set_returns_null(self):
+        self.assertEqual(
+            evaluate(
+                parse_one(lex("(set! x 1)")), env_with_prelude()),
+            NULL)
+
+
 class DoTest(unittest.TestCase):
     def test_do(self):
         self.assertEqual(

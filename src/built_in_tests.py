@@ -212,12 +212,12 @@ class EvaluatingLambda(unittest.TestCase):
         """
         self.assertEqual(
             evaluate_with_fresh_env(
-                parse_one(lex("((lambda () (set! x 2) x))"))),
+                parse_one(lex("((lambda () (set-symbol! (quote x) 2) x))"))),
             Integer(2))
 
         with self.assertRaises(UnboundVariable):
             evaluate_with_fresh_env(
-                parse_one(lex("((lambda () (set! x 2)) x)")))
+                parse_one(lex("((lambda () (set-symbol! (quote x) 2)) x)")))
 
     def test_closure_variables(self):
         """Ensure that we can update closure variables inside a lambda.
@@ -225,7 +225,7 @@ class EvaluatingLambda(unittest.TestCase):
         """
         self.assertEqual(
             evaluate_all_with_fresh_env(
-                parse(lex("(set! x 1) ((lambda () (set! x 2))) x"))),
+                parse(lex("(set-symbol! (quote x) 1) ((lambda () (set-symbol! (quote x) 2))) x"))),
             Integer(2))
 
 
@@ -240,25 +240,6 @@ class FreshSymbolTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
                 parse_one(lex("(fresh-symbol 1)")))
-
-
-class Set(unittest.TestCase):
-    def test_set(self):
-        self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex("(set! x 1) x"))),
-            Integer(1))
-
-    def test_set_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(
-                parse_one(lex("(set! x 1 2)")))
-
-    def test_set_returns_null(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(
-                parse_one(lex("(set! x 1)"))),
-            NULL)
 
 
 class SetSymbol(unittest.TestCase):
@@ -325,7 +306,7 @@ class LetTest(unittest.TestCase):
         self.assertEqual(
             evaluate_all_with_fresh_env(
                 parse(lex(
-                    "(set! x 1) (let (x 2) (set! x 3)) x"))),
+                    "(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"))),
             Integer(1))
 
     def test_let_not_function_scope(self):
@@ -336,7 +317,7 @@ class LetTest(unittest.TestCase):
         self.assertEqual(
             evaluate_all_with_fresh_env(
                 parse(lex(
-                    "(let () (set! x 3)) x"))),
+                    "(let () (set-symbol! (quote x) 3)) x"))),
             Integer(3))
 
 
@@ -360,7 +341,7 @@ class Quote(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x 1) (quote (x (unquote x)))"))),
+                "(set-symbol! (quote x) 1) (quote (x (unquote x)))"))),
             expected)
 
     def test_unquote_star(self):
@@ -368,7 +349,7 @@ class Quote(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote (foo bar))) (quote (baz (unquote* x)))"))),
+                "(set-symbol! (quote x) (quote (foo bar))) (quote (baz (unquote* x)))"))),
             expected)
 
     def test_unquote_star_after_unquote(self):
@@ -376,7 +357,7 @@ class Quote(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x true) (set! y (quote (1 2)))"
+                "(set-symbol! (quote x) true) (set-symbol! (quote y) (quote (1 2)))"
                 "(quote (if (unquote x) (do (unquote* y))))"))),
             expected)
         
@@ -452,7 +433,7 @@ class If(unittest.TestCase):
         self.assertEqual(
             # An empty list is falsey.
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote ())) (if x 2 3)"))),
+                "(set-symbol! (quote x) (quote ())) (if x 2 3)"))),
             Integer(3))
 
     def test_if_wrong_number_of_args(self):
@@ -514,7 +495,9 @@ class While(unittest.TestCase):
         # not evaluate the body here.
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x true) (set! y 1) (while x (set! x false) (set! y 2)) y"))),
+                "(set-symbol! (quote x) true) (set-symbol! (quote y) 1)"
+                "(while x (set-symbol! (quote x) false) (set-symbol! (quote y) 2))"
+                "y"))),
             Integer(2))
         
     def test_while_wrong_number_of_args(self):
@@ -560,7 +543,7 @@ class Same(unittest.TestCase):
 
     def test_list_same(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex("(set! x (quote ())) (same? x x)"))),
+            evaluate_all_with_fresh_env(parse(lex("(set-symbol! (quote x) (quote ())) (same? x x)"))),
             TRUE)
 
     def test_function_same(self):
@@ -570,7 +553,7 @@ class Same(unittest.TestCase):
 
     def test_lambda_same(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex("(set! x (lambda () 1)) (same? x x)"))),
+            evaluate_all_with_fresh_env(parse(lex("(set-symbol! (quote x) (lambda () 1)) (same? x x)"))),
             TRUE)
 
     def test_special_same(self):
@@ -673,7 +656,7 @@ class SetIndex(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote (0))) (set-index! x 0 1) x"))),
+                "(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"))),
             expected)
 
     def test_set_index_returns_null(self):
@@ -719,7 +702,7 @@ class AppendTest(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote (1))) (append! x 2) x"))),
+                "(set-symbol! (quote x) (quote (1))) (append! x 2) x"))),
             expected)
 
     def test_append_returns_null(self):
@@ -750,7 +733,7 @@ class PushTest(unittest.TestCase):
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(set! x (quote ())) (push! x 1) x"))),
+                "(set-symbol! (quote x) (quote ())) (push! x 1) x"))),
             expected)
 
     def test_push_returns_null(self):
@@ -792,7 +775,7 @@ class EvaluatingMacros(unittest.TestCase):
     def test_macro(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                "(macro just-x (ignored-arg) (quote x)) (set! x 1) (just-x y)"))),
+                "(macro just-x (ignored-arg) (quote x)) (set-symbol! (quote x) 1) (just-x y)"))),
             Integer(1)
         )
 
@@ -800,7 +783,7 @@ class EvaluatingMacros(unittest.TestCase):
         self.assertEqual(
             evaluate_all(parse(lex(
                 "(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)))))"
-                "(set! x 1) (when true (set! x 2)) x")), env_with_prelude()),
+                "(set-symbol! (quote x) 1) (when true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
             Integer(2)
         )
 

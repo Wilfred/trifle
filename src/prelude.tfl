@@ -4,7 +4,14 @@
 ; function/macro was defined.
 ; todo: docstrings
 
-; todo: macros should probably check argument types to aid debugging
+; todo: macros should check argument types to aid debugging
+(macro set! (symbol value)
+  (quote
+    (set-symbol! (quote (unquote symbol)) (unquote value))
+  )
+)
+
+; todo: macros should check argument types to aid debugging
 ; todoc
 ; todo: unit test
 (macro function (name params :rest body)

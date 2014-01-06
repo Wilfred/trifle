@@ -20,30 +20,6 @@ class SetSymbol(Special):
                 "The first argument to set-symbol! must be a symbol, but got: %s"
                 % variable_name.repr())
 
-        from evaluator import evaluate
-        env.set(variable_name.symbol_name, evaluate(variable_value, env))
-
-        return NULL
-
-
-# todo: rewrite this as a macro that calls set-symbol!
-class Set(Special):
-    def call(self, args, env):
-        if len(args) != 2:
-            # todo: print the actual arguments given
-            # todo: separate error for argument number vs type
-            raise TrifleTypeError(
-                "set! takes 2 arguments, but got %d." % len(args))
-
-        variable_name = args[0]
-        variable_value = args[1]
-
-        if not isinstance(variable_name, Symbol):
-            raise TrifleTypeError(
-                "The first argument to set! must be a symbol, but got %s."
-                % variable_name.repr())
-
-        from evaluator import evaluate
         env.set(variable_name.symbol_name, variable_value)
 
         return NULL
