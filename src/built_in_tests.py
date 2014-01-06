@@ -803,7 +803,3 @@ class EvaluatingMacros(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(macro 123 (bar))")))
-
-
-if __name__ == '__main__':
-    unittest.main()
