@@ -70,6 +70,9 @@ class SymbolLex(unittest.TestCase):
             lex("foo!")[0], Symbol('foo!'))
 
         self.assertEqual(
+            lex("foo_bar")[0], Symbol('foo_bar'))
+
+        self.assertEqual(
             lex("<=")[0], Symbol('<='))
 
     def test_lex_invalid_symbol(self):
