@@ -3,10 +3,10 @@
 `(if CONDITION THEN)`
 `(if CONDITION THEN ELSE)`
 
-The macro `if` takes two or three arguments. If the condition
-evaluates to a [truthy](Booleans-Truthy.md) value, the THEN expression is
-evaluated and returned. Otherwise, the ELSE expression is evaluated
-and returned.
+The special expression `if` takes two or three arguments. If the
+condition evaluates to a [truthy](Booleans-Truthy.md) value, the THEN
+expression is evaluated and returned. Otherwise, the ELSE expression
+is evaluated and returned.
 
 If no ELSE expression is given, `if` returns `null`.
 
