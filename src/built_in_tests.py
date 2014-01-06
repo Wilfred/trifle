@@ -265,8 +265,8 @@ class SetSymbol(unittest.TestCase):
     def test_set_symbol(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(
-                parse(lex("(set-symbol! (quote x) 1) x"))),
-            Integer(1))
+                parse(lex("(set-symbol! (quote x) (quote y)) x"))),
+            Symbol("y"))
 
     def test_set_symbol_wrong_arg_number(self):
         with self.assertRaises(TrifleTypeError):
