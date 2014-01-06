@@ -4,6 +4,7 @@ from trifle_types import (List, Symbol, Integer, Null, NULL,
 from errors import UnboundVariable, TrifleTypeError
 from almost_python import zip
 from environment import Scope
+from parameters import is_variable_arity, check_parameters
 
 
 def evaluate_all(expressions, environment):
@@ -29,6 +30,7 @@ def evaluate(expression, environment):
         return evaluate_value(expression, environment)
 
 
+# todo: this would be simpler if `values` was also a trifle List
 def build_scope(parameters, values):
     """Build a single scope where every value in values (a python list) is
     bound to a symbol according to the parameters List given.
@@ -37,11 +39,7 @@ def build_scope(parameters, values):
     are passed a list in the named parameter.
 
     """
-    varargs = False
-    if len(parameters.values) >= 2:
-        if isinstance(parameters.values[-2], Keyword) and \
-           parameters.values[-2].symbol_name == 'rest':
-            varargs = True
+    varargs = is_variable_arity(parameters)
 
     if varargs:
         # The only negative slice supported by RPython is -1, so we
@@ -49,22 +47,9 @@ def build_scope(parameters, values):
         normal_parameters = parameters.values[:-1][:-1]
     else:
         normal_parameters = parameters.values
-    
+
     # Ensure we have the right number of arguments:
-    # TODO: optional arguments
-    if len(normal_parameters) > len(values):
-        # todo: unit test this error for both lambda and macros
-        # todo: say what parameters we expected
-        if varargs:
-            raise TrifleTypeError("expected at least %d argument%s, but got %d" %
-                                  (len(normal_parameters),
-                                   "s" if len(normal_parameters) > 1 else "",
-                                   len(values)))
-        else:
-            raise TrifleTypeError("expected %d argument%s, but got %d" %
-                                  (len(normal_parameters),
-                                   "s" if len(normal_parameters) > 1 else "",
-                                   len(values)))
+    check_parameters(parameters, List(values))
 
     scope = Scope({})
     for variable, value in zip(normal_parameters, values):

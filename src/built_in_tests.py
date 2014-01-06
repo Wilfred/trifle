@@ -5,7 +5,7 @@ from parser import parse_one, parse
 from trifle_types import (List, Integer, Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
-from errors import UnboundVariable, TrifleTypeError, LexFailed
+from errors import UnboundVariable, TrifleTypeError, LexFailed, ArityError
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -177,10 +177,20 @@ class EvaluatingLambda(unittest.TestCase):
                 parse_one(lex("((lambda (:rest args) args) 1 2 3 4)"))),
             expected)
 
+    def test_call_lambda_too_few_arguments(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("((lambda (x) 1))")))
+
     def test_call_lambda_too_few_variable_arguments(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("((lambda (x y :rest args) x))")))
+
+    def test_call_lambda_too_many_arguments(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("((lambda () 1) 2)")))
 
     def test_lambda_wrong_arg_number(self):
         with self.assertRaises(TrifleTypeError):
@@ -778,6 +788,16 @@ class EvaluatingMacros(unittest.TestCase):
                 "(macro just-x (ignored-arg) (quote x)) (set-symbol! (quote x) 1) (just-x y)"))),
             Integer(1)
         )
+
+    def test_call_macro_too_few_args(self):
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(macro ignore (x) null) (ignore 1 2)")))
+
+    def test_call_macro_too_many_args(self):
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(macro ignore (x) null) (ignore)")))
 
     def test_macro_rest_args(self):
         self.assertEqual(

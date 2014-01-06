@@ -1,5 +1,5 @@
 from trifle_types import List, Symbol, Keyword
-from errors import TrifleTypeError
+from errors import TrifleTypeError, ArityError
 
 
 def validate_parameters(parameter_list):
@@ -25,3 +25,35 @@ def validate_parameters(parameter_list):
             param.repr())
 
 
+def is_variable_arity(parameter_list):
+    if len(parameter_list.values) < 2:
+        return False
+
+    penultimate_param = parameter_list.values[-2]
+    if isinstance(penultimate_param, Keyword):
+        if penultimate_param.symbol_name == 'rest':
+            return True
+
+    return False
+
+
+# todo: optional arguments (due to default values), keyword arguments
+def check_parameters(parameter_list, given_args):
+    """Ensure that we have been given sufficient arguments for this
+    parameter list.
+
+    """
+    if is_variable_arity(parameter_list):
+        minimum_args = len(parameter_list.values) - 2
+        if len(given_args.values) < minimum_args:
+            # todo: can we say *what* was expecting these arguments?
+            raise ArityError("Expected at least %d argument%s, but got %d." %
+                             (minimum_args,
+                              "s" if minimum_args > 1 else "",
+                              len(given_args.values)))
+    else:
+        if len(parameter_list.values) != len(given_args.values):
+            raise ArityError("Expected %d argument%s, but got %d." %
+                             (len(parameter_list.values),
+                              "s" if len(parameter_list.values) > 1 else "",
+                              len(given_args.values)))

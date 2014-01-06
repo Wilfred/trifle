@@ -28,3 +28,7 @@ class UnboundVariable(TrifleError):
 # Python already has a 'TypeError' exception
 class TrifleTypeError(TrifleError):
     pass
+
+
+class ArityError(TrifleError):
+    pass
