@@ -1,3 +1,8 @@
+; The Trifle prelude. These are functions and macros that are included
+; in every namespace. Functions are written without error checking, as
+; tracebacks should be clear enough. Macros are written more
+; defensively.
+
 ; todo: we should document whether functions are built-in or in the
 ; prelude.
 ; todo: the docs should have links to the source code where the
