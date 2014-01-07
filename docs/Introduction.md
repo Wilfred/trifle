@@ -20,13 +20,14 @@ otherwise.
 2.3. [Null](Null.md)  
 2.4. [Symbols](Symbols.md)  
 2.5. [Lists](Lists.md)  
-2.6. [Variables](Variables.md)  
-2.7. [Loops](Loops.md)  
-2.8. [Functions](Functions.md)  
-2.9. [Evaluation](Evaluation.md)  
-2.10. [Special Expressions](Special-Expressions.md)  
-2.11. [Macros](Macros.md)  
-2.12. [Comments](Comments.md)  
+2.6. [Strings](Strings.md)  
+2.7. [Variables](Variables.md)  
+2.8. [Loops](Loops.md)  
+2.9. [Functions](Functions.md)  
+2.10. [Evaluation](Evaluation.md)  
+2.11. [Special Expressions](Special-Expressions.md)  
+2.12. [Macros](Macros.md)  
+2.13. [Comments](Comments.md)  
 
 ### Contributing
 
