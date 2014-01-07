@@ -95,6 +95,9 @@ class StringLex(unittest.TestCase):
         self.assertEqual(
             lex('"foo"')[0], String('foo'))
 
+        self.assertEqual(
+            lex('"foo\nbar"')[0], String('foo\nbar'))
+
 
 class BooleanLex(unittest.TestCase):
     def test_lex_boolean(self):
