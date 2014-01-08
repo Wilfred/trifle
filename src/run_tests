@@ -1,3 +1,5 @@
 #!/bin/bash
 
-PYTHONPATH=pypy python2 tests.py
+set -x
+
+PYTHONPATH=pypy nosetests

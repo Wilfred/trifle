@@ -25,5 +25,8 @@ results and errors easier. You can run the tests with:
 
 ```bash
 $ cd src
+$ mkdir -p ~/.envs
+$ virtualenv -p python2.7 ~/.envs/trifle --system-site-packages
+$ pip install nose
 $ ./run_tests
 ```
