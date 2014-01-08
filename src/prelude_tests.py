@@ -3,7 +3,7 @@ import unittest
 from trifle_types import List, Integer, TRUE, FALSE, NULL
 from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
-from parser import parse_one, parse
+from trifle_parser import parse_one, parse
 from lexer import lex
 
 

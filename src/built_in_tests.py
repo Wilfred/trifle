@@ -1,7 +1,7 @@
 import unittest
 
 from lexer import lex
-from parser import parse_one, parse
+from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all

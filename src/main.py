@@ -4,7 +4,7 @@ import os
 from rpython.rtyper.module.ll_os_environ import getenv_llimpl
 
 from lexer import lex
-from parser import parse
+from trifle_parser import parse
 from evaluator import evaluate_all
 from errors import TrifleError
 from environment import fresh_environment

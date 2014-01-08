@@ -1,3 +1,6 @@
+# There's already a 'parser' in the standard library, so we're forced
+# to call this trifle_parser.py.
+
 from trifle_types import List, OpenParen, CloseParen
 from errors import ParseFailed
 
