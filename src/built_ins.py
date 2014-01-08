@@ -1,5 +1,5 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
-                          Boolean, TRUE, FALSE, NULL, Symbol)
+                          Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError
 from almost_python import deepcopy, copy
 from parameters import validate_parameters
@@ -269,6 +269,24 @@ class While(Special):
 
             for arg in args[1:]:
                 evaluate(arg, env)
+
+        return NULL
+
+
+# todo: implement in prelude in terms of writing to stdout
+# todo: just print a newline if called without any arguments.
+# todo: allow a separator argument, Python 3 style
+# todo: this should be documented under IO, not strings
+class Print(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise TrifleTypeError(
+                "print takes 1 argument, but got %s." % List(args).repr())
+
+        if isinstance(args[0], String):
+            print args[0].string
+        else:
+            print args[0].repr()
 
         return NULL
 

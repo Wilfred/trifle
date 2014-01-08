@@ -7,3 +7,7 @@ String literals consist of characters between double quotes,
 e.g. `"blacmange"` and `"flambé"`. Backslashes are not permitted
 between double quotes. Unlike many other programming languages,
 newlines may occur between double quotes.
+
+## String functions
+
+1. [print](Strings-Print.md)

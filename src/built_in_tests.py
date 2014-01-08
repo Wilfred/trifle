@@ -1,4 +1,6 @@
 import unittest
+from cStringIO import StringIO
+import sys
 
 from lexer import lex
 from trifle_parser import parse_one, parse
@@ -517,6 +519,49 @@ class While(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
                 parse_one(lex("(while)")))
+
+
+class PrintTest(unittest.TestCase):
+    def test_print_returns_null(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                '(print "foo")'))),
+            NULL)
+
+    def test_print_writes_to_stdout(self):
+        old_stdout = sys.stdout
+        mock_stdout = StringIO()
+
+        # Monkey-patch stdout.
+        sys.stdout = mock_stdout
+        
+        evaluate_with_fresh_env(parse_one(lex(
+            '(print "foo")')))
+
+        # Undo the monkey-patch.
+        sys.stdout = old_stdout
+
+        self.assertEqual(mock_stdout.getvalue(), "foo\n")
+
+    def test_print_handles_numbers(self):
+        old_stdout = sys.stdout
+        mock_stdout = StringIO()
+
+        # Monkey-patch stdout.
+        sys.stdout = mock_stdout
+        
+        evaluate_with_fresh_env(parse_one(lex(
+            '(print 1)')))
+
+        # Undo the monkey-patch.
+        sys.stdout = old_stdout
+
+        self.assertEqual(mock_stdout.getvalue(), "1\n")
+
+    def test_print_wrong_arg_number(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(print 1 2)")))
 
 
 class Same(unittest.TestCase):
