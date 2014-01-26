@@ -2,4 +2,4 @@
 
 set -x
 
-PYTHONPATH=pypy nosetests
+PYTHONPATH=pypy nosetests tests.py
