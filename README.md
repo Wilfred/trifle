@@ -1,3 +1,19 @@
+**Table of Contents** *generated with [autotoc](https://github.com/Wilfred/autotoc)*
+
+- [Trifle Lisp](#trifle-lisp)
+  - [Goals](#goals)
+    - [Modular](#modular)
+    - [Iterating](#iterating)
+    - [Self-documenting](#self-documenting)
+    - [Documented](#documented)
+    - [Expressive](#expressive)
+    - [Re-Examined](#re-examined)
+    - [Friendly](#friendly)
+    - [Fast Enough](#fast-enough)
+    - [Missing Features](#missing-features)
+  - [Release History](#release-history)
+    - [v0.1](#v01)
+
 # Trifle Lisp
 #### *A sweet and friendly lisp*
 
