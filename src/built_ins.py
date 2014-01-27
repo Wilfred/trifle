@@ -458,7 +458,6 @@ class Length(Function):
         return Integer(len(some_list.values))
 
 
-# todo: support negative indexes
 class SetIndex(Function):
     def call(self, args):
         if len(args) != 3:
@@ -479,11 +478,19 @@ class SetIndex(Function):
                 "the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
-        # todo: separate error class
-        if index.value < 0 or index.value >= len(some_list.values):
+        if not some_list.values:
+            raise TrifleTypeError("can't call get-item on an empty list")
+
+        # todo: use a separate error class (index error, or value error)
+        if index.value >= len(some_list.values):
             raise TrifleTypeError(
-                "the list has %d items, but you tried to set index %d"
+                "the list has %d items, but you asked to set index %d"
                 % (len(some_list.values), index.value))
+
+        if index.value < -1 * len(some_list.values):
+            raise TrifleTypeError(
+                "Can't set index %d of a %d element list (must be -%d or higher)"
+                % (index.value, len(some_list.values), len(some_list.values)))
 
         some_list.values[index.value] = value
 

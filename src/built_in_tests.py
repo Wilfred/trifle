@@ -723,6 +723,14 @@ class SetIndex(unittest.TestCase):
                 "(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"))),
             expected)
 
+    def test_set_index_negative(self):
+        expected = List([Integer(10), Integer(1)])
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(set-symbol! (quote x) (quote (10 20))) (set-index! x -1 1) x"))),
+            expected)
+
     def test_set_index_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
@@ -744,7 +752,7 @@ class SetIndex(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(set-index! (quote (1)) 2 true)")))
 
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex("(set-index! (quote (1 2 3)) -1 true)")))
+            evaluate_with_fresh_env(parse_one(lex("(set-index! (quote (1 2 3)) -4 true)")))
 
     def test_set_index_wrong_arg_number(self):
         with self.assertRaises(TrifleTypeError):
