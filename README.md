@@ -6,6 +6,8 @@ Current status: Only a very basic interpreter implemented. Please see
 
 [![Build Status](https://travis-ci.org/Wilfred/trifle.png?branch=master)](https://travis-ci.org/Wilfred/trifle)
 
+## Goals
+
 Trifle is:
 
 ### Modular
@@ -91,9 +93,17 @@ free. The language provides also provides basic TCO.
 
 Influences: Pypy, Scheme
 
-## Missing Features
+### Missing Features
 
 A new programming language should really have a good answer to 'how do
 I run it in the browser?', 'how do I scale it to multiple cores?' and
 'how do I interface with C code?'. Since this is an experimental
 language, we are cheerfully ignoring these questions for now.
+
+## Release History
+
+### v0.1
+
+This release includes integers, lists, booleans, strings (though you
+can do little with strings currently), symbols, loops, functions,
+closures and macros.
