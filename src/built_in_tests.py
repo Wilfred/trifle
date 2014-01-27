@@ -680,6 +680,15 @@ class GetIndex(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) 0)"))),
             Integer(2))
 
+    def test_get_index_negative_index(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) -1)"))),
+            Integer(3))
+
+    def test_get_index_negative_index_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) -3)")))
+
     def test_get_index_typeerror(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(get-index null 0)")))
@@ -693,9 +702,6 @@ class GetIndex(unittest.TestCase):
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1)) 2)")))
-
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1 2 3)) -1)")))
 
     def test_get_index_wrong_arg_number(self):
         with self.assertRaises(TrifleTypeError):

@@ -406,7 +406,6 @@ class LessThan(Function):
         return TRUE
 
 
-# todo: support negative indexes
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
@@ -426,11 +425,19 @@ class GetIndex(Function):
                 "the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
-        # todo: separate error class
-        if index.value < 0 or index.value >= len(some_list.values):
+        if not some_list.values:
+            raise TrifleTypeError("can't call get-item on an empty list")
+
+        # todo: use a separate error class (index error, or value error)
+        if index.value >= len(some_list.values):
             raise TrifleTypeError(
                 "the list has %d items, but you asked for index %d"
                 % (len(some_list.values), index.value))
+
+        if index.value < -1 * len(some_list.values):
+            raise TrifleTypeError(
+                "Can't get index %d of a %d element list (must be -%d or higher)"
+                % (index.value, len(some_list.values), len(some_list.values)))
 
         return some_list.values[index.value]
 
