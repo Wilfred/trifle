@@ -135,7 +135,7 @@ make-unique-symbol (Clojure feature)
 
 Docstring conventions:
 
-"Takes argument FOO and calls <bar> on it.
+"Takes argument FOO and calls [bar] on it.
 
 >> (quux 1)
 2"
