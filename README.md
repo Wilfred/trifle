@@ -39,8 +39,9 @@ experimentation and to minimise the amount of non-Trifle code users
 must read. Where non-essential functions are written in RPython for
 performance, an equivalent Trifle implementation will be included.
 
-That said, the Trifle community will promote a set of defaults, so new
-users have a standard set of tools to get started with.
+In spite of encouraging libraries to live outside of the core, the
+Trifle community will promote a set of defaults, so new users have a
+standard set of tools to get started with.
 
 Influences: Scheme's small core, CLOS as a library, npm, Smalltalk
 
