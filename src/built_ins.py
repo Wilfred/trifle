@@ -1,6 +1,6 @@
 from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
-from errors import TrifleTypeError
+from errors import TrifleTypeError, ArityError
 from almost_python import deepcopy, copy
 from parameters import validate_parameters
 
@@ -534,3 +534,32 @@ class Push(Function):
         some_list.values.insert(0, value)
 
         return NULL
+
+
+class Call(Special):
+    def call(self, args, env):
+        if len(args) != 2:
+            raise ArityError(
+                "call takes 2 arguments, but got: %s" % List(args).repr())
+
+        from evaluator import evaluate
+        function = evaluate(args[0], env)
+        arguments = evaluate(args[1], env)
+
+        # TODO: should call accept macros and specials too?
+        if not (isinstance(function, Function) or
+                isinstance(function, Lambda)):
+            raise TrifleTypeError(
+                "the first argument to call must be a function, but got: %s"
+                % function.repr())
+
+        if not isinstance(arguments, List):
+            raise TrifleTypeError(
+                "the second argument to call must be a list, but got: %s"
+                % arguments.repr())
+
+        # Build an equivalent expression
+        expression = List([function] + arguments.values)
+
+        return evaluate(expression, env)
+        

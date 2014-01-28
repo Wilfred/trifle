@@ -25,3 +25,4 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 ## Evaluation special expressions
 
 1. [quote](Evaluation-Quote.md)
+2. [call](Evaluation-Call.md)

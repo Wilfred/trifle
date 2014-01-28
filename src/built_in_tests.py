@@ -843,6 +843,33 @@ class EnvironmentVariables(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("x")))
 
 
+class CallTest(unittest.TestCase):
+    def test_call(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(call + (quote (1 2 3)))"))),
+            Integer(6)
+        )
+
+    def test_call_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(call + (quote (1 2 3)) 1)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(call +)")))
+
+    def test_call_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(call null (quote (1 2 3)))")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_all_with_fresh_env(parse(lex(
+                "(call + null)")))
+
+
 class EvaluatingMacros(unittest.TestCase):
     def test_macro(self):
         self.assertEqual(
