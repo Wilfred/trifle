@@ -80,7 +80,7 @@
 
 ; todoc, especially how it handles empty lists
 (function last (lst)
-  (get-index lst (dec (length lst)))
+  (get-index lst -1)
 )
 
 (function do (:rest args)
