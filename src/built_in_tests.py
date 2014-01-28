@@ -7,7 +7,8 @@ from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
-from errors import UnboundVariable, TrifleTypeError, LexFailed, ArityError
+from errors import (UnboundVariable, TrifleTypeError,
+                    LexFailed, ParseFailed, ArityError)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -841,6 +842,35 @@ class EnvironmentVariables(unittest.TestCase):
     def test_unbound_variable(self):
         with self.assertRaises(UnboundVariable):
             evaluate_with_fresh_env(parse_one(lex("x")))
+
+
+class ParseTest(unittest.TestCase):
+    def test_parse(self):
+        expected = parse(lex("(+ 1 2)"))
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                "(parse \"(+ 1 2)\")"))),
+            expected)
+
+    def test_parse_invalid_parse(self):
+        with self.assertRaises(ParseFailed):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(parse ")")')))
+
+    def test_parse_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(parse)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(parse "()" 1)')))
+
+    def test_parse_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(parse 123)")))
 
 
 class CallTest(unittest.TestCase):

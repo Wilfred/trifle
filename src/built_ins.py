@@ -3,6 +3,8 @@ from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
 from errors import TrifleTypeError, ArityError
 from almost_python import deepcopy, copy
 from parameters import validate_parameters
+from lexer import lex
+from trifle_parser import parse
 
 
 class SetSymbol(Special):
@@ -535,6 +537,23 @@ class Push(Function):
 
         return NULL
 
+
+class Parse(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                "parse takes 1 arguments, but got: %s" % List(args).repr())
+
+        program_string = args[0]
+
+        if not isinstance(program_string, String):
+            raise TrifleTypeError(
+                "the first argument to parse must be a list, but got: %s"
+                % program_string.repr())
+
+        tokens = lex(program_string.string)
+        return parse(tokens)
+        
 
 class Call(Special):
     def call(self, args, env):

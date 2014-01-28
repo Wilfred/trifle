@@ -21,6 +21,7 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 ## Evaluation functions
 
 1. [do](Evaluation-Do.md)
+2. [parse](Evaluation-Parse.md)
 
 ## Evaluation special expressions
 
