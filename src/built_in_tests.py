@@ -61,6 +61,10 @@ class IntegerLex(unittest.TestCase):
         self.assertEqual(
             lex("-0")[0], Integer(0))
 
+    def test_lex_invalid_number(self):
+        with self.assertRaises(LexFailed):
+            lex("123abc")
+
 
 class SymbolLex(unittest.TestCase):
     def test_lex_symbol(self):
@@ -92,6 +96,9 @@ class KeywordLex(unittest.TestCase):
         self.assertEqual(
             lex(":x")[0], Keyword('x'))
 
+    def test_lex_invalid_keyword(self):
+        with self.assertRaises(LexFailed):
+            lex(":123")
 
 class StringLex(unittest.TestCase):
     def test_lex_string(self):
@@ -857,6 +864,11 @@ class ParseTest(unittest.TestCase):
         with self.assertRaises(ParseFailed):
             evaluate_with_fresh_env(parse_one(lex(
                 '(parse ")")')))
+
+    def test_parse_invalid_lex(self):
+        with self.assertRaises(LexFailed):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(parse "123abc")')))
 
     def test_parse_arg_number(self):
         with self.assertRaises(ArityError):

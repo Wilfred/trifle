@@ -17,6 +17,9 @@ SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
 
+# TODO: support 0x123, 0o123
+INTEGER_REGEXP = get_code('-?[0-9_]+')
+
 # todoc: exactly what syntax we accept for numbers and symbols
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
@@ -28,15 +31,26 @@ TOKENS = [
     # todo: support single quoted strings
     (STRING, get_code(r"\"[^\"\\]*\"")),
 
-    # todoc: underscores
-    # todo: support 0x123, 0o123
-    (INTEGER, get_code('-?[0-9_]+')),
-
-    # note this captures 'true' and 'false' too
-    (SYMBOL, get_code('[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
+    # note this captures true/false/null and numbers too
+    (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
     
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
 ]
+
+DIGITS = '0123456789'
+
+def starts_like_integer(text):
+    if not text:
+        return False
+
+    if text[0] in DIGITS:
+        return True
+
+    if len(text) > 1:
+        if text[0] == '-' and text[1] in DIGITS:
+            return True
+
+    return False
 
 
 def lex(text):
@@ -56,14 +70,6 @@ def lex(text):
                     lexed_tokens.append(OpenParen())
                 elif token == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
-                elif token == INTEGER:
-                    integer_chars = []
-                    for char in text[:match.match_end]:
-                        if char != '_':
-                            integer_chars.append(char)
-
-                    integer_string = "".join(integer_chars)
-                    lexed_tokens.append(Integer(int(integer_string)))
                 elif token == SYMBOL:
                     # We deliberately treat `true`, `false` and `null`
                     # as literals rather than just variables defined.
@@ -76,6 +82,18 @@ def lex(text):
                         lexed_tokens.append(FALSE)
                     elif text[:match.match_end] == 'null':
                         lexed_tokens.append(NULL)
+                    elif starts_like_integer(text[:match.match_end]):
+                        integer_chars = []
+                        for char in text[:match.match_end]:
+                            if char != '_':
+                                integer_chars.append(char)
+
+                        integer_string = "".join(integer_chars)
+                        try:
+                            lexed_tokens.append(Integer(int(integer_string)))
+                        except ValueError:
+                            raise LexFailed("Invalid number: '%s'" % text)
+                        
                     else:
                         lexed_tokens.append(Symbol(text[:match.match_end]))
                 elif token == KEYWORD:
