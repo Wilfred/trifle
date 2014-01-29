@@ -77,6 +77,7 @@ class Symbol(TrifleType):
         self.symbol_name = symbol_name
 
 
+# TODOC
 class Keyword(TrifleType):
     def repr(self):
         return ":%s" % self.symbol_name
