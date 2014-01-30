@@ -300,7 +300,7 @@ class SetSymbolTest(unittest.TestCase):
             Symbol("y"))
 
     def test_set_symbol_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(set-symbol! (quote x) 1 2)")))
 

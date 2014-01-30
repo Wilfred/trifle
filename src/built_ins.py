@@ -10,8 +10,7 @@ from trifle_parser import parse
 class SetSymbol(Special):
     def call(self, args, env):
         if len(args) != 2:
-            # todo: separate error for argument number vs type
-            raise TrifleTypeError(
+            raise ArityError(
                 "set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
 
         from evaluator import evaluate
