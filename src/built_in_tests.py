@@ -487,11 +487,11 @@ class IfTest(unittest.TestCase):
             Integer(3))
 
     def test_if_wrong_number_of_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(if)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(if 1 2 3 4)")))
 

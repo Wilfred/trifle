@@ -205,9 +205,8 @@ class Quote(Special):
 class If(Special):
     def call(self, args, env):
         if len(args) not in [2, 3]:
-            # todo: print the actual arguments given
-            raise TrifleTypeError(
-                "if takes 2 or 3 arguments, but got %d." % len(args))
+            raise ArityError(
+                "if takes 2 or 3 arguments, but got: %s" % List(args).repr())
 
         condition = args[0]
         then = args[1]
