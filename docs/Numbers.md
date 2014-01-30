@@ -18,3 +18,4 @@ e.g. `1_000_000`.
 ## Number macros
 
 1. [inc!](Numbers-IncMacro.md)
+1. [dec!](Numbers-DecMacro.md)

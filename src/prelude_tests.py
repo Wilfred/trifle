@@ -57,6 +57,12 @@ class DecTest(unittest.TestCase):
             evaluate(parse_one(lex("(dec 5)")), env_with_prelude()),
             Integer(4))
 
+    def test_dec_macro(self):
+        self.assertEqual(
+            evaluate_all(parse(lex("(set! x 2) (dec! x) x")), env_with_prelude()),
+            Integer(1))
+
+
 class ForEachTest(unittest.TestCase):
     def test_for_each(self):
         self.assertEqual(

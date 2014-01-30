@@ -35,8 +35,11 @@
   (quote (set! (unquote x) (inc (unquote x))))
 )
 
-; todo: dec!
 (function dec (x) (- x 1))
+
+(macro dec! (x)
+  (quote (set! (unquote x) (dec (unquote x))))
+)
 
 (macro for-each (name some-list :rest body)
   (let (index-var (fresh-symbol))
