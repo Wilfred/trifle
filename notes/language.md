@@ -50,7 +50,7 @@ E PI
 
 ### String
 
-Strings are effectively immutable vectors of unicode characters.
+Strings are effectively lists of unicode characters.
 
 uppercase lowercase
 
@@ -61,7 +61,7 @@ format
 
 ### Sequence
 
-Generic functions that handle lists, strings or hash-sets.
+Generic functions that handle lists, strings and sets.
 
 all? any? sequence?
 
@@ -71,6 +71,8 @@ flatten reduce equal? length set-at! value-at empty? subseq reverse
 reverse! copy deepcopy append append!
 
 zip filter map for-each
+
+freeze unfreeze frozen?
 
 ### Hash-map
 
@@ -158,3 +160,11 @@ expressive.
 CL's condition system allows you to inspect 'exception handlers' at
 runtime. JavaScript allows you to inspect the current stack, making
 building a debugger straightforward.
+
+## Classes
+
+Implement as a library.
+
+Favour upfront declaration of slots to aid static analysis.
+
+Multiple dispatch, multiple inheritance, reuse Python's MRO algorithm.
