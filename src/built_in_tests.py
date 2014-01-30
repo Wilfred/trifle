@@ -233,7 +233,7 @@ class EvaluatingLambdaTest(unittest.TestCase):
                 parse_one(lex("((lambda () 1) 2)")))
 
     def test_lambda_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(lambda)")))
 

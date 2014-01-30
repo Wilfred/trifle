@@ -83,8 +83,7 @@ class LambdaFactory(Special):
 
     def call(self, args, env):
         if not args:
-            # todo: separate error for argument number vs type
-            raise TrifleTypeError(
+            raise ArityError(
                 "lambda takes at least 1 argument, but got 0.")
 
         parameters = args[0]
