@@ -383,7 +383,7 @@ class QuoteTest(unittest.TestCase):
             expected)
 
     def test_quote_wrong_number_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(quote foo bar)")))
 
     def test_unquote(self):

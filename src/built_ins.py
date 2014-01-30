@@ -197,9 +197,8 @@ class Quote(Special):
     
     def call(self, args, env):
         if len(args) != 1:
-            # todo: print the actual arguments given
-            raise TrifleTypeError(
-                "quote takes 1 argument, but got %d." % len(args))
+            raise ArityError(
+                "quote takes 1 argument, but got %d." % List(args).repr())
 
         return self.evaluate_unquote_calls(deepcopy(args[0]), env)
 
