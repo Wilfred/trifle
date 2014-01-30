@@ -52,7 +52,7 @@ NULL = Null()
 
 class Number(TrifleType):
     def repr(self):
-        return "%s" % self.value
+        return "%r" % self.value
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
