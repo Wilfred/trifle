@@ -13,7 +13,7 @@ the prelude very often.
 
 """
 
-class Set(unittest.TestCase):
+class SetTest(unittest.TestCase):
     def test_set(self):
         self.assertEqual(
             evaluate_all(

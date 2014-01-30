@@ -31,15 +31,13 @@ def evaluate_with_fresh_env(expression):
     return evaluate(expression, fresh_environment())
 
 
-# todo: it's confusing that these names overlap with the
-# built-ins. Append "Test" to all the TestCase subclasses.
-class CommentLex(unittest.TestCase):
+class CommentLexTest(unittest.TestCase):
     def test_lex_comment(self):
         self.assertEqual(
             lex("1 ; 2 \n 3"), [Integer(1), Integer(3)])
 
 
-class IntegerLex(unittest.TestCase):
+class IntegerLexTest(unittest.TestCase):
     def test_lex_positive_number(self):
         self.assertEqual(
             lex("123")[0], Integer(123))
@@ -67,7 +65,7 @@ class IntegerLex(unittest.TestCase):
             lex("123abc")
 
 
-class FloatLex(unittest.TestCase):
+class FloatLexTest(unittest.TestCase):
     def test_lex_positive(self):
         self.assertEqual(
             lex("123.0")[0], Float(123.0))
@@ -90,7 +88,7 @@ class FloatLex(unittest.TestCase):
             lex("123.abc")
 
 
-class SymbolLex(unittest.TestCase):
+class SymbolLexTest(unittest.TestCase):
     def test_lex_symbol(self):
         self.assertEqual(
             lex("x")[0], Symbol('x'))
@@ -115,7 +113,7 @@ class SymbolLex(unittest.TestCase):
             lex("\\")
 
 
-class KeywordLex(unittest.TestCase):
+class KeywordLexTest(unittest.TestCase):
     def test_lex_keyword(self):
         self.assertEqual(
             lex(":x")[0], Keyword('x'))
@@ -124,7 +122,7 @@ class KeywordLex(unittest.TestCase):
         with self.assertRaises(LexFailed):
             lex(":123")
 
-class StringLex(unittest.TestCase):
+class StringLexTest(unittest.TestCase):
     def test_lex_string(self):
         self.assertEqual(
             lex('"foo"')[0], String('foo'))
@@ -133,7 +131,7 @@ class StringLex(unittest.TestCase):
             lex('"foo\nbar"')[0], String('foo\nbar'))
 
 
-class BooleanLex(unittest.TestCase):
+class BooleanLexTest(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(
             lex("true")[0], TRUE)
@@ -150,25 +148,25 @@ class BooleanLex(unittest.TestCase):
             lex("true-foo")[0], Symbol('true-foo'))
 
 
-class NullLex(unittest.TestCase):
+class NullLexTest(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(
             lex("null")[0], NULL)
 
 
-class Parsing(unittest.TestCase):
+class ParsingTest(unittest.TestCase):
     def test_parse_list(self):
         self.assertEqual(parse_one(lex("(1 2)")),
                          List([Integer(1), Integer(2)]))
 
 
-class Evaluating(unittest.TestCase):
+class EvaluatingTest(unittest.TestCase):
     def test_invalid_function(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(1)")))
 
 
-class EvaluatingLiterals(unittest.TestCase):
+class EvaluatingLiteralsTest(unittest.TestCase):
     def test_eval_boolean(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("true"))),
@@ -204,7 +202,7 @@ class EvaluatingLiterals(unittest.TestCase):
             String("foo"))
 
 
-class EvaluatingLambda(unittest.TestCase):
+class EvaluatingLambdaTest(unittest.TestCase):
     def test_call_lambda(self):
         self.assertEqual(
             evaluate_with_fresh_env(
@@ -294,7 +292,7 @@ class FreshSymbolTest(unittest.TestCase):
                 parse_one(lex("(fresh-symbol 1)")))
 
 
-class SetSymbol(unittest.TestCase):
+class SetSymbolTest(unittest.TestCase):
     def test_set_symbol(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(
@@ -376,7 +374,7 @@ class LetTest(unittest.TestCase):
 # todo: decide whether quote should construct fresh values each time
 # i.e. (function foo () (set! x (quote ())) (push! x 1) x)
 # what does (do (foo) (foo)) evaluate to?
-class Quote(unittest.TestCase):
+class QuoteTest(unittest.TestCase):
     def test_quote(self):
         expected = parse_one(lex("(+ 1 2)"))
         
@@ -446,7 +444,7 @@ class SubtractTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(- -)")))
 
 
-class Multiply(unittest.TestCase):
+class MultiplyTest(unittest.TestCase):
     def test_multiply(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(*)"))),
                          Integer(1))
@@ -462,7 +460,7 @@ class Multiply(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(* 1 null)")))
 
 
-class If(unittest.TestCase):
+class IfTest(unittest.TestCase):
     def test_if_one_arg(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(if true 1)"))),
@@ -498,7 +496,7 @@ class If(unittest.TestCase):
                 parse_one(lex("(if 1 2 3 4)")))
 
 
-class Truthy(unittest.TestCase):
+class TruthyTest(unittest.TestCase):
     def test_truthy(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(truthy? 2)"))),
@@ -534,7 +532,7 @@ class Truthy(unittest.TestCase):
                 parse_one(lex("(truthy? 1 2)")))
 
 
-class While(unittest.TestCase):
+class WhileTest(unittest.TestCase):
     def test_while_false_condition(self):
         # `(while)` is an error, but this should work as while should
         # not evaluate the body here.
@@ -601,7 +599,7 @@ class PrintTest(unittest.TestCase):
                 parse_one(lex("(print 1 2)")))
 
 
-class Same(unittest.TestCase):
+class SameTest(unittest.TestCase):
     def test_booleans_same(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(same? true true)"))),
@@ -671,7 +669,7 @@ class Same(unittest.TestCase):
                 parse_one(lex("(same? 1 2 3)")))
 
 
-class LessThan(unittest.TestCase):
+class LessThanTest(unittest.TestCase):
     def test_less_than(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(< 1 2)"))),
@@ -693,7 +691,7 @@ class LessThan(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(< 1)")))
 
 
-class Length(unittest.TestCase):
+class LengthTest(unittest.TestCase):
     def test_length(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(length (quote (2 3)))"))),
@@ -711,7 +709,7 @@ class Length(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(length (quote ()) 1)")))
             
 
-class GetIndex(unittest.TestCase):
+class GetIndexTest(unittest.TestCase):
     def test_get_index(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (2 3)) 0)"))),
@@ -751,7 +749,7 @@ class GetIndex(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1)) 0 0)")))
 
 
-class SetIndex(unittest.TestCase):
+class SetIndexTest(unittest.TestCase):
     def test_set_index(self):
         expected = List([Integer(1)])
         
@@ -867,7 +865,7 @@ class PushTest(unittest.TestCase):
                 "(push! null 0)")))
 
 
-class EnvironmentVariables(unittest.TestCase):
+class EnvironmentVariablesTest(unittest.TestCase):
     def test_evaluate_variable(self):
         env = Environment([Scope({
             'x': Integer(1),
@@ -941,7 +939,7 @@ class CallTest(unittest.TestCase):
                 "(call + null)")))
 
 
-class EvaluatingMacros(unittest.TestCase):
+class EvaluatingMacrosTest(unittest.TestCase):
     def test_macro(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
