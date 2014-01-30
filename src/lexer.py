@@ -22,7 +22,7 @@ FLOAT = 'float'
 # TODO: support 0x123, 0o123
 INTEGER_REGEXP = get_code('-?[0-9_]+')
 
-# todoc: exactly what syntax we accept for numbers and symbols
+# todoc: exactly what syntax we accept for symbols
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
