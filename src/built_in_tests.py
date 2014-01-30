@@ -965,19 +965,24 @@ class EvaluatingMacrosTest(unittest.TestCase):
             Integer(2)
         )
 
-    def test_macro_bad_args(self):
-        with self.assertRaises(TrifleTypeError):
+    def test_macro_bad_args_number(self):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(macro foo)")))
 
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(macro foo (bar))")))
+
+    def test_macro_bad_arg_types(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                "(macro foo bar)")))
+                "(macro foo bar null)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                "(macro foo (1))")))
+                "(macro foo (1) null)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                "(macro 123 (bar))")))
+                "(macro 123 (bar) null)")))

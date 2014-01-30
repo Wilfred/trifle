@@ -104,17 +104,16 @@ class DefineMacro(Special):
     """
 
     def call(self, args, env):
-        if len(args) < 2:
-            # todo: separate error for argument number vs type
-            raise TrifleTypeError(
-                "macro takes at least 2 arguments, but got %d." % len(args))
+        if len(args) < 3:
+            raise ArityError(
+                "macro takes at least 3 arguments, but got: %s" % List(args).repr())
 
         macro_name = args[0]
         parameters = args[1]
         
         if not isinstance(macro_name, Symbol):
             raise TrifleTypeError(
-                "macro name should be a symbol, but got %s" %
+                "macro name should be a symbol, but got: %s" %
                 macro_name.repr())
 
         parameters = args[1]
