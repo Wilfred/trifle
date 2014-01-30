@@ -50,7 +50,8 @@ E PI
 
 ### String
 
-Strings are effectively lists of unicode characters.
+Strings are effectively lists of unicode characters. Character are a
+distinct type.
 
 uppercase lowercase
 
