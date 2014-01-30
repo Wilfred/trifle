@@ -46,18 +46,22 @@ class Null(TrifleType):
 NULL = Null()
 
 
-class Integer(TrifleType):
+class Number(TrifleType):
     def repr(self):
         return "%s" % self.value
 
     def __eq__(self, other):
-        if self.__class__ != other.__class__:
+        if not isinstance(other, Number):
             return False
 
         return self.value == other.value
 
     def __init__(self, value):
         self.value = value
+
+
+class Integer(Number):
+    pass
 
 
 class Symbol(TrifleType):
