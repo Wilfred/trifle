@@ -939,6 +939,22 @@ class CallTest(unittest.TestCase):
                 "(call + null)")))
 
 
+class EvalTest(unittest.TestCase):
+    def test_eval(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                "(eval (quote (+ 1 2 3)))"))),
+            Integer(6)
+        )
+
+    def test_eval_modifies_scope(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                '(set-symbol! (quote x) 0) (eval (quote (set-symbol! (quote x) 1))) x'))),
+            Integer(1)
+        )
+
+
 class EvaluatingMacrosTest(unittest.TestCase):
     def test_macro(self):
         self.assertEqual(

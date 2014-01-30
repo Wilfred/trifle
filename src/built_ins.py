@@ -544,7 +544,21 @@ class Parse(Function):
 
         tokens = lex(program_string.string)
         return parse(tokens)
-        
+
+
+# todo: consider allowing the user to pass in an environment for sandboxing
+class Eval(Special):
+    def call(self, args, env):
+        if len(args) != 1:
+            raise ArityError(
+                "eval takes 1 argument, but got: %s" % List(args).repr())
+
+        from evaluator import evaluate
+        # Act like a normal function and evaluate our argument first.
+        expression = evaluate(args[0], env)
+
+        return evaluate(expression, env)
+
 
 class Call(Special):
     def call(self, args, env):
