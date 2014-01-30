@@ -31,7 +31,7 @@ class SetSymbol(Special):
 class Let(Special):
     def call(self, args, env):
         if not args:
-            raise TrifleTypeError(
+            raise ArityError(
                 "let takes at least 1 argument, but got: %s" % List(args).repr())
 
         bindings = args[0]
@@ -56,8 +56,7 @@ class Let(Special):
                     )
 
         if len(bindings.values) % 2 == 1:
-            # todo: this should be an arity error
-            raise TrifleTypeError(
+            raise ArityError(
                 "no value given for let-bound variable: %s"
                 % bindings.values[-1].repr())
 

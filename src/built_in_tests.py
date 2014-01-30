@@ -335,7 +335,7 @@ class LetTest(unittest.TestCase):
                 parse_one(lex("(let (1 1) null)")))
 
     def test_let_odd_bindings(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(let (x 1 y) null)")))
 
@@ -344,7 +344,7 @@ class LetTest(unittest.TestCase):
             evaluate_with_fresh_env(
                 parse_one(lex("(let null null)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(let)")))
 
