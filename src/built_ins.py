@@ -27,7 +27,6 @@ class SetSymbol(Special):
         return NULL
 
 
-# todoc
 class Let(Special):
     def call(self, args, env):
         if not args:

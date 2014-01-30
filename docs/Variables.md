@@ -1,8 +1,22 @@
 # Variables
 
-Trifle lisp supports variables. When you assign to undefined variable,
-it is defined in the innermost scope. Otherwise, you change the
-variable in the innermost scope where it is defined.
+Trifle lisp supports variables. You will generally want to use `let`
+to introduce new local variables, and `set!` to modify them.
+
+## Variable special expressions
+
+1. [let](Variables-Let.md)
+2. [set-symbol!](Variables-SetSymbol.md)
+
+## Variable macros
+
+1. [set!](Variables-Set.md)
+
+## Scopes
+
+When you assign to undefined variable, it is defined in the innermost
+scope. Otherwise, you change the variable in the innermost scope where
+it is defined.
 
 Examples:
 
@@ -32,10 +46,3 @@ null
 > x
 2
 ```
-
-## Variable special expressions
-
-1. [set-symbol!](Variables-SetSymbol.md)
-
-## Variable macros
-1. [set!](Variables-Set.md)
