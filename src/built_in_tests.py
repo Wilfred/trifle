@@ -4,7 +4,8 @@ import sys
 
 from lexer import lex
 from trifle_parser import parse_one, parse
-from trifle_types import (List, Integer, Symbol, Keyword, String, Lambda,
+from trifle_types import (List, Integer, Float,
+                          Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
@@ -64,6 +65,29 @@ class IntegerLex(unittest.TestCase):
     def test_lex_invalid_number(self):
         with self.assertRaises(LexFailed):
             lex("123abc")
+
+
+class FloatLex(unittest.TestCase):
+    def test_lex_positive(self):
+        self.assertEqual(
+            lex("123.0")[0], Float(123.0))
+
+    def test_lex_float_leading_zero(self):
+        self.assertEqual(
+            lex("0123.0")[0], Float(123.0))
+
+    def test_lex_negative(self):
+        self.assertEqual(
+            lex("-123.0")[0], Float(-123.0))
+
+    def test_lex_with_underscores(self):
+        self.assertEqual(
+            lex("1_000.000_2")[0], Float(1000.0002))
+        
+
+    def test_lex_invalid(self):
+        with self.assertRaises(LexFailed):
+            lex("123.abc")
 
 
 class SymbolLex(unittest.TestCase):
@@ -158,6 +182,11 @@ class EvaluatingLiterals(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("123"))),
             Integer(123))
+
+    def test_eval_float(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("123.4"))),
+            Float(123.4))
 
     def test_eval_null(self):
         self.assertEqual(

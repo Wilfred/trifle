@@ -1,4 +1,5 @@
-from trifle_types import (List, Symbol, Integer, Null, NULL,
+from trifle_types import (List, Symbol, Integer, Float,
+                          Null, NULL,
                           Function, Lambda, Macro, Special, Boolean,
                           Keyword, String)
 from errors import UnboundVariable, TrifleTypeError
@@ -113,6 +114,9 @@ def evaluate_list(node, environment):
 
 def evaluate_value(value, environment):
     if isinstance(value, Integer):
+        # Integers evaluate to themselves
+        return value
+    elif isinstance(value, Float):
         # Integers evaluate to themselves
         return value
     elif isinstance(value, Boolean):

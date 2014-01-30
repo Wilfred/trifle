@@ -50,9 +50,9 @@ class Null(TrifleType):
 NULL = Null()
 
 
-class Number(TrifleType):
+class Integer(TrifleType):
     def repr(self):
-        return "%r" % self.value
+        return "%s" % self.value
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -64,8 +64,18 @@ class Number(TrifleType):
         self.value = value
 
 
-class Integer(Number):
-    pass
+class Float(TrifleType):
+    def repr(self):
+        return "%s" % self.float_value
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.float_value == other.float_value
+
+    def __init__(self, value):
+        self.float_value = value
 
 
 class Symbol(TrifleType):

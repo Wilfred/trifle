@@ -2,7 +2,8 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import (OpenParen, CloseParen, Integer, Symbol, Keyword,
+from trifle_types import (OpenParen, CloseParen, Integer, Float,
+                          Symbol, Keyword,
                           String, TRUE, FALSE, NULL)
 from errors import LexFailed
 
@@ -16,6 +17,7 @@ INTEGER = 'integer'
 SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
+FLOAT = 'float'
 
 # TODO: support 0x123, 0o123
 INTEGER_REGEXP = get_code('-?[0-9_]+')
@@ -31,7 +33,10 @@ TOKENS = [
     # todo: support single quoted strings
     (STRING, get_code(r"\"[^\"\\]*\"")),
 
-    # note this captures true/false/null and numbers too
+    # todoc
+    (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+")),
+
+    # note this captures true/false/null and integers too
     (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
     
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
@@ -51,6 +56,19 @@ def starts_like_integer(text):
             return True
 
     return False
+
+
+def remove_char(string, unwanted_char):
+    """Return string with all instances of char removed.  We're forced to
+    iterate over a list to keep RPython happy.
+
+    """
+    chars = []
+    for char in string:
+        if char != unwanted_char:
+            chars.append(char)
+
+    return "".join(chars)
 
 
 def lex(text):
@@ -83,12 +101,7 @@ def lex(text):
                     elif text[:match.match_end] == 'null':
                         lexed_tokens.append(NULL)
                     elif starts_like_integer(text[:match.match_end]):
-                        integer_chars = []
-                        for char in text[:match.match_end]:
-                            if char != '_':
-                                integer_chars.append(char)
-
-                        integer_string = "".join(integer_chars)
+                        integer_string = remove_char(text[:match.match_end], "_")
                         try:
                             lexed_tokens.append(Integer(int(integer_string)))
                         except ValueError:
@@ -96,6 +109,9 @@ def lex(text):
                         
                     else:
                         lexed_tokens.append(Symbol(text[:match.match_end]))
+                elif token == FLOAT:
+                    float_string = remove_char(text[:match.match_end], "_")
+                    lexed_tokens.append(Float(float(float_string)))
                 elif token == KEYWORD:
                     # todoc
                     lexed_tokens.append(Keyword(text[1:match.match_end]))
