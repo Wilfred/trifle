@@ -115,7 +115,7 @@ class DefineMacro(Special):
         if not isinstance(macro_name, Symbol):
             raise TrifleTypeError(
                 "macro name should be a symbol, but got %s" %
-                parameters.repr())
+                macro_name.repr())
 
         parameters = args[1]
         validate_parameters(parameters)
