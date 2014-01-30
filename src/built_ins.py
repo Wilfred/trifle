@@ -197,7 +197,7 @@ class Quote(Special):
     def call(self, args, env):
         if len(args) != 1:
             raise ArityError(
-                "quote takes 1 argument, but got %d." % List(args).repr())
+                "quote takes 1 argument, but got: %s" % List(args).repr())
 
         return self.evaluate_unquote_calls(deepcopy(args[0]), env)
 
