@@ -245,10 +245,8 @@ def is_truthy(value):
 class Truthy(Function):
     def call(self, args):
         if len(args) != 1:
-            # todoc: this error
-            # todo: print the actual arguments given
-            raise TrifleTypeError(
-                "truthy? takes 1 argument, but got %d." % len(args))
+            raise ArityError(
+                "truthy? takes 1 argument, but got: %s" % List(args).repr())
 
         return is_truthy(args[0])
 

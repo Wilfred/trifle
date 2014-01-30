@@ -523,11 +523,11 @@ class TruthyTest(unittest.TestCase):
             TRUE)
 
     def test_truthy_wrong_number_of_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(truthy?)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(truthy? 1 2)")))
 
