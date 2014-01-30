@@ -739,13 +739,13 @@ class GetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1)) 2)")))
 
     def test_get_index_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(get-index)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1)))")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(get-index (quote (1)) 0 0)")))
 
 
