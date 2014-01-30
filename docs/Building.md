@@ -27,6 +27,6 @@ results and errors easier. You can run the tests with:
 $ cd src
 $ mkdir -p ~/.envs
 $ virtualenv -p python2.7 ~/.envs/trifle --system-site-packages
-$ pip install nose
+$ pip install -r requirements.pip
 $ ./run_tests
 ```
