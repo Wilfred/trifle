@@ -522,7 +522,7 @@ class TruthyTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(truthy? (quote (1)))"))),
             TRUE)
 
-    def test_if_wrong_number_of_args(self):
+    def test_truthy_wrong_number_of_args(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
                 parse_one(lex("(truthy?)")))
