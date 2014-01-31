@@ -587,3 +587,21 @@ class Call(Special):
 
         return evaluate(expression, env)
         
+
+# todoc
+class Defined(Special):
+    def call(self, args, env):
+        # todo: a utility function for arity checking.
+        if len(args) != 1:
+            raise ArityError(
+                "defined? takes 1 arguments, but got: %s" % List(args).repr())
+
+        from evaluator import evaluate
+        symbol = evaluate(args[0], env)
+
+        if not isinstance(symbol, Symbol):
+            raise TrifleTypeError(
+                "the first argument to defined? must be a symbol, but got: %s"
+                % symbol.repr())
+
+        return Boolean(env.contains(symbol.symbol_name))

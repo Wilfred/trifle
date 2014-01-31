@@ -1002,3 +1002,30 @@ class EvaluatingMacrosTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(macro 123 (bar) null)")))
+
+
+class DefinedTest(unittest.TestCase):
+    def test_defined(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                "(defined? (quote +))"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                "(defined? (quote i-dont-exist))"))),
+            FALSE)
+
+    def test_defined_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(defined? 1)")))
+
+    def test_defined_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(defined?)")))
+            
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(defined? (quote foo) 1)")))
