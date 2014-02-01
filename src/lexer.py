@@ -50,7 +50,7 @@ LEXEMES = [
     (BOOLEAN, get_code('(true|false)$')),
     (NULL_TYPE, get_code('null$')),
     
-    (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
+    (SYMBOL, get_code('[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
 ]
 
