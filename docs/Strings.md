@@ -9,5 +9,3 @@ between double quotes. Unlike many other programming languages,
 newlines may occur between double quotes.
 
 ## String functions
-
-1. [print](Strings-Print.md)

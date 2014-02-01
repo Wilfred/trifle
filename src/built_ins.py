@@ -269,7 +269,6 @@ class While(Special):
 # todo: implement in prelude in terms of writing to stdout
 # todo: just print a newline if called without any arguments.
 # todo: allow a separator argument, Python 3 style
-# todo: this should be documented under IO, not strings
 class Print(Function):
     def call(self, args):
         if len(args) != 1:
