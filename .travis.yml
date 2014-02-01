@@ -11,3 +11,5 @@ script:
   - PYTHONPATH=src/pypy TRIFLEPATH=src coverage run --omit='src/pypy*' src/tests.py
   # Ensure that we can build the binary (i.e. our source is RPython friendly).
   - python2 src/pypy/rpython/bin/rpython --batch src/main.py
+after_success:
+  coveralls
