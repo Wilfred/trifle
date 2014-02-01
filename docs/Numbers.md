@@ -1,10 +1,14 @@
 # Numbers
 
-Trifle currently only supports integers.
+Trifle supports integers and floats.
 
-Integer literals are strings of digits. Example integers are `0`,
+Integer literals are made from digits. Example integers are `0`,
 `1234` and `-999999`. You may also use underscores to group digits,
 e.g. `1_000_000`.
+
+Float literals are made from digits and a single decimal
+point. Example floats are `1.1` and `0.123`. As with integers, you can
+use underscores in float literals: `1_000.000_001`.
 
 ## Number functions
 

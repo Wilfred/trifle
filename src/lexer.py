@@ -42,7 +42,6 @@ LEXEMES = [
     # todo: support single quoted characters
     (STRING, get_code(r"\"[^\"\\]*\"$")),
 
-    # todoc
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
     # TODO: support 0x123, 0o123
