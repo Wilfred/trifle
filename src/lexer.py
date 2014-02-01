@@ -30,7 +30,7 @@ TOKENS = [
     (CLOSE_PAREN, get_code(r"\)")),
 
     # todoc
-    # todo: support single quoted strings
+    # todo: support single quoted characters
     (STRING, get_code(r"\"[^\"\\]*\"")),
 
     # todoc
