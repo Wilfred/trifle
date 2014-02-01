@@ -594,7 +594,7 @@ class PrintTest(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), "1\n")
 
     def test_print_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(print 1 2)")))
 

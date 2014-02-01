@@ -273,7 +273,7 @@ class While(Special):
 class Print(Function):
     def call(self, args):
         if len(args) != 1:
-            raise TrifleTypeError(
+            raise ArityError(
                 "print takes 1 argument, but got %s." % List(args).repr())
 
         if isinstance(args[0], String):
