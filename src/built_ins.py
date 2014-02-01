@@ -414,17 +414,30 @@ class Subtract(Function):
 
 class Multiply(Function):
     def call(self, args):
+        float_args = False
         for arg in args:
-            # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
-                    "* requires numbers, but got: %s." % arg.repr())
+                if isinstance(arg, Float):
+                    float_args = True
+                else:
+                    raise TrifleTypeError(
+                        "* requires numbers, but got: %s." % arg.repr())
 
-        product = 1
-        for arg in args:
-            product *= arg.value
+        if float_args:
+            product = 1.0
+            for arg in args:
+                if isinstance(arg, Integer):
+                    product *= float(arg.value)
+                else:
+                    product *= arg.float_value
 
-        return Integer(product)
+            return Float(product)
+
+        else:
+            product = 1
+            for arg in args:
+                product *= arg.value
+            return Integer(product)
 
 
 class LessThan(Function):
