@@ -418,7 +418,7 @@ class QuoteTest(unittest.TestCase):
         
 
 class AddTest(unittest.TestCase):
-    def test_add(self):
+    def test_add_integers(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(+)"))),
                          Integer(0))
         
@@ -428,6 +428,13 @@ class AddTest(unittest.TestCase):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(+ 1 2)"))),
                          Integer(3))
 
+    def test_add_floats(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(+ 1.0 2.0)"))),
+                         Float(3.0))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(+ 1 2.0)"))),
+                         Float(3.0))
+        
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(+ +)")))

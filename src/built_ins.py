@@ -1,5 +1,5 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
-                          Integer, List,
+                          Integer, Float, List,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError, ArityError
 from almost_python import deepcopy, copy, raw_input
@@ -346,16 +346,30 @@ class FreshSymbol(Function):
 
 class Add(Function):
     def call(self, args):
+        float_args = False
         for arg in args:
-            # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
-                    "+ requires numbers, but got: %s." % arg.repr())
+                if isinstance(arg, Float):
+                    float_args = True
+                else:
+                    raise TrifleTypeError(
+                        "+ requires numbers, but got: %s." % arg.repr())
 
-        total = 0
-        for arg in args:
-            total += arg.value
-        return Integer(total)
+        if float_args:
+            total = 0.0
+            for arg in args:
+                if isinstance(arg, Integer):
+                    total += float(arg.value)
+                else:
+                    total += arg.float_value
+
+            return Float(total)
+
+        else:
+            total = 0
+            for arg in args:
+                total += arg.value
+            return Integer(total)
 
 
 class Subtract(Function):
