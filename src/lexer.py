@@ -8,7 +8,8 @@ from trifle_types import (OpenParen, CloseParen, Integer, Float,
 from errors import LexFailed
 
 
-# Note this an incomplete list.
+# Note this an incomplete list and is purely to give us convenient
+# constants.
 WHITESPACE = 'whitespace'
 COMMENT = 'comment'
 OPEN_PAREN = 'open-paren'
@@ -18,6 +19,9 @@ SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
 FLOAT = 'float'
+ATOM = 'atom'
+
+ATOM_REGEXP = get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')
 
 # TODO: support 0x123, 0o123
 INTEGER_REGEXP = get_code('-?[0-9_]+')
@@ -29,6 +33,14 @@ TOKENS = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
 
+    (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
+    (STRING, get_code(r"\"[^\"\\]*\"")),
+]
+
+LEXEMES = [
+    (OPEN_PAREN, get_code(r"\(")),
+    (CLOSE_PAREN, get_code(r"\)")),
+
     # todoc
     # todo: support single quoted characters
     (STRING, get_code(r"\"[^\"\\]*\"")),
@@ -37,6 +49,7 @@ TOKENS = [
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+")),
 
     # note this captures true/false/null and integers too
+    # TODO: fix that
     (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
     
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
@@ -71,8 +84,12 @@ def remove_char(string, unwanted_char):
     return "".join(chars)
 
 
-def lex(text):
-    lexed_tokens = []
+def split_tokens(text):
+    """Given the raw text of a trifle program, split it into things that
+    look like tokens.
+
+    """
+    tokens = []
 
     while text:
         found_match = False
@@ -81,56 +98,86 @@ def lex(text):
             match = rsre_core.match(regexp, text)
             if match:
                 found_match = True
+                matched_text = text[:match.match_end]
+                text = text[match.match_end:]
 
                 if token in [WHITESPACE, COMMENT]:
                     pass
-                elif token == OPEN_PAREN:
+                else:
+                    tokens.append(matched_text)
+                
+                break
+
+        if not found_match:
+            raise LexFailed("Could not lex remainder: '%s'" % text)
+
+    return tokens
+
+
+def _lex(tokens):
+    lexed_tokens = []
+
+    for token in tokens:
+        found_match = False
+    
+        for lexeme_name, regexp in LEXEMES:
+            match = rsre_core.match(regexp, token)
+            if match:
+                found_match = True
+
+                if lexeme_name in [WHITESPACE, COMMENT]:
+                    pass
+                elif lexeme_name == OPEN_PAREN:
                     lexed_tokens.append(OpenParen())
-                elif token == CLOSE_PAREN:
+                elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
-                elif token == SYMBOL:
+                elif lexeme_name == SYMBOL:
                     # We deliberately treat `true`, `false` and `null`
                     # as literals rather than just variables defined.
                     # Otherwise, an expression may print `true` as its
                     # result but evaluating `true` may not give
                     # `true`, which is confusing.
-                    if text[:match.match_end] == 'true':
+                    if token == 'true':
                         lexed_tokens.append(TRUE)
-                    elif text[:match.match_end] == 'false':
+                    elif token == 'false':
                         lexed_tokens.append(FALSE)
-                    elif text[:match.match_end] == 'null':
+                    elif token == 'null':
                         lexed_tokens.append(NULL)
-                    elif starts_like_integer(text[:match.match_end]):
-                        integer_string = remove_char(text[:match.match_end], "_")
+                    elif starts_like_integer(token):
+                        integer_string = remove_char(token, "_")
                         try:
                             lexed_tokens.append(Integer(int(integer_string)))
                         except ValueError:
-                            raise LexFailed("Invalid number: '%s'" % text)
+                            raise LexFailed("Invalid number: '%s'" % token)
                         
                     else:
-                        lexed_tokens.append(Symbol(text[:match.match_end]))
-                elif token == FLOAT:
-                    float_string = remove_char(text[:match.match_end], "_")
+                        lexed_tokens.append(Symbol(token))
+                elif lexeme_name == FLOAT:
+                    float_string = remove_char(token, "_")
                     lexed_tokens.append(Float(float(float_string)))
-                elif token == KEYWORD:
+                elif lexeme_name == KEYWORD:
                     # todoc
-                    lexed_tokens.append(Keyword(text[1:match.match_end]))
-                elif token == STRING:
+                    lexed_tokens.append(Keyword(token[1:]))
+                elif lexeme_name == STRING:
                     # todoc
+                    # TODO: this variable is probably unnecessary, even on RPython
                     string_end = match.match_end - 1
 
                     # This is always true, but RPython doesn't support
                     # negative indexes on slices and can't prove the
                     # slice is non-negative.
                     if string_end >= 0:
-                        lexed_tokens.append(String(text[1:string_end]))
+                        lexed_tokens.append(String(token[1:string_end]))
                 else:
                     assert False, "Unrecognised token '%s'" % token
                 
-                text = text[match.match_end:]
                 break
 
         if not found_match:
-            raise LexFailed("Could not lex remainder: '%s'" % text)
+            raise LexFailed("Could not lex token: '%s'" % token)
 
     return lexed_tokens
+
+
+def lex(text):
+    return _lex(split_tokens(text))
