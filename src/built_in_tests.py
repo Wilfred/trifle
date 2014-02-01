@@ -2,6 +2,8 @@ import unittest
 from cStringIO import StringIO
 import sys
 
+from mock import patch
+
 from lexer import lex
 from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Float,
@@ -564,17 +566,11 @@ class PrintTest(unittest.TestCase):
             NULL)
 
     def test_print_writes_to_stdout(self):
-        old_stdout = sys.stdout
         mock_stdout = StringIO()
 
-        # Monkey-patch stdout.
-        sys.stdout = mock_stdout
-        
-        evaluate_with_fresh_env(parse_one(lex(
-            '(print "foo")')))
-
-        # Undo the monkey-patch.
-        sys.stdout = old_stdout
+        with patch('sys.stdout', mock_stdout):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(print "foo")')))
 
         self.assertEqual(mock_stdout.getvalue(), "foo\n")
 
