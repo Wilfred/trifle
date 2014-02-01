@@ -2,7 +2,7 @@
 
 `(print VALUE)`
 
-The function writes a string representation of VALUE to stdout. It
+The function `print` writes a string representation of VALUE to stdout. It
 always returns `null`.
 
 Examples:
