@@ -1,4 +1,5 @@
-from trifle_types import (Function, Lambda, Macro, Special, Integer, List,
+from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
+                          Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError, ArityError
 from almost_python import deepcopy, copy
@@ -7,15 +8,14 @@ from lexer import lex
 from trifle_parser import parse
 
 
-class SetSymbol(Special):
+class SetSymbol(FunctionWithEnv):
     def call(self, args, env):
         if len(args) != 2:
             raise ArityError(
                 "set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
 
-        from evaluator import evaluate
-        variable_name = evaluate(args[0], env)
-        variable_value = evaluate(args[1], env)
+        variable_name = args[0]
+        variable_value = args[1]
 
         if not isinstance(variable_name, Symbol):
             raise TrifleTypeError(

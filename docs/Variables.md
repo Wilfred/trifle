@@ -6,7 +6,10 @@ to introduce new local variables, and `set!` to modify them.
 ## Variable special expressions
 
 1. [let](Variables-Let.md)
-2. [set-symbol!](Variables-SetSymbol.md)
+
+## Variable functions
+
+1. [set-symbol!](Variables-SetSymbol.md)
 
 ## Variable macros
 
