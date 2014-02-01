@@ -557,15 +557,14 @@ class Eval(FunctionWithEnv):
         return evaluate(args[0], env)
 
 
-class Call(Special):
+class Call(FunctionWithEnv):
     def call(self, args, env):
         if len(args) != 2:
             raise ArityError(
                 "call takes 2 arguments, but got: %s" % List(args).repr())
 
-        from evaluator import evaluate
-        function = evaluate(args[0], env)
-        arguments = evaluate(args[1], env)
+        function = args[0]
+        arguments = args[1]
 
         # TODO: should call accept macros and specials too?
         if not (isinstance(function, Function) or
@@ -582,6 +581,7 @@ class Call(Special):
         # Build an equivalent expression
         expression = List([function] + arguments.values)
 
+        from evaluator import evaluate
         return evaluate(expression, env)
         
 
