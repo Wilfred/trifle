@@ -7,5 +7,7 @@ install:
   # Install our other dependencies.
   - pip install -r requirements.pip
 script:
-  - PYTHONPATH=src/pypy TRIFLEPATH=src python2 src/tests.py
+  # Run our unit tests.
+  - PYTHONPATH=src/pypy TRIFLEPATH=src coverage run --omit='src/pypy*' src/tests.py
+  # Ensure that we can build the binary (i.e. our source is RPython friendly).
   - python2 src/pypy/rpython/bin/rpython --batch src/main.py
