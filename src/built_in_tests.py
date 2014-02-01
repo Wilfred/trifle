@@ -2,7 +2,7 @@ import unittest
 from cStringIO import StringIO
 import sys
 
-from mock import patch
+from mock import patch, Mock
 
 from lexer import lex
 from trifle_parser import parse_one, parse
@@ -593,6 +593,34 @@ class PrintTest(unittest.TestCase):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(print 1 2)")))
+
+
+class InputTest(unittest.TestCase):
+    def test_input(self):
+        mock_read = Mock()
+        mock_read.return_value = "foobar\n"
+
+        with patch('os.write'):
+            with patch('os.read', mock_read):
+                self.assertEqual(
+                    evaluate_with_fresh_env(parse_one(lex(
+                        '(input ">> ")'))),
+                    String("foobar")
+                )
+
+    def test_input_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(input 1)")))
+
+    def test_input_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(input)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(input \"foo\" 1)")))
 
 
 class SameTest(unittest.TestCase):

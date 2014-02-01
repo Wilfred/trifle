@@ -2,7 +2,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, List,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError, ArityError
-from almost_python import deepcopy, copy
+from almost_python import deepcopy, copy, raw_input
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
@@ -281,6 +281,24 @@ class Print(Function):
             print args[0].repr()
 
         return NULL
+
+
+# todo: implement in prelude in terms of stdin and stdout
+class Input(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                "input takes 1 argument, but got %s." % List(args).repr())
+
+        prefix = args[0]
+
+        if not isinstance(prefix, String):
+            raise TrifleTypeError(
+                "The first argument to input must be a string, but got: %s"
+                % prefix.repr())
+
+        user_input = raw_input(prefix.string)
+        return String(user_input)
 
 
 class Same(Function):

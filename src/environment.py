@@ -2,7 +2,8 @@ from built_ins import (Add, Subtract, Multiply, LessThan, Same,
                        Truthy, Quote, SetSymbol, Let, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
                        Length, GetIndex, SetIndex, Push, Append,
-                       Print, Call, Parse, Eval, Defined)
+                       Print, Input,
+                       Call, Parse, Eval, Defined)
 
 
 class Scope(object):
@@ -113,6 +114,7 @@ def fresh_environment():
         'macro': DefineMacro(),
         'fresh-symbol': FreshSymbol(),
         'print': Print(),
+        'input': Input(),
         'call': Call(),
         'parse': Parse(),
         'eval': Eval(),
