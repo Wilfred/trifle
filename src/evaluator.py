@@ -1,6 +1,6 @@
 from trifle_types import (List, Symbol, Integer, Float,
                           Null, NULL,
-                          Function, Lambda, Macro, Special, Boolean,
+                          Function, FunctionWithEnv, Lambda, Macro, Special, Boolean,
                           Keyword, String)
 from errors import UnboundVariable, TrifleTypeError
 from almost_python import zip
@@ -78,6 +78,11 @@ def evaluate_list(node, environment):
         arguments = [
             evaluate(el, environment) for el in raw_arguments]
         return function.call(arguments)
+        
+    if isinstance(function, FunctionWithEnv):
+        arguments = [
+            evaluate(el, environment) for el in raw_arguments]
+        return function.call(arguments, environment)
         
     elif isinstance(function, Macro):
         # Build a new environment to evaluate with.

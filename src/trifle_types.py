@@ -162,6 +162,17 @@ class Function(TrifleType):
         return "<function>"
 
 
+class FunctionWithEnv(TrifleType):
+    """A function provided by the interpreter. Subclasses must provide a
+    call method that takes arguments and the environment.. Arguments
+    are passed in after being evaluated.
+
+    """
+    def repr(self):
+        # todo: we can be more helpful than this
+        return "<function>"
+
+
 # todo: could we define interpreter Function classes in terms of Lambda?
 class Lambda(TrifleType):
     """A user defined function. Holds a reference to the current lexical
