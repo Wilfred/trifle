@@ -1,7 +1,11 @@
 language: python
 python:
   - 2.7
-install: make -C src pypy
+install:
+  # Download the Pypy depdencies
+  - make -C src pypy
+  # Install our other dependencies.
+  - pip install -r requirements.pip
 script:
   - PYTHONPATH=src/pypy TRIFLEPATH=src python2 src/tests.py
   - python2 src/pypy/rpython/bin/rpython --batch src/main.py
