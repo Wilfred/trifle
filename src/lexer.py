@@ -19,12 +19,9 @@ SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
 FLOAT = 'float'
+BOOLEAN = 'boolean'
+NULL_TYPE = 'null type'
 ATOM = 'atom'
-
-ATOM_REGEXP = get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')
-
-# TODO: support 0x123, 0o123
-INTEGER_REGEXP = get_code('-?[0-9_]+')
 
 # todoc: exactly what syntax we accept for symbols
 TOKENS = [
@@ -43,16 +40,19 @@ LEXEMES = [
 
     # todoc
     # todo: support single quoted characters
-    (STRING, get_code(r"\"[^\"\\]*\"")),
+    (STRING, get_code(r"\"[^\"\\]*\"$")),
 
     # todoc
-    (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+")),
+    (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
-    # note this captures true/false/null and integers too
-    # TODO: fix that
-    (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
+    # TODO: support 0x123, 0o123
+    (INTEGER, get_code('-?[0-9_]+')),
+
+    (BOOLEAN, get_code('(true|false)$')),
+    (NULL_TYPE, get_code('null$')),
     
-    (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*')),
+    (SYMBOL, get_code('[a-z0-9*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
+    (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
 ]
 
 DIGITS = '0123456789'
@@ -131,33 +131,27 @@ def _lex(tokens):
                     lexed_tokens.append(OpenParen())
                 elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
-                elif lexeme_name == SYMBOL:
-                    # We deliberately treat `true`, `false` and `null`
-                    # as literals rather than just variables defined.
-                    # Otherwise, an expression may print `true` as its
-                    # result but evaluating `true` may not give
-                    # `true`, which is confusing.
+                elif lexeme_name == BOOLEAN:
                     if token == 'true':
                         lexed_tokens.append(TRUE)
-                    elif token == 'false':
-                        lexed_tokens.append(FALSE)
-                    elif token == 'null':
-                        lexed_tokens.append(NULL)
-                    elif starts_like_integer(token):
-                        integer_string = remove_char(token, "_")
-                        try:
-                            lexed_tokens.append(Integer(int(integer_string)))
-                        except ValueError:
-                            raise LexFailed("Invalid integer: '%s'" % token)
-                        
                     else:
-                        lexed_tokens.append(Symbol(token))
+                        lexed_tokens.append(FALSE)
+                elif lexeme_name == NULL_TYPE:
+                    lexed_tokens.append(NULL)
+                elif lexeme_name == INTEGER:
+                    integer_string = remove_char(token, "_")
+                    try:
+                        lexed_tokens.append(Integer(int(integer_string)))
+                    except ValueError:
+                        raise LexFailed("Invalid integer: '%s'" % token)
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Float(float(float_string)))
                     except ValueError:
                         raise LexFailed("Invalid float: '%s'" % token)
+                elif lexeme_name == SYMBOL:
+                    lexed_tokens.append(Symbol(token))
                 elif lexeme_name == KEYWORD:
                     # todoc
                     lexed_tokens.append(Keyword(token[1:]))
