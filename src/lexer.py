@@ -160,7 +160,6 @@ def _lex(tokens):
                     lexed_tokens.append(Keyword(token[1:]))
                 elif lexeme_name == STRING:
                     # todoc
-                    # TODO: this variable is probably unnecessary, even on RPython
                     string_end = match.match_end - 1
 
                     # This is always true, but RPython doesn't support
