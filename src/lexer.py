@@ -148,13 +148,16 @@ def _lex(tokens):
                         try:
                             lexed_tokens.append(Integer(int(integer_string)))
                         except ValueError:
-                            raise LexFailed("Invalid number: '%s'" % token)
+                            raise LexFailed("Invalid integer: '%s'" % token)
                         
                     else:
                         lexed_tokens.append(Symbol(token))
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
-                    lexed_tokens.append(Float(float(float_string)))
+                    try:
+                        lexed_tokens.append(Float(float(float_string)))
+                    except ValueError:
+                        raise LexFailed("Invalid float: '%s'" % token)
                 elif lexeme_name == KEYWORD:
                     # todoc
                     lexed_tokens.append(Keyword(token[1:]))

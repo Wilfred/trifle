@@ -89,6 +89,9 @@ class FloatLexTest(unittest.TestCase):
         with self.assertRaises(LexFailed):
             lex("123.abc")
 
+        with self.assertRaises(LexFailed):
+            lex("123.456abc")
+
 
 class SymbolLexTest(unittest.TestCase):
     def test_lex_symbol(self):
