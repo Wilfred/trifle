@@ -6,3 +6,7 @@ define functions using `lambda`.
 ## Function special expressions
 
 1. [lambda](Functions-Lambda.md)
+
+## Function macros
+
+1. [function](Functions-Function.md)

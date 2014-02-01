@@ -17,7 +17,6 @@
 )
 
 ; todo: macros should check argument types to aid debugging
-; todoc
 ; todo: unit test
 (macro function (name params :rest body)
   (quote
