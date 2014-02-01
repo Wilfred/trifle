@@ -2,8 +2,7 @@
 
 `(eval EXPRESSION)`
 
-The special expression `eval` evaluates EXPRESSION, then returns the
-result of evaluating that result.
+The function `eval` returns the result of evaluating EXPRESSION.
 
 Examples:
 

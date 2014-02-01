@@ -22,9 +22,9 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 
 1. [do](Evaluation-Do.md)
 2. [parse](Evaluation-Parse.md)
+3. [eval](Evaluation-Eval.md)
 
 ## Evaluation special expressions
 
 1. [quote](Evaluation-Quote.md)
 2. [call](Evaluation-Call.md)
-3. [eval](Evaluation-Eval.md)
