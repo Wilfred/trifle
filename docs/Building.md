@@ -26,7 +26,7 @@ results and errors easier. You can run the tests with:
 ```bash
 $ cd src
 $ mkdir -p ~/.envs
-$ virtualenv -p python2.7 ~/.envs/trifle --system-site-packages
+$ virtualenv -p python2.7 ~/.envs/trifle
 $ pip install -r requirements.pip
 $ ./run_tests
 ```
