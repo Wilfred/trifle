@@ -374,22 +374,42 @@ class Add(Function):
 
 class Subtract(Function):
     def call(self, args):
+        float_args = False
         for arg in args:
-            # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
-                    "- requires numbers, but got: %s." % arg.repr())
+                if isinstance(arg, Float):
+                    float_args = True
+                else:
+                    raise TrifleTypeError(
+                        "- requires numbers, but got: %s." % arg.repr())
 
         if not args:
             return Integer(0)
 
         if len(args) == 1:
-            return Integer(-args[0].value)
+            if isinstance(args[0], Integer):
+                return Integer(-args[0].value)
+            else:
+                return Float(-args[0].float_value)
 
-        total = args[0].value
-        for arg in args[1:]:
-            total -= arg.value
-        return Integer(total)
+        if float_args:
+            if isinstance(args[0], Integer):
+                total = float(args[0].value)
+            else:
+                total = args[0].float_value
+                
+            for arg in args[1:]:
+                if isinstance(args[0], Integer):
+                    total -= float(arg.float_value)
+                else:
+                    total -= arg.float_value
+
+            return Float(total)
+        else:
+            total = args[0].value
+            for arg in args[1:]:
+                total -= arg.value
+            return Integer(total)
 
 
 class Multiply(Function):
