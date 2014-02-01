@@ -5,7 +5,7 @@ install:
   # Download the Pypy depdencies
   - make -C src pypy
   # Install our other dependencies.
-  - pip install -r requirements.pip
+  - pip install -r src/requirements.pip
 script:
   # Run our unit tests.
   - PYTHONPATH=src/pypy TRIFLEPATH=src coverage run --omit='src/pypy*' src/tests.py
