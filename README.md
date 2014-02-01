@@ -21,6 +21,7 @@ Current status: Only a very basic interpreter implemented. Please see
 [the docs](docs/Introduction.md) to see what's available.
 
 [![Build Status](https://travis-ci.org/Wilfred/trifle.png?branch=master)](https://travis-ci.org/Wilfred/trifle)
+[![Coverage Status](https://coveralls.io/repos/Wilfred/trifle/badge.png)](https://coveralls.io/r/Wilfred/trifle)
 
 ## Goals
 
