@@ -24,6 +24,7 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 2. [call](Evaluation-Call.md)
 3. [parse](Evaluation-Parse.md)
 4. [eval](Evaluation-Eval.md)
+5. [defined?](Evaluation-Defined.md)
 
 ## Evaluation special expressions
 

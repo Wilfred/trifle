@@ -585,16 +585,14 @@ class Call(FunctionWithEnv):
         return evaluate(expression, env)
         
 
-# todoc
-class Defined(Special):
+class Defined(FunctionWithEnv):
     def call(self, args, env):
         # todo: a utility function for arity checking.
         if len(args) != 1:
             raise ArityError(
                 "defined? takes 1 arguments, but got: %s" % List(args).repr())
 
-        from evaluator import evaluate
-        symbol = evaluate(args[0], env)
+        symbol = args[0]
 
         if not isinstance(symbol, Symbol):
             raise TrifleTypeError(
