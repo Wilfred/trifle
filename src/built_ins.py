@@ -1,7 +1,7 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
-from errors import TrifleTypeError, ArityError
+from errors import TrifleTypeError, ArityError, DivideByZero
 from almost_python import deepcopy, copy, raw_input
 from parameters import validate_parameters
 from lexer import lex
@@ -439,6 +439,38 @@ class Multiply(Function):
                 product *= arg.value
             return Integer(product)
 
+
+class Divide(Function):
+    def call(self, args):
+        if len(args) < 2:
+            raise ArityError(
+                "/ takes at least 2 arguments, but got: %s" % List(args).repr())
+
+        float_args = False
+        for arg in args:
+            if not isinstance(arg, Integer):
+                if isinstance(arg, Float):
+                    float_args = True
+                else:
+                    raise TrifleTypeError(
+                        "/ requires numbers, but got: %s." % arg.repr())
+
+        if isinstance(args[0], Integer):
+            quotient = float(args[0].value)
+        else:
+            quotient = args[0].float_value
+
+        for arg in args[1:]:
+            try:
+                if isinstance(arg, Integer):
+                    quotient /= float(arg.value)
+                else:
+                    quotient /= arg.float_value
+            except ZeroDivisionError:
+                raise DivideByZero("Divided by zero: %s" % arg.repr())
+
+        return Float(quotient)
+            
 
 class LessThan(Function):
     def call(self, args):

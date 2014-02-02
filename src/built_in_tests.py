@@ -11,7 +11,8 @@ from trifle_types import (List, Integer, Float,
                           TRUE, FALSE, NULL)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
-                    LexFailed, ParseFailed, ArityError)
+                    LexFailed, ParseFailed, ArityError,
+                    DivideByZero)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -487,6 +488,31 @@ class MultiplyTest(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(* 1 null)")))
+
+
+class DivideTest(unittest.TestCase):
+    def test_divide(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(/ 1 2)"))),
+                         Float(0.5))
+
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(/ 1 2 2)"))),
+                         Float(0.25))
+
+    def test_divide_floats(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(/ 1.0 2)"))),
+                         Float(0.5))
+        
+    def test_divide_by_zero(self):
+        with self.assertRaises(DivideByZero):
+            evaluate_with_fresh_env(parse_one(lex("(/ 1 0)")))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex("(/ 1 null)")))
+
+    def test_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex("(/ 1)")))
 
 
 class IfTest(unittest.TestCase):

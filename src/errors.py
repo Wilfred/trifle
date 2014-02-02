@@ -33,3 +33,7 @@ class TrifleTypeError(TrifleError):
     
 class ArityError(TrifleError):
     pass
+
+
+class DivideByZero(TrifleError):
+    pass
