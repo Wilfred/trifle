@@ -169,3 +169,12 @@ Implement as a library.
 Favour upfront declaration of slots to aid static analysis.
 
 Multiple dispatch, multiple inheritance, reuse Python's MRO algorithm.
+
+## User testing
+
+This is an interesting area that would be worthwhile to pursue.
+
+Relevant papers:
+
+* http://ecs.victoria.ac.nz/foswiki/pub/Events/PLATEAU/Program/plateau2011-stefik.pdf
+* An Empirical Investigation into Programming Language Syntax
