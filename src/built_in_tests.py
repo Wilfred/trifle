@@ -756,6 +756,15 @@ class LessThanTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(< 3 2)"))),
             FALSE)
 
+    def test_less_than_floats(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(< 1 2.0)"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(< 3.0 2.0)"))),
+            FALSE)
+
     def test_less_than_typeerror(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(< true false)")))

@@ -478,20 +478,46 @@ class LessThan(Function):
             raise ArityError(
                 "< takes at least 2 arguments, but got: %s" % List(args).repr())
         
+        float_args = False
         for arg in args:
-            # todo: we will want other numeric types
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
-                    "%s is not a number." % arg.repr())
+                if isinstance(arg, Float):
+                    float_args = True
+                else:
+                    raise TrifleTypeError(
+                        "< requires numbers, but got: %s." % arg.repr())
 
-        previous_arg = args[0]
-        for arg in args[1:]:
-            if not previous_arg.value < arg.value:
-                return FALSE
+        if float_args:
+            if isinstance(args[0], Integer):
+                previous_number = float(args[0].value)
+            else:
+                previous_number = args[0].float_value
 
-            previous_arg = arg
+            for arg in args[1:]:
+                if isinstance(arg, Integer):
+                    number = float(arg.value)
+                else:
+                    number = arg.float_value
 
-        return TRUE
+                if not previous_number < number:
+                    return FALSE
+
+                previous_number = number
+
+            return TRUE
+
+        else:
+            # Only integers.
+            previous_number = args[0].value
+            for arg in args[1:]:
+                number = arg.value
+
+                if not previous_number < number:
+                    return FALSE
+
+                previous_number = number
+
+            return TRUE
 
 
 class GetIndex(Function):

@@ -9,12 +9,13 @@ is less than the next argument.
 
 Examples:
 
-    > (< 1 2)
-    true
+```lisp
+> (< 1 2)
+true
 
-    > (< 1 5 6)
-    true
+> (< 1 5 6.0)
+true
 
-    > (< 10 9)
-    false
-
+> (< 10 9)
+false
+```
