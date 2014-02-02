@@ -120,6 +120,33 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.2
+
+Numbers: This release adds floats, and makes parsing stricter. `123foo`
+was previously a symbol, it is now a syntax error. The function `/`
+and macro `dec!` have been added.
+
+Evaluation: The functions `call`, `parse`, `eval` and `defined?` have
+been added.
+
+Macros: Fixed a bug with `macro` where it reported the
+wrong argument as incorrect. Macros now always require a body.
+
+Errors: Many built-in functions have had their error messages
+improved, and raise an arity error (not a type error) on the wrong
+number of arguments.
+
+Documentation: Docs have been improved, and `function` and `let` have
+gained docmentation. We've cleared up the difference between functions
+(arguments always evaluated) and special expressions (does not
+evaluate some arguments).
+
+I/O: The function `input` (read a line from stdin) has been added.
+
+Workflow: We now use coveralls to measure code coverage on Python code
+for every checkin. Note we don't have any facility for measuring
+coverage on Trifle code yet.
+
 ### v0.1
 
 This release includes integers, lists, booleans, strings (though you
