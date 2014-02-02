@@ -475,9 +475,8 @@ class Divide(Function):
 class LessThan(Function):
     def call(self, args):
         if len(args) < 2:
-            # todo: print the actual arguments given
-            raise TrifleTypeError(
-                "< takes at least 2 arguments, but got %d." % len(args))
+            raise ArityError(
+                "< takes at least 2 arguments, but got: %s" % List(args).repr())
         
         for arg in args:
             # todo: we will want other numeric types

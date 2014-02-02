@@ -761,10 +761,10 @@ class LessThanTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(< true false)")))
 
     def test_less_than_insufficient_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(<)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex("(< 1)")))
 
 
