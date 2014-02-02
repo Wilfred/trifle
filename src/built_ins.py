@@ -446,14 +446,10 @@ class Divide(Function):
             raise ArityError(
                 "/ takes at least 2 arguments, but got: %s" % List(args).repr())
 
-        float_args = False
         for arg in args:
-            if not isinstance(arg, Integer):
-                if isinstance(arg, Float):
-                    float_args = True
-                else:
-                    raise TrifleTypeError(
-                        "/ requires numbers, but got: %s." % arg.repr())
+            if not isinstance(arg, Integer) and not isinstance(arg, Float):
+                raise TrifleTypeError(
+                    "/ requires numbers, but got: %s." % arg.repr())
 
         if isinstance(args[0], Integer):
             quotient = float(args[0].value)
