@@ -12,6 +12,7 @@
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
+    - [v0.2](#v02)
     - [v0.1](#v01)
 
 # Trifle Lisp
