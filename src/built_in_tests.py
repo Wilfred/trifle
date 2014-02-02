@@ -462,6 +462,9 @@ class SubtractTest(unittest.TestCase):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(- 1 2.0)"))),
                          Float(-1.0))
         
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex("(- 0.0 1)"))),
+                         Float(-1.0))
+        
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex("(- -)")))

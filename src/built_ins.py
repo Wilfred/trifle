@@ -399,8 +399,8 @@ class Subtract(Function):
                 total = args[0].float_value
                 
             for arg in args[1:]:
-                if isinstance(args[0], Integer):
-                    total -= float(arg.float_value)
+                if isinstance(arg, Integer):
+                    total -= float(arg.value)
                 else:
                     total -= arg.float_value
 
