@@ -159,7 +159,7 @@ class Function(TrifleType):
     """
     def repr(self):
         # todo: we can be more helpful than this
-        return "<function>"
+        return "<built-in function>"
 
 
 class FunctionWithEnv(TrifleType):
@@ -170,7 +170,7 @@ class FunctionWithEnv(TrifleType):
     """
     def repr(self):
         # todo: we can be more helpful than this
-        return "<function>"
+        return "<built-in function>"
 
 
 # todo: could we define interpreter Function classes in terms of Lambda?
