@@ -785,7 +785,6 @@ class Close(Function):
         return NULL
 
 
-# TODOC
 # TODO: specify a limit for how much to read.
 class Read(Function):
     def call(self, args):
