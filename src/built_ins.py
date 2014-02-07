@@ -723,6 +723,9 @@ class Defined(FunctionWithEnv):
         return Boolean(env.contains(symbol.symbol_name))
 
 
+# TODO: error on a file we can't write to
+# TODO: error when we run out of file handles
+# TODO: other errors the file system can throw at us
 class Open(Function):
     def call(self, args):
         # todo: a utility function for arity checking.
