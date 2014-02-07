@@ -41,3 +41,11 @@ class DivideByZero(TrifleError):
 
 class StackOverflow(TrifleError):
     pass
+
+
+class FileNotFound(TrifleError):
+    pass
+
+
+class TrifleValueError(TrifleError):
+    pass

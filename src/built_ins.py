@@ -1,8 +1,11 @@
+import errno
+
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List, Keyword,
                           FileHandle, Bytes,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
-from errors import TrifleTypeError, ArityError, DivideByZero
+from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
+                    TrifleValueError)
 from almost_python import deepcopy, copy, raw_input
 from parameters import validate_parameters
 from lexer import lex
@@ -720,7 +723,6 @@ class Defined(FunctionWithEnv):
         return Boolean(env.contains(symbol.symbol_name))
 
 
-# TODOC
 class Open(Function):
     def call(self, args):
         # todo: a utility function for arity checking.
@@ -742,11 +744,18 @@ class Open(Function):
                 "the first argument to open must be a string, but got: %s"
                 % flag.repr())
 
-        # TODO: be stricter about what flags we accept.
         if flag.symbol_name == 'write':
             handle = open(path.string, 'w')
+        elif flag.symbol_name == 'read':
+            try:
+                handle = open(path.string, 'r')
+            except IOError as e:
+                if e.errno == errno.ENOENT:
+                    raise FileNotFound(path.string)
+                else:
+                    raise
         else:
-            handle = open(path.string, 'r')
+            raise TrifleValueError("Invalid flag for open: :%s" % flag.symbol_name)
 
         return FileHandle(path.string, handle)
 

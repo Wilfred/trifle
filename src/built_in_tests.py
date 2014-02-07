@@ -14,7 +14,8 @@ from trifle_types import (List, Integer, Float,
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
-                    DivideByZero, StackOverflow)
+                    DivideByZero, StackOverflow, FileNotFound,
+                    TrifleValueError)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -1134,11 +1135,27 @@ class DefinedTest(unittest.TestCase):
 # TODO: support read and write flags together
 # TODO: add read, write! and seek! functions.
 class OpenTest(unittest.TestCase):
-    def test_open(self):
+    def test_open_read(self):
+        result = evaluate_with_fresh_env(parse_one(lex(
+            '(open "built_in_tests.py" :read)')))
+
+        self.assertTrue(isinstance(result, FileHandle))
+
+    def test_open_read_no_such_file(self):
+        with self.assertRaises(FileNotFound):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(open "this_file_doesnt_exist" :read)')))
+
+    def test_open_write(self):
         result = evaluate_with_fresh_env(parse_one(lex(
             '(open "/tmp/foo" :write)')))
 
         self.assertTrue(isinstance(result, FileHandle))
+
+    def test_open_invalid_flag(self):
+        with self.assertRaises(TrifleValueError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(open "/tmp/foo" :foo)')))
 
     def test_open_arity_error(self):
         with self.assertRaises(ArityError):
