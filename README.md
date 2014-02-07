@@ -93,6 +93,13 @@ encouraged to aid readability.
 
 Influences: Clojure
 
+### Accessible
+
+Trifle places a high value on code readability for users who have
+programmed in other languages but are new to Trifle (or lisps in
+general). It tries to use familiar terminology and avoids
+abbreviations.
+
 ### Friendly
 
 The Trifle community strives to be friendly and helpful. We have a
