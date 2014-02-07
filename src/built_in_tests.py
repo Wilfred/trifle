@@ -12,7 +12,7 @@ from trifle_types import (List, Integer, Float,
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
-                    DivideByZero)
+                    DivideByZero, StackOverflow)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -283,6 +283,14 @@ class EvaluatingLambdaTest(unittest.TestCase):
             evaluate_all_with_fresh_env(
                 parse(lex("(set-symbol! (quote x) 1) ((lambda () (set-symbol! (quote x) 2))) x"))),
             Integer(2))
+
+    # TODO: make this pass.
+    # TODO: also test for stack overflow inside macros.
+    @unittest.skip
+    def test_stack_overflow(self):
+        with self.assertRaises(StackOverflow):
+            evaluate_all_with_fresh_env(
+                parse(lex("(set-symbol! (quote f) (lambda () (f))) (f)")))
 
 
 class FreshSymbolTest(unittest.TestCase):

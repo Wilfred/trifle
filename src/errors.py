@@ -37,3 +37,7 @@ class ArityError(TrifleError):
 
 class DivideByZero(TrifleError):
     pass
+
+
+class StackOverflow(TrifleError):
+    pass
