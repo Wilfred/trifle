@@ -152,6 +152,16 @@ class List(TrifleType):
             return self.values == other.values
 
 
+# TODOC
+class FileHandle(TrifleType):
+    def __init__(self, file_name, file_handle):
+        self.file_name = file_name
+        self.file_handle = file_handle
+
+    def repr(self):
+        return '#file("%s")' % self.file_name
+
+
 class Function(TrifleType):
     """A function provided by the interpreter. Subclasses must provide a
     call method. Arguments are passed in after being evaluated.

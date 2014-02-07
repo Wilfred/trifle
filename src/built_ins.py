@@ -1,5 +1,5 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
-                          Integer, Float, List,
+                          Integer, Float, List, Keyword, FileHandle,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError, ArityError, DivideByZero
 from almost_python import deepcopy, copy, raw_input
@@ -717,3 +717,33 @@ class Defined(FunctionWithEnv):
                 % symbol.repr())
 
         return Boolean(env.contains(symbol.symbol_name))
+
+
+# TODOC
+class Open(Function):
+    def call(self, args):
+        # todo: a utility function for arity checking.
+        if len(args) != 2:
+            raise ArityError(
+                "open takes 2 arguments, but got: %s" % List(args).repr())
+
+        path = args[0]
+
+        if not isinstance(path, String):
+            raise TrifleTypeError(
+                "the first argument to open must be a string, but got: %s"
+                % path.repr())
+
+        flag = args[1]
+
+        if not isinstance(flag, Keyword):
+            raise TrifleTypeError(
+                "the first argument to open must be a string, but got: %s"
+                % flag.repr())
+
+        if flag.symbol_name == 'write':
+            handle = open(path.string, 'w')
+        else:
+            handle = open(path.string, 'r')
+
+        return FileHandle(path.string, handle)

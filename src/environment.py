@@ -4,7 +4,8 @@ from built_ins import (Add, Subtract, Multiply, Divide,
                        LambdaFactory, DefineMacro, FreshSymbol,
                        Length, GetIndex, SetIndex, Push, Append,
                        Print, Input,
-                       Call, Parse, Eval, Defined)
+                       Call, Parse, Eval, Defined,
+                       Open)
 
 
 class Scope(object):
@@ -121,4 +122,5 @@ def fresh_environment():
         'parse': Parse(),
         'eval': Eval(),
         'defined?': Defined(),
+        'open': Open(),
     })])

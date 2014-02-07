@@ -8,7 +8,8 @@ from lexer import lex
 from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Float,
                           Symbol, Keyword, String, Lambda,
-                          TRUE, FALSE, NULL)
+                          TRUE, FALSE, NULL,
+                          FileHandle)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
@@ -1126,3 +1127,28 @@ class DefinedTest(unittest.TestCase):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(defined? (quote foo) 1)")))
+
+class OpenTest(unittest.TestCase):
+    def test_open(self):
+        result = evaluate_with_fresh_env(parse_one(lex(
+            '(open "/tmp/foo" :write)')))
+
+        self.assertTrue(isinstance(result, FileHandle))
+
+    def test_open_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(open "/foo/bar")')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(open "/foo/bar" :write :write)')))
+
+    def test_open_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(open "/foo/bar" null)')))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(open null :write)")))
