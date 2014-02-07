@@ -650,7 +650,7 @@ class Parse(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "parse takes 1 arguments, but got: %s" % List(args).repr())
+                "parse takes 1 argument, but got: %s" % List(args).repr())
 
         program_string = args[0]
 
@@ -707,7 +707,7 @@ class Defined(FunctionWithEnv):
         # todo: a utility function for arity checking.
         if len(args) != 1:
             raise ArityError(
-                "defined? takes 1 arguments, but got: %s" % List(args).repr())
+                "defined? takes 1 argument, but got: %s" % List(args).repr())
 
         symbol = args[0]
 
