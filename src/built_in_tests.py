@@ -288,7 +288,7 @@ class EvaluatingLambdaTest(unittest.TestCase):
 
     # TODO: make this pass.
     # TODO: also test for stack overflow inside macros.
-    @unittest.skip
+    @unittest.skip("We don't keep track of the stack yet.")
     def test_stack_overflow(self):
         with self.assertRaises(StackOverflow):
             evaluate_all_with_fresh_env(
