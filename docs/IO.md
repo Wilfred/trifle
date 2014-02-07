@@ -6,4 +6,4 @@ Trifle has limited support for I/O.
 
 1. [print](IO-Print.md)
 2. [input](IO-Input.md)
-
+3. [open](IO-Open.md)
