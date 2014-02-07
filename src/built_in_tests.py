@@ -211,6 +211,15 @@ class EvaluatingLiteralsTest(unittest.TestCase):
             String("foo"))
 
 
+class BytesReprTest(unittest.TestCase):
+    def test_bytes_repr(self):
+        bytes_val = Bytes("\\ souffl\xc3\xa9")
+
+        self.assertEqual(
+            bytes_val.repr(),
+            '#bytes("\\\\ souffl\\xc3\\xa9")')
+
+
 class EvaluatingLambdaTest(unittest.TestCase):
     def test_call_lambda(self):
         self.assertEqual(

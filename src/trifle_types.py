@@ -169,7 +169,23 @@ class Bytes(TrifleType):
         return self.byte_value == other.byte_value
 
     def repr(self):
-        return '#bytes("%s")' % self.byte_value
+        SMALLEST_PRINTABLE_CHAR = ' '
+        LARGEST_PRINTABLE_CHAR = '~'
+
+        printable_chars = []
+
+        for char in self.byte_value:
+            if SMALLEST_PRINTABLE_CHAR <= char <= LARGEST_PRINTABLE_CHAR:
+                if char == "\\":
+                    printable_chars.append("\\\\")
+                else:
+                    printable_chars.append(char)
+            else:
+                # e.g. "0x21"
+                hexadecimal = hex(ord(char))
+                printable_chars.append("\\x%s" % hexadecimal[2:])
+
+        return '#bytes("%s")' % "".join(printable_chars)
 
 
 # TODOC
