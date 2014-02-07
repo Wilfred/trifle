@@ -143,6 +143,13 @@ Docstring conventions:
 >> (quux 1)
 2"
 
+### Reader macros
+
+Reader macros should start with `#` and end with
+balanced parentheses. E.g. `#foo(quux :baz)`.
+
+Question: should we use this syntax for true/false/null?
+
 ## Unspecified
 
 Sockets and other network functionality. About (Python: `sys.version`)
