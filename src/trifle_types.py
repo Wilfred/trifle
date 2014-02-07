@@ -191,6 +191,7 @@ class Bytes(TrifleType):
 # TODOC
 class FileHandle(TrifleType):
     def __init__(self, file_name, file_handle):
+        self.is_closed = False
         self.file_name = file_name
         self.file_handle = file_handle
 

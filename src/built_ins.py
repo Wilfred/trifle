@@ -777,10 +777,11 @@ class Close(Function):
                 "the first argument to close! must be a file handle, but got: %s"
                 % handle.repr())
 
-        if handle.file_handle.closed:
+        if handle.is_closed:
             raise UsingClosedFile("File handle for %s is already closed." % handle.file_name)
-
-        handle.file_handle.close()
+        else:
+            handle.is_closed = True
+            handle.file_handle.close()
 
         return NULL
 
