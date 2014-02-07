@@ -1,5 +1,6 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
-                          Integer, Float, List, Keyword, FileHandle,
+                          Integer, Float, List, Keyword,
+                          FileHandle, Bytes,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import TrifleTypeError, ArityError, DivideByZero
 from almost_python import deepcopy, copy, raw_input
@@ -747,3 +748,21 @@ class Open(Function):
             handle = open(path.string, 'r')
 
         return FileHandle(path.string, handle)
+
+
+# TODOC
+# TODO: specify a limit for how much to read.
+class Read(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                "read takes 1 argument, but got: %s" % List(args).repr())
+
+        handle = args[0]
+
+        if not isinstance(handle, FileHandle):
+            raise TrifleTypeError(
+                "the first argument to open must be a file handle, but got: %s"
+                % handle.repr())
+
+        return Bytes(handle.file_handle.read())

@@ -1,6 +1,7 @@
 import unittest
 from cStringIO import StringIO
 import sys
+import os
 
 from mock import patch, Mock
 
@@ -9,7 +10,7 @@ from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Float,
                           Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL,
-                          FileHandle)
+                          FileHandle, Bytes)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
@@ -1128,6 +1129,10 @@ class DefinedTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(
                 "(defined? (quote foo) 1)")))
 
+
+# TODO: error on nonexistent file, or file we can't read/write
+# TODO: support read and write flags together
+# TODO: add read, write! and seek! functions.
 class OpenTest(unittest.TestCase):
     def test_open(self):
         result = evaluate_with_fresh_env(parse_one(lex(
@@ -1152,3 +1157,18 @@ class OpenTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(open null :write)")))
+
+
+# TODO: type and arity tests
+class ReadTest(unittest.TestCase):
+    def test_read(self):
+        os.system('echo -n foo > test.txt')
+        
+        result = evaluate_with_fresh_env(parse_one(lex(
+            '(read (open "test.txt" :read))')))
+
+        os.remove('test.txt')
+
+        self.assertEqual(
+            result,
+            Bytes("foo"))

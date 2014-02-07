@@ -5,7 +5,7 @@ from built_ins import (Add, Subtract, Multiply, Divide,
                        Length, GetIndex, SetIndex, Push, Append,
                        Print, Input,
                        Call, Parse, Eval, Defined,
-                       Open)
+                       Open, Read)
 
 
 class Scope(object):
@@ -123,4 +123,5 @@ def fresh_environment():
         'eval': Eval(),
         'defined?': Defined(),
         'open': Open(),
+        'read': Read(),
     })])

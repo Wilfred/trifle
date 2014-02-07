@@ -152,6 +152,26 @@ class List(TrifleType):
             return self.values == other.values
 
 
+# TODO: reader macro for these
+# TODO: a way of creating these without opening a file
+# TODO: test evaluating these
+# TODO: unit test equal? for these
+# TODO: make these mutable
+# TODOC
+class Bytes(TrifleType):
+    def __init__(self, byte_value):
+        self.byte_value = byte_value
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.byte_value == other.byte_value
+
+    def repr(self):
+        return '#bytes("%s")' % self.byte_value
+
+
 # TODOC
 class FileHandle(TrifleType):
     def __init__(self, file_name, file_handle):
@@ -159,7 +179,7 @@ class FileHandle(TrifleType):
         self.file_handle = file_handle
 
     def repr(self):
-        return '#file("%s")' % self.file_name
+        return '#file-handle("%s")' % self.file_name
 
 
 class Function(TrifleType):
