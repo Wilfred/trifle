@@ -5,7 +5,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           FileHandle, Bytes,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
-                    TrifleValueError)
+                    TrifleValueError, UsingClosedFile)
 from almost_python import deepcopy, copy, raw_input
 from parameters import validate_parameters
 from lexer import lex
@@ -761,6 +761,28 @@ class Open(Function):
             raise TrifleValueError("Invalid flag for open: :%s" % flag.symbol_name)
 
         return FileHandle(path.string, handle)
+
+
+class Close(Function):
+    def call(self, args):
+        # todo: a utility function for arity checking.
+        if len(args) != 1:
+            raise ArityError(
+                "close! takes 1 argument, but got: %s" % List(args).repr())
+
+        handle = args[0]
+
+        if not isinstance(handle, FileHandle):
+            raise TrifleTypeError(
+                "the first argument to close! must be a file handle, but got: %s"
+                % handle.repr())
+
+        if handle.file_handle.closed:
+            raise UsingClosedFile("File handle for %s is already closed." % handle.file_name)
+
+        handle.file_handle.close()
+
+        return NULL
 
 
 # TODOC

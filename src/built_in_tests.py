@@ -15,7 +15,7 @@ from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError)
+                    TrifleValueError, UsingClosedFile)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -1174,6 +1174,39 @@ class OpenTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 "(open null :write)")))
+
+
+class CloseTest(unittest.TestCase):
+    def test_close(self):
+        result = evaluate_all_with_fresh_env(parse(lex(
+            '(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) x')))
+
+        self.assertTrue(result.file_handle.closed)
+
+    def test_close_twice_error(self):
+        with self.assertRaises(UsingClosedFile):
+            evaluate_all_with_fresh_env(parse(lex(
+                '(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')))
+
+    def test_close_returns_null(self):
+        result = evaluate_with_fresh_env(parse_one(lex(
+            '(close! (open "/tmp/foo" :write))')))
+
+        self.assertEqual(result, NULL)
+
+    def test_close_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(close! (open "/tmp/foo" :write) null)')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(close!)')))
+
+    def test_close_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(close! null)')))
 
 
 class ReadTest(unittest.TestCase):

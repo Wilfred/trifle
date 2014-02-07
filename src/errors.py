@@ -49,3 +49,7 @@ class FileNotFound(TrifleError):
 
 class TrifleValueError(TrifleError):
     pass
+
+
+class UsingClosedFile(TrifleError):
+    pass
