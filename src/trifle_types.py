@@ -204,10 +204,6 @@ class Macro(TrifleType):
         return "<macro>"
 
 
-# todo: Some built-ins, such as eval and defined?, do actually
-# evaluate their arguments, but also manipulate the environment. We
-# should create a different type for these, and update the docs
-# accordingly.
 class Special(TrifleType):
     """A special expression is an expression whose arguments are passed
     unevaluated, but at run time.
