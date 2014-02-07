@@ -1159,7 +1159,6 @@ class OpenTest(unittest.TestCase):
                 "(open null :write)")))
 
 
-# TODO: type and arity tests
 class ReadTest(unittest.TestCase):
     def test_read(self):
         os.system('echo -n foo > test.txt')
@@ -1172,3 +1171,17 @@ class ReadTest(unittest.TestCase):
         self.assertEqual(
             result,
             Bytes("foo"))
+
+    def test_read_arity(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(read)")))
+            
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                '(read "/etc/foo" :read :read)')))
+            
+    def test_read_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                "(read null)")))
