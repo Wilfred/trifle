@@ -754,7 +754,7 @@ class Open(Function):
                 handle = open(path.string, 'r')
             except IOError as e:
                 if e.errno == errno.ENOENT:
-                    raise FileNotFound(path.string)
+                    raise FileNotFound("No file found: %s" % path.string)
                 else:
                     raise
         else:
