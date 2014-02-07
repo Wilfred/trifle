@@ -1137,7 +1137,7 @@ class DefinedTest(unittest.TestCase):
 class OpenTest(unittest.TestCase):
     def test_open_read(self):
         result = evaluate_with_fresh_env(parse_one(lex(
-            '(open "built_in_tests.py" :read)')))
+            '(open "/etc/hosts" :read)')))
 
         self.assertTrue(isinstance(result, FileHandle))
 
