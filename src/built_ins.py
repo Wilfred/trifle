@@ -742,6 +742,7 @@ class Open(Function):
                 "the first argument to open must be a string, but got: %s"
                 % flag.repr())
 
+        # TODO: be stricter about what flags we accept.
         if flag.symbol_name == 'write':
             handle = open(path.string, 'w')
         else:
