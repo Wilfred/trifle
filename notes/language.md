@@ -159,13 +159,25 @@ Catching exceptions:
  (call-dodgy-func)
  :catch (:zero-division)
  :catch (:type-error (call-restart :try-again))
- :finally (cleanup))
+ :finally (cleanup)
+)
 ```
 
 Throwing exceptions:
 
 ```lisp
 (throw {:kind :value-error :message "Woah, I didn't expect that!"})
+```
+
+Offering restarts (which are dynamically scoped):
+
+```lisp
+(try
+  (call-dodgy-func)
+  :restart (:return-null (lambda () null))
+  :restart (:retry (lambda () (call-dodgy-func)))
+  :restart (:override-with (lambda (value) (foo value)))
+)
 ```
 
 ## Unspecified
