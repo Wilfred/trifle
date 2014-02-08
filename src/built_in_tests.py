@@ -210,6 +210,12 @@ class EvaluatingLiteralsTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex('"foo"'))),
             String("foo"))
 
+    def test_eval_bytes(self):
+        bytes_val = Bytes("foobar")
+        self.assertEqual(
+            evaluate_with_fresh_env(bytes_val),
+            bytes_val)
+
 
 class BytesReprTest(unittest.TestCase):
     def test_bytes_repr(self):
