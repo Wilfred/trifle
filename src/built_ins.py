@@ -308,9 +308,8 @@ class Input(Function):
 class Same(Function):
     def call(self, args):
         if len(args) != 2:
-            # todo: print the actual arguments given
             raise TrifleTypeError(
-                "same? takes 2 arguments, but got %d." % len(args))
+                "same? takes 2 arguments, but got: %s" % List(args).repr())
 
         # Sadly, we can't access .__class__ in RPython.
         if isinstance(args[0], Symbol):
