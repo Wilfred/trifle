@@ -150,6 +150,24 @@ balanced parentheses. E.g. `#foo(quux :baz)`.
 
 Question: should we use this syntax for true/false/null?
 
+### Exceptions
+
+Catching exceptions:
+
+```lisp
+(try
+ (call-dodgy-func)
+ :catch (:zero-division)
+ :catch (:type-error (call-restart :try-again))
+ :finally (cleanup))
+```
+
+Throwing exceptions:
+
+```lisp
+(throw {:kind :value-error :message "Woah, I didn't expect that!"})
+```
+
 ## Unspecified
 
 Sockets and other network functionality. About (Python: `sys.version`)
