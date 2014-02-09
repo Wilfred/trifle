@@ -319,13 +319,6 @@ class Same(Function):
 
             return FALSE
 
-        if isinstance(args[0], Integer):
-            if isinstance(args[1], Integer):
-                if args[0].value == args[1].value:
-                    return TRUE
-
-            return FALSE
-
         if args[0] is args[1]:
             return TRUE
         else:

@@ -2,25 +2,24 @@
 
 `(same VALUE VALUE)`
 
-The function `same?` returns `true` if both arguments are of the same
-type and represent the same value.
+The function `same?` returns `true` if both arguments are the same
+value. Note this is different from `equal?`, which compares if two
+values are equivalent.
 
 Examples:
 
 ```lisp
-> (same? 1 1)
+> (same? (quote a) (quote a))
 true
-
-> (same? 1 2)
-false
 
 > (same? false 123)
 false
 ```
 
-Note that `same?` implements shallow equality, so lists with the same
-elements are not the same. If two variables reference the same list
-instance, `same?` will return `true`.
+If two values are `same?`, then they are the same value in memory. For
+example, lists with the same elements are not the same. If two
+variables reference the same list instance, `same?` will return
+`true`.
 
 Examples:
 

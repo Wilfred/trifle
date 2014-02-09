@@ -720,11 +720,6 @@ class SameTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex("(same? true false)"))),
             FALSE)
 
-    def test_integers_same(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex("(same? 1 1)"))),
-            TRUE)
-
     def test_integers_different(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex("(same? 1 2)"))),
