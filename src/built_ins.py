@@ -6,7 +6,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
                     TrifleValueError, UsingClosedFile)
-from almost_python import deepcopy, copy, raw_input
+from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
