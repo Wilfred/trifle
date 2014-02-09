@@ -312,6 +312,7 @@ class Same(Function):
                 "same? takes 2 arguments, but got: %s" % List(args).repr())
 
         # Sadly, we can't access .__class__ in RPython.
+        # TODO: proper symbol interning.
         if isinstance(args[0], Symbol):
             if isinstance(args[1], Symbol):
                 if args[0].symbol_name == args[1].symbol_name:
