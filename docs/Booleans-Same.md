@@ -1,6 +1,6 @@
 # same?
 
-`(same VALUE VALUE)`
+`(same? VALUE VALUE)`
 
 The function `same?` returns `true` if both arguments are the same
 value. Note this is different from `equal?`, which compares if two
