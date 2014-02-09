@@ -761,11 +761,11 @@ class SameTest(unittest.TestCase):
             FALSE)
 
     def test_same_wrong_number_of_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(same? 1)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex("(same? 1 2 3)")))
 
