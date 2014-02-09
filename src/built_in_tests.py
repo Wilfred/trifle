@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 from cStringIO import StringIO
 import sys
@@ -1339,3 +1340,26 @@ class ReadTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 u"(read null)")))
+
+
+class EncodeTest(unittest.TestCase):
+    def test_encode(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(encode "soufflé")'))),
+            Bytes(b"souffl\xc3\xa9"))
+    
+    def test_encode_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(encode null)')))
+    
+    def test_encode_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(encode)')))
+    
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(encode "foo" 2)')))
+    

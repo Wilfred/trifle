@@ -865,3 +865,20 @@ class Read(Function):
                 % handle.repr())
 
         return Bytes(handle.file_handle.read())
+
+
+# TODO: take a second argument that specifies the encoding.
+class Encode(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"encode takes 1 argument, but got: %s" % List(args).repr())
+
+        string = args[0]
+
+        if not isinstance(string, String):
+            raise TrifleTypeError(
+                u"the first argument to encode must be a string, but got: %s"
+                % string.repr())
+
+        return Bytes(string.string.encode('utf-8'))
