@@ -26,7 +26,6 @@ class UnboundVariable(TrifleError):
 
 
 # Python already has a 'TypeError' exception
-# TODO: add a value error too
 class TrifleTypeError(TrifleError):
     pass
 
