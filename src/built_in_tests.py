@@ -770,6 +770,100 @@ class SameTest(unittest.TestCase):
                 parse_one(lex("(same? 1 2 3)")))
 
 
+class EqualTest(unittest.TestCase):
+    def test_booleans_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? true true)"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? false false)"))),
+            TRUE)
+
+    def test_booleans_different(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? true false)"))),
+            FALSE)
+
+    def test_integers_same(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? 1 1)"))),
+            TRUE)
+
+    def test_integers_different(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? 1 2)"))),
+            FALSE)
+
+    def test_floats_same(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? 1.0 1.0)"))),
+            TRUE)
+
+    def test_numbers_same(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? 1.0 1)"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? 1 1.0)"))),
+            TRUE)
+
+    def test_null_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? null null)"))),
+            TRUE)
+
+    def test_symbol_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? (quote a) (quote a))"))),
+            TRUE)
+
+    # TODO: unit test bytes equality, once we have a way of creating them without files
+    def test_list_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? (quote (1 (2))) (quote (1 (2))))"))),
+            TRUE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? (quote (1 (2))) (quote (1 (3))))"))),
+            FALSE)
+
+    def test_string_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? \"foo\" \"foo\")"))),
+            TRUE)
+
+    def test_function_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? equal? equal?)"))),
+            TRUE)
+
+    def test_lambda_equal(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex("(set-symbol! (quote x) (lambda () 1)) (equal? x x)"))),
+            TRUE)
+
+    def test_special_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? if if)"))),
+            TRUE)
+
+    def test_different_types(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex("(equal? true 1)"))),
+            FALSE)
+
+    def test_equal_wrong_number_of_args(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(equal? 1)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(
+                parse_one(lex("(equal? 1 2 3)")))
+
+
 class LessThanTest(unittest.TestCase):
     def test_less_than(self):
         self.assertEqual(

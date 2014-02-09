@@ -326,6 +326,77 @@ class Same(Function):
             return FALSE
 
 
+def is_equal(x, y):
+    """Return True if x and y are equal.
+
+    TODO: fix the potential stack overflow here for deep lists.
+
+    """
+    if isinstance(x, Symbol):
+        if isinstance(y, Symbol):
+            return x.symbol_name == y.symbol_name
+
+        return False
+
+    elif isinstance(x, Float):
+        if isinstance(y, Float):
+            return x.float_value == y.float_value
+
+        elif isinstance(y, Integer):
+            return x.float_value == float(y.value)        
+
+        return False
+
+    elif isinstance(x, Integer):
+        if isinstance(y, Integer):
+            return x.value == y.value
+
+        elif isinstance(y, Float):
+            return float(x.value) == y.float_value
+
+        return False
+
+    elif isinstance(x, Integer):
+        if isinstance(y, Integer):
+            return x.value == y.value
+
+        return False
+
+    elif isinstance(x, String):
+        if isinstance(y, String):
+            return x.string == y.string
+
+        return False
+
+    elif isinstance(x, List):
+        if isinstance(y, List):
+            if len(x.values) != len(y.values):
+                return False
+
+            for x_element, y_element in zip(x.values, y.values):
+                if not is_equal(x_element, y_element):
+                    return False
+            return True
+
+        return False
+
+    return x is y
+
+
+# TODO: Is there a better place in the docs for this, rather than under booleans?
+# We're inconsistent between grouping by input type or output type.
+class Equal(Function):
+    def call(self, args):
+        if len(args) != 2:
+            raise ArityError(
+                "equal? takes 2 arguments, but got: %s" % List(args).repr())
+
+        if is_equal(args[0], args[1]):
+            return TRUE
+        else:
+            return FALSE
+
+
 class FreshSymbol(Function):
     def __init__(self):
         self.count = 1
