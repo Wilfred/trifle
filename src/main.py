@@ -50,7 +50,7 @@ def env_with_prelude():
 # todo: some unit tests to ensure the top level works
 def entry_point(argv):
     """Either a file name:
-    $ ./trifle ~/files/foo.bao
+    $ ./trifle ~/files/foo.tfl
 
     A code snippet:
     $ ./trifle -i '1 2'

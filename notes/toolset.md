@@ -33,10 +33,10 @@ Trifle packages should support semver dependencies, allowing and
 encouraging users to specify what their project depends on. It should
 make it easy to say 'I depend on foo 1.2+, but less that 2.0'.
 
-### Extension: -auto-import.bao
+### Extension: -auto-import.tfl
 
 Assume I have a package `foo` that contains `foo/bar:some-function`. I
-want to be able to define `foo/-auto-import.bao` that imports
+want to be able to define `foo/-auto-import.tfl` that imports
 `foo/bar`, so users of the package can access `foo:some-function`.
 
 ### Extension: Sandboxing
