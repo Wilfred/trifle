@@ -159,6 +159,7 @@ class List(TrifleType):
 # TODOC
 class Bytes(TrifleType):
     def __init__(self, byte_value):
+        assert isinstance(byte_value, str)
         self.byte_value = byte_value
 
     def __eq__(self, other):
