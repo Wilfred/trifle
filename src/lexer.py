@@ -54,7 +54,7 @@ LEXEMES = [
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
 ]
 
-DIGITS = '0123456789'
+DIGITS = u'0123456789'
 
 def starts_like_integer(text):
     if not text:
@@ -64,7 +64,7 @@ def starts_like_integer(text):
         return True
 
     if len(text) > 1:
-        if text[0] == '-' and text[1] in DIGITS:
+        if text[0] == u'-' and text[1] in DIGITS:
             return True
 
     return False
@@ -108,7 +108,7 @@ def split_tokens(text):
                 break
 
         if not found_match:
-            raise LexFailed("Could not lex remainder: '%s'" % text)
+            raise LexFailed(u"Could not lex remainder: '%s'" % text)
 
     return tokens
 
@@ -131,7 +131,7 @@ def _lex(tokens):
                 elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
                 elif lexeme_name == BOOLEAN:
-                    if token == 'true':
+                    if token == u'true':
                         lexed_tokens.append(TRUE)
                     else:
                         lexed_tokens.append(FALSE)
@@ -142,13 +142,13 @@ def _lex(tokens):
                     try:
                         lexed_tokens.append(Integer(int(integer_string)))
                     except ValueError:
-                        raise LexFailed("Invalid integer: '%s'" % token)
+                        raise LexFailed(u"Invalid integer: '%s'" % token)
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Float(float(float_string)))
                     except ValueError:
-                        raise LexFailed("Invalid float: '%s'" % token)
+                        raise LexFailed(u"Invalid float: '%s'" % token)
                 elif lexeme_name == SYMBOL:
                     lexed_tokens.append(Symbol(token))
                 elif lexeme_name == KEYWORD:
@@ -164,12 +164,12 @@ def _lex(tokens):
                     if string_end >= 0:
                         lexed_tokens.append(String(token[1:string_end]))
                 else:
-                    assert False, "Unrecognised token '%s'" % token
+                    assert False, u"Unrecognised token '%s'" % token
                 
                 break
 
         if not found_match:
-            raise LexFailed("Could not lex token: '%s'" % token)
+            raise LexFailed(u"Could not lex token: '%s'" % token)
 
     return lexed_tokens
 

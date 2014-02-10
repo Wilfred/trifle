@@ -114,7 +114,7 @@ def evaluate_list(node, environment):
         return evaluate_all(function.body, lambda_env)
     else:
         # todoc: this error
-        raise TrifleTypeError("%s isn't a function or macro."
+        raise TrifleTypeError(u"%s isn't a function or macro."
                               % function.repr())
 
 
@@ -151,7 +151,7 @@ def evaluate_value(value, environment):
         if environment.contains(symbol_name):
             return environment.get(symbol_name)
         else:
-            raise UnboundVariable("No such variable defined: '%s'"
+            raise UnboundVariable(u"No such variable defined: '%s'"
                                   % symbol_name)
     else:
         assert False, "I don't know how to evaluate that value."

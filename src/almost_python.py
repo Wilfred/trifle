@@ -9,15 +9,18 @@ be typed in RPython. So, we define our own here.
 
 
 def raw_input(prefix):
-    """Assumes the input is no more than 1024 characters.
+    """Assumes the input is no more than 1024 characters, and always
+    returns a unicode object.
 
     Based on http://stackoverflow.com/a/9244639
 
     """
     STDIN = 0
     STDOUT = 1
-    os.write(STDOUT, prefix)
-    return os.read(STDIN, 1024)[:-1] # discard the trailing last newline
+    os.write(STDOUT, prefix.encode('utf-8'))
+
+    user_string = os.read(STDIN, 1024)[:-1] # discard the trailing last newline
+    return user_string.decode('utf-8')
 
 
 def zip(list1, list2):

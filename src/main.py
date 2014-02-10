@@ -12,7 +12,6 @@ from almost_python import raw_input
 
 
 def get_contents(filename):
-    # todo: programs should be UTF-8 only
     fp = os.open(filename, os.O_RDONLY, 0777)
 
     program_contents = ""
@@ -23,7 +22,7 @@ def get_contents(filename):
         program_contents += read
     os.close(fp)
 
-    return program_contents
+    return program_contents.decode('utf-8')
 
 
 def env_with_prelude():
@@ -66,13 +65,13 @@ def entry_point(argv):
         env = env_with_prelude()
         while True:
             try:
-                user_input = raw_input('> ')
+                user_input = raw_input(u'> ')
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
 
                 print evaluate_all(parse_tree, env).repr()
             except TrifleError as e:
-                print "Error: %s" % e.message
+                print u"Error: %s" % e.message
             except KeyboardInterrupt:
                 print
                 return 0
@@ -92,7 +91,7 @@ def entry_point(argv):
         try:
             print evaluate_all(parse_tree, env).repr()
         except TrifleError as e:
-            print "Error: %s" % e.message
+            print u"Error: %s" % e.message
             return 1
         
         return 0
@@ -100,14 +99,14 @@ def entry_point(argv):
     elif len(argv) == 3:
         if argv[1] == '-i':
             env = env_with_prelude()
-            code_snippet = argv[2]
+            code_snippet = argv[2].decode('utf-8')
             lexed_tokens = lex(code_snippet)
             parse_tree = parse(lexed_tokens)
 
             try:
                 print evaluate_all(parse_tree, env).repr()
             except TrifleError as e:
-                print "Error: %s" % e.message
+                print u"Error: %s" % e.message
                 return 1
             return 0
             

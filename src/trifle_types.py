@@ -18,9 +18,9 @@ class TrifleType(object):
 class Boolean(TrifleType):
     def repr(self):
         if self.value:
-            return "true"
+            return u"true"
         else:
-            return "false"
+            return u"false"
 
     def __eq__(self, other):
         """We deliberately treat Integer(1) as different to Float(1.0) since
@@ -44,7 +44,7 @@ FALSE = Boolean(False)
 
 class Null(TrifleType):
     def repr(self):
-        return "null"
+        return u"null"
 
 
 NULL = Null()
@@ -52,7 +52,7 @@ NULL = Null()
 
 class Integer(TrifleType):
     def repr(self):
-        return "%s" % self.value
+        return u"%d" % self.value
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -66,7 +66,7 @@ class Integer(TrifleType):
 
 class Float(TrifleType):
     def repr(self):
-        return "%s" % self.float_value
+        return u"%f" % self.float_value
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -78,6 +78,7 @@ class Float(TrifleType):
         self.float_value = value
 
 
+# todo: symbols and keywords should be unicode
 class Symbol(TrifleType):
     def repr(self):
         return self.symbol_name
@@ -98,7 +99,7 @@ class Symbol(TrifleType):
 # TODOC
 class Keyword(TrifleType):
     def repr(self):
-        return ":%s" % self.symbol_name
+        return u":%s" % self.symbol_name
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
@@ -115,7 +116,7 @@ class Keyword(TrifleType):
 
 class String(TrifleType):
     def repr(self):
-        return '"%s"' % self.string
+        return u'"%s"' % self.string
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.string)
@@ -127,6 +128,7 @@ class String(TrifleType):
         return self.string == other.string
 
     def __init__(self, string):
+        assert isinstance(string, unicode)
         self.string = string
 
 
@@ -143,7 +145,7 @@ class List(TrifleType):
     # todo: fix infinite loop for lists that contain themselves
     def repr(self):
         element_reprs = [element.repr() for element in self.values]
-        return "(%s)" % " ".join(element_reprs)
+        return u"(%s)" % u" ".join(element_reprs)
 
     def __eq__(self, other):
         if not isinstance(other, List):
@@ -185,7 +187,7 @@ class Bytes(TrifleType):
                 hexadecimal = hex(ord(char))
                 printable_chars.append("\\x%s" % hexadecimal[2:])
 
-        return '#bytes("%s")' % "".join(printable_chars)
+        return u'#bytes("%s")' % ("".join(printable_chars)).decode('utf-8')
 
 
 # TODOC
@@ -196,7 +198,7 @@ class FileHandle(TrifleType):
         self.file_handle = file_handle
 
     def repr(self):
-        return '#file-handle("%s")' % self.file_name
+        return u'#file-handle("%s")' % self.file_name
 
 
 class Function(TrifleType):
@@ -206,7 +208,7 @@ class Function(TrifleType):
     """
     def repr(self):
         # todo: we can be more helpful than this
-        return "<built-in function>"
+        return u"<built-in function>"
 
 
 class FunctionWithEnv(TrifleType):
@@ -217,7 +219,7 @@ class FunctionWithEnv(TrifleType):
     """
     def repr(self):
         # todo: we can be more helpful than this
-        return "<built-in function>"
+        return u"<built-in function>"
 
 
 # todo: could we define interpreter Function classes in terms of Lambda?
@@ -233,7 +235,7 @@ class Lambda(TrifleType):
 
     def repr(self):
         # todo: we can be more helpful than this
-        return "<lambda>"
+        return u"<lambda>"
 
 
 class Macro(TrifleType):
@@ -248,7 +250,7 @@ class Macro(TrifleType):
 
     def repr(self):
         # todo: we can be more helpful than this
-        return "<macro>"
+        return u"<macro>"
 
 
 class Special(TrifleType):
@@ -258,7 +260,7 @@ class Special(TrifleType):
     """
     def repr(self):
         # todo: we can be more helpful than this
-        return "<special expression>"
+        return u"<special expression>"
 
 
 """Our parenthesis classes aren't exposed to the user, but we add them

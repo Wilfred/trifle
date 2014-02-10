@@ -51,7 +51,7 @@ class Environment(object):
             if scope.contains(variable_name):
                 return scope.get(variable_name)
 
-        raise KeyError("Could not find '%s' in environment" % variable_name)
+        raise KeyError(u"Could not find '%s' in environment" % variable_name)
 
     def globals_only(self):
         """Return a new environment that only includes variables defined
@@ -96,34 +96,34 @@ def fresh_environment():
 
     """
     return Environment([Scope({
-        '+': Add(),
-        '-': Subtract(),
-        '*': Multiply(),
-        '/': Divide(),
-        '<': LessThan(),
-        'length': Length(),
-        'get-index': GetIndex(),
-        'set-index!': SetIndex(),
-        'push!': Push(),
-        'append!': Append(),
-        'same?': Same(),
-        'equal?': Equal(),
-        'truthy?': Truthy(),
-        'quote': Quote(),
-        'set-symbol!': SetSymbol(),
-        'let': Let(),
-        'if': If(),
-        'while': While(),
-        'lambda': LambdaFactory(),
-        'macro': DefineMacro(),
-        'fresh-symbol': FreshSymbol(),
-        'print': Print(),
-        'input': Input(),
-        'call': Call(),
-        'parse': Parse(),
-        'eval': Eval(),
-        'defined?': Defined(),
-        'open': Open(),
-        'close!': Close(),
-        'read': Read(),
+        u'+': Add(),
+        u'-': Subtract(),
+        u'*': Multiply(),
+        u'/': Divide(),
+        u'<': LessThan(),
+        u'length': Length(),
+        u'get-index': GetIndex(),
+        u'set-index!': SetIndex(),
+        u'push!': Push(),
+        u'append!': Append(),
+        u'same?': Same(),
+        u'equal?': Equal(),
+        u'truthy?': Truthy(),
+        u'quote': Quote(),
+        u'set-symbol!': SetSymbol(),
+        u'let': Let(),
+        u'if': If(),
+        u'while': While(),
+        u'lambda': LambdaFactory(),
+        u'macro': DefineMacro(),
+        u'fresh-symbol': FreshSymbol(),
+        u'print': Print(),
+        u'input': Input(),
+        u'call': Call(),
+        u'parse': Parse(),
+        u'eval': Eval(),
+        u'defined?': Defined(),
+        u'open': Open(),
+        u'close!': Close(),
+        u'read': Read(),
     })])

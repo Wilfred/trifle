@@ -16,14 +16,14 @@ class SetSymbol(FunctionWithEnv):
     def call(self, args, env):
         if len(args) != 2:
             raise ArityError(
-                "set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
+                u"set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
 
         variable_name = args[0]
         variable_value = args[1]
 
         if not isinstance(variable_name, Symbol):
             raise TrifleTypeError(
-                "The first argument to set-symbol! must be a symbol, but got: %s"
+                u"The first argument to set-symbol! must be a symbol, but got: %s"
                 % variable_name.repr())
 
         env.set(variable_name.symbol_name, variable_value)
@@ -35,7 +35,7 @@ class Let(Special):
     def call(self, args, env):
         if not args:
             raise ArityError(
-                "let takes at least 1 argument, but got: %s" % List(args).repr())
+                u"let takes at least 1 argument, but got: %s" % List(args).repr())
 
         bindings = args[0]
         expressions = args[1:]
@@ -46,7 +46,7 @@ class Let(Special):
 
         if not isinstance(bindings, List):
             raise TrifleTypeError(
-                "let requires a list as its first argument, but got: %s"
+                u"let requires a list as its first argument, but got: %s"
                 % bindings.repr()
             )
 
@@ -54,13 +54,13 @@ class Let(Special):
             if index % 2 == 0:
                 if not isinstance(expression, Symbol):
                     raise TrifleTypeError(
-                        "Expected a symbol for a let-bound variable, but got: %s"
+                        u"Expected a symbol for a let-bound variable, but got: %s"
                         % expression.repr()
                     )
 
         if len(bindings.values) % 2 == 1:
             raise ArityError(
-                "no value given for let-bound variable: %s"
+                u"no value given for let-bound variable: %s"
                 % bindings.values[-1].repr())
 
         # Fix circular import by importing here.
@@ -87,7 +87,7 @@ class LambdaFactory(Special):
     def call(self, args, env):
         if not args:
             raise ArityError(
-                "lambda takes at least 1 argument, but got 0.")
+                u"lambda takes at least 1 argument, but got 0.")
 
         parameters = args[0]
 
@@ -109,14 +109,14 @@ class DefineMacro(Special):
     def call(self, args, env):
         if len(args) < 3:
             raise ArityError(
-                "macro takes at least 3 arguments, but got: %s" % List(args).repr())
+                u"macro takes at least 3 arguments, but got: %s" % List(args).repr())
 
         macro_name = args[0]
         parameters = args[1]
         
         if not isinstance(macro_name, Symbol):
             raise TrifleTypeError(
-                "macro name should be a symbol, but got: %s" %
+                u"macro name should be a symbol, but got: %s" %
                 macro_name.repr())
 
         parameters = args[1]
@@ -144,7 +144,7 @@ class Quote(Special):
         if not isinstance(list_head, Symbol):
             return False
 
-        if not list_head.symbol_name == 'unquote':
+        if not list_head.symbol_name == u'unquote':
             return False
 
         return True
@@ -161,7 +161,7 @@ class Quote(Special):
         if not isinstance(list_head, Symbol):
             return False
 
-        if not list_head.symbol_name == 'unquote*':
+        if not list_head.symbol_name == u'unquote*':
             return False
 
         return True
@@ -183,7 +183,7 @@ class Quote(Special):
                     # todo: unit test this error
                     if not isinstance(values_list, List):
                         raise TrifleTypeError(
-                            "unquote* must be used with a list, but got a %s" % values_list.repr())
+                            u"unquote* must be used with a list, but got a %s" % values_list.repr())
 
                     # Splice in the result of evaluating the unquote* argument
                     expression.values = expression.values[:index] + values_list.values + expression.values[index+1:]
@@ -198,7 +198,7 @@ class Quote(Special):
     def call(self, args, env):
         if len(args) != 1:
             raise ArityError(
-                "quote takes 1 argument, but got: %s" % List(args).repr())
+                u"quote takes 1 argument, but got: %s" % List(args).repr())
 
         return self.evaluate_unquote_calls(deepcopy(args[0]), env)
 
@@ -207,7 +207,7 @@ class If(Special):
     def call(self, args, env):
         if len(args) not in [2, 3]:
             raise ArityError(
-                "if takes 2 or 3 arguments, but got: %s" % List(args).repr())
+                u"if takes 2 or 3 arguments, but got: %s" % List(args).repr())
 
         condition = args[0]
         then = args[1]
@@ -247,7 +247,7 @@ class Truthy(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "truthy? takes 1 argument, but got: %s" % List(args).repr())
+                u"truthy? takes 1 argument, but got: %s" % List(args).repr())
 
         return is_truthy(args[0])
 
@@ -256,7 +256,7 @@ class While(Special):
     def call(self, args, env):
         if not args:
             raise TrifleTypeError(
-                "while takes at least one argument.")
+                u"while takes at least one argument.")
 
         from evaluator import evaluate
         while True:
@@ -277,7 +277,7 @@ class Print(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "print takes 1 argument, but got %s." % List(args).repr())
+                u"print takes 1 argument, but got %s." % List(args).repr())
 
         if isinstance(args[0], String):
             print args[0].string
@@ -292,13 +292,13 @@ class Input(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "input takes 1 argument, but got %s." % List(args).repr())
+                u"input takes 1 argument, but got %s." % List(args).repr())
 
         prefix = args[0]
 
         if not isinstance(prefix, String):
             raise TrifleTypeError(
-                "The first argument to input must be a string, but got: %s"
+                u"The first argument to input must be a string, but got: %s"
                 % prefix.repr())
 
         user_input = raw_input(prefix.string)
@@ -309,7 +309,7 @@ class Same(Function):
     def call(self, args):
         if len(args) != 2:
             raise ArityError(
-                "same? takes 2 arguments, but got: %s" % List(args).repr())
+                u"same? takes 2 arguments, but got: %s" % List(args).repr())
 
         # Sadly, we can't access .__class__ in RPython.
         # TODO: proper symbol interning.
@@ -389,7 +389,7 @@ class Equal(Function):
     def call(self, args):
         if len(args) != 2:
             raise ArityError(
-                "equal? takes 2 arguments, but got: %s" % List(args).repr())
+                u"equal? takes 2 arguments, but got: %s" % List(args).repr())
 
         if is_equal(args[0], args[1]):
             return TRUE
@@ -404,9 +404,9 @@ class FreshSymbol(Function):
     def call(self, args):
         if args:
             raise TrifleTypeError(
-                "fresh-symbol takes 0 arguments, but got: %s" % List(args).repr())
+                u"fresh-symbol takes 0 arguments, but got: %s" % List(args).repr())
 
-        symbol_name = "%d-unnamed" % self.count
+        symbol_name = u"%d-unnamed" % self.count
         self.count += 1
 
         return Symbol(symbol_name)
@@ -421,7 +421,7 @@ class Add(Function):
                     float_args = True
                 else:
                     raise TrifleTypeError(
-                        "+ requires numbers, but got: %s." % arg.repr())
+                        u"+ requires numbers, but got: %s." % arg.repr())
 
         if float_args:
             total = 0.0
@@ -449,7 +449,7 @@ class Subtract(Function):
                     float_args = True
                 else:
                     raise TrifleTypeError(
-                        "- requires numbers, but got: %s." % arg.repr())
+                        u"- requires numbers, but got: %s." % arg.repr())
 
         if not args:
             return Integer(0)
@@ -489,7 +489,7 @@ class Multiply(Function):
                     float_args = True
                 else:
                     raise TrifleTypeError(
-                        "* requires numbers, but got: %s." % arg.repr())
+                        u"* requires numbers, but got: %s." % arg.repr())
 
         if float_args:
             product = 1.0
@@ -512,12 +512,12 @@ class Divide(Function):
     def call(self, args):
         if len(args) < 2:
             raise ArityError(
-                "/ takes at least 2 arguments, but got: %s" % List(args).repr())
+                u"/ takes at least 2 arguments, but got: %s" % List(args).repr())
 
         for arg in args:
             if not isinstance(arg, Integer) and not isinstance(arg, Float):
                 raise TrifleTypeError(
-                    "/ requires numbers, but got: %s." % arg.repr())
+                    u"/ requires numbers, but got: %s." % arg.repr())
 
         if isinstance(args[0], Integer):
             quotient = float(args[0].value)
@@ -531,7 +531,7 @@ class Divide(Function):
                 else:
                     quotient /= arg.float_value
             except ZeroDivisionError:
-                raise DivideByZero("Divided by zero: %s" % arg.repr())
+                raise DivideByZero(u"Divided by zero: %s" % arg.repr())
 
         return Float(quotient)
             
@@ -540,7 +540,7 @@ class LessThan(Function):
     def call(self, args):
         if len(args) < 2:
             raise ArityError(
-                "< takes at least 2 arguments, but got: %s" % List(args).repr())
+                u"< takes at least 2 arguments, but got: %s" % List(args).repr())
         
         float_args = False
         for arg in args:
@@ -549,7 +549,7 @@ class LessThan(Function):
                     float_args = True
                 else:
                     raise TrifleTypeError(
-                        "< requires numbers, but got: %s." % arg.repr())
+                        u"< requires numbers, but got: %s." % arg.repr())
 
         if float_args:
             if isinstance(args[0], Integer):
@@ -588,33 +588,33 @@ class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
             raise ArityError(
-                "get-index takes 2 arguments, but got: %s" % List(args).repr())
+                u"get-index takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         index = args[1]
 
         if not isinstance(some_list, List):
             raise TrifleTypeError(
-                "the first argument to get-index must be a list, but got: %s"
+                u"the first argument to get-index must be a list, but got: %s"
                 % some_list.repr())
 
         if not isinstance(index, Integer):
             raise TrifleTypeError(
-                "the second argument to get-index must be an integer, but got: %s"
+                u"the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
         if not some_list.values:
-            raise TrifleTypeError("can't call get-item on an empty list")
+            raise TrifleTypeError(u"can't call get-item on an empty list")
 
         # todo: use a separate error class (index error, or value error)
         if index.value >= len(some_list.values):
             raise TrifleTypeError(
-                "the list has %d items, but you asked for index %d"
+                u"the list has %d items, but you asked for index %d"
                 % (len(some_list.values), index.value))
 
         if index.value < -1 * len(some_list.values):
             raise TrifleTypeError(
-                "Can't get index %d of a %d element list (must be -%d or higher)"
+                u"Can't get index %d of a %d element list (must be -%d or higher)"
                 % (index.value, len(some_list.values), len(some_list.values)))
 
         return some_list.values[index.value]
@@ -624,13 +624,13 @@ class Length(Function):
     def call(self, args):
         if len(args) != 1:
             raise TrifleTypeError(
-                "length takes 1 argument, but got: %s" % List(args).repr())
+                u"length takes 1 argument, but got: %s" % List(args).repr())
 
         some_list = args[0]
 
         if not isinstance(some_list, List):
             raise TrifleTypeError(
-                "the first argument to length must be a list, but got: %s"
+                u"the first argument to length must be a list, but got: %s"
                 % some_list.repr())
 
         return Integer(len(some_list.values))
@@ -640,7 +640,7 @@ class SetIndex(Function):
     def call(self, args):
         if len(args) != 3:
             raise TrifleTypeError(
-                "set-index! takes 3 arguments, but got: %s" % List(args).repr())
+                u"set-index! takes 3 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         index = args[1]
@@ -648,26 +648,26 @@ class SetIndex(Function):
 
         if not isinstance(some_list, List):
             raise TrifleTypeError(
-                "the first argument to set-index! must be a list, but got: %s"
+                u"the first argument to set-index! must be a list, but got: %s"
                 % some_list.repr())
 
         if not isinstance(index, Integer):
             raise TrifleTypeError(
-                "the second argument to set-index! must be an integer, but got: %s"
+                u"the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
         if not some_list.values:
-            raise TrifleTypeError("can't call get-item on an empty list")
+            raise TrifleTypeError(u"can't call get-item on an empty list")
 
         # todo: use a separate error class (index error, or value error)
         if index.value >= len(some_list.values):
             raise TrifleTypeError(
-                "the list has %d items, but you asked to set index %d"
+                u"the list has %d items, but you asked to set index %d"
                 % (len(some_list.values), index.value))
 
         if index.value < -1 * len(some_list.values):
             raise TrifleTypeError(
-                "Can't set index %d of a %d element list (must be -%d or higher)"
+                u"Can't set index %d of a %d element list (must be -%d or higher)"
                 % (index.value, len(some_list.values), len(some_list.values)))
 
         some_list.values[index.value] = value
@@ -679,14 +679,14 @@ class Append(Function):
     def call(self, args):
         if len(args) != 2:
             raise TrifleTypeError(
-                "append! takes 2 arguments, but got: %s" % List(args).repr())
+                u"append! takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         value = args[1]
 
         if not isinstance(some_list, List):
             raise TrifleTypeError(
-                "the first argument to append! must be a list, but got: %s"
+                u"the first argument to append! must be a list, but got: %s"
                 % some_list.repr())
 
         some_list.values.append(value)
@@ -699,14 +699,14 @@ class Push(Function):
     def call(self, args):
         if len(args) != 2:
             raise TrifleTypeError(
-                "push! takes 2 arguments, but got: %s" % List(args).repr())
+                u"push! takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]
         value = args[1]
 
         if not isinstance(some_list, List):
             raise TrifleTypeError(
-                "the first argument to push! must be a list, but got: %s"
+                u"the first argument to push! must be a list, but got: %s"
                 % some_list.repr())
 
         some_list.values.insert(0, value)
@@ -718,13 +718,13 @@ class Parse(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "parse takes 1 argument, but got: %s" % List(args).repr())
+                u"parse takes 1 argument, but got: %s" % List(args).repr())
 
         program_string = args[0]
 
         if not isinstance(program_string, String):
             raise TrifleTypeError(
-                "the first argument to parse must be a list, but got: %s"
+                u"the first argument to parse must be a list, but got: %s"
                 % program_string.repr())
 
         tokens = lex(program_string.string)
@@ -736,7 +736,7 @@ class Eval(FunctionWithEnv):
     def call(self, args, env):
         if len(args) != 1:
             raise ArityError(
-                "eval takes 1 argument, but got: %s" % List(args).repr())
+                u"eval takes 1 argument, but got: %s" % List(args).repr())
 
         from evaluator import evaluate
         return evaluate(args[0], env)
@@ -746,7 +746,7 @@ class Call(FunctionWithEnv):
     def call(self, args, env):
         if len(args) != 2:
             raise ArityError(
-                "call takes 2 arguments, but got: %s" % List(args).repr())
+                u"call takes 2 arguments, but got: %s" % List(args).repr())
 
         function = args[0]
         arguments = args[1]
@@ -755,12 +755,12 @@ class Call(FunctionWithEnv):
         if not (isinstance(function, Function) or
                 isinstance(function, Lambda)):
             raise TrifleTypeError(
-                "the first argument to call must be a function, but got: %s"
+                u"the first argument to call must be a function, but got: %s"
                 % function.repr())
 
         if not isinstance(arguments, List):
             raise TrifleTypeError(
-                "the second argument to call must be a list, but got: %s"
+                u"the second argument to call must be a list, but got: %s"
                 % arguments.repr())
 
         # Build an equivalent expression
@@ -775,13 +775,13 @@ class Defined(FunctionWithEnv):
         # todo: a utility function for arity checking.
         if len(args) != 1:
             raise ArityError(
-                "defined? takes 1 argument, but got: %s" % List(args).repr())
+                u"defined? takes 1 argument, but got: %s" % List(args).repr())
 
         symbol = args[0]
 
         if not isinstance(symbol, Symbol):
             raise TrifleTypeError(
-                "the first argument to defined? must be a symbol, but got: %s"
+                u"the first argument to defined? must be a symbol, but got: %s"
                 % symbol.repr())
 
         return Boolean(env.contains(symbol.symbol_name))
@@ -795,34 +795,34 @@ class Open(Function):
         # todo: a utility function for arity checking.
         if len(args) != 2:
             raise ArityError(
-                "open takes 2 arguments, but got: %s" % List(args).repr())
+                u"open takes 2 arguments, but got: %s" % List(args).repr())
 
         path = args[0]
 
         if not isinstance(path, String):
             raise TrifleTypeError(
-                "the first argument to open must be a string, but got: %s"
+                u"the first argument to open must be a string, but got: %s"
                 % path.repr())
 
         flag = args[1]
 
         if not isinstance(flag, Keyword):
             raise TrifleTypeError(
-                "the first argument to open must be a string, but got: %s"
+                u"the first argument to open must be a string, but got: %s"
                 % flag.repr())
 
-        if flag.symbol_name == 'write':
-            handle = open(path.string, 'w')
-        elif flag.symbol_name == 'read':
+        if flag.symbol_name == u'write':
+            handle = open(path.string.encode('utf-8'), 'w')
+        elif flag.symbol_name == u'read':
             try:
-                handle = open(path.string, 'r')
+                handle = open(path.string.encode('utf-8'), 'r')
             except IOError as e:
                 if e.errno == errno.ENOENT:
-                    raise FileNotFound("No file found: %s" % path.string)
+                    raise FileNotFound(u"No file found: %s" % path.string)
                 else:
                     raise
         else:
-            raise TrifleValueError("Invalid flag for open: :%s" % flag.symbol_name)
+            raise TrifleValueError(u"Invalid flag for open: :%s" % flag.symbol_name)
 
         return FileHandle(path.string, handle)
 
@@ -832,17 +832,17 @@ class Close(Function):
         # todo: a utility function for arity checking.
         if len(args) != 1:
             raise ArityError(
-                "close! takes 1 argument, but got: %s" % List(args).repr())
+                u"close! takes 1 argument, but got: %s" % List(args).repr())
 
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
             raise TrifleTypeError(
-                "the first argument to close! must be a file handle, but got: %s"
+                u"the first argument to close! must be a file handle, but got: %s"
                 % handle.repr())
 
         if handle.is_closed:
-            raise UsingClosedFile("File handle for %s is already closed." % handle.file_name)
+            raise UsingClosedFile(u"File handle for %s is already closed." % handle.file_name)
         else:
             handle.is_closed = True
             handle.file_handle.close()
@@ -855,13 +855,13 @@ class Read(Function):
     def call(self, args):
         if len(args) != 1:
             raise ArityError(
-                "read takes 1 argument, but got: %s" % List(args).repr())
+                u"read takes 1 argument, but got: %s" % List(args).repr())
 
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
             raise TrifleTypeError(
-                "the first argument to open must be a file handle, but got: %s"
+                u"the first argument to open must be a file handle, but got: %s"
                 % handle.repr())
 
         return Bytes(handle.file_handle.read())
