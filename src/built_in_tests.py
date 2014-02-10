@@ -134,10 +134,10 @@ class KeywordLexTest(unittest.TestCase):
 class StringLexTest(unittest.TestCase):
     def test_lex_string(self):
         self.assertEqual(
-            lex('"foo"')[0], String('foo'))
+            lex(u'"foo"')[0], String(u'foo'))
 
         self.assertEqual(
-            lex('"foo\nbar"')[0], String('foo\nbar'))
+            lex(u'"foo\nbar"')[0], String(u'foo\nbar'))
 
 
 class BooleanLexTest(unittest.TestCase):
@@ -207,8 +207,8 @@ class EvaluatingLiteralsTest(unittest.TestCase):
 
     def test_eval_string(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex('"foo"'))),
-            String("foo"))
+            evaluate_with_fresh_env(parse_one(lex(u'"foo"'))),
+            String(u"foo"))
 
     def test_eval_bytes(self):
         bytes_val = Bytes("foobar")
@@ -644,7 +644,7 @@ class PrintTest(unittest.TestCase):
     def test_print_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
-                '(print "foo")'))),
+                u'(print "foo")'))),
             NULL)
 
     def test_print_writes_to_stdout(self):
@@ -652,7 +652,7 @@ class PrintTest(unittest.TestCase):
 
         with patch('sys.stdout', mock_stdout):
             evaluate_with_fresh_env(parse_one(lex(
-                '(print "foo")')))
+                u'(print "foo")')))
 
         self.assertEqual(mock_stdout.getvalue(), "foo\n")
 
@@ -686,8 +686,8 @@ class InputTest(unittest.TestCase):
             with patch('os.read', mock_read):
                 self.assertEqual(
                     evaluate_with_fresh_env(parse_one(lex(
-                        '(input ">> ")'))),
-                    String("foobar")
+                        u'(input ">> ")'))),
+                    String(u"foobar")
                 )
 
     def test_input_type_error(self):
@@ -702,7 +702,7 @@ class InputTest(unittest.TestCase):
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
-                parse_one(lex("(input \"foo\" 1)")))
+                parse_one(lex(u"(input \"foo\" 1)")))
 
 
 class SameTest(unittest.TestCase):
@@ -831,7 +831,7 @@ class EqualTest(unittest.TestCase):
 
     def test_string_equal(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex("(equal? \"foo\" \"foo\")"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? \"foo\" \"foo\")"))),
             TRUE)
 
     def test_function_equal(self):
@@ -1088,18 +1088,18 @@ class ParseTest(unittest.TestCase):
 
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
-                "(parse \"(+ 1 2)\")"))),
+                u"(parse \"(+ 1 2)\")"))),
             expected)
 
     def test_parse_invalid_parse(self):
         with self.assertRaises(ParseFailed):
             evaluate_with_fresh_env(parse_one(lex(
-                '(parse ")")')))
+                u'(parse ")")')))
 
     def test_parse_invalid_lex(self):
         with self.assertRaises(LexFailed):
             evaluate_with_fresh_env(parse_one(lex(
-                '(parse "123abc")')))
+                u'(parse "123abc")')))
 
     def test_parse_arg_number(self):
         with self.assertRaises(ArityError):
@@ -1108,7 +1108,7 @@ class ParseTest(unittest.TestCase):
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(parse "()" 1)')))
+                u'(parse "()" 1)')))
 
     def test_parse_type_error(self):
         with self.assertRaises(TrifleTypeError):
@@ -1241,67 +1241,67 @@ class DefinedTest(unittest.TestCase):
 class OpenTest(unittest.TestCase):
     def test_open_read(self):
         result = evaluate_with_fresh_env(parse_one(lex(
-            '(open "/etc/hosts" :read)')))
+            u'(open "/etc/hosts" :read)')))
 
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_read_no_such_file(self):
         with self.assertRaises(FileNotFound):
             evaluate_with_fresh_env(parse_one(lex(
-                '(open "this_file_doesnt_exist" :read)')))
+                u'(open "this_file_doesnt_exist" :read)')))
 
     def test_open_write(self):
         result = evaluate_with_fresh_env(parse_one(lex(
-            '(open "/tmp/foo" :write)')))
+            u'(open "/tmp/foo" :write)')))
 
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_invalid_flag(self):
         with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(open "/tmp/foo" :foo)')))
+                u'(open "/tmp/foo" :foo)')))
 
     def test_open_arity_error(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(open "/foo/bar")')))
+                u'(open "/foo/bar")')))
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(open "/foo/bar" :write :write)')))
+                u'(open "/foo/bar" :write :write)')))
 
     def test_open_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(open "/foo/bar" null)')))
+                u'(open "/foo/bar" null)')))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                "(open null :write)")))
+                u"(open null :write)")))
 
 
 class CloseTest(unittest.TestCase):
     def test_close(self):
         result = evaluate_all_with_fresh_env(parse(lex(
-            '(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) x')))
+            u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) x')))
 
         self.assertTrue(result.file_handle.closed)
 
     def test_close_twice_error(self):
         with self.assertRaises(UsingClosedFile):
             evaluate_all_with_fresh_env(parse(lex(
-                '(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')))
+                u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')))
 
     def test_close_returns_null(self):
         result = evaluate_with_fresh_env(parse_one(lex(
-            '(close! (open "/tmp/foo" :write))')))
+            u'(close! (open "/tmp/foo" :write))')))
 
         self.assertEqual(result, NULL)
 
     def test_close_arity_error(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(close! (open "/tmp/foo" :write) null)')))
+                u'(close! (open "/tmp/foo" :write) null)')))
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
@@ -1318,7 +1318,7 @@ class ReadTest(unittest.TestCase):
         os.system('echo -n foo > test.txt')
         
         result = evaluate_with_fresh_env(parse_one(lex(
-            '(read (open "test.txt" :read))')))
+            u'(read (open "test.txt" :read))')))
 
         os.remove('test.txt')
 
@@ -1333,7 +1333,7 @@ class ReadTest(unittest.TestCase):
             
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                '(read "/etc/foo" :read :read)')))
+                u'(read "/etc/foo" :read :read)')))
             
     def test_read_type_error(self):
         with self.assertRaises(TrifleTypeError):

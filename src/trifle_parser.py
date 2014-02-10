@@ -16,7 +16,7 @@ def parse_inner(tokens, top_level):
             parse_tree.append(parse_inner(tokens, top_level=False))
         elif isinstance(token, CloseParen):
             if top_level:
-                raise ParseFailed('Closing paren does not have matching open paren.')
+                raise ParseFailed(u'Closing paren does not have matching open paren.')
             else:
                 saw_closing_paren = True
                 break
@@ -24,7 +24,7 @@ def parse_inner(tokens, top_level):
             parse_tree.append(token)
 
     if not top_level and not saw_closing_paren:
-        raise ParseFailed('Open paren was not closed.')
+        raise ParseFailed(u'Open paren was not closed.')
 
     return parse_tree
 
