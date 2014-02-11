@@ -78,7 +78,6 @@ class Float(TrifleType):
         self.float_value = value
 
 
-# todo: symbols and keywords should be unicode
 class Symbol(TrifleType):
     def repr(self):
         return self.symbol_name
@@ -93,6 +92,7 @@ class Symbol(TrifleType):
         return self.symbol_name == other.symbol_name
 
     def __init__(self, symbol_name):
+        assert isinstance(symbol_name, unicode)
         self.symbol_name = symbol_name
 
 
@@ -111,6 +111,7 @@ class Keyword(TrifleType):
         return self.symbol_name == other.symbol_name
 
     def __init__(self, symbol_name):
+        assert isinstance(symbol_name, unicode)
         self.symbol_name = symbol_name
 
 
