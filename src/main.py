@@ -69,7 +69,7 @@ def entry_point(argv):
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
 
-                print evaluate_all(parse_tree, env).repr()
+                print evaluate_all(parse_tree, env).repr().encode('utf-8')
             except TrifleError as e:
                 print u"Error: %s" % e.message
             except KeyboardInterrupt:
@@ -89,7 +89,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            print evaluate_all(parse_tree, env).repr()
+            print evaluate_all(parse_tree, env).repr().encode('utf-8')
         except TrifleError as e:
             print u"Error: %s" % e.message
             return 1
@@ -104,7 +104,7 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             try:
-                print evaluate_all(parse_tree, env).repr()
+                print evaluate_all(parse_tree, env).repr().encode('utf-8')
             except TrifleError as e:
                 print u"Error: %s" % e.message
                 return 1
