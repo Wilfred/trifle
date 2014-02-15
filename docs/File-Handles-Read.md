@@ -22,8 +22,3 @@ null
 > (read h)
 #bytes("a delicous souffl\xc3\xa9 and a spoon")
 ```
-
-You should close file handles when you are finished with them. When
-your program terminates, your file handles are closed
-automatically. However, you may run out of file handles if your
-program runs for a long time.
