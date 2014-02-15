@@ -9,5 +9,6 @@ Examples:
 
 ```lisp
 > (encode "soufflé")
+#bytes("souffl\xc3\xa9")
 
 ```
