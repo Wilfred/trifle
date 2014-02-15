@@ -368,6 +368,12 @@ def is_equal(x, y):
 
         return False
 
+    elif isinstance(x, Bytes):
+        if isinstance(y, Bytes):
+            return x.byte_value == y.byte_value
+
+        return False
+
     elif isinstance(x, List):
         if isinstance(y, List):
             if len(x.values) != len(y.values):

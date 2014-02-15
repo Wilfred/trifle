@@ -820,7 +820,6 @@ class EqualTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(equal? (quote a) (quote a))"))),
             TRUE)
 
-    # TODO: unit test bytes equality, once we have a way of creating them without files
     def test_list_equal(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(equal? (quote (1 (2))) (quote (1 (2))))"))),
@@ -829,6 +828,17 @@ class EqualTest(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(equal? (quote (1 (2))) (quote (1 (3))))"))),
             FALSE)
+
+    def test_bytes_equal(self):
+        env = fresh_environment()
+        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
+        env.set(u'y', Bytes(b"souffl\xc3\xa9"))
+        env.set(u'z', Bytes(b"foo"))
+        
+        self.assertEqual(evaluate(parse_one(lex(u"(equal? x y)")), env),
+                         TRUE)
+        self.assertEqual(evaluate(parse_one(lex(u"(equal? y z)")), env),
+                         FALSE)
 
     def test_string_equal(self):
         self.assertEqual(

@@ -156,7 +156,6 @@ class List(TrifleType):
 
 
 # TODO: reader macro for these
-# TODO: unit test equal? for these
 # TODO: make these mutable
 # TODO: a better name for these
 # TODOC
