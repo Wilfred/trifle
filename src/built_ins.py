@@ -882,3 +882,20 @@ class Encode(Function):
                 % string.repr())
 
         return Bytes(string.string.encode('utf-8'))
+
+
+# TODO: take a second argument that specifies the encoding.
+class Decode(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"decode takes 1 argument, but got: %s" % List(args).repr())
+
+        bytestring = args[0]
+
+        if not isinstance(bytestring, Bytes):
+            raise TrifleTypeError(
+                u"the first argument to decode must be bytes, but got: %s"
+                % bytestring.repr())
+
+        return String(bytestring.byte_value.decode('utf-8'))

@@ -24,11 +24,12 @@ otherwise.
 2.7. [Variables](Variables.md)  
 2.8. [Loops](Loops.md)  
 2.9. [I/O](IO.md)  
-2.10. [Functions](Functions.md)  
-2.11. [Evaluation](Evaluation.md)  
-2.12. [Special Expressions](Special-Expressions.md)  
-2.13. [Macros](Macros.md)  
-2.14. [Comments](Comments.md)  
+2.10. [Bytes](Bytes.md)  
+2.11. [Functions](Functions.md)  
+2.12. [Evaluation](Evaluation.md)  
+2.13. [Special Expressions](Special-Expressions.md)  
+2.14. [Macros](Macros.md)  
+2.15. [Comments](Comments.md)  
 
 ### Contributing
 

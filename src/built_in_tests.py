@@ -1363,3 +1363,26 @@ class EncodeTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(
                 u'(encode "foo" 2)')))
     
+
+class DecodeTest(unittest.TestCase):
+    def test_decode(self):
+        env = fresh_environment()
+        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
+        self.assertEqual(evaluate(parse_one(lex(u"(decode x)")), env),
+                         String(u"soufflé"))
+
+    def test_encode_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(decode null)')))
+    
+    def test_encode_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(decode)')))
+    
+        env = fresh_environment()
+        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(u'(decode x 2)')), env)
+    

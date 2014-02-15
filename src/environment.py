@@ -5,7 +5,7 @@ from built_ins import (Add, Subtract, Multiply, Divide,
                        Length, GetIndex, SetIndex, Push, Append,
                        Print, Input,
                        Call, Parse, Eval, Defined,
-                       Open, Close, Read, Encode)
+                       Open, Close, Read, Encode, Decode)
 
 
 class Scope(object):
@@ -127,4 +127,5 @@ def fresh_environment():
         u'close!': Close(),
         u'read': Read(),
         u'encode': Encode(),
+        u'decode': Decode(),
     })])
