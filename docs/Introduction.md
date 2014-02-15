@@ -15,21 +15,24 @@ otherwise.
 
 ### Language
 
+Data types:
+
 2.1. [Booleans](Booleans.md)  
 2.2. [Numbers](Numbers.md)  
 2.3. [Null](Null.md)  
 2.4. [Symbols](Symbols.md)  
 2.5. [Lists](Lists.md)  
 2.6. [Strings](Strings.md)  
-2.7. [Variables](Variables.md)  
-2.8. [Loops](Loops.md)  
-2.9. [I/O](IO.md)  
-2.10. [Bytes](Bytes.md)  
-2.11. [Functions](Functions.md)  
+2.7. [Bytes](Bytes.md)__
+2.8. [Functions](Functions.md)  
+2.9. [Macros](Macros.md)  
+
+2.10. [Variables](Variables.md)  
+2.11. [Loops](Loops.md)  
 2.12. [Evaluation](Evaluation.md)  
 2.13. [Special Expressions](Special-Expressions.md)  
-2.14. [Macros](Macros.md)  
-2.15. [Comments](Comments.md)  
+2.14. [Comments](Comments.md)
+2.15. [I/O](IO.md)
 
 ### Contributing
 
