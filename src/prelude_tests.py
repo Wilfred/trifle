@@ -13,6 +13,9 @@ the prelude very often.
 
 """
 
+# TODO: we should shell out to the RPython-compiled binary instead of
+# assuming CPython behaves the same.
+
 class SetTest(unittest.TestCase):
     def test_set(self):
         self.assertEqual(
