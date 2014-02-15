@@ -159,6 +159,7 @@ class List(TrifleType):
 # TODO: a way of creating these without opening a file
 # TODO: unit test equal? for these
 # TODO: make these mutable
+# TODO: a better name for these
 # TODOC
 class Bytes(TrifleType):
     def __init__(self, byte_value):
