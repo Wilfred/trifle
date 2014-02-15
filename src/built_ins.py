@@ -867,7 +867,7 @@ class Read(Function):
 
         if not isinstance(handle, FileHandle):
             raise TrifleTypeError(
-                u"the first argument to open must be a file handle, but got: %s"
+                u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
         return Bytes(handle.file_handle.read())
