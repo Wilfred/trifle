@@ -891,6 +891,7 @@ class Encode(Function):
 
 
 # TODO: take a second argument that specifies the encoding.
+# TODO: throw an exception on bytes that aren't valid UTF-8.
 class Decode(Function):
     def call(self, args):
         if len(args) != 1:
