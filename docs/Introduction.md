@@ -24,15 +24,16 @@ Data types:
 2.5. [Lists](Lists.md)  
 2.6. [Strings](Strings.md)  
 2.7. [Bytes](Bytes.md)__
-2.8. [Functions](Functions.md)  
-2.9. [Macros](Macros.md)  
+2.8. [File handles](File-Handles.md)__
+2.9. [Functions](Functions.md)  
+2.10. [Macros](Macros.md)
 
-2.10. [Variables](Variables.md)  
-2.11. [Loops](Loops.md)  
-2.12. [Evaluation](Evaluation.md)  
-2.13. [Special expressions](Special-Expressions.md)  
-2.14. [Comments](Comments.md)
-2.15. [I/O](IO.md)
+2.11. [Variables](Variables.md)  
+2.12. [Loops](Loops.md)  
+2.13. [Evaluation](Evaluation.md)  
+2.14. [Special expressions](Special-Expressions.md)  
+2.15. [Comments](Comments.md)
+2.16. [I/O](IO.md)
 
 ### Contributing
 

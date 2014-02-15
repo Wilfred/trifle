@@ -190,7 +190,6 @@ class Bytes(TrifleType):
         return u'#bytes("%s")' % ("".join(printable_chars)).decode('utf-8')
 
 
-# TODOC
 class FileHandle(TrifleType):
     def __init__(self, file_name, file_handle):
         self.is_closed = False
