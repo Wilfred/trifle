@@ -30,7 +30,7 @@ Data types:
 2.10. [Variables](Variables.md)  
 2.11. [Loops](Loops.md)  
 2.12. [Evaluation](Evaluation.md)  
-2.13. [Special Expressions](Special-Expressions.md)  
+2.13. [Special expressions](Special-Expressions.md)  
 2.14. [Comments](Comments.md)
 2.15. [I/O](IO.md)
 
