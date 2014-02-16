@@ -12,4 +12,5 @@ your program runs for a long time.
 1. [open](File-Handles-Open.md)
 2. [close!](File-Handles-Close.md)
 3. [read](File-Handles-Read.md)
+4. [write!](File-Handles-Write.md)
 

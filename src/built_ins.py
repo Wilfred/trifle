@@ -873,6 +873,31 @@ class Read(Function):
         return Bytes(handle.file_handle.read())
 
 
+class Write(Function):
+    def call(self, args):
+        if len(args) != 2:
+            raise ArityError(
+                u"write! takes 2 argument, but got: %s" % List(args).repr())
+
+        handle = args[0]
+
+        if not isinstance(handle, FileHandle):
+            raise TrifleTypeError(
+                u"the first argument to write! must be a file handle, but got: %s"
+                % handle.repr())
+
+        to_write = args[1]
+
+        if not isinstance(to_write, Bytes):
+            raise TrifleTypeError(
+                u"the second argument to write! must be a bytes, but got: %s"
+                % to_write.repr())
+
+        handle.file_handle.write(to_write.byte_value)
+
+        return NULL
+
+
 # TODO: take a second argument that specifies the encoding.
 class Encode(Function):
     def call(self, args):

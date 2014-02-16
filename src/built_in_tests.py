@@ -1248,7 +1248,7 @@ class DefinedTest(unittest.TestCase):
 
 # TODO: error on nonexistent file, or file we can't read/write
 # TODO: support read and write flags together
-# TODO: add read, write! and seek! functions.
+# TODO: add a seek! function
 class OpenTest(unittest.TestCase):
     def test_open_read(self):
         result = evaluate_with_fresh_env(parse_one(lex(
@@ -1350,6 +1350,45 @@ class ReadTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 u"(read null)")))
+
+
+class WriteTest(unittest.TestCase):
+    def test_write(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote f) (open "test.txt" :write))'
+                u'(write! f (encode "foo")) (close! f)'))),
+            NULL)
+
+        self.assertTrue(os.path.exists("test.txt"), "File was not created!")
+
+        with open('test.txt') as f:
+            self.assertEqual(f.read(), "foo")
+
+        os.remove('test.txt')
+
+    def test_write_read_only_handle(self):
+        pass
+
+    def test_write_arity(self):
+        # Too few args.
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(write! (open "foo.txt" :write))')))
+
+        # Too many args.
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(write! (open "foo.txt" :write) (encode "f") null)')))
+            
+    def test_write_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(write! null (encode "f"))')))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(write! (open "foo.txt" :write) null)')))
 
 
 class EncodeTest(unittest.TestCase):
