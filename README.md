@@ -8,10 +8,12 @@
     - [Documented](#documented)
     - [Expressive](#expressive)
     - [Re-Examined](#re-examined)
+    - [Accessible](#accessible)
     - [Friendly](#friendly)
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
+    - [v0.3](#v03)
     - [v0.2](#v02)
     - [v0.1](#v01)
 
@@ -127,6 +129,25 @@ I run it in the browser?', 'how do I scale it to multiple cores?' and
 language, we are cheerfully ignoring these questions for now.
 
 ## Release History
+
+### v0.3
+
+File handles: Added a file handle datatype, and added the functions
+`open`, `close`, `read` and `write!`.
+
+Bytes: Added a bytes datatype, and added the function `decode`.
+
+Strings: Fixed many unicode bugs. Added the function `encode`.
+
+Equality: Added the function `equal?`. `same?` no longer treats
+numbers specially, so it's now possible for two numbers to be `equal?`
+but not `same?`. `same?` now throws ArityError if given the wrong
+number of arguments.
+
+Built-in functions: String representations have been improved.
+
+Docs: The documentation has been grouped into more logical sections,
+and datatypes have been separated from other documentation pages.
 
 ### v0.2
 
