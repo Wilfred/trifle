@@ -1367,8 +1367,12 @@ class WriteTest(unittest.TestCase):
 
         os.remove('test.txt')
 
+    # todo: we should also test reading from a write-only handle.
     def test_write_read_only_handle(self):
-        pass
+        with self.assertRaises(ValueError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
+                u'(write! f (encode "foo"))')))
 
     def test_write_arity(self):
         # Too few args.

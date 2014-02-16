@@ -830,7 +830,7 @@ class Open(Function):
         else:
             raise TrifleValueError(u"Invalid flag for open: :%s" % flag.symbol_name)
 
-        return FileHandle(path.string, handle)
+        return FileHandle(path.string, handle, flag)
 
 
 class Close(Function):
@@ -884,6 +884,11 @@ class Write(Function):
         if not isinstance(handle, FileHandle):
             raise TrifleTypeError(
                 u"the first argument to write! must be a file handle, but got: %s"
+                % handle.repr())
+
+        if handle.mode.symbol_name != "write":
+            raise ValueError(
+                u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
 
         to_write = args[1]
