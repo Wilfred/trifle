@@ -15,7 +15,8 @@ otherwise.
 
 ### Language
 
-Data types:
+Trifle includes the following data types. Functions are listed under
+the data types they take as arguments.
 
 2.1. [Booleans](Booleans.md)  
 2.2. [Numbers](Numbers.md)  
