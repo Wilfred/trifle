@@ -34,7 +34,6 @@ the data types they take as arguments.
 2.13. [Evaluation](Evaluation.md)  
 2.14. [Special expressions](Special-Expressions.md)  
 2.15. [Comments](Comments.md)
-2.16. [I/O](IO.md)
 
 ### Contributing
 
