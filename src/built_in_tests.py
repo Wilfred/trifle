@@ -1394,6 +1394,8 @@ class WriteTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(
                 u'(write! (open "foo.txt" :write) null)')))
 
+        os.remove('foo.txt')
+
 
 class EncodeTest(unittest.TestCase):
     def test_encode(self):
