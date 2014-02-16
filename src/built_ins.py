@@ -886,7 +886,7 @@ class Write(Function):
                 u"the first argument to write! must be a file handle, but got: %s"
                 % handle.repr())
 
-        if handle.mode.symbol_name != "write":
+        if handle.mode.symbol_name != u"write":
             raise ValueError(
                 u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
