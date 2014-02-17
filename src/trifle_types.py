@@ -157,9 +157,7 @@ class List(TrifleType):
 
 # TODO: reader macro for these
 # TODO: make these mutable
-# TODO: a better name for these
-# TODOC
-class Bytes(TrifleType):
+class Bytestring(TrifleType):
     def __init__(self, byte_value):
         assert isinstance(byte_value, str)
         self.byte_value = byte_value

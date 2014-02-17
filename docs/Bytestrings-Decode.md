@@ -8,8 +8,6 @@ assuming BYTES is UTF-8 encoded.
 Examples:
 
 ```lisp
-> x
-#bytes("souffl\xc3\xa9")
-> (decode x)
+> (decode #bytes("souffl\xc3\xa9"))
 "soufflé"
 ```

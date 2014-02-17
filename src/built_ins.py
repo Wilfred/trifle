@@ -2,7 +2,7 @@ import errno
 
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List, Keyword,
-                          FileHandle, Bytes,
+                          FileHandle, Bytestring,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
                     TrifleValueError, UsingClosedFile)
@@ -368,8 +368,8 @@ def is_equal(x, y):
 
         return False
 
-    elif isinstance(x, Bytes):
-        if isinstance(y, Bytes):
+    elif isinstance(x, Bytestring):
+        if isinstance(y, Bytestring):
             return x.byte_value == y.byte_value
 
         return False
@@ -870,7 +870,7 @@ class Read(Function):
                 u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
-        return Bytes(handle.file_handle.read())
+        return Bytestring(handle.file_handle.read())
 
 
 class Write(Function):
@@ -893,7 +893,7 @@ class Write(Function):
 
         to_write = args[1]
 
-        if not isinstance(to_write, Bytes):
+        if not isinstance(to_write, Bytestring):
             raise TrifleTypeError(
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
@@ -917,7 +917,7 @@ class Encode(Function):
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
-        return Bytes(string.string.encode('utf-8'))
+        return Bytestring(string.string.encode('utf-8'))
 
 
 # TODO: take a second argument that specifies the encoding.
@@ -930,7 +930,7 @@ class Decode(Function):
 
         bytestring = args[0]
 
-        if not isinstance(bytestring, Bytes):
+        if not isinstance(bytestring, Bytestring):
             raise TrifleTypeError(
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())

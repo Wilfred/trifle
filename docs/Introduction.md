@@ -24,7 +24,7 @@ the data types they take as arguments.
 2.4. [Symbols](Symbols.md)  
 2.5. [Lists](Lists.md)  
 2.6. [Strings](Strings.md)  
-2.7. [Bytes](Bytes.md)__
+2.7. [Bytestrings](Bytestrings.md)__
 2.8. [File handles](File-Handles.md)__
 2.9. [Functions](Functions.md)  
 2.10. [Macros](Macros.md)

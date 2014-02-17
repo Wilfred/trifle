@@ -11,7 +11,7 @@ from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Float,
                           Symbol, Keyword, String, Lambda,
                           TRUE, FALSE, NULL,
-                          FileHandle, Bytes)
+                          FileHandle, Bytestring)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
@@ -212,15 +212,15 @@ class EvaluatingLiteralsTest(unittest.TestCase):
             String(u"foo"))
 
     def test_eval_bytes(self):
-        bytes_val = Bytes("foobar")
+        bytes_val = Bytestring("foobar")
         self.assertEqual(
             evaluate_with_fresh_env(bytes_val),
             bytes_val)
 
 
-class BytesReprTest(unittest.TestCase):
+class BytestringReprTest(unittest.TestCase):
     def test_bytes_repr(self):
-        bytes_val = Bytes("\\ souffl\xc3\xa9")
+        bytes_val = Bytestring("\\ souffl\xc3\xa9")
 
         self.assertEqual(
             bytes_val.repr(),
@@ -831,9 +831,9 @@ class EqualTest(unittest.TestCase):
 
     def test_bytes_equal(self):
         env = fresh_environment()
-        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
-        env.set(u'y', Bytes(b"souffl\xc3\xa9"))
-        env.set(u'z', Bytes(b"foo"))
+        env.set(u'x', Bytestring(b"souffl\xc3\xa9"))
+        env.set(u'y', Bytestring(b"souffl\xc3\xa9"))
+        env.set(u'z', Bytestring(b"foo"))
         
         self.assertEqual(evaluate(parse_one(lex(u"(equal? x y)")), env),
                          TRUE)
@@ -1335,7 +1335,7 @@ class ReadTest(unittest.TestCase):
 
         self.assertEqual(
             result,
-            Bytes("foo"))
+            Bytestring("foo"))
 
     def test_read_arity(self):
         with self.assertRaises(ArityError):
@@ -1402,7 +1402,7 @@ class EncodeTest(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
                 u'(encode "soufflé")'))),
-            Bytes(b"souffl\xc3\xa9"))
+            Bytestring(b"souffl\xc3\xa9"))
     
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):
@@ -1422,7 +1422,7 @@ class EncodeTest(unittest.TestCase):
 class DecodeTest(unittest.TestCase):
     def test_decode(self):
         env = fresh_environment()
-        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
+        env.set(u'x', Bytestring(b"souffl\xc3\xa9"))
         self.assertEqual(evaluate(parse_one(lex(u"(decode x)")), env),
                          String(u"soufflé"))
 
@@ -1437,7 +1437,7 @@ class DecodeTest(unittest.TestCase):
                 u'(decode)')))
     
         env = fresh_environment()
-        env.set(u'x', Bytes(b"souffl\xc3\xa9"))
+        env.set(u'x', Bytestring(b"souffl\xc3\xa9"))
         with self.assertRaises(ArityError):
             evaluate(parse_one(lex(u'(decode x 2)')), env)
     
