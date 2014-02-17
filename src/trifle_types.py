@@ -155,7 +155,6 @@ class List(TrifleType):
             return self.values == other.values
 
 
-# TODO: reader macro for these
 # TODO: make these mutable
 class Bytestring(TrifleType):
     def __init__(self, byte_value):

@@ -145,6 +145,15 @@ class StringLexTest(unittest.TestCase):
             lex(u'"flambé"')[0], String(u'flambé'))
 
 
+class BytestringLexTest(unittest.TestCase):
+    def test_lex_bytestring(self):
+        self.assertEqual(
+            lex(u'#bytes("foo")')[0], Bytestring(b'foo'))
+
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("flambé")')
+
+
 class BooleanLexTest(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(

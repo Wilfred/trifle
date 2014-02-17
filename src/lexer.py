@@ -4,7 +4,8 @@ from rpython.rlib.rsre.rpy import get_code
 
 from trifle_types import (OpenParen, CloseParen, Integer, Float,
                           Symbol, Keyword,
-                          String, TRUE, FALSE, NULL)
+                          String, Bytestring,
+                          TRUE, FALSE, NULL)
 from errors import LexFailed
 
 
@@ -18,6 +19,7 @@ INTEGER = 'integer'
 SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
+BYTESTRING = 'bytestring'
 FLOAT = 'float'
 BOOLEAN = 'boolean'
 NULL_TYPE = 'null type'
@@ -32,6 +34,7 @@ TOKENS = [
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"[^"\\]*"')),
+    (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
 ]
 
 # After splitting, we lex properly.
@@ -42,6 +45,7 @@ LEXEMES = [
     # todo: support single quoted characters
     # todo: support some backslash patterns
     (STRING, get_code(r"\"[^\"\\]*\"$")),
+    (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
 
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
@@ -164,6 +168,14 @@ def _lex(tokens):
                     # slice is non-negative.
                     if string_end >= 0:
                         lexed_tokens.append(String(token[1:string_end]))
+                elif lexeme_name == BYTESTRING:
+                    string_end = match.match_end - 2
+
+                    # This is always true, but RPython doesn't support
+                    # negative indexes on slices and can't prove the
+                    # slice is non-negative.
+                    if string_end >= 0:
+                        lexed_tokens.append(Bytestring(token[8:string_end].encode('utf-8')))
                 else:
                     assert False, u"Unrecognised token '%s'" % token
                 
