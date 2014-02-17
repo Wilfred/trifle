@@ -140,6 +140,10 @@ class StringLexTest(unittest.TestCase):
         self.assertEqual(
             lex(u'"foo\nbar"')[0], String(u'foo\nbar'))
 
+    def test_lex_non_ascii_string(self):
+        self.assertEqual(
+            lex(u'"flambé"')[0], String(u'flambé'))
+
 
 class BooleanLexTest(unittest.TestCase):
     def test_lex_boolean(self):
