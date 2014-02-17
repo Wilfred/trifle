@@ -39,8 +39,8 @@ LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
 
-    # todoc
     # todo: support single quoted characters
+    # todo: support some backslash patterns
     (STRING, get_code(r"\"[^\"\\]*\"$")),
 
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),

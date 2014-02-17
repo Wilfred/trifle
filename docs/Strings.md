@@ -5,8 +5,8 @@ points.
 
 String literals consist of characters between double quotes,
 e.g. `"blacmange"` and `"flambé"`. Backslashes are not permitted
-between double quotes. Unlike many other programming languages,
-newlines may occur between double quotes.
+between double quotes. Any other character may occur, including
+newlines.
 
 ## String functions
 
