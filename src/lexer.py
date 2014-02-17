@@ -175,7 +175,12 @@ def _lex(tokens):
                     # negative indexes on slices and can't prove the
                     # slice is non-negative.
                     if string_end >= 0:
-                        lexed_tokens.append(Bytestring(token[8:string_end].encode('utf-8')))
+                        contents = token[8:string_end]
+                    else:
+                        # Unreachable.
+                        contents = u""
+
+                    lexed_tokens.append(Bytestring(bytearray(contents.encode("utf-8"))))
                 else:
                     assert False, u"Unrecognised token '%s'" % token
                 

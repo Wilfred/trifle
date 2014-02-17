@@ -155,10 +155,9 @@ class List(TrifleType):
             return self.values == other.values
 
 
-# TODO: make these mutable
 class Bytestring(TrifleType):
     def __init__(self, byte_value):
-        assert isinstance(byte_value, str)
+        assert isinstance(byte_value, bytearray)
         self.byte_value = byte_value
 
     def __eq__(self, other):
@@ -173,7 +172,7 @@ class Bytestring(TrifleType):
 
         printable_chars = []
 
-        for char in self.byte_value:
+        for char in str(self.byte_value):
             if SMALLEST_PRINTABLE_CHAR <= char <= LARGEST_PRINTABLE_CHAR:
                 if char == "\\":
                     printable_chars.append("\\\\")

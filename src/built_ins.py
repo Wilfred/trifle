@@ -870,7 +870,7 @@ class Read(Function):
                 u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
-        return Bytestring(handle.file_handle.read())
+        return Bytestring(bytearray(handle.file_handle.read()))
 
 
 class Write(Function):
@@ -898,7 +898,7 @@ class Write(Function):
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
 
-        handle.file_handle.write(to_write.byte_value)
+        handle.file_handle.write(str(to_write.byte_value))
 
         return NULL
 
@@ -917,7 +917,7 @@ class Encode(Function):
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
-        return Bytestring(string.string.encode('utf-8'))
+        return Bytestring(bytearray(string.string.encode('utf-8')))
 
 
 # TODO: take a second argument that specifies the encoding.
@@ -935,4 +935,4 @@ class Decode(Function):
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())
 
-        return String(bytestring.byte_value.decode('utf-8'))
+        return String(str(bytestring.byte_value).decode('utf-8'))
