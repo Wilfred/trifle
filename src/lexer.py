@@ -31,7 +31,7 @@ TOKENS = [
     (CLOSE_PAREN, get_code(r"\)")),
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
-    (STRING, get_code(r"\"[^\"\\]*\"")),
+    (STRING, get_code(r'"[^"\\]*"')),
 ]
 
 LEXEMES = [
