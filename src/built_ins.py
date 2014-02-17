@@ -610,16 +610,16 @@ class GetIndex(Function):
                 % index.repr())
 
         if not some_list.values:
-            raise TrifleTypeError(u"can't call get-item on an empty list")
+            raise TrifleValueError(u"can't call get-item on an empty list")
 
-        # todo: use a separate error class (index error, or value error)
+        # todo: use a separate error class for index errors
         if index.value >= len(some_list.values):
-            raise TrifleTypeError(
+            raise TrifleValueError(
                 u"the list has %d items, but you asked for index %d"
                 % (len(some_list.values), index.value))
 
         if index.value < -1 * len(some_list.values):
-            raise TrifleTypeError(
+            raise TrifleValueError(
                 u"Can't get index %d of a %d element list (must be -%d or higher)"
                 % (index.value, len(some_list.values), len(some_list.values)))
 

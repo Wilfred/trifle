@@ -954,7 +954,7 @@ class GetIndexTest(unittest.TestCase):
             Integer(3))
 
     def test_get_index_negative_index_error(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (2 3)) -3)")))
 
     def test_get_index_typeerror(self):
@@ -965,10 +965,10 @@ class GetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (1)) false)")))
 
     def test_get_index_indexerror(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote ()) 0)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (1)) 2)")))
 
     def test_get_index_wrong_arg_number(self):
