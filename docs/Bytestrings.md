@@ -11,5 +11,6 @@ quotes, e.g. `#bytes("foo")`.
 ## Bytestring functions
 
 1. [decode](Bytestrings-Decode.md)
-2. [length](Sequences-Length.md)
 2. [get-index](Sequences-GetIndex.md)
+3. [set-index](Sequences-SetIndex.md)
+4. [length](Sequences-Length.md)

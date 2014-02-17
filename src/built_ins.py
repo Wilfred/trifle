@@ -659,35 +659,50 @@ class SetIndex(Function):
             raise TrifleTypeError(
                 u"set-index! takes 3 arguments, but got: %s" % List(args).repr())
 
-        some_list = args[0]
+        sequence = args[0]
         index = args[1]
         value = args[2]
 
-        if not isinstance(some_list, List):
+        if isinstance(sequence, List):
+            sequence_length = len(sequence.values)
+        elif isinstance(sequence, Bytestring):
+            sequence_length = len(sequence.byte_value)
+        else:
             raise TrifleTypeError(
-                u"the first argument to set-index! must be a list, but got: %s"
-                % some_list.repr())
+                u"the first argument to set-index! must be a sequence, but got: %s"
+                % sequence.repr())
 
         if not isinstance(index, Integer):
             raise TrifleTypeError(
                 u"the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
-        if not some_list.values:
-            raise TrifleTypeError(u"can't call get-item on an empty list")
+        if not sequence_length:
+            raise TrifleTypeError(u"can't call get-item on an empty sequence")
 
         # todo: use a separate error class (index error, or value error)
-        if index.value >= len(some_list.values):
+        if index.value >= sequence_length:
             raise TrifleTypeError(
-                u"the list has %d items, but you asked to set index %d"
-                % (len(some_list.values), index.value))
+                u"the sequence has %d items, but you asked to set index %d"
+                % (sequence_length, index.value))
 
-        if index.value < -1 * len(some_list.values):
+        if index.value < -1 * sequence_length:
             raise TrifleTypeError(
-                u"Can't set index %d of a %d element list (must be -%d or higher)"
-                % (index.value, len(some_list.values), len(some_list.values)))
+                u"Can't set index %d of a %d element sequence (must be -%d or higher)"
+                % (index.value, sequence_length, sequence_length))
 
-        some_list.values[index.value] = value
+        if isinstance(sequence, List):
+            sequence.values[index.value] = value
+        elif isinstance(sequence, Bytestring):
+            if not isinstance(value, Integer):
+                raise TrifleTypeError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                                      % value.repr())
+
+            if not (0 <= value.value <= 255):
+                raise TrifleValueError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                                       % value.repr())
+
+            sequence.byte_value[index.value] = value.value
 
         return NULL
 

@@ -988,7 +988,7 @@ class GetIndexTest(unittest.TestCase):
 
 
 class SetIndexTest(unittest.TestCase):
-    def test_set_index(self):
+    def test_set_index_list(self):
         expected = List([Integer(1)])
         
         self.assertEqual(
@@ -996,6 +996,32 @@ class SetIndexTest(unittest.TestCase):
                 u"(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"))),
             expected)
 
+    def test_set_index_bytestring(self):
+        expected = Bytestring(bytearray("bbc"))
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("abc")) (set-index! x 0 98) x'))),
+            expected)
+
+    def test_set_index_bytestring_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(set-index! #bytes("a") 0 null)')))
+        
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(set-index! #bytes("a") 0 1.0)')))
+        
+    def test_set_index_bytestring_range_error(self):
+        with self.assertRaises(TrifleValueError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(set-index! #bytes("a") 0 -1)')))
+        
+        with self.assertRaises(TrifleValueError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(set-index! #bytes("a") 0 256)')))
+        
     def test_set_index_negative(self):
         expected = List([Integer(10), Integer(1)])
         

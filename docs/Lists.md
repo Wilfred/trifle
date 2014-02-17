@@ -10,7 +10,7 @@ and updating.
 
 1. [list](Lists-List.md)
 2. [get-index](Sequences-GetIndex.md)
-3. [set-index!](Lists-SetIndex.md)
+3. [set-index!](Sequences-SetIndex.md)
 4. [length](Sequences-Length.md)
 5. [append!](Lists-Append.md)
 6. [push!](Lists-Push.md)
