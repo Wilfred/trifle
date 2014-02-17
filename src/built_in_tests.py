@@ -1044,26 +1044,26 @@ class SetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) false false)")))
 
     def test_set_index_indexerror(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote ()) 0 true)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 2 true)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(TrifleValueError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1 2 3)) -4 true)")))
 
     def test_set_index_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index!)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)))")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 0)")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 0 5 6)")))
 
 

@@ -651,12 +651,10 @@ class Length(Function):
             % some_list.repr())
 
 
-
-
 class SetIndex(Function):
     def call(self, args):
         if len(args) != 3:
-            raise TrifleTypeError(
+            raise ArityError(
                 u"set-index! takes 3 arguments, but got: %s" % List(args).repr())
 
         sequence = args[0]
@@ -678,16 +676,16 @@ class SetIndex(Function):
                 % index.repr())
 
         if not sequence_length:
-            raise TrifleTypeError(u"can't call get-item on an empty sequence")
+            raise TrifleValueError(u"can't call set-index! on an empty sequence")
 
-        # todo: use a separate error class (index error, or value error)
+        # todo: use a separate error class for index error
         if index.value >= sequence_length:
-            raise TrifleTypeError(
+            raise TrifleValueError(
                 u"the sequence has %d items, but you asked to set index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleTypeError(
+            raise TrifleValueError(
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
