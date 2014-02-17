@@ -23,7 +23,7 @@ BOOLEAN = 'boolean'
 NULL_TYPE = 'null type'
 ATOM = 'atom'
 
-# todoc: exactly what syntax we accept for symbols
+# Tokens are used to split strings into coarse categories.
 TOKENS = [
     (WHITESPACE, get_code(r"\s+")),
     (COMMENT, get_code(";[^\n]*")),
@@ -34,6 +34,7 @@ TOKENS = [
     (STRING, get_code(r'"[^"\\]*"')),
 ]
 
+# After splitting, we lex properly.
 LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
@@ -50,6 +51,7 @@ LEXEMES = [
     (BOOLEAN, get_code('(true|false)$')),
     (NULL_TYPE, get_code('null$')),
     
+    # todoc: exactly what syntax we accept for symbols
     (SYMBOL, get_code('[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
     (KEYWORD, get_code(':[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),
 ]
