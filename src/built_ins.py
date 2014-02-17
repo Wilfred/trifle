@@ -634,12 +634,16 @@ class Length(Function):
 
         some_list = args[0]
 
-        if not isinstance(some_list, List):
-            raise TrifleTypeError(
-                u"the first argument to length must be a list, but got: %s"
-                % some_list.repr())
+        if isinstance(some_list, List):
+            return Integer(len(some_list.values))
+        elif isinstance(some_list, Bytestring):
+            return Integer(len(some_list.byte_value))
 
-        return Integer(len(some_list.values))
+        raise TrifleTypeError(
+            u"the first argument to length must be a list, but got: %s"
+            % some_list.repr())
+
+
 
 
 class SetIndex(Function):

@@ -920,10 +920,15 @@ class LessThanTest(unittest.TestCase):
 
 
 class LengthTest(unittest.TestCase):
-    def test_length(self):
+    def test_length_list(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(length (quote (2 3)))"))),
             Integer(2))
+
+    def test_length_bytestring(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u'(length #bytes("abc"))'))),
+            Integer(3))
 
     def test_length_typeerror(self):
         with self.assertRaises(TrifleTypeError):
