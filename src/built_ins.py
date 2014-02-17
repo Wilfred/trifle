@@ -596,34 +596,41 @@ class GetIndex(Function):
             raise ArityError(
                 u"get-index takes 2 arguments, but got: %s" % List(args).repr())
 
-        some_list = args[0]
+        sequence = args[0]
         index = args[1]
 
-        if not isinstance(some_list, List):
+        if isinstance(sequence, List):
+            sequence_length = len(sequence.values)
+        elif isinstance(sequence, Bytestring):
+            sequence_length = len(sequence.byte_value)
+        else:
             raise TrifleTypeError(
-                u"the first argument to get-index must be a list, but got: %s"
-                % some_list.repr())
+                u"the first argument to get-index must be a sequence, but got: %s"
+                % sequence.repr())
 
         if not isinstance(index, Integer):
             raise TrifleTypeError(
                 u"the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
-        if not some_list.values:
-            raise TrifleValueError(u"can't call get-item on an empty list")
+        if not sequence_length:
+            raise TrifleValueError(u"can't call get-item on an empty sequence")
 
         # todo: use a separate error class for index errors
-        if index.value >= len(some_list.values):
+        if index.value >= sequence_length:
             raise TrifleValueError(
                 u"the list has %d items, but you asked for index %d"
-                % (len(some_list.values), index.value))
+                % (sequence_length, index.value))
 
-        if index.value < -1 * len(some_list.values):
+        if index.value < -1 * sequence_length:
             raise TrifleValueError(
                 u"Can't get index %d of a %d element list (must be -%d or higher)"
-                % (index.value, len(some_list.values), len(some_list.values)))
+                % (index.value, sequence_length, sequence_length))
 
-        return some_list.values[index.value]
+        if isinstance(sequence, List):
+            return sequence.values[index.value]
+        elif isinstance(sequence, Bytestring):
+            return Integer(sequence.byte_value[index.value])
 
 
 class Length(Function):

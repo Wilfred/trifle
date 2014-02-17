@@ -12,3 +12,4 @@ quotes, e.g. `#bytes("foo")`.
 
 1. [decode](Bytestrings-Decode.md)
 2. [length](Sequences-Length.md)
+2. [get-index](Sequences-GetIndex.md)

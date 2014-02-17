@@ -943,10 +943,15 @@ class LengthTest(unittest.TestCase):
             
 
 class GetIndexTest(unittest.TestCase):
-    def test_get_index(self):
+    def test_get_index_list(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (2 3)) 0)"))),
             Integer(2))
+
+    def test_get_index_bytestring(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u'(get-index #bytes("abc") 0)'))),
+            Integer(97))
 
     def test_get_index_negative_index(self):
         self.assertEqual(
