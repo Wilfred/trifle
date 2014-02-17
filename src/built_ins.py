@@ -619,12 +619,12 @@ class GetIndex(Function):
         # todo: use a separate error class for index errors
         if index.value >= sequence_length:
             raise TrifleValueError(
-                u"the list has %d items, but you asked for index %d"
+                u"the sequence has %d items, but you asked for index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
             raise TrifleValueError(
-                u"Can't get index %d of a %d element list (must be -%d or higher)"
+                u"Can't get index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
         if isinstance(sequence, List):
