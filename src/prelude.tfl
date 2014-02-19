@@ -91,5 +91,5 @@
 )
 
 (function not (value)
-  (if value false true)
+  (if value #false #true)
 )

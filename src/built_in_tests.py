@@ -157,18 +157,18 @@ class BytestringLexTest(unittest.TestCase):
 class BooleanLexTest(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"true")[0], TRUE)
+            lex(u"#true")[0], TRUE)
 
         self.assertEqual(
-            lex(u"false")[0], FALSE)
+            lex(u"#false")[0], FALSE)
 
     def test_lex_symbol_leading_bool(self):
-        """Ensure that a symbol which starts with a valid boolean literal, is
-        still a valid symbol.
+        """Ensure that a literal whose prefix is a valid boolean, is still a
+        lex error.
 
         """
-        self.assertEqual(
-            lex(u"true-foo")[0], Symbol(u'true-foo'))
+        with self.assertRaises(LexFailed):
+            lex(u"#trueish")
 
 
 class NullLexTest(unittest.TestCase):
@@ -192,11 +192,11 @@ class EvaluatingTest(unittest.TestCase):
 class EvaluatingLiteralsTest(unittest.TestCase):
     def test_eval_boolean(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"true"))),
+            evaluate_with_fresh_env(parse_one(lex(u"#true"))),
             TRUE)
 
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"false"))),
+            evaluate_with_fresh_env(parse_one(lex(u"#false"))),
             FALSE)
 
     def test_eval_integer(self):
@@ -231,13 +231,17 @@ class EvaluatingLiteralsTest(unittest.TestCase):
             bytes_val)
 
 
-class BytestringReprTest(unittest.TestCase):
+class ReprTest(unittest.TestCase):
     def test_bytes_repr(self):
         bytes_val = Bytestring(bytearray("\\ souffl\xc3\xa9"))
 
         self.assertEqual(
             bytes_val.repr(),
             '#bytes("\\\\ souffl\\xc3\\xa9")')
+
+    def test_bool_repr(self):
+        self.assertEqual(TRUE.repr(), "#true")
+        self.assertEqual(FALSE.repr(), "#false")
 
 
 class EvaluatingLambdaTest(unittest.TestCase):
@@ -449,11 +453,11 @@ class QuoteTest(unittest.TestCase):
             expected)
 
     def test_unquote_star_after_unquote(self):
-        expected = parse_one(lex(u"(if true (do 1 2))"))
+        expected = parse_one(lex(u"(if #true (do 1 2))"))
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) true) (set-symbol! (quote y) (quote (1 2)))"
+                u"(set-symbol! (quote x) #true) (set-symbol! (quote y) (quote (1 2)))"
                 u"(quote (if (unquote x) (do (unquote* y))))"))),
             expected)
         
@@ -561,20 +565,20 @@ class DivideTest(unittest.TestCase):
 class IfTest(unittest.TestCase):
     def test_if_one_arg(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if true 1)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(if #true 1)"))),
             Integer(1))
 
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if false 1)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(if #false 1)"))),
             NULL)
 
     def test_if_two_args(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if true 2 3)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(if #true 2 3)"))),
             Integer(2))
 
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if false 4 5)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(if #false 4 5)"))),
             Integer(5))
 
     def test_if_two_args_evals_condition(self):
@@ -605,11 +609,11 @@ class TruthyTest(unittest.TestCase):
             FALSE)
         
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? false)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(truthy? #false)"))),
             FALSE)
         
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? true)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(truthy? #true)"))),
             TRUE)
         
         self.assertEqual(
@@ -635,7 +639,7 @@ class WhileTest(unittest.TestCase):
         # `(while)` is an error, but this should work as while should
         # not evaluate the body here.
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(while false (while))"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(while #false (while))"))),
             NULL)
 
     def test_while_true_condition(self):
@@ -643,8 +647,8 @@ class WhileTest(unittest.TestCase):
         # not evaluate the body here.
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) true) (set-symbol! (quote y) 1)"
-                u"(while x (set-symbol! (quote x) false) (set-symbol! (quote y) 2))"
+                u"(set-symbol! (quote x) #true) (set-symbol! (quote y) 1)"
+                u"(while x (set-symbol! (quote x) #false) (set-symbol! (quote y) 2))"
                 u"y"))),
             Integer(2))
         
@@ -722,16 +726,16 @@ class InputTest(unittest.TestCase):
 class SameTest(unittest.TestCase):
     def test_booleans_same(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? true true)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(same? #true #true)"))),
             TRUE)
 
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? false false)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(same? #false #false)"))),
             TRUE)
 
     def test_booleans_different(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? true false)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(same? #true #false)"))),
             FALSE)
 
     def test_integers_different(self):
@@ -771,7 +775,7 @@ class SameTest(unittest.TestCase):
 
     def test_different_types(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? true 1)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(same? #true 1)"))),
             FALSE)
 
     def test_same_wrong_number_of_args(self):
@@ -787,16 +791,16 @@ class SameTest(unittest.TestCase):
 class EqualTest(unittest.TestCase):
     def test_booleans_equal(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? true true)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? #true #true)"))),
             TRUE)
 
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? false false)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? #false #false)"))),
             TRUE)
 
     def test_booleans_different(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? true false)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? #true #false)"))),
             FALSE)
 
     def test_integers_same(self):
@@ -875,7 +879,7 @@ class EqualTest(unittest.TestCase):
 
     def test_different_types(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? true 1)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? #true 1)"))),
             FALSE)
 
     def test_equal_wrong_number_of_args(self):
@@ -909,7 +913,7 @@ class LessThanTest(unittest.TestCase):
 
     def test_less_than_typeerror(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(< true false)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(< #true #false)")))
 
     def test_less_than_insufficient_args(self):
         with self.assertRaises(ArityError):
@@ -967,7 +971,7 @@ class GetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index null 0)")))
 
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (1)) false)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (1)) #false)")))
 
     def test_get_index_indexerror(self):
         with self.assertRaises(TrifleValueError):
@@ -1041,17 +1045,17 @@ class SetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! null 0 0)")))
 
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) false false)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) #false #false)")))
 
     def test_set_index_indexerror(self):
         with self.assertRaises(TrifleValueError):
-            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote ()) 0 true)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote ()) 0 #true)")))
 
         with self.assertRaises(TrifleValueError):
-            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 2 true)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 2 #true)")))
 
         with self.assertRaises(TrifleValueError):
-            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1 2 3)) -4 true)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1 2 3)) -4 #true)")))
 
     def test_set_index_wrong_arg_number(self):
         with self.assertRaises(ArityError):
@@ -1241,7 +1245,7 @@ class EvaluatingMacrosTest(unittest.TestCase):
         self.assertEqual(
             evaluate_all(parse(lex(
                 u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)))))"
-                u"(set-symbol! (quote x) 1) (when true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
+                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
             Integer(2)
         )
 

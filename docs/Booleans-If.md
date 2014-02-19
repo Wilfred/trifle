@@ -12,14 +12,14 @@ If no ELSE expression is given, `if` returns `null`.
 
 Examples:
 
-    > (if true 1 2)
+    > (if #true 1 2)
     1
 
-    > (if false 1 2)
+    > (if #false 1 2)
     2
 
     > (if (quote (foo)) 1 2)
     1
 
-    > (if false 1)
+    > (if #false 1)
     null

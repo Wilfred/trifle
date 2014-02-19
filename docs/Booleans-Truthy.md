@@ -9,10 +9,10 @@ The function `truthy?` converts its argument to a boolean. The values
 Examples:
 
     > (truthy? 0)
-    false
+    #false
 
     > (truthy? 1)
-    true
+    #true
 
     > (truthy? (quote ()))
-    false
+    #false

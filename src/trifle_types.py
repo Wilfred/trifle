@@ -18,9 +18,9 @@ class TrifleType(object):
 class Boolean(TrifleType):
     def repr(self):
         if self.value:
-            return u"true"
+            return u"#true"
         else:
-            return u"false"
+            return u"#false"
 
     def __eq__(self, other):
         """We deliberately treat Integer(1) as different to Float(1.0) since

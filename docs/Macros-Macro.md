@@ -15,7 +15,7 @@ Examples:
 > (macro unless (condition expression)
       (quote (if (not (unquote condition)) (unquote expression)))
   )
-> (unless true foo) ; no error thrown, since foo is not evaluated
+> (unless #true foo) ; no error thrown, since foo is not evaluated
 
 > (macro unless (condition :rest expressions)
       (quote (if (not (unquote condition)) (unquote* expressions)))

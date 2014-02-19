@@ -181,12 +181,12 @@ class LastTest(unittest.TestCase):
 class NotTest(unittest.TestCase):
     def test_not_booleans(self):
         self.assertEqual(
-            evaluate(parse_one(lex(u"(not true)")),
+            evaluate(parse_one(lex(u"(not #true)")),
                      env_with_prelude()),
             FALSE)
         
         self.assertEqual(
-            evaluate(parse_one(lex(u"(not false)")),
+            evaluate(parse_one(lex(u"(not #false)")),
                      env_with_prelude()),
             TRUE)
 

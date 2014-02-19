@@ -224,7 +224,7 @@ class If(Special):
 
 
 def is_truthy(value):
-    """Convert the value to the trifle values `true` or `false`
+    """Convert the value to the trifle values `#true` or `#false`
     depending on its truthiness.
 
     """

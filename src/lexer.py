@@ -24,6 +24,7 @@ FLOAT = 'float'
 BOOLEAN = 'boolean'
 NULL_TYPE = 'null type'
 ATOM = 'atom'
+HASH_LITERAL = 'hash_literal'
 
 # Tokens are used to split strings into coarse categories.
 TOKENS = [
@@ -34,7 +35,10 @@ TOKENS = [
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"[^"\\]*"')),
+
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
+
+    (HASH_LITERAL, get_code('#[a-zA-Z]*')),
 ]
 
 # After splitting, we lex properly.
@@ -52,7 +56,7 @@ LEXEMES = [
     # TODO: support 0x123, 0o123
     (INTEGER, get_code('-?[0-9_]+$')),
 
-    (BOOLEAN, get_code('(true|false)$')),
+    (BOOLEAN, get_code('(#true|#false)$')),
     (NULL_TYPE, get_code('null$')),
     
     # todoc: exactly what syntax we accept for symbols
@@ -136,25 +140,29 @@ def _lex(tokens):
                     lexed_tokens.append(OpenParen())
                 elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
+                    
                 elif lexeme_name == BOOLEAN:
-                    if token == u'true':
+                    if token == u'#true':
                         lexed_tokens.append(TRUE)
                     else:
                         lexed_tokens.append(FALSE)
                 elif lexeme_name == NULL_TYPE:
                     lexed_tokens.append(NULL)
+                    
                 elif lexeme_name == INTEGER:
                     integer_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Integer(int(integer_string)))
                     except ValueError:
                         raise LexFailed(u"Invalid integer: '%s'" % token)
+                        
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Float(float(float_string)))
                     except ValueError:
                         raise LexFailed(u"Invalid float: '%s'" % token)
+
                 elif lexeme_name == SYMBOL:
                     lexed_tokens.append(Symbol(token))
                 elif lexeme_name == KEYWORD:
