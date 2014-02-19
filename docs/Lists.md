@@ -8,17 +8,28 @@ and updating.
 
 ## List functions
 
+Predicates:
+
 1. [list?](Lists-ListPredicate.md)
-2. [list](Lists-List.md)
-3. [get-index](Sequences-GetIndex.md)
-4. [set-index!](Sequences-SetIndex.md)
-5. [length](Sequences-Length.md)
-6. [append!](Sequences-Append.md)
-7. [push!](Lists-Push.md)
-8. [first](Sequence-First.md)
-9. [second](Sequences-Second.md)
-10. [third](Sequences-Third.md)
-11. [fourth](Sequences-Fourth.md)
-12. [fifth](Sequences-Fifth.md)
-13. [last](Sequences-Last.md)
-14. [map](Lists-Map.md)
+
+Creating a new list:
+
+1. [list](Lists-List.md)
+2. [map](Lists-Map.md)
+
+Accessing:
+
+1. [get-index](Sequences-GetIndex.md)
+2. [length](Sequences-Length.md)
+3. [first](Sequence-First.md)
+4. [second](Sequences-Second.md)
+5. [third](Sequences-Third.md)
+6. [fourth](Sequences-Fourth.md)
+7. [fifth](Sequences-Fifth.md)
+8. [last](Sequences-Last.md)
+
+Modifying:
+
+1. [set-index!](Sequences-SetIndex.md)
+2. [append!](Sequences-Append.md)
+3. [push!](Lists-Push.md)

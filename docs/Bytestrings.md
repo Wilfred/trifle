@@ -10,14 +10,22 @@ quotes, e.g. `#bytes("foo")`.
 
 ## Bytestring functions
 
+Converting:
+
 1. [decode](Bytestrings-Decode.md)
-2. [get-index](Sequences-GetIndex.md)
-3. [set-index](Sequences-SetIndex.md)
-4. [length](Sequences-Length.md)
-5. [append!](Sequences-Append.md)
-6. [first](Sequence-First.md)
-7. [second](Sequences-Second.md)
-8. [third](Sequences-Third.md)
-9. [fourth](Sequences-Fourth.md)
-10. [fifth](Sequences-Fifth.md)
-11. [last](Sequences-Last.md)
+
+Accessing:
+
+1. [get-index](Sequences-GetIndex.md)
+2. [length](Sequences-Length.md)
+3. [first](Sequence-First.md)
+4. [second](Sequences-Second.md)
+5. [third](Sequences-Third.md)
+6. [fourth](Sequences-Fourth.md)
+7. [fifth](Sequences-Fifth.md)
+8. [last](Sequences-Last.md)
+
+Modifying:
+
+1. [set-index!](Sequences-SetIndex.md)
+2. [append!](Sequences-Append.md)
