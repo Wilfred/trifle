@@ -14,3 +14,8 @@ quotes, e.g. `#bytes("foo")`.
 2. [get-index](Sequences-GetIndex.md)
 3. [set-index](Sequences-SetIndex.md)
 4. [length](Sequences-Length.md)
+5. [first](Sequence-First.md)
+6. [second](Sequences-Second.md)
+7. [third](Sequences-Third.md)
+8. [fourth](Sequences-Fourth.md)
+9. [fifth](Sequences-Fifth.md)

@@ -9,4 +9,6 @@ Examples:
 ```lisp
 > (third (list 10 20 30))
 30
+> (third #bytes("abc"))
+99
 ```

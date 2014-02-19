@@ -102,11 +102,23 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(1))
         
+    def test_first_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(first #bytes("abc"))')),
+                     env_with_prelude()),
+            Integer(97))
+        
     def test_second(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(second (list 1 2 3 4 5))")),
                      env_with_prelude()),
             Integer(2))
+        
+    def test_second_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(second #bytes("abc"))')),
+                     env_with_prelude()),
+            Integer(98))
         
     def test_third(self):
         self.assertEqual(
@@ -114,11 +126,23 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(3))
         
+    def test_third_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(third #bytes("abc"))')),
+                     env_with_prelude()),
+            Integer(99))
+        
     def test_fourth(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(fourth (list 1 2 3 4 5))")),
                      env_with_prelude()),
             Integer(4))
+        
+    def test_fourth_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(fourth #bytes("abcd"))')),
+                     env_with_prelude()),
+            Integer(100))
         
     def test_fifth(self):
         self.assertEqual(
@@ -126,6 +150,12 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(5))
 
+    def test_fifth_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(fifth #bytes("abcde"))')),
+                     env_with_prelude()),
+            Integer(101))
+        
 
 class LastTest(unittest.TestCase):
     def test_last(self):
