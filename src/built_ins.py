@@ -726,15 +726,29 @@ class Append(Function):
             raise TrifleTypeError(
                 u"append! takes 2 arguments, but got: %s" % List(args).repr())
 
-        some_list = args[0]
+        sequence = args[0]
         value = args[1]
 
-        if not isinstance(some_list, List):
-            raise TrifleTypeError(
-                u"the first argument to append! must be a list, but got: %s"
-                % some_list.repr())
+        if isinstance(sequence, List):
+            sequence.values.append(value)
+            
+        elif isinstance(sequence, Bytestring):
+            # TODO: write a utility function for checking the type of
+            # values to be inserted into bytestrings.
+            if not isinstance(value, Integer):
+                raise TrifleTypeError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                                      % value.repr())
 
-        some_list.values.append(value)
+            if not (0 <= value.value <= 255):
+                raise TrifleValueError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                                       % value.repr())
+
+            sequence.byte_value.append(value.value)
+
+        else:
+            raise TrifleTypeError(
+                u"the first argument to append! must be a sequence, but got: %s"
+                % sequence.repr())
 
         return NULL
 

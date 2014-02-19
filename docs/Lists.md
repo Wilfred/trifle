@@ -13,7 +13,7 @@ and updating.
 3. [get-index](Sequences-GetIndex.md)
 4. [set-index!](Sequences-SetIndex.md)
 5. [length](Sequences-Length.md)
-6. [append!](Lists-Append.md)
+6. [append!](Sequences-Append.md)
 7. [push!](Lists-Push.md)
 8. [first](Sequence-First.md)
 9. [second](Sequences-Second.md)

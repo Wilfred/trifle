@@ -1083,6 +1083,12 @@ class AppendTest(unittest.TestCase):
                 u"(set-symbol! (quote x) (quote (1))) (append! x 2) x"))),
             expected)
 
+    def test_append_bytestring(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("a")) (append! x 98) x'))),
+            Bytestring(bytearray("ab")))
+
     def test_append_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
