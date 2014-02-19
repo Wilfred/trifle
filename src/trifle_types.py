@@ -15,6 +15,7 @@ class TrifleType(object):
         return "<%s: %s>" % (self.__class__.__name__, self.repr())
 
 
+# TODO: move to a consistent naming scheme: .boolean_value, .list_value etc.
 class Boolean(TrifleType):
     def repr(self):
         if self.value:
