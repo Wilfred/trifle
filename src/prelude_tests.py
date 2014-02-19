@@ -5,6 +5,7 @@ from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
 from trifle_parser import parse_one, parse
 from lexer import lex
+from errors import TrifleValueError
 
 
 """Unit tests for functions and macros in the prelude. It's easier to
@@ -163,6 +164,18 @@ class LastTest(unittest.TestCase):
             evaluate(parse_one(lex(u"(last (list 1 2 3 4 5))")),
                      env_with_prelude()),
             Integer(5))
+
+    def test_last_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(last #bytes("abc"))')),
+                     env_with_prelude()),
+            Integer(99))
+
+    def test_last_empty_list(self):
+        # todo: we need a separate index error
+        with self.assertRaises(TrifleValueError):
+            evaluate(parse_one(lex(u"(last (list 1 2 3 4 5))")),
+                     env_with_prelude())
 
 
 class NotTest(unittest.TestCase):

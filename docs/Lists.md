@@ -19,4 +19,5 @@ and updating.
 9. [third](Sequences-Third.md)
 10. [fourth](Sequences-Fourth.md)
 11. [fifth](Sequences-Fifth.md)
-12. [map](Lists-Map.md)
+12. [last](Sequences-Last.md)
+13. [map](Lists-Map.md)

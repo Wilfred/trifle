@@ -80,9 +80,8 @@
   (get-index seq 4)
 )
 
-; todoc, especially how it handles empty sequences
-(function last (sequence)
-  (get-index sequence -1)
+(function last (seq)
+  (get-index seq -1)
 )
 
 (function do (:rest args)

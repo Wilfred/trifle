@@ -19,3 +19,4 @@ quotes, e.g. `#bytes("foo")`.
 7. [third](Sequences-Third.md)
 8. [fourth](Sequences-Fourth.md)
 9. [fifth](Sequences-Fifth.md)
+10. [last](Sequences-Last.md)
