@@ -174,7 +174,7 @@ Offering restarts (which are dynamically scoped):
 ```lisp
 (try
   (call-dodgy-func)
-  :restart (:return-null (lambda () null))
+  :restart (:return-null (lambda () #null))
   :restart (:retry (lambda () (call-dodgy-func)))
   :restart (:override-with (lambda (value) (foo value)))
 )

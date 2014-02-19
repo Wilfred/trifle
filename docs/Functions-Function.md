@@ -9,7 +9,7 @@ Examples:
 
 ```lisp
 > (function double (x) (* x 2))
-null
+#null
 > (double 4)
 8
 ```

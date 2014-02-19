@@ -44,7 +44,7 @@ FALSE = Boolean(False)
 
 class Null(TrifleType):
     def repr(self):
-        return u"null"
+        return u"#null"
 
 
 NULL = Null()

@@ -13,7 +13,7 @@ Examples:
 > (defined? (quote foo))
 #false
 > (set! foo 1)
-null
+#null
 > (defined? (quote foo))
 #true
 ```

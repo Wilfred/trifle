@@ -17,7 +17,7 @@ Examples:
 > (equal? (list 1) (list 1 2))
 #false
 
-> (equal? null "banana")
+> (equal? #null "banana")
 #false
 ```
 

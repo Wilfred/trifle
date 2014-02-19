@@ -9,11 +9,11 @@ Examples:
 
 ```lisp
 > (set! h (open "/tmp/test.txt" :write))
-null
+#null
 > (write! h (encode "hello world")
-null
+#null
 > (close! h)
-null
+#null
 ```
 
 This will create (or overwrite if it already exists) a file
@@ -25,13 +25,13 @@ Example:
 
 ```lisp
 > (set! h (open "/tmp/test.txt" :write))
-null
+#null
 > (write! h (encode "trifle")
-null
+#null
 > (write! h (encode "!")
-null
+#null
 > (close! h)
-null
+#null
 ```
 
 After running this code, /tmp/test.txt contains the text `trifle!`.

@@ -10,13 +10,13 @@ Examples:
 
 ```lisp
 > (set! my-list (list 10 20 30))
-null
+#null
 > (set-index! my-list 0 11)
-null
+#null
 > my-list
 (11 20 30)
 > (set-index! my-list -1 100)
-null
+#null
 > my-list
 (11 20 100)
 ```
@@ -28,9 +28,9 @@ Example:
 
 ```lisp
 > (set! my-bytestring #bytes("bbc"))
-null
+#null
 > (set-index! my-bytestring 0 97)
-null
+#null
 > my-bytestring
 #bytes("abc")
 ```

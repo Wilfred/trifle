@@ -7,7 +7,7 @@ of EXPRESSIONS. It evaluates the EXPRESSIONS if CONDITION
 evaluates to a truthy value, then repeats until CONDITION
 evaluates to a falsey value.
 
-Always returns `null`.
+Always returns `#null`.
 
 Examples:
 

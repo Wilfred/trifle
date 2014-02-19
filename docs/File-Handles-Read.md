@@ -18,7 +18,7 @@ You can now try this Trifle code:
 
 ```lisp
 > (set! h (open "/tmp/test.txt" :read))
-null
+#null
 > (read h)
 #bytes("a delicous souffl\xc3\xa9 and a spoon")
 ```

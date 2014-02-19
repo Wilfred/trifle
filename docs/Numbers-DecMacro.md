@@ -9,9 +9,9 @@ Examples:
 
 ```lisp
 > (set! x 3)
-null
+#null
 > (dec! x)
-null
+#null
 > x
 2
 ```

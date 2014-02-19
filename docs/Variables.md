@@ -27,7 +27,7 @@ Defining a variable in global scope:
 
 ```lisp
 > (set! x 1)
-null
+#null
 > x
 1
 ```
@@ -43,9 +43,9 @@ If a variable is already defined in a outer scope, it will be updated:
 
 ```lisp
 > (set! x 1)
-null
+#null
 > ((lambda () (set! x 2)))
-null
+#null
 > x
 2
 ```

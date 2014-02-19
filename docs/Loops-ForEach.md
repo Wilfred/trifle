@@ -6,7 +6,7 @@ The macro `for-each` evaluates EXPRESSIONS repeatedly, once for each
 value in LIST. In each iteration, SYMBOL is set to the next value in
 LIST.
 
-Returns `null`.
+Returns `#null`.
 
 Examples:
 

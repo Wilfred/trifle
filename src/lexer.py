@@ -57,7 +57,7 @@ LEXEMES = [
     (INTEGER, get_code('-?[0-9_]+$')),
 
     (BOOLEAN, get_code('(#true|#false)$')),
-    (NULL_TYPE, get_code('null$')),
+    (NULL_TYPE, get_code('#null$')),
     
     # todoc: exactly what syntax we accept for symbols
     (SYMBOL, get_code('[a-z*/+?!<>=_-][a-z0-9*/+?!<>=_-]*$')),

@@ -8,9 +8,9 @@ Examples:
 
 ```lisp
 > (set! my-list (list 20 30))
-null
+#null
 > (append! my-list 40)
-null
+#null
 > my-list
 (20 30 40)
 ```

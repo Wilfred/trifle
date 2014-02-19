@@ -8,7 +8,7 @@ condition evaluates to a [truthy](Booleans-Truthy.md) value, the THEN
 expression is evaluated and returned. Otherwise, the ELSE expression
 is evaluated and returned.
 
-If no ELSE expression is given, `if` returns `null`.
+If no ELSE expression is given, `if` returns `#null`.
 
 Examples:
 
@@ -22,4 +22,4 @@ Examples:
     1
 
     > (if #false 1)
-    null
+    #null

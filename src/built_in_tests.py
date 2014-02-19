@@ -174,7 +174,7 @@ class BooleanLexTest(unittest.TestCase):
 class NullLexTest(unittest.TestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"null")[0], NULL)
+            lex(u"#null")[0], NULL)
 
 
 class ParsingTest(unittest.TestCase):
@@ -211,7 +211,7 @@ class EvaluatingLiteralsTest(unittest.TestCase):
 
     def test_eval_null(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"null"))),
+            evaluate_with_fresh_env(parse_one(lex(u"#null"))),
             NULL)
 
     def test_eval_keyword(self):
@@ -242,6 +242,9 @@ class ReprTest(unittest.TestCase):
     def test_bool_repr(self):
         self.assertEqual(TRUE.repr(), "#true")
         self.assertEqual(FALSE.repr(), "#false")
+
+    def test_null_repr(self):
+        self.assertEqual(NULL.repr(), "#null")
 
 
 class EvaluatingLambdaTest(unittest.TestCase):
@@ -382,17 +385,17 @@ class LetTest(unittest.TestCase):
     def test_let_malformed_bindings(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
-                parse_one(lex(u"(let (1 1) null)")))
+                parse_one(lex(u"(let (1 1) #null)")))
 
     def test_let_odd_bindings(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
-                parse_one(lex(u"(let (x 1 y) null)")))
+                parse_one(lex(u"(let (x 1 y) #null)")))
 
     def test_let_not_bindings(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(
-                parse_one(lex(u"(let null null)")))
+                parse_one(lex(u"(let #null #null)")))
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
@@ -534,7 +537,7 @@ class MultiplyTest(unittest.TestCase):
 
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(* 1 null)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(* 1 #null)")))
 
 
 class DivideTest(unittest.TestCase):
@@ -555,7 +558,7 @@ class DivideTest(unittest.TestCase):
 
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(/ 1 null)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(/ 1 #null)")))
 
     def test_arity_error(self):
         with self.assertRaises(ArityError):
@@ -745,7 +748,7 @@ class SameTest(unittest.TestCase):
 
     def test_null_same(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? null null)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(same? #null #null)"))),
             TRUE)
 
     def test_symbol_same(self):
@@ -829,7 +832,7 @@ class EqualTest(unittest.TestCase):
 
     def test_null_equal(self):
         self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? null null)"))),
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? #null #null)"))),
             TRUE)
 
     def test_symbol_equal(self):
@@ -968,7 +971,7 @@ class GetIndexTest(unittest.TestCase):
 
     def test_get_index_typeerror(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(get-index null 0)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(get-index #null 0)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (1)) #false)")))
@@ -1011,7 +1014,7 @@ class SetIndexTest(unittest.TestCase):
     def test_set_index_bytestring_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(set-index! #bytes("a") 0 null)')))
+                u'(set-index! #bytes("a") 0 #null)')))
         
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
@@ -1042,7 +1045,7 @@ class SetIndexTest(unittest.TestCase):
 
     def test_set_index_typeerror(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_fresh_env(parse_one(lex(u"(set-index! null 0 0)")))
+            evaluate_with_fresh_env(parse_one(lex(u"(set-index! #null 0 0)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) #false #false)")))
@@ -1099,7 +1102,7 @@ class AppendTest(unittest.TestCase):
         # first argument must be a list
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(append! null 0)")))
+                u"(append! #null 0)")))
 
 
 class PushTest(unittest.TestCase):
@@ -1130,7 +1133,7 @@ class PushTest(unittest.TestCase):
         # first argument must be a list
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(push! null 0)")))
+                u"(push! #null 0)")))
 
 
 class EnvironmentVariablesTest(unittest.TestCase):
@@ -1200,11 +1203,11 @@ class CallTest(unittest.TestCase):
     def test_call_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_all_with_fresh_env(parse(lex(
-                u"(call null (quote (1 2 3)))")))
+                u"(call #null (quote (1 2 3)))")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_all_with_fresh_env(parse(lex(
-                u"(call + null)")))
+                u"(call + #null)")))
 
 
 class EvalTest(unittest.TestCase):
@@ -1234,12 +1237,12 @@ class EvaluatingMacrosTest(unittest.TestCase):
     def test_call_macro_too_few_args(self):
         with self.assertRaises(ArityError):
             evaluate_all_with_fresh_env(parse(lex(
-                u"(macro ignore (x) null) (ignore 1 2)")))
+                u"(macro ignore (x) #null) (ignore 1 2)")))
 
     def test_call_macro_too_many_args(self):
         with self.assertRaises(ArityError):
             evaluate_all_with_fresh_env(parse(lex(
-                u"(macro ignore (x) null) (ignore)")))
+                u"(macro ignore (x) #null) (ignore)")))
 
     def test_macro_rest_args(self):
         self.assertEqual(
@@ -1261,15 +1264,15 @@ class EvaluatingMacrosTest(unittest.TestCase):
     def test_macro_bad_arg_types(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(macro foo bar null)")))
+                u"(macro foo bar #null)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(macro foo (1) null)")))
+                u"(macro foo (1) #null)")))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(macro 123 (bar) null)")))
+                u"(macro 123 (bar) #null)")))
 
 
 class DefinedTest(unittest.TestCase):
@@ -1337,11 +1340,11 @@ class OpenTest(unittest.TestCase):
     def test_open_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(open "/foo/bar" null)')))
+                u'(open "/foo/bar" #null)')))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(open null :write)")))
+                u"(open #null :write)")))
 
 
 class CloseTest(unittest.TestCase):
@@ -1365,7 +1368,7 @@ class CloseTest(unittest.TestCase):
     def test_close_arity_error(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(close! (open "/tmp/foo" :write) null)')))
+                u'(close! (open "/tmp/foo" :write) #null)')))
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
@@ -1374,7 +1377,7 @@ class CloseTest(unittest.TestCase):
     def test_close_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(close! null)')))
+                u'(close! #null)')))
 
 
 class ReadTest(unittest.TestCase):
@@ -1402,7 +1405,7 @@ class ReadTest(unittest.TestCase):
     def test_read_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u"(read null)")))
+                u"(read #null)")))
 
 
 class WriteTest(unittest.TestCase):
@@ -1436,16 +1439,16 @@ class WriteTest(unittest.TestCase):
         # Too many args.
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(write! (open "foo.txt" :write) (encode "f") null)')))
+                u'(write! (open "foo.txt" :write) (encode "f") #null)')))
             
     def test_write_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(write! null (encode "f"))')))
+                u'(write! #null (encode "f"))')))
 
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(write! (open "foo.txt" :write) null)')))
+                u'(write! (open "foo.txt" :write) #null)')))
 
         os.remove('foo.txt')
 
@@ -1460,7 +1463,7 @@ class EncodeTest(unittest.TestCase):
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(encode null)')))
+                u'(encode #null)')))
     
     def test_encode_arity_error(self):
         with self.assertRaises(ArityError):
@@ -1482,7 +1485,7 @@ class DecodeTest(unittest.TestCase):
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(decode null)')))
+                u'(decode #null)')))
     
     def test_encode_arity_error(self):
         with self.assertRaises(ArityError):

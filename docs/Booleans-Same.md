@@ -28,8 +28,9 @@ Examples:
 #false
 
 > (set! x (list 1))
-null
+#null
 > (set! y x)
+#null
 > (same? x y)
 #true
 ```

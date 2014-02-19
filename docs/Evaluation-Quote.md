@@ -22,7 +22,7 @@ Examples:
 
 ```lisp
 > (set! x 1)
-null
+#null
 > (quote (x (unquote x))
 (x 1)
 ```
@@ -35,7 +35,7 @@ Examples
 
 ```lisp
 > (set! x 1)
-null
+#null
 > (quote (x (unquote* (list x x))))
 (x 1 1)
 > (quote (x (unquote (list x x))))

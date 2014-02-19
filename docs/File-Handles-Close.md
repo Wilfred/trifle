@@ -8,9 +8,9 @@ Examples:
 
 ```lisp
 > (set! h (open "/tmp/testfile.txt" :write))
-null
+#null
 > (close! h)
-null
+#null
 ```
 
 You should close file handles when you are finished with them. When
