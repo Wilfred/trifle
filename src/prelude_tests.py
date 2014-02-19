@@ -174,7 +174,7 @@ class LastTest(unittest.TestCase):
     def test_last_empty_list(self):
         # todo: we need a separate index error
         with self.assertRaises(TrifleValueError):
-            evaluate(parse_one(lex(u"(last (list 1 2 3 4 5))")),
+            evaluate(parse_one(lex(u"(last (list))")),
                      env_with_prelude())
 
 
