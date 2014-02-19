@@ -15,7 +15,7 @@ Predicates:
 Creating a new list:
 
 1. [list](Lists-List.md)
-2. [map](Lists-Map.md)
+2. [map](Sequences-Map.md)
 
 Accessing:
 

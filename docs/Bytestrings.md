@@ -10,6 +10,10 @@ quotes, e.g. `#bytes("foo")`.
 
 ## Bytestring functions
 
+Creating a new bytestring:
+
+1. [map](Sequences-Map.md)
+
 Converting:
 
 1. [decode](Bytestrings-Decode.md)

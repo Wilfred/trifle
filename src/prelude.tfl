@@ -55,9 +55,9 @@
   )
 )
 
-(function map (func some-list)
-  (let (result (list))
-    (for-each item some-list
+(function map (func sequence)
+  (let (result (if (list? sequence) (list) #bytes("")))
+    (for-each item sequence
       (append! result (func item))
     )
     result
