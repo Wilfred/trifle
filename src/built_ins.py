@@ -817,7 +817,8 @@ class Call(FunctionWithEnv):
 
 class Defined(FunctionWithEnv):
     def call(self, args, env):
-        # todo: a utility function for arity checking.
+        # TODO: a utility function for arity checking, which prints
+        # both the number of args and shows the args themselves.
         if len(args) != 1:
             raise ArityError(
                 u"defined? takes 1 argument, but got: %s" % List(args).repr())
