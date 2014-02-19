@@ -1497,3 +1497,35 @@ class DecodeTest(unittest.TestCase):
         with self.assertRaises(ArityError):
             evaluate(parse_one(lex(u'(decode x 2)')), env)
     
+
+class ListPredicateTest(unittest.TestCase):
+    def test_is_list(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list? (quote ()))'))),
+            TRUE)
+
+    def test_is_not_list(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list? #bytes(""))'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list? #null)'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list? 1.0)'))),
+            FALSE)
+
+    def test_is_list_arity(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list?)')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(list? #null #null)')))

@@ -590,6 +590,21 @@ class LessThan(Function):
             return TRUE
 
 
+# TODO: name other FOO? functions as FooPredicate, and update doc names accordingly
+class ListPredicate(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"list? takes 1 argument, but got: %s" % List(args).repr())
+
+        value = args[0]
+
+        if isinstance(value, List):
+            return TRUE
+        else:
+            return FALSE
+
+
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
