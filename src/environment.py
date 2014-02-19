@@ -117,7 +117,7 @@ def fresh_environment():
         u'lambda': LambdaFactory(),
         u'macro': DefineMacro(),
         u'fresh-symbol': FreshSymbol(),
-        u'print': Print(),
+        u'print!': Print(),
         u'input': Input(),
         u'call': Call(),
         u'parse': Parse(),

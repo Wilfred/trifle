@@ -665,7 +665,7 @@ class PrintTest(unittest.TestCase):
     def test_print_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
-                u'(print "foo")'))),
+                u'(print! "foo")'))),
             NULL)
 
     def test_print_writes_to_stdout(self):
@@ -673,7 +673,7 @@ class PrintTest(unittest.TestCase):
 
         with patch('sys.stdout', mock_stdout):
             evaluate_with_fresh_env(parse_one(lex(
-                u'(print "foo")')))
+                u'(print! "foo")')))
 
         self.assertEqual(mock_stdout.getvalue(), "foo\n")
 
@@ -685,7 +685,7 @@ class PrintTest(unittest.TestCase):
         sys.stdout = mock_stdout
         
         evaluate_with_fresh_env(parse_one(lex(
-            u'(print 1)')))
+            u'(print! 1)')))
 
         # Undo the monkey-patch.
         sys.stdout = old_stdout
@@ -695,7 +695,7 @@ class PrintTest(unittest.TestCase):
     def test_print_wrong_arg_number(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
-                parse_one(lex(u"(print 1 2)")))
+                parse_one(lex(u"(print! 1 2)")))
 
 
 class InputTest(unittest.TestCase):

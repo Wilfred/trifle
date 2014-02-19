@@ -11,5 +11,5 @@ newlines.
 ## String functions
 
 1. [encode](Strings-Encode.md)
-2. [print](Strings-Print.md)
+2. [print!](Strings-Print.md)
 3. [input](Strings-Input.md)
