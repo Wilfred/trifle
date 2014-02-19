@@ -16,7 +16,7 @@ Lists are evaluated left-to-right. In the form `(a b c)`:
 1. `a` is evaluated first (presumably returning a function),
 2. then `b` is evaluated,
 3. then `c` is evaluated,
-4. finally the function is called with the arguments.
+4. finally the function is called with the arguments, passed by reference.
 
 ## Evaluation functions
 
