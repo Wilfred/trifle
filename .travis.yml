@@ -13,3 +13,5 @@ script:
   - python2 src/pypy/rpython/bin/rpython --batch src/main.py
 after_success:
   coveralls
+notifications:
+  irc: "chat.freenode.net#trifle"
