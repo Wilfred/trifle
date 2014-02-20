@@ -743,7 +743,7 @@ class Append(Function):
                 raise TrifleValueError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
                                        % value.repr())
 
-            sequence.byte_value.append(value.value)
+            sequence.byte_value = sequence.byte_value + bytearray(chr(value.value))
 
         else:
             raise TrifleTypeError(
