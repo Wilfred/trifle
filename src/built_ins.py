@@ -757,7 +757,7 @@ class Append(Function):
 class Push(Function):
     def call(self, args):
         if len(args) != 2:
-            raise TrifleTypeError(
+            raise ArityError(
                 u"push! takes 2 arguments, but got: %s" % List(args).repr())
 
         some_list = args[0]

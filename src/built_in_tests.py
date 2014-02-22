@@ -1127,11 +1127,11 @@ class PushTest(unittest.TestCase):
             NULL)
 
     def test_push_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
                 u"(push! (quote ()))")))
 
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
                 u"(push! (quote ()) 0 1)")))
 
