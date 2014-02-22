@@ -1,3 +1,11 @@
+# Copyright 2014 Wilfred Hughes. See docs/Licensing.md.
+#
+# Licensed under the Apache Licence, Version 2.0 <Licence-Apache.txt or
+# http://www.apache.org/licenses/LICENSE-2.0> or the MIT licence
+# <Licence-MIT.txt or http://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
 import sys
 import os
 
