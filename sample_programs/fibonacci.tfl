@@ -1,0 +1,10 @@
+(function fibonacci (n)
+  "Return the Nth number in the fibonacci sequence."
+  (if (equal? n 0) 0
+    (if (equal? n 1) 1
+      (+ (fibonacci (dec n)) (fibonacci (dec (dec n))))
+    )
+  )
+)
+
+(print! (fibonacci 10))
