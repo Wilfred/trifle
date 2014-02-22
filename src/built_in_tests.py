@@ -1112,13 +1112,19 @@ class AppendTest(unittest.TestCase):
 
 
 class PushTest(unittest.TestCase):
-    def test_push(self):
+    def test_push_list(self):
         expected = List([Integer(1)])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
                 u"(set-symbol! (quote x) (quote ())) (push! x 1) x"))),
             expected)
+
+    def test_push_bytestring(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x'))),
+            Bytestring(bytearray("abc")))
 
     def test_push_returns_null(self):
         self.assertEqual(

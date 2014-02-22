@@ -32,4 +32,4 @@ Modifying:
 
 1. [set-index!](Sequences-SetIndex.md)
 2. [append!](Sequences-Append.md)
-3. [push!](Lists-Push.md)
+3. [push!](Sequences-Push.md)
