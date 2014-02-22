@@ -23,7 +23,7 @@ $ ./trifle -i '(+ 2 3)'
 For longer programs, you can pass the filename as an argument.
 
 ```
-$ echo '(+ 2 3)' > add.tfl
+$ echo '(print! (+ 2 3))' > add.tfl
 $ ./trifle add.tfl
 5
 ```

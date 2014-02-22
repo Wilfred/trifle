@@ -89,7 +89,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            print evaluate_all(parse_tree, env).repr().encode('utf-8')
+            evaluate_all(parse_tree, env).repr()
         except TrifleError as e:
             print u"Error: %s" % e.message
             return 1
