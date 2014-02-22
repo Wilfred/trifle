@@ -14,4 +14,9 @@ script:
 after_success:
   coveralls
 notifications:
-  irc: "chat.freenode.net#trifle"
+  irc:
+    channels:
+      - "chat.freenode.net#trifle"
+    on_success: always
+    on_failure: always
+    use_notice: true
