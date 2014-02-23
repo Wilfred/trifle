@@ -882,7 +882,7 @@ class Open(Function):
 
         if not isinstance(flag, Keyword):
             raise TrifleTypeError(
-                u"the first argument to open must be a string, but got: %s"
+                u"the second argument to open must be a keyword, but got: %s"
                 % flag.repr())
 
         if flag.symbol_name == u'write':
