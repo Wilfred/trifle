@@ -3,7 +3,7 @@ from built_ins import (Add, Subtract, Multiply, Divide,
                        Truthy, Quote, SetSymbol, Let, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
                        Length, ListPredicate, GetIndex, SetIndex, Push, Append,
-                       Print, Input,
+                       Print, Input, Exit,
                        Call, Parse, Eval, Defined,
                        Open, Close, Read, Write, Encode, Decode)
 
@@ -120,6 +120,7 @@ def fresh_environment():
         u'fresh-symbol': FreshSymbol(),
         u'print!': Print(),
         u'input': Input(),
+        u'exit!': Exit(),
         u'call': Call(),
         u'parse': Parse(),
         u'eval': Eval(),

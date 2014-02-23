@@ -68,7 +68,7 @@ def entry_point(argv):
     """
     if len(argv) == 1:
         # REPL. Ultimately we will rewrite this as a Trifle program.
-        print "Trifle interpreter. Press Ctrl-C to exit."
+        print "Trifle interpreter. Type (exit!) to exit."
 
         env = env_with_prelude()
         while True:
@@ -80,8 +80,7 @@ def entry_point(argv):
                 print evaluate_all(parse_tree, env).repr().encode('utf-8')
             except TrifleError as e:
                 print u"Error: %s" % e.message
-            except KeyboardInterrupt:
-                print
+            except SystemExit:
                 return 0
     
     elif len(argv) == 2:
@@ -101,7 +100,8 @@ def entry_point(argv):
         except TrifleError as e:
             print u"Error: %s" % e.message
             return 1
-        
+        except SystemExit:
+            return 0
         return 0
     
     elif len(argv) == 3:
@@ -116,6 +116,8 @@ def entry_point(argv):
             except TrifleError as e:
                 print u"Error: %s" % e.message
                 return 1
+            except SystemExit:
+                return 0
             return 0
             
     print """Usage:

@@ -1,4 +1,4 @@
-import errno
+import sys
 
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List, Keyword,
@@ -1008,3 +1008,15 @@ class Decode(Function):
 
         py_unicode = str(bytestring.byte_value).decode('utf-8')
         return String([char for char in py_unicode])
+
+
+# TODO: take an extra argument for return codes (and check against the maximum legal value).
+# TODOC
+class Exit(Function):
+    def call(self, args):
+        if args:
+            # TODO: unit test this error
+            raise ArityError(
+                u"exit! takes 0 arguments, but got: %s" % List(args).repr())
+
+        raise SystemExit()

@@ -1549,3 +1549,9 @@ class ListPredicateTest(unittest.TestCase):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(
                 u'(list? #null #null)')))
+
+class ExitTest(unittest.TestCase):
+    def test_exit(self):
+        with self.assertRaises(SystemExit):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(exit!)')))
