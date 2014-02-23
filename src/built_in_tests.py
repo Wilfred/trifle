@@ -232,12 +232,20 @@ class EvaluatingLiteralsTest(unittest.TestCase):
 
 
 class ReprTest(unittest.TestCase):
+    def test_list_repr(self):
+        list_val = List([Integer(1)])
+        self.assertEqual(list_val.repr(), '(1)')
+
     def test_bytes_repr(self):
         bytes_val = Bytestring(bytearray("\\ souffl\xc3\xa9"))
 
         self.assertEqual(
             bytes_val.repr(),
             '#bytes("\\\\ souffl\\xc3\\xa9")')
+
+    def test_string_repr(self):
+        string_val = String((u"foo"))
+        self.assertEqual(string_val.repr(), '"foo"')
 
     def test_bool_repr(self):
         self.assertEqual(TRUE.repr(), "#true")
