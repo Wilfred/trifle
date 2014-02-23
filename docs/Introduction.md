@@ -38,8 +38,9 @@ the data types they take as arguments.
 
 ### Contributing
 
-3.1. [Source code](https://github.com/wilfred/trifle)  
-3.2. [Bugs](https://github.com/wilfred/trifle/issues)  
-3.3. [License](License.md)  
-3.4. [Building](Building.md)  
-3.5. [Conventions](Conventions.md)  
+3.1. [Community](Community.md)  
+3.2. [Source code](https://github.com/wilfred/trifle)  
+3.3. [Bugs](https://github.com/wilfred/trifle/issues)  
+3.4. [License](License.md)  
+3.5. [Building](Building.md)  
+3.6. [Conventions](Conventions.md)  
