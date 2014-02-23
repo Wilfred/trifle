@@ -190,7 +190,10 @@ class Bytestring(TrifleType):
 class FileHandle(TrifleType):
     def __init__(self, file_name, file_handle, file_mode):
         self.is_closed = False
+
+        assert isinstance(file_name, str), "File name is %r" % file_name
         self.file_name = file_name
+
         self.file_handle = file_handle
         self.mode = file_mode
 
