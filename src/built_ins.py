@@ -891,6 +891,8 @@ class Open(Function):
             try:
                 handle = open(path.as_unicode().encode('utf-8'), 'r')
             except IOError as e:
+                # TODO: Fix RPython error that stops us inspecting .errno.
+                # This will throw on other IOErrors, such as permission problems.
                 raise FileNotFound(u"No file found: %s" % path.as_unicode())
                 # if e.errno == 2:
                 #     raise FileNotFound(u"No file found: %s" % path.as_unicode())
