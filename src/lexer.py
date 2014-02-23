@@ -175,7 +175,8 @@ def _lex(tokens):
                     # negative indexes on slices and can't prove the
                     # slice is non-negative.
                     if string_end >= 0:
-                        lexed_tokens.append(String(token[1:string_end]))
+                        string_contents = token[1:string_end]
+                        lexed_tokens.append(String([char for char in string_contents]))
                 elif lexeme_name == BYTESTRING:
                     string_end = match.match_end - 2
 

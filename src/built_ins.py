@@ -280,7 +280,7 @@ class Print(Function):
                 u"print takes 1 argument, but got %s." % List(args).repr())
 
         if isinstance(args[0], String):
-            print args[0].string
+            print args[0].as_unicode()
         else:
             print args[0].repr()
 
@@ -301,8 +301,8 @@ class Input(Function):
                 u"The first argument to input must be a string, but got: %s"
                 % prefix.repr())
 
-        user_input = raw_input(prefix.string)
-        return String(user_input)
+        user_input = raw_input(prefix.as_unicode())
+        return String([char for char in user_input])
 
 
 class Same(Function):
@@ -800,7 +800,7 @@ class Parse(Function):
                 u"the first argument to parse must be a list, but got: %s"
                 % program_string.repr())
 
-        tokens = lex(program_string.string)
+        tokens = lex(program_string.as_unicode())
         return parse(tokens)
 
 
@@ -886,19 +886,20 @@ class Open(Function):
                 % flag.repr())
 
         if flag.symbol_name == u'write':
-            handle = open(path.string.encode('utf-8'), 'w')
+            handle = open(path.as_unicode().encode('utf-8'), 'w')
         elif flag.symbol_name == u'read':
             try:
-                handle = open(path.string.encode('utf-8'), 'r')
+                handle = open(path.as_unicode().encode('utf-8'), 'r')
             except IOError as e:
-                if e.errno == errno.ENOENT:
-                    raise FileNotFound(u"No file found: %s" % path.string)
-                else:
-                    raise
+                raise FileNotFound(u"No file found: %s" % path.as_unicode())
+                # if e.errno == 2:
+                #     raise FileNotFound(u"No file found: %s" % path.as_unicode())
+                # else:
+                #     raise
         else:
             raise TrifleValueError(u"Invalid flag for open: :%s" % flag.symbol_name)
 
-        return FileHandle(path.string, handle, flag)
+        return FileHandle(path.as_unicode().encode('utf-8'), handle, flag)
 
 
 class Close(Function):
@@ -916,7 +917,7 @@ class Close(Function):
                 % handle.repr())
 
         if handle.is_closed:
-            raise UsingClosedFile(u"File handle for %s is already closed." % handle.file_name)
+            raise UsingClosedFile(u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
         else:
             handle.is_closed = True
             handle.file_handle.close()
@@ -985,7 +986,7 @@ class Encode(Function):
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
-        return Bytestring(bytearray(string.string.encode('utf-8')))
+        return Bytestring(bytearray(string.as_unicode().encode('utf-8')))
 
 
 # TODO: take a second argument that specifies the encoding.
@@ -1003,4 +1004,5 @@ class Decode(Function):
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())
 
-        return String(str(bytestring.byte_value).decode('utf-8'))
+        py_unicode = str(bytestring.byte_value).decode('utf-8')
+        return String([char for char in py_unicode])

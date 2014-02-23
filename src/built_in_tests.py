@@ -135,14 +135,14 @@ class KeywordLexTest(unittest.TestCase):
 class StringLexTest(unittest.TestCase):
     def test_lex_string(self):
         self.assertEqual(
-            lex(u'"foo"')[0], String(u'foo'))
+            lex(u'"foo"')[0], String(list(u'foo')))
 
         self.assertEqual(
-            lex(u'"foo\nbar"')[0], String(u'foo\nbar'))
+            lex(u'"foo\nbar"')[0], String(list(u'foo\nbar')))
 
     def test_lex_non_ascii_string(self):
         self.assertEqual(
-            lex(u'"flambé"')[0], String(u'flambé'))
+            lex(u'"flambé"')[0], String(list(u'flambé')))
 
 
 class BytestringLexTest(unittest.TestCase):
@@ -222,7 +222,7 @@ class EvaluatingLiteralsTest(unittest.TestCase):
     def test_eval_string(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u'"foo"'))),
-            String(u"foo"))
+            String(list(u"foo")))
 
     def test_eval_bytes(self):
         bytes_val = Bytestring(bytearray("foobar"))
@@ -244,7 +244,7 @@ class ReprTest(unittest.TestCase):
             '#bytes("\\\\ souffl\\xc3\\xa9")')
 
     def test_string_repr(self):
-        string_val = String((u"foo"))
+        string_val = String(list(u"foo"))
         self.assertEqual(string_val.repr(), '"foo"')
 
     def test_bool_repr(self):
@@ -716,7 +716,7 @@ class InputTest(unittest.TestCase):
                 self.assertEqual(
                     evaluate_with_fresh_env(parse_one(lex(
                         u'(input ">> ")'))),
-                    String(u"foobar")
+                    String(list(u"foobar"))
                 )
 
     def test_input_type_error(self):
@@ -1500,7 +1500,7 @@ class DecodeTest(unittest.TestCase):
         env = fresh_environment()
         env.set(u'x', Bytestring(bytearray(b"souffl\xc3\xa9")))
         self.assertEqual(evaluate(parse_one(lex(u"(decode x)")), env),
-                         String(u"soufflé"))
+                         String(list(u"soufflé")))
 
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):

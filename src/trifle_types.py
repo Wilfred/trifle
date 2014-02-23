@@ -118,7 +118,7 @@ class Keyword(TrifleType):
 
 class String(TrifleType):
     def repr(self):
-        return u'"%s"' % self.string
+        return u'"%s"' % self.as_unicode()
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.string)
@@ -129,8 +129,15 @@ class String(TrifleType):
 
         return self.string == other.string
 
+    def as_unicode(self):
+        return u"".join(self.string)
+
     def __init__(self, string):
-        assert isinstance(string, unicode)
+        """We expect a list of unicode chars."""
+        assert isinstance(string, list)
+        if string:
+            assert isinstance(string[0], unicode)
+
         self.string = string
 
 
@@ -198,7 +205,7 @@ class FileHandle(TrifleType):
         self.mode = file_mode
 
     def repr(self):
-        return u'#file-handle("%s")' % self.file_name
+        return u'#file-handle("%s")' % self.file_name.decode('utf-8')
 
 
 class Function(TrifleType):
