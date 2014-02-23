@@ -11,7 +11,8 @@ otherwise.
 
 ### Usage
 
-1.1. [Interpreter](Interpreter.md)  
+1.1. [Getting started](Getting-Started.md)  
+1.2. [Interpreter](Interpreter.md)  
 
 ### Language
 
