@@ -235,6 +235,27 @@ class NotTest(unittest.TestCase):
                      env_with_prelude()),
             FALSE)
 
+
+class RestTest(unittest.TestCase):
+    def test_rest(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(rest (list 1 2 3))")),
+                     env_with_prelude()),
+            List([Integer(2), Integer(3)]))
+        
+    def test_rest_bytestring(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(rest #bytes("abc"))')),
+                     env_with_prelude()),
+            Bytestring(bytearray(b"bc")))
+        
+    def test_rest_empty_list(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(rest (list))")),
+                     env_with_prelude()),
+            List())
+        
+        
 class UnlessTest(unittest.TestCase):
     def test_unless_true(self):
         self.assertEqual(

@@ -96,6 +96,21 @@
   )
 )
 
+;; todo: write in terms of a slice function.
+(function rest (seq)
+  (let (i 0
+        result (if (list? seq) (list) #bytes(""))
+       )
+    (for-each item seq
+      (unless (equal? i 0)
+        (append! result item)
+      )
+      (inc! i)
+    )
+    result
+  )
+)
+
 (function do (:rest args)
   (if args
     (last args)

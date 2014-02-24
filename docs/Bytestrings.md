@@ -13,6 +13,7 @@ quotes, e.g. `#bytes("foo")`.
 Creating a new bytestring:
 
 1. [map](Sequences-Map.md)
+2. [rest](Sequences-Rest.md)
 
 Converting:
 
