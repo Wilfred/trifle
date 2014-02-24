@@ -19,6 +19,7 @@ use underscores in float literals: `1_000.000_001`.
 4. [>](Numbers-LessThan.md)
 5. [inc](Numbers-Inc.md)
 6. [dec](Numbers-Dec.md)
+7. [zero?](Numbers-ZeroPredicate.md)
 
 ## Number macros
 

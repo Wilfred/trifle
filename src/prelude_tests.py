@@ -55,6 +55,34 @@ class IncTest(unittest.TestCase):
             Integer(3))
 
 
+class ZeroPredicateTest(unittest.TestCase):
+    def test_not_zero(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? 5)")), env_with_prelude()),
+            FALSE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? -3)")), env_with_prelude()),
+            FALSE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? #null)")), env_with_prelude()),
+            FALSE)
+
+    def test_zero(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? 0)")), env_with_prelude()),
+            TRUE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? 0.0)")), env_with_prelude()),
+            TRUE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(zero? -0.0)")), env_with_prelude()),
+            TRUE)
+
+
 class DecTest(unittest.TestCase):
     def test_dec(self):
         self.assertEqual(
