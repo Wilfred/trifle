@@ -88,6 +88,14 @@
   (equal? x 0)
 )
 
+(macro unless (condition :rest body)
+  (quote
+    (if (not (unquote condition))
+      (do (unquote* body))
+    )
+  )
+)
+
 (function do (:rest args)
   (if args
     (last args)

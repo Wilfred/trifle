@@ -234,3 +234,17 @@ class NotTest(unittest.TestCase):
             evaluate(parse_one(lex(u"(not 123)")),
                      env_with_prelude()),
             FALSE)
+
+class UnlessTest(unittest.TestCase):
+    def test_unless_true(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(unless #true 1)")),
+                     env_with_prelude()),
+            NULL)
+        
+    def test_unless_false(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(unless #false 1 2)")),
+                     env_with_prelude()),
+            Integer(2))
+        

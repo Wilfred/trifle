@@ -3,6 +3,10 @@
 Trifle lisp has a boolean datatype. There are two boolean literals,
 `#true` and `#false`.
 
+## Boolean special expressions
+
+1. [if](Booleans-If.md)
+
 ## Boolean functions
 
 1. [truthy?](Booleans-Truthy.md)
@@ -10,6 +14,6 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 3. [equal?](Booleans-Equal.md)
 4. [not](Booleans-Not.md)
 
-## Boolean special expressions
+## Boolean macros
 
-1. [if](Booleans-If.md)
+1. [unless](Booleans-Unless.md)
