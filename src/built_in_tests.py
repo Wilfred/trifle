@@ -463,6 +463,11 @@ class QuoteTest(unittest.TestCase):
                 u"(set-symbol! (quote x) (quote (foo bar))) (quote (baz (unquote* x)))"))),
             expected)
 
+    def test_unquote_star_top_level(self):
+        with self.assertRaises(TrifleValueError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(quote (unquote* #null))")))
+
     def test_unquote_star_after_unquote(self):
         expected = parse_one(lex(u"(if #true (do 1 2))"))
         

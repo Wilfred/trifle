@@ -1,5 +1,3 @@
-import sys
-
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List, Keyword,
                           FileHandle, Bytestring,
@@ -129,7 +127,7 @@ class DefineMacro(Special):
         return NULL
 
 
-# todo: it would be nice to define this as a trifle macro using a quote primitive
+# todo: it would be nice to define this as a trifle macro using a 'literal' primitive
 # (e.g. elisp defines backquote in terms of quote)
 class Quote(Special):
     def is_unquote(self, expression):
@@ -193,12 +191,19 @@ class Quote(Special):
                     self.evaluate_unquote_calls(item, env)
 
         return expression
-                        
     
     def call(self, args, env):
         if len(args) != 1:
             raise ArityError(
                 u"quote takes 1 argument, but got: %s" % List(args).repr())
+
+        if isinstance(args[0], List) and args[0].values:
+            list_head = args[0].values[0]
+
+            if isinstance(list_head, Symbol):
+                if list_head.symbol_name == "unquote*":
+                    raise TrifleValueError(
+                        "Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
         return self.evaluate_unquote_calls(deepcopy(args[0]), env)
 
