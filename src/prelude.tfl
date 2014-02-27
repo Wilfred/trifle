@@ -111,6 +111,22 @@
   )
 )
 
+; TODO: case should throw an error on invalid input
+; e.g. (case ())
+; TODOC
+(macro case (:rest clauses)
+  (if clauses
+    (let (clause (first clauses))
+      (quote
+        (if (unquote (first clause))
+          (do (unquote* (rest clause)))
+          (unquote (call case (rest clauses)))
+        )
+      )
+    )
+  )
+)
+
 (function do (:rest args)
   (if args
     (last args)

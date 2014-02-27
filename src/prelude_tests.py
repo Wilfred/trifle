@@ -269,3 +269,21 @@ class UnlessTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(2))
         
+class CaseTest(unittest.TestCase):
+    def test_case_true(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(case (#true 1))")),
+                     env_with_prelude()),
+            Integer(1))
+
+    def test_case_first_match(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(case (#true 1) (#true 2))")),
+                     env_with_prelude()),
+            Integer(1))
+
+    def test_case_second_match(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(case (#false 1) (#true 2))")),
+                     env_with_prelude()),
+            Integer(2))
