@@ -146,6 +146,7 @@ class List(TrifleType):
         if values is None:
             self.values = []
         else:
+            assert isinstance(values, list)
             self.values = values
 
     def append(self, value):
