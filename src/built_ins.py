@@ -208,7 +208,7 @@ class Quote(Special):
             list_head = args[0].values[0]
 
             if isinstance(list_head, Symbol):
-                if list_head.symbol_name == "unquote*":
+                if list_head.symbol_name == u"unquote*":
                     raise TrifleValueError(
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
