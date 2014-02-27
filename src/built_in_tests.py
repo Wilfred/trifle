@@ -1243,6 +1243,14 @@ class CallTest(unittest.TestCase):
             Integer(6)
         )
 
+    def test_call_macro(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(macro add1 (x) (quote (+ 1 (unquote x))))"
+                u"(call add1 (quote (1)))"))),
+            Integer(2)
+        )
+
     def test_call_arg_number(self):
         with self.assertRaises(ArityError):
             evaluate_all_with_fresh_env(parse(lex(
