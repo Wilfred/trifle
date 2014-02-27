@@ -28,7 +28,7 @@ Examples:
 ```
 
 If `quote` is given a list that contains lists of the form
-`(unquote EXPRESSION...)`, those expressions will be evaluated and
+`(unquote* EXPRESSION...)`, those expressions will be evaluated and
 included in the parent list.
 
 Examples
@@ -38,6 +38,6 @@ Examples
 #null
 > (quote (x (unquote* (list x x))))
 (x 1 1)
-> (quote (x (unquote (list x x))))
+> (quote (x (unquote* (list x x))))
 (x (1 1))
 ```
