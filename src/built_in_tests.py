@@ -447,7 +447,16 @@ class QuoteTest(unittest.TestCase):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(quote foo bar)")))
 
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(u"(quote)")))
+
     def test_unquote(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(quote (unquote (+ 1 2)))"))),
+            Integer(3))
+
+    def test_unquote_nested(self):
         expected = List([Symbol(u'x'), Integer(1)])
         
         self.assertEqual(
@@ -462,6 +471,24 @@ class QuoteTest(unittest.TestCase):
             evaluate_all_with_fresh_env(parse(lex(
                 u"(set-symbol! (quote x) (quote (foo bar))) (quote (baz (unquote* x)))"))),
             expected)
+
+    def test_unquote_wrong_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(set-symbol! (quote x) 1) (quote (unquote x x))")))
+
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(quote (unquote))")))
+
+    def test_unquote_star_wrong_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))")))
+
+        with self.assertRaises(ArityError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(quote (list (unquote*)))")))
 
     def test_unquote_star_top_level(self):
         with self.assertRaises(TrifleValueError):

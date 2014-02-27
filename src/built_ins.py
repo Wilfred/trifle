@@ -165,20 +165,27 @@ class Quote(Special):
         return True
     
     # todo: fix the potential stack overflow
-    # todo: throw errors on (unquote two arguments!) and (unquote)
     def evaluate_unquote_calls(self, expression, env):
         from evaluator import evaluate
         if isinstance(expression, List):
             for index, item in enumerate(copy(expression).values):
                 if self.is_unquote(item):
+                    # TODO: this is calling repr but including the function call itself
+                    if len(item.values) != 2:
+                        raise ArityError(
+                            u"unquote takes 1 argument, but got: %s" % item.repr())
+            
                     unquote_argument = item.values[1]
                     expression.values[index] = evaluate(unquote_argument, env)
                     
                 elif self.is_unquote_star(item):
+                    if len(item.values) != 2:
+                        raise ArityError(
+                            u"unquote* takes 1 argument, but got: %s" % item.repr())
+            
                     unquote_argument = item.values[1]
                     values_list = evaluate(unquote_argument, env)
 
-                    # todo: unit test this error
                     if not isinstance(values_list, List):
                         raise TrifleTypeError(
                             u"unquote* must be used with a list, but got a %s" % values_list.repr())
@@ -205,7 +212,8 @@ class Quote(Special):
                     raise TrifleValueError(
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
-        return self.evaluate_unquote_calls(deepcopy(args[0]), env)
+        result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env)
+        return result.values[0]
 
 
 class If(Special):
