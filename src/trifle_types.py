@@ -221,7 +221,7 @@ class Function(TrifleType):
 
 class FunctionWithEnv(TrifleType):
     """A function provided by the interpreter. Subclasses must provide a
-    call method that takes arguments and the environment.. Arguments
+    call method that takes arguments and the environment. Arguments
     are passed in after being evaluated.
 
     """
