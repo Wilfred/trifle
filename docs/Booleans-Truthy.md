@@ -14,5 +14,5 @@ Examples:
     > (truthy? 1)
     #true
 
-    > (truthy? (quote ()))
+    > (truthy? (list))
     #false
