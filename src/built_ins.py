@@ -253,6 +253,10 @@ def is_truthy(value):
         if len(value.values) == 0:
             return FALSE
 
+    if isinstance(value, String):
+        if len(value.string) == 0:
+            return FALSE
+
     return TRUE
 
         

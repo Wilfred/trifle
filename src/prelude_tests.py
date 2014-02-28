@@ -307,6 +307,15 @@ class TruthyTest(unittest.TestCase):
             evaluate(parse_one(lex(u'(truthy? "foo")')), env_with_prelude()),
             TRUE)
 
+    def test_truthy_strings(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(truthy? "")')), env_with_prelude()),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(truthy? "foo")')), env_with_prelude()),
+            TRUE)
+
     def test_truthy_lists(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? (list))")), env_with_prelude()),
