@@ -5,7 +5,7 @@ from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError
+from errors import TrifleValueError, ArityError
 
 
 """Unit tests for functions and macros in the prelude. It's easier to
@@ -287,3 +287,38 @@ class CaseTest(unittest.TestCase):
             evaluate(parse_one(lex(u"(case (#false 1) (#true 2))")),
                      env_with_prelude()),
             Integer(2))
+
+class TruthyTest(unittest.TestCase):
+    def test_truthy(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? 2)")), env_with_prelude()),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? 0)")), env_with_prelude()),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? #false)")), env_with_prelude()),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? #true)")), env_with_prelude()),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? (quote ()))")), env_with_prelude()),
+            FALSE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? (quote (1)))")), env_with_prelude()),
+            TRUE)
+
+    def test_truthy_wrong_number_of_args(self):
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(u"(truthy?)")), env_with_prelude())
+
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(u"(truthy? 1 2)")), env_with_prelude())
+
+

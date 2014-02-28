@@ -256,15 +256,6 @@ def is_truthy(value):
     return TRUE
 
         
-class Truthy(Function):
-    def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"truthy? takes 1 argument, but got: %s" % List(args).repr())
-
-        return is_truthy(args[0])
-
-
 class While(Special):
     def call(self, args, env):
         if not args:

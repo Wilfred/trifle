@@ -641,42 +641,6 @@ class IfTest(unittest.TestCase):
                 parse_one(lex(u"(if 1 2 3 4)")))
 
 
-class TruthyTest(unittest.TestCase):
-    def test_truthy(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? 2)"))),
-            TRUE)
-        
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? 0)"))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? #false)"))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? #true)"))),
-            TRUE)
-        
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? (quote ()))"))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(truthy? (quote (1)))"))),
-            TRUE)
-
-    def test_truthy_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            evaluate_with_fresh_env(
-                parse_one(lex(u"(truthy?)")))
-
-        with self.assertRaises(ArityError):
-            evaluate_with_fresh_env(
-                parse_one(lex(u"(truthy? 1 2)")))
-
-
 class WhileTest(unittest.TestCase):
     def test_while_false_condition(self):
         # `(while)` is an error, but this should work as while should
