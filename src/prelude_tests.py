@@ -289,13 +289,22 @@ class CaseTest(unittest.TestCase):
             Integer(2))
 
 class TruthyTest(unittest.TestCase):
-    def test_truthy_numbers(self):
+    def test_truthy_integers(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? 2)")), env_with_prelude()),
             TRUE)
         
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? 0)")), env_with_prelude()),
+            FALSE)
+
+    def test_truthy_floats(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? -0.2)")), env_with_prelude()),
+            TRUE)
+        
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(truthy? 0.0)")), env_with_prelude()),
             FALSE)
 
     def test_truthy_bools(self):

@@ -249,6 +249,10 @@ def is_truthy(value):
         if value.value == 0:
             return FALSE
 
+    if isinstance(value, Float):
+        if value.float_value == 0.0:
+            return FALSE
+
     if isinstance(value, List):
         if len(value.values) == 0:
             return FALSE
