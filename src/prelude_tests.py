@@ -289,7 +289,7 @@ class CaseTest(unittest.TestCase):
             Integer(2))
 
 class TruthyTest(unittest.TestCase):
-    def test_truthy(self):
+    def test_truthy_numbers(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? 2)")), env_with_prelude()),
             TRUE)
@@ -297,21 +297,23 @@ class TruthyTest(unittest.TestCase):
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? 0)")), env_with_prelude()),
             FALSE)
-        
+
+    def test_truthy_bools(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(truthy? #false)")), env_with_prelude()),
             FALSE)
         
         self.assertEqual(
-            evaluate(parse_one(lex(u"(truthy? #true)")), env_with_prelude()),
+            evaluate(parse_one(lex(u'(truthy? "foo")')), env_with_prelude()),
             TRUE)
-        
+
+    def test_truthy_lists(self):
         self.assertEqual(
-            evaluate(parse_one(lex(u"(truthy? (quote ()))")), env_with_prelude()),
+            evaluate(parse_one(lex(u"(truthy? (list))")), env_with_prelude()),
             FALSE)
         
         self.assertEqual(
-            evaluate(parse_one(lex(u"(truthy? (quote (1)))")), env_with_prelude()),
+            evaluate(parse_one(lex(u"(truthy? (list (list)))")), env_with_prelude()),
             TRUE)
 
     def test_truthy_wrong_number_of_args(self):
