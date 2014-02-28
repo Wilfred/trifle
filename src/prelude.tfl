@@ -9,6 +9,9 @@
 ; function/macro was defined.
 ; todo: docstrings
 
+; TODO: We need to measure branch coverage of prelude code, to ensure
+; everything is tested.
+
 ; todo: macros should check argument types to aid debugging
 (macro set! (symbol value)
   (quote
