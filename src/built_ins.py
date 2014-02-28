@@ -257,6 +257,10 @@ def is_truthy(value):
         if len(value.string) == 0:
             return FALSE
 
+    if isinstance(value, Bytestring):
+        if len(value.byte_value) == 0:
+            return FALSE
+
     return TRUE
 
         
