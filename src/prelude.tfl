@@ -116,7 +116,6 @@
 
 ; TODO: case should throw an error on invalid input
 ; e.g. (case ())
-; TODOC
 (macro case (:rest clauses)
   (if clauses
     (let (clause (first clauses))
