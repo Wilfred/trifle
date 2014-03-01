@@ -576,6 +576,30 @@ class Mod(Function):
         return Integer(args[0].value % args[1].value)
 
 
+class Div(Function):
+    """Integer division. Note this differs from Python's //, which is
+    floor division. In Python:
+
+    >>> 4.5 // 1.5
+    3.0
+
+    """
+    def call(self, args):
+        if len(args) != 2:
+            raise ArityError(
+                u"div takes 2 arguments, but got: %s" % List(args).repr())
+
+        for arg in args:
+            if not isinstance(arg, Integer):
+                raise TrifleTypeError(
+                    u"div requires integers, but got: %s." % arg.repr())
+
+        if args[1].value == 0:
+            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+
+        return Integer(args[0].value // args[1].value)
+            
+
 class LessThan(Function):
     def call(self, args):
         if len(args) < 2:

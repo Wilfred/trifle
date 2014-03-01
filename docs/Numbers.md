@@ -17,10 +17,11 @@ use underscores in float literals: `1_000.000_001`.
 3. [*](Numbers-Multiply.md)
 3. [/](Numbers-Divide.md)
 4. [mod](Numbers-Mod.md)
-5. [>](Numbers-LessThan.md)
-6. [inc](Numbers-Inc.md)
-7. [dec](Numbers-Dec.md)
-8. [zero?](Numbers-ZeroPredicate.md)
+5. [div](Numbers-Div.md)
+6. [>](Numbers-LessThan.md)
+7. [inc](Numbers-Inc.md)
+8. [dec](Numbers-Dec.md)
+9. [zero?](Numbers-ZeroPredicate.md)
 
 ## Number macros
 

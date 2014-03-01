@@ -629,6 +629,33 @@ class ModTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(mod 1 2 3)")))
 
 
+class DivTest(unittest.TestCase):
+    def test_div(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(div 5 2)"))),
+                         Integer(2))
+
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(div -5 2)"))),
+                         Integer(-3))
+
+    def test_div_by_zero(self):
+        with self.assertRaises(DivideByZero):
+            evaluate_with_fresh_env(parse_one(lex(u"(div 1 0)")))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(u"(div 1 #null)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(u"(div 2.0 1.0)")))
+
+    def test_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(u"(div 1)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(u"(div 1 2 3)")))
+
+
 class IfTest(unittest.TestCase):
     def test_if_one_arg(self):
         self.assertEqual(
