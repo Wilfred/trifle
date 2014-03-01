@@ -69,6 +69,19 @@ def build_scope(parameters, values):
     return scope
 
 
+def expand_macro(macro, arguments, environment):
+    """Expand the given macro by one iteration. Arguments should be a
+    Python list of Trifle values.
+
+    """
+    # Build a new environment to evaluate with.
+    inner_scope = build_scope(macro.arguments, arguments)
+    macro_env = environment.globals_only().with_nested_scope(inner_scope)
+
+    expression = evaluate_all(macro.body, macro_env)
+    return expression
+
+
 # todo: error on evaluating an empty list
 def evaluate_list(node, environment):
     list_elements = node.values
@@ -86,13 +99,7 @@ def evaluate_list(node, environment):
         return function.call(arguments, environment)
         
     elif isinstance(function, Macro):
-        # Build a new environment to evaluate with.
-        inner_scope = build_scope(function.arguments, raw_arguments)
-
-        macro_env = environment.globals_only().with_nested_scope(inner_scope)
-
-        # Evaluate the macro body, returning an expression
-        expression = evaluate_all(function.body, macro_env)
+        expression = expand_macro(function, raw_arguments, environment)
 
         # Evaluate the expanded expression
         return evaluate(expression, environment)
