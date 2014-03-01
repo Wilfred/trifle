@@ -290,7 +290,7 @@ class CaseTest(unittest.TestCase):
 
     def test_clause_body_in_correct_scope(self):
         self.assertEqual(
-            evaluate(parse_one(lex(u"(let (x 1) (case (#false 1) (#true x)))")),
+            evaluate(parse_one(lex(u"(let (x 2) (case (#false 1) (#true x)))")),
                      env_with_prelude()),
             Integer(2))
 
