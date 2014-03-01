@@ -127,6 +127,42 @@ class DefineMacro(Special):
         return NULL
 
 
+# TODO: unit test
+# TODOC
+# TODO: add an expand-all-macros special too.
+class ExpandMacro(Special):
+    """Given an expression that is a macro call, expand it one step and
+    return the resulting (unevaluated) expression.
+
+    """
+    def call(self, args, env):
+        if len(args) != 1:
+            raise ArityError(
+                u"expand-macro takes 1 argument, but got: %s" % List(args).repr())
+
+        expr = args[0]
+
+        if not isinstance(expr, List):
+            raise TrifleTypeError(
+                u"The first argument to expand-macro must be a list, but got: %s" % args[0].repr())
+
+        if not expr.values:
+            raise TrifleValueError(
+                u"The first argument to expand-macro must be a non-empty list.")
+
+        macro_name = expr.values[0]
+
+        from evaluator import evaluate, expand_macro
+        macro = evaluate(macro_name, env)
+
+        if not isinstance(macro, Macro):
+            raise TrifleTypeError(
+                u"Expected a macro, but got: %s" % macro.repr())
+
+        macro_args = expr.values[1:]
+        return expand_macro(macro, macro_args, env)
+
+
 # todo: it would be nice to define this as a trifle macro using a 'literal' primitive
 # (e.g. elisp defines backquote in terms of quote)
 class Quote(Special):

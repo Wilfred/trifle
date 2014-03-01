@@ -71,7 +71,7 @@ def build_scope(parameters, values):
 
 def expand_macro(macro, arguments, environment):
     """Expand the given macro by one iteration. Arguments should be a
-    Python list of Trifle values.
+    Python list of unevaluated Trifle values.
 
     """
     # Build a new environment to evaluate with.
