@@ -351,3 +351,9 @@ class TruthyTest(unittest.TestCase):
             evaluate(parse_one(lex(u"(truthy? 1 2)")), env_with_prelude())
 
 
+class RangeTest(unittest.TestCase):
+    def test_range(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(range 5)")), env_with_prelude()),
+            evaluate(parse_one(lex(u"(list 0 1 2 3 4)")), env_with_prelude())
+        )

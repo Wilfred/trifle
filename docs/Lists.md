@@ -17,6 +17,7 @@ Creating a new list:
 1. [list](Lists-List.md)
 2. [map](Sequences-Map.md)
 3. [rest](Sequences-Rest.md)
+4. [range](Lists-Range.md)
 
 Accessing:
 

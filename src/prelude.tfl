@@ -114,6 +114,20 @@
   )
 )
 
+; TODO: throw an error on max < 0.
+(function range (max)
+  "Return a list of integers from 0 to max - 1."
+  (let (result (list)
+        i 0
+       )
+    (while (< i max)
+      (append! result i)
+      (inc! i)
+    )
+    result
+  )
+)
+
 ; TODO: case should throw an error on invalid input
 ; e.g. (case ())
 (macro case (:rest clauses)
