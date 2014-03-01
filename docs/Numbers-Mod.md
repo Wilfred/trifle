@@ -1,4 +1,4 @@
-# +
+# mod
 
 `(mod INTEGER INTEGER)`
 
