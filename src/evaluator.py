@@ -151,6 +151,7 @@ def evaluate_value(value, environment):
         if environment.contains(symbol_name):
             return environment.get(symbol_name)
         else:
+            # TODO: suggest variables with similar spelling.
             raise UnboundVariable(u"No such variable defined: '%s'"
                                   % symbol_name)
     else:
