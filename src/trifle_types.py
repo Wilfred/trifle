@@ -62,6 +62,7 @@ class Integer(TrifleType):
         return self.value == other.value
 
     def __init__(self, value):
+        assert isinstance(value, int)
         self.value = value
 
 
@@ -76,6 +77,7 @@ class Float(TrifleType):
         return self.float_value == other.float_value
 
     def __init__(self, value):
+        assert isinstance(value, float)
         self.float_value = value
 
 
