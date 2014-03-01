@@ -130,6 +130,55 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.4
+
+Bytestrings: 'Bytes' are now called bytestrings, and literal
+bytestrings are recognised by the interpreter
+(e.g. `#bytes("abc")`). Bytestrings are now mutable.
+
+Sequences: Trifle now has the concept of a 'sequence', which is a
+mutable ordered datatype. Lists and bytestrings are both
+sequences. The expressions `length`, `get-index`, `set-index!`,
+`first`, `second`, `third`, `fourth`, `fifth`, `append!` and `map` now
+handle sequences. Added the function `last`. The macro `for-each` now
+handles sequences.
+
+Lists: Added the functions `list?`, `rest` and `range`.
+
+Booleans: The literal boolean syntax has changed to `#true` and
+`#false`. Added the macros `unless` and `case`. `truthy?` has moved to
+the prelude. The values `""`, `#bytes("")` and `0.0` are now considerd
+to be falsey.
+
+Null: The literal null syntax has changed to `#null`.
+
+Strings: `print` is now `print!`.
+
+Numbers: Added the functions `zero?`, `mod` and `div`.
+
+Errors: `get-index`, `set-index!` and `push!` now use arity errors and value
+errors where appropriate. Fixed some error wording issues with `open`.
+
+IO: Added an `exit!` function.
+
+Evaluation: `quote` is now much stricter about arguments passed to
+`unquote` and `unquote*` instead of silently ignoring them. `call` can
+now handle macros as well as functions.
+
+Interpreter: When given the path to a function, the result of the
+program is no longer automatically printed. Use `print!` in your
+program instead.
+
+Editing: There is now an Emacs major mode available, see
+[Getting Started](docs/Getting-Started.md).
+
+Sample programs: Added [hello world](sample_programs/hello_world.tfl),
+[fibonacci](sample_programs/fibonacci.tfl) and
+[fizzbuzz](sample_programs/fizzbuzz.tfl) sample programs.
+
+Licensing: Trifle is now dual-licensed under MIT and Apache 2.0. This
+will not change again.
+
 ### v0.3
 
 File handles: Added a file handle datatype, and added the functions
