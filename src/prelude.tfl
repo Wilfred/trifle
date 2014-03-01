@@ -136,7 +136,7 @@
       (quote
         (if (unquote (first clause))
           (do (unquote* (rest clause)))
-          (unquote (call case (rest clauses)))
+          (case (unquote* (rest clauses)))
         )
       )
     )
