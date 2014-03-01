@@ -1,4 +1,4 @@
-from built_ins import (Add, Subtract, Multiply, Divide,
+from built_ins import (Add, Subtract, Multiply, Divide, Mod,
                        LessThan, Same, Equal,
                        Quote, SetSymbol, Let, If, While,
                        LambdaFactory, DefineMacro, FreshSymbol,
@@ -100,6 +100,7 @@ def fresh_environment():
         u'-': Subtract(),
         u'*': Multiply(),
         u'/': Divide(),
+        u'mod': Mod(),
         u'<': LessThan(),
         u'length': Length(),
         u'list?': ListPredicate(),

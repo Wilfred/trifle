@@ -558,6 +558,24 @@ class Divide(Function):
         return Float(quotient)
             
 
+# TODO: it would be nice to support floats too
+class Mod(Function):
+    def call(self, args):
+        if len(args) != 2:
+            raise ArityError(
+                u"mod takes 2 arguments, but got: %s" % List(args).repr())
+
+        for arg in args:
+            if not isinstance(arg, Integer):
+                raise TrifleTypeError(
+                    u"mod requires integers, but got: %s." % arg.repr())
+
+        if args[1].value == 0:
+            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+
+        return Integer(args[0].value % args[1].value)
+
+
 class LessThan(Function):
     def call(self, args):
         if len(args) < 2:

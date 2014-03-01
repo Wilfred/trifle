@@ -605,6 +605,30 @@ class DivideTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(/ 1)")))
 
 
+class ModTest(unittest.TestCase):
+    def test_mod(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(mod 11 10)"))),
+                         Integer(1))
+
+    def test_mod_by_zero(self):
+        with self.assertRaises(DivideByZero):
+            evaluate_with_fresh_env(parse_one(lex(u"(mod 1 0)")))
+
+    def test_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(u"(mod 1 #null)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(u"(mod 1 0.5)")))
+
+    def test_arity_error(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(u"(mod 1)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(u"(mod 1 2 3)")))
+
+
 class IfTest(unittest.TestCase):
     def test_if_one_arg(self):
         self.assertEqual(
