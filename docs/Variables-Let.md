@@ -5,7 +5,8 @@
 The special expression `let` introduces a new scope with additional
 variables, then evaluates EXPRESSIONS with that new scope. BINDINGS is
 a list with an even number of items
-`SYMBOL EXPRESSION SYMBOL EXPRESSION...`.
+`SYMBOL EXPRESSION SYMBOL EXPRESSION...`. EXPRESSIONs are evaluated
+left-to-right.
 
 Examples:
 
