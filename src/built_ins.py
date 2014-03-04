@@ -760,7 +760,7 @@ class Length(Function):
             return Integer(len(some_list.byte_value))
 
         raise TrifleTypeError(
-            u"the first argument to length must be a list, but got: %s"
+            u"the first argument to length must be a sequence, but got: %s"
             % some_list.repr())
 
 
@@ -895,7 +895,7 @@ class Parse(Function):
 
         if not isinstance(program_string, String):
             raise TrifleTypeError(
-                u"the first argument to parse must be a list, but got: %s"
+                u"the first argument to parse must be a string, but got: %s"
                 % program_string.repr())
 
         tokens = lex(program_string.as_unicode())
