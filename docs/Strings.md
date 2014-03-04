@@ -1,6 +1,6 @@
 # Strings
 
-Trifle supports strings. Strings are sequences of unicode code
+Trifle supports strings. Strings are mutable sequences of unicode code
 points.
 
 String literals consist of characters between double quotes,
