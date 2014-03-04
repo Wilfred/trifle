@@ -20,6 +20,10 @@ Accessing:
 1. [get-index](Sequences-GetIndex.md)
 2. [length](Sequences-Length.md)
 
+Modifying:
+
+1. [set-index!](Sequences-SetIndex.md)
+
 Other:
 
 1. [print!](Strings-Print.md)

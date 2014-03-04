@@ -21,6 +21,17 @@ Examples:
 (11 20 100)
 ```
 
+When used with strings, VALUE must be a character.
+
+```lisp
+> (set! my-string "bbc")
+#null
+> (set-index! my-string 0 'a')
+#null
+> my-string
+"abc"
+```
+
 When used with bytestrings, VALUE must be an integer between 0 and
 255.
 

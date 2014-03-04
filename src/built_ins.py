@@ -780,6 +780,8 @@ class SetIndex(Function):
             sequence_length = len(sequence.values)
         elif isinstance(sequence, Bytestring):
             sequence_length = len(sequence.byte_value)
+        elif isinstance(sequence, String):
+            sequence_length = len(sequence.string)
         else:
             raise TrifleTypeError(
                 u"the first argument to set-index! must be a sequence, but got: %s"
@@ -808,14 +810,20 @@ class SetIndex(Function):
             sequence.values[index.value] = value
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
-                raise TrifleTypeError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                                       % value.repr())
 
             if not (0 <= value.value <= 255):
-                raise TrifleValueError(u"Permitted values for bytestrings are integers between 0 and 255, but got: %s"
+                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                                        % value.repr())
 
             sequence.byte_value[index.value] = value.value
+        elif isinstance(sequence, String):
+            if not isinstance(value, Character):
+                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
+                                      % value.repr())
+
+            sequence.string[index.value] = value.character
 
         return NULL
 

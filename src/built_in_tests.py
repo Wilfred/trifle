@@ -1083,6 +1083,14 @@ class SetIndexTest(unittest.TestCase):
                 u"(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"))),
             expected)
 
+    def test_set_index_string(self):
+        expected = String(list(u"bbc"))
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) "abc") (set-index! x 0 \'b\') x'))),
+            expected)
+
     def test_set_index_bytestring(self):
         expected = Bytestring(bytearray("bbc"))
         
@@ -1099,6 +1107,11 @@ class SetIndexTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(
                 u'(set-index! #bytes("a") 0 1.0)')))
+        
+    def test_set_index_string_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(set-index! "abc" 0 #null)')))
         
     def test_set_index_bytestring_range_error(self):
         with self.assertRaises(TrifleValueError):
