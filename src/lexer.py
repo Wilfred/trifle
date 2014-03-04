@@ -4,7 +4,7 @@ from rpython.rlib.rsre.rpy import get_code
 
 from trifle_types import (OpenParen, CloseParen, Integer, Float,
                           Symbol, Keyword,
-                          String, Bytestring,
+                          String, Bytestring, Character,
                           TRUE, FALSE, NULL)
 from errors import LexFailed
 
@@ -19,6 +19,7 @@ INTEGER = 'integer'
 SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
+CHARACTER = 'character'
 BYTESTRING = 'bytestring'
 FLOAT = 'float'
 BOOLEAN = 'boolean'
@@ -35,6 +36,7 @@ TOKENS = [
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"[^"\\]*"')),
+    (CHARACTER, get_code(r"'[^']'")),
 
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
 
@@ -46,10 +48,10 @@ LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
 
-    # todo: support single quoted characters
     # todo: support some backslash patterns
     (STRING, get_code(r"\"[^\"\\]*\"$")),
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
+    (CHARACTER, get_code(r"'[^']'")),
 
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
@@ -190,6 +192,8 @@ def _lex(tokens):
                         contents = u""
 
                     lexed_tokens.append(Bytestring(bytearray(contents.encode("utf-8"))))
+                elif lexeme_name == CHARACTER:
+                    lexed_tokens.append(Character(token[1]))
                 else:
                     assert False, u"Unrecognised token '%s'" % token
                 

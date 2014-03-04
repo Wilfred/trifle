@@ -1,4 +1,4 @@
-from trifle_types import (List, Bytestring, Symbol,
+from trifle_types import (List, Bytestring, Character, Symbol,
                           Integer, Float,
                           Null, NULL,
                           Function, FunctionWithEnv, Lambda, Macro, Special, Boolean,
@@ -145,7 +145,10 @@ def evaluate_value(value, environment):
         # Strings evaluate to themselves
         return value
     elif isinstance(value, Bytestring):
-        # Strings evaluate to themselves
+        # Bytestrings evaluate to themselves
+        return value
+    elif isinstance(value, Character):
+        # Characters evaluate to themselves
         return value
     elif isinstance(value, Function):
         # Functions evaluate to themselves

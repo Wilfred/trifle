@@ -9,7 +9,8 @@ from mock import patch, Mock
 from lexer import lex
 from trifle_parser import parse_one, parse
 from trifle_types import (List, Integer, Float,
-                          Symbol, Keyword, String, Lambda,
+                          Symbol, Keyword, String, Character,
+                          Lambda,
                           TRUE, FALSE, NULL,
                           FileHandle, Bytestring)
 from evaluator import evaluate, evaluate_all
@@ -145,6 +146,16 @@ class StringLexTest(unittest.TestCase):
             lex(u'"flambé"')[0], String(list(u'flambé')))
 
 
+class CharacterLexTest(unittest.TestCase):
+    def test_lex_character(self):
+        self.assertEqual(
+            lex(u"'a'")[0], Character(u'a'))
+
+    def test_lex_non_ascii_character(self):
+        self.assertEqual(
+            lex(u"'é'")[0], Character(u'é'))
+
+
 class BytestringLexTest(unittest.TestCase):
     def test_lex_bytestring(self):
         self.assertEqual(
@@ -225,10 +236,14 @@ class EvaluatingLiteralsTest(unittest.TestCase):
             String(list(u"foo")))
 
     def test_eval_bytes(self):
-        bytes_val = Bytestring(bytearray("foobar"))
         self.assertEqual(
-            evaluate_with_fresh_env(bytes_val),
-            bytes_val)
+            evaluate_with_fresh_env(parse_one(lex(u'#bytes("foobar")'))),
+            Bytestring(bytearray("foobar")))
+
+    def test_eval_character(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u"'a'"))),
+            Character(u"a"))
 
 
 class ReprTest(unittest.TestCase):
