@@ -1030,6 +1030,11 @@ class GetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u'(get-index #bytes("abc") 0)'))),
             Integer(97))
 
+    def test_get_index_string(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u'(get-index "abc" 0)'))),
+            Character(u'a'))
+
     def test_get_index_negative_index(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(get-index (quote (2 3)) -1)"))),

@@ -13,6 +13,8 @@ Examples:
 10
 > (get-index (list 10 20 30) -1)
 30
+> (get-index "abc" 0)
+'a'
 > (get-index #bytes("abc") 0)
 97
 ```

@@ -1,6 +1,6 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, List, Keyword,
-                          FileHandle, Bytestring,
+                          FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
                     TrifleValueError, UsingClosedFile)
@@ -712,6 +712,8 @@ class GetIndex(Function):
             sequence_length = len(sequence.values)
         elif isinstance(sequence, Bytestring):
             sequence_length = len(sequence.byte_value)
+        elif isinstance(sequence, String):
+            sequence_length = len(sequence.string)
         else:
             raise TrifleTypeError(
                 u"the first argument to get-index must be a sequence, but got: %s"
@@ -740,6 +742,8 @@ class GetIndex(Function):
             return sequence.values[index.value]
         elif isinstance(sequence, Bytestring):
             return Integer(sequence.byte_value[index.value])
+        elif isinstance(sequence, String):
+            return Character(sequence.string[index.value])
 
 
 class Length(Function):
