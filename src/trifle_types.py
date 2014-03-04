@@ -118,6 +118,27 @@ class Keyword(TrifleType):
         self.symbol_name = symbol_name
 
 
+# TODOC
+class Character(TrifleType):
+    def repr(self):
+        return u"'%s'" % self.character
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.character)
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return self.character == other.character
+
+    def __init__(self, character):
+        assert isinstance(character, unicode)
+        assert len(character) == 1
+
+        self.character = character
+
+
 class String(TrifleType):
     def repr(self):
         return u'"%s"' % self.as_unicode()
