@@ -18,6 +18,7 @@ Creating a new string:
 Accessing:
 
 1. [get-index](Sequences-GetIndex.md)
+2. [length](Sequences-Length.md)
 
 Other:
 

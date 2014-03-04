@@ -752,16 +752,18 @@ class Length(Function):
             raise TrifleTypeError(
                 u"length takes 1 argument, but got: %s" % List(args).repr())
 
-        some_list = args[0]
+        sequence = args[0]
 
-        if isinstance(some_list, List):
-            return Integer(len(some_list.values))
-        elif isinstance(some_list, Bytestring):
-            return Integer(len(some_list.byte_value))
+        if isinstance(sequence, List):
+            return Integer(len(sequence.values))
+        elif isinstance(sequence, Bytestring):
+            return Integer(len(sequence.byte_value))
+        elif isinstance(sequence, String):
+            return Integer(len(sequence.string))
 
         raise TrifleTypeError(
             u"the first argument to length must be a sequence, but got: %s"
-            % some_list.repr())
+            % sequence.repr())
 
 
 class SetIndex(Function):

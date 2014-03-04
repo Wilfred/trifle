@@ -1002,6 +1002,11 @@ class LengthTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(length (quote (2 3)))"))),
             Integer(2))
 
+    def test_length_list_string(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u'(length "abc")'))),
+            Integer(3))
+
     def test_length_bytestring(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u'(length #bytes("abc"))'))),

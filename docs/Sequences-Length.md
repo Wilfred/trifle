@@ -9,6 +9,8 @@ Examples:
 ```lisp
 > (length (list 5 6 7))
 3
+> (length "abc")
+3
 > (length #bytes("abc"))
 3
 ```
