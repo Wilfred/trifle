@@ -10,6 +10,10 @@ newlines.
 
 ## String functions
 
+Predicates:
+
+1. [string?](Strings-StringPredicate.md)
+
 Creating a new string:
 
 1. [encode](Strings-Encode.md)

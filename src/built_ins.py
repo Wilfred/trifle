@@ -699,7 +699,6 @@ class ListPredicate(Function):
             return FALSE
 
 
-# TODOC
 class StringPredicate(Function):
     def call(self, args):
         if len(args) != 1:
