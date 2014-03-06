@@ -1649,6 +1649,40 @@ class ListPredicateTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(
                 u'(list? #null #null)')))
 
+
+class StringPredicateTest(unittest.TestCase):
+    def test_is_string(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string? "")'))),
+            TRUE)
+
+    def test_is_not_string(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string? #bytes(""))'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string? #null)'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string? 1.0)'))),
+            FALSE)
+
+    def test_is_string_arity(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string?)')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(string? #null #null)')))
+
+
 class ExitTest(unittest.TestCase):
     def test_exit(self):
         with self.assertRaises(SystemExit):

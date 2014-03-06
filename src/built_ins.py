@@ -699,6 +699,21 @@ class ListPredicate(Function):
             return FALSE
 
 
+# TODOC
+class StringPredicate(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"string? takes 1 argument, but got: %s" % List(args).repr())
+
+        value = args[0]
+
+        if isinstance(value, String):
+            return TRUE
+        else:
+            return FALSE
+
+
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:
