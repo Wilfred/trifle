@@ -4,7 +4,7 @@ Trifle supports strings. Strings are mutable sequences of unicode code
 points.
 
 String literals consist of characters between double quotes,
-e.g. `"blacmange"` and `"flambé"`. Backslashes are not permitted
+e.g. `"blancmange"` and `"flambé"`. Backslashes are not permitted
 between double quotes. Any other character may occur, including
 newlines.
 
