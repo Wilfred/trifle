@@ -20,4 +20,11 @@ Examples:
 #null
 > my-bytes
 #bytes("abc")
+
+> (set! my-string "ab")
+#null
+> (append! my-string 'c')
+#null
+> my-string
+"abc"
 ```

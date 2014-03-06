@@ -853,6 +853,13 @@ class Append(Function):
 
             sequence.byte_value = sequence.byte_value + bytearray(chr(value.value))
 
+        elif isinstance(sequence, String):
+            if not isinstance(value, Character):
+                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
+                                      % value.repr())
+
+            sequence.string.append(value.character)
+
         else:
             raise TrifleTypeError(
                 u"the first argument to append! must be a sequence, but got: %s"
