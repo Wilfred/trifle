@@ -1,6 +1,7 @@
 import unittest
 
-from trifle_types import List, Bytestring, Integer, TRUE, FALSE, NULL
+from trifle_types import (List, Bytestring, String, Integer,
+                          TRUE, FALSE, NULL)
 from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
 from trifle_parser import parse_one, parse
@@ -128,6 +129,12 @@ class MapTest(unittest.TestCase):
             evaluate(parse_one(lex(u'(map (lambda (x) (+ x 1)) #bytes("abc"))')),
                      env_with_prelude()),
             Bytestring(bytearray("bcd")))
+
+    def test_map_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(map (lambda (x) \'z\') "abc")')),
+                     env_with_prelude()),
+            String(list(u"zzz")))
 
 
 class NthItemTest(unittest.TestCase):

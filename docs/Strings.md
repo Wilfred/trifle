@@ -18,6 +18,7 @@ Creating a new string:
 
 1. [encode](Strings-Encode.md)
 2. [input](Strings-Input.md)
+3. [map](Sequences-Map.md)
 
 Accessing:
 

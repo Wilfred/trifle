@@ -59,7 +59,14 @@
 )
 
 (function map (func sequence)
-  (let (result (if (list? sequence) (list) #bytes("")))
+  (let
+    (result
+      (case
+        ((list? sequence) (list))
+        ((string? sequence) "")
+        (:else #bytes(""))
+      )
+    )
     (for-each item sequence
       (append! result (func item))
     )
