@@ -1,9 +1,9 @@
 # decode
 
-`(decode BYTES)`
+`(decode BYTESTRING)`
 
-The function `decode` takes a bytes and returns the equivalent string,
-assuming BYTES is UTF-8 encoded.
+The function `decode` takes a bytestring and returns the equivalent
+string, assuming BYTESTRING is UTF-8 encoded.
 
 Examples:
 
