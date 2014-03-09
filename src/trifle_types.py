@@ -118,7 +118,6 @@ class Keyword(TrifleType):
         self.symbol_name = symbol_name
 
 
-# TODOC
 class Character(TrifleType):
     def repr(self):
         return u"'%s'" % self.character

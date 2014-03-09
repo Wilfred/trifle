@@ -713,7 +713,6 @@ class StringPredicate(Function):
             return FALSE
 
 
-# TODOC
 class CharacterPredicate(Function):
     def call(self, args):
         if len(args) != 1:

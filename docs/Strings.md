@@ -1,9 +1,9 @@
 # Strings
 
-Trifle supports strings. Strings are mutable sequences of unicode code
-points.
+Trifle supports strings. Strings are mutable sequences of
+[characters](Characters.md).
 
-String literals consist of characters between double quotes,
+String literals consist of unicode characters between double quotes,
 e.g. `"blancmange"` and `"flambé"`. Backslashes are not permitted
 between double quotes. Any other character may occur, including
 newlines.
