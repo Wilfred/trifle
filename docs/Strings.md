@@ -34,6 +34,7 @@ Accessing:
 Modifying:
 
 1. [set-index!](Sequences-SetIndex.md)
+2. [append!](Sequences-Append.md)
 
 Other:
 
