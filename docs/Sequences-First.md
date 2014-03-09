@@ -9,6 +9,8 @@ Examples:
 ```lisp
 > (first (list 1 2))
 1
+> (first "abc")
+'a'
 > (first #bytes("abc"))
 97
 ```

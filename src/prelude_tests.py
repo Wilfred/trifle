@@ -1,6 +1,7 @@
 import unittest
 
-from trifle_types import (List, Bytestring, String, Integer,
+from trifle_types import (List, Bytestring, String, Character,
+                          Integer,
                           TRUE, FALSE, NULL)
 from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
@@ -150,6 +151,12 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(97))
         
+    def test_first_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(first "abc")')),
+                     env_with_prelude()),
+            Character(u'a'))
+        
     def test_second(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(second (list 1 2 3 4 5))")),
@@ -161,6 +168,12 @@ class NthItemTest(unittest.TestCase):
             evaluate(parse_one(lex(u'(second #bytes("abc"))')),
                      env_with_prelude()),
             Integer(98))
+        
+    def test_second_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(second "abc")')),
+                     env_with_prelude()),
+            Character(u'b'))
         
     def test_third(self):
         self.assertEqual(
@@ -174,6 +187,12 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(99))
         
+    def test_third_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(third "abc")')),
+                     env_with_prelude()),
+            Character(u'c'))
+        
     def test_fourth(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(fourth (list 1 2 3 4 5))")),
@@ -186,6 +205,12 @@ class NthItemTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(100))
         
+    def test_fourth_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(fourth "abcd")')),
+                     env_with_prelude()),
+            Character(u'd'))
+        
     def test_fifth(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(fifth (list 1 2 3 4 5))")),
@@ -197,6 +222,12 @@ class NthItemTest(unittest.TestCase):
             evaluate(parse_one(lex(u'(fifth #bytes("abcde"))')),
                      env_with_prelude()),
             Integer(101))
+        
+    def test_fifth_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(fifth "abcde")')),
+                     env_with_prelude()),
+            Character(u'e'))
         
 
 class LastTest(unittest.TestCase):

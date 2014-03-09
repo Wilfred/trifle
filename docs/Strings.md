@@ -24,6 +24,11 @@ Accessing:
 
 1. [get-index](Sequences-GetIndex.md)
 2. [length](Sequences-Length.md)
+3. [first](Sequence-First.md)
+4. [second](Sequences-Second.md)
+5. [third](Sequences-Third.md)
+6. [fourth](Sequences-Fourth.md)
+7. [fifth](Sequences-Fifth.md)
 
 Modifying:
 

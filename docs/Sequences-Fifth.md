@@ -9,6 +9,8 @@ Examples:
 ```lisp
 > (fifth (list 10 20 30 40 50))
 50
+> (fifth "abcde")
+'e'
 > (fifth #bytes("abcde"))
 101
 ```
