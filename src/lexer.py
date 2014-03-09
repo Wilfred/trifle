@@ -36,7 +36,7 @@ TOKENS = [
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"[^"\\]*"')),
-    (CHARACTER, get_code(r"'[^']'")),
+    (CHARACTER, get_code(r"'[^'\\]'")),
 
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
 

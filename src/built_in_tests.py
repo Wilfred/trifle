@@ -155,6 +155,10 @@ class CharacterLexTest(unittest.TestCase):
         self.assertEqual(
             lex(u"'é'")[0], Character(u'é'))
 
+    def test_lex_backslash(self):
+        with self.assertRaises(LexFailed):
+            lex(u"'\\'")
+
 
 class BytestringLexTest(unittest.TestCase):
     def test_lex_bytestring(self):
