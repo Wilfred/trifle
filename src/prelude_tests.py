@@ -243,6 +243,12 @@ class LastTest(unittest.TestCase):
                      env_with_prelude()),
             Integer(99))
 
+    def test_last_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(last "abc")')),
+                     env_with_prelude()),
+            Character(u'c'))
+
     def test_last_empty_list(self):
         # todo: we need a separate index error
         with self.assertRaises(TrifleValueError):

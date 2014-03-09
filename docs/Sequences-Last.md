@@ -10,6 +10,8 @@ Examples:
 ```lisp
 > (last (list 1 2))
 2
+> (last "abc")
+'c'
 > (last #bytes("abc"))
 99
 ```

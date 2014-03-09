@@ -29,6 +29,7 @@ Accessing:
 5. [third](Sequences-Third.md)
 6. [fourth](Sequences-Fourth.md)
 7. [fifth](Sequences-Fifth.md)
+8. [last](Sequences-Last.md)
 
 Modifying:
 
