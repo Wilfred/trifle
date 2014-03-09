@@ -713,6 +713,21 @@ class StringPredicate(Function):
             return FALSE
 
 
+# TODOC
+class CharacterPredicate(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"character? takes 1 argument, but got: %s" % List(args).repr())
+
+        value = args[0]
+
+        if isinstance(value, Character):
+            return TRUE
+        else:
+            return FALSE
+
+
 class GetIndex(Function):
     def call(self, args):
         if len(args) != 2:

@@ -1683,6 +1683,39 @@ class StringPredicateTest(unittest.TestCase):
                 u'(string? #null #null)')))
 
 
+class CharacterPredicateTest(unittest.TestCase):
+    def test_is_character(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(character? 'a')"))),
+            TRUE)
+
+    def test_is_not_character(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(character? "")'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(character? #null)'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(character? 1.0)'))),
+            FALSE)
+
+    def test_is_character_arity(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(character?)')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(character? #null #null)')))
+
+
 class ExitTest(unittest.TestCase):
     def test_exit(self):
         with self.assertRaises(SystemExit):
