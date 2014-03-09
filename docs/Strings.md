@@ -16,10 +16,9 @@ Predicates:
 
 Creating a new string:
 
-1. [encode](Strings-Encode.md)
-2. [input](Strings-Input.md)
-3. [map](Sequences-Map.md)
-4. [rest](Sequences-Rest.md)
+1. [input](Strings-Input.md)
+2. [map](Sequences-Map.md)
+3. [rest](Sequences-Rest.md)
 
 Accessing:
 
@@ -33,3 +32,4 @@ Modifying:
 Other:
 
 1. [print!](Strings-Print.md)
+2. [encode](Strings-Encode.md)
