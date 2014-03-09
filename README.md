@@ -130,6 +130,20 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.5
+
+Strings: Strings are now sequences of characters and all sequence
+functions (`get-index`, `set-index!`, `append!`, `push!`, `length`,
+`map`, `rest`, `first`, `second`, `third`, `fourth`, `fifth`, and
+`last`) can be called on them. Also added a `string?` function.
+
+Character: Added a character datatype. Added a `character?` function.
+
+Errors: Fixed error messages in `length` and `parse` which incorrectly
+stated the expected type.
+
+Docs: Fixed some minor mistakes.
+
 ### v0.4
 
 Bytestrings: 'Bytes' are now called bytestrings, and literal
