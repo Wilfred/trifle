@@ -256,6 +256,12 @@ class RestTest(unittest.TestCase):
                      env_with_prelude()),
             Bytestring(bytearray(b"bc")))
         
+    def test_rest_string(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u'(rest "abc")')),
+                     env_with_prelude()),
+            String(list(u"bc")))
+        
     def test_rest_empty_list(self):
         self.assertEqual(
             evaluate(parse_one(lex(u"(rest (list))")),

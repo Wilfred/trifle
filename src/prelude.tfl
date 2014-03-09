@@ -106,10 +106,17 @@
   )
 )
 
-;; todo: write in terms of a slice function.
+; TODO: write in terms of a slice function.
+; TODO: be stricter and throw an index error on an empty list.
 (function rest (seq)
   (let (i 0
-        result (if (list? seq) (list) #bytes(""))
+        ; We can't use case here, since it calls rest.
+        result (if (list? seq)
+                 (list)
+                 (if (string? seq)
+                   ""
+                   #bytes(""))
+               )
        )
     (for-each item seq
       (unless (equal? i 0)
