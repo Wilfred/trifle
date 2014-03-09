@@ -1225,6 +1225,12 @@ class PushTest(unittest.TestCase):
                 u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x'))),
             Bytestring(bytearray("abc")))
 
+    def test_push_string(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) "bc") (push! x \'a\') x'))),
+            String(list(u"abc")))
+
     def test_push_returns_null(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(

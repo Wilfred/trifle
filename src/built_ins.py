@@ -923,6 +923,13 @@ class Push(Function):
 
             sequence.byte_value = bytearray(chr(value.value)) + sequence.byte_value
 
+        elif isinstance(sequence, String):
+            if not isinstance(value, Character):
+                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
+                                      % value.repr())
+
+            sequence.string.insert(0, value.character)
+
         else:
             raise TrifleTypeError(
                 u"the first argument to push! must be a sequence, but got: %s"

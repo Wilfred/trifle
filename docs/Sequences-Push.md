@@ -14,6 +14,13 @@ Examples:
 > my-list
 (10 20 30)
 
+> (set! my-string "bc")
+#null
+> (push! my-string 'a')
+#null
+> my-string
+"abc"
+
 > (set! my-bytes #bytes("bc"))
 #null
 > (push! my-bytes 97)
