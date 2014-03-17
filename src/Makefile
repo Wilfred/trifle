@@ -15,6 +15,12 @@ trifle: pypy main.py lexer.py trifle_types.py trifle_parser.py evaluator.py buil
 	./rpython main.py
 	mv main-c trifle
 
+install:
+	cp trifle /usr/local/bin/trifle
+
+uninstall:
+	rm /usr/local/bin/trifle
+
 .PHONY: clean
 
 clean:
