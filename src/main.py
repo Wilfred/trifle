@@ -44,7 +44,14 @@ def env_with_prelude():
     prelude_path = os.path.join(trifle_path, "prelude.tfl")
     
     # Trifle equivalent of PYTHONPATH.
-    code = get_contents(prelude_path)
+    try:
+        code = get_contents(prelude_path)
+    except OSError:
+        # TODO: work out which error occurred (not found/wrong
+        # permissions/other) and be more helpful.
+        print "Could not find prelude.tfl. Have you set TRIFLEPATH?"
+        raise
+        
     lexed_tokens = lex(code)
     parse_tree = parse(lexed_tokens)
 
@@ -70,7 +77,11 @@ def entry_point(argv):
         # REPL. Ultimately we will rewrite this as a Trifle program.
         print "Trifle interpreter. Type (exit!) to exit."
 
-        env = env_with_prelude()
+        try:
+            env = env_with_prelude()
+        except OSError:
+            return 2
+            
         while True:
             try:
                 user_input = raw_input(u'> ')
@@ -91,7 +102,10 @@ def entry_point(argv):
             print 'No such file: %s' % filename
             return 2
 
-        env = env_with_prelude()
+        try:
+            env = env_with_prelude()
+        except OSError:
+            return 2
         code = get_contents(filename)
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
@@ -106,7 +120,10 @@ def entry_point(argv):
     
     elif len(argv) == 3:
         if argv[1] == '-i':
-            env = env_with_prelude()
+            try:
+                env = env_with_prelude()
+            except OSError:
+                return 2
             code_snippet = argv[2].decode('utf-8')
             lexed_tokens = lex(code_snippet)
             parse_tree = parse(lexed_tokens)
