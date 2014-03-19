@@ -184,3 +184,10 @@
     #true
   )
 )
+
+; TODOC
+; TODO: unit test
+; TODO: error on incomparable types
+(function > (x y)
+  (and (not (equal? x y)) (not (< x y)))
+)
