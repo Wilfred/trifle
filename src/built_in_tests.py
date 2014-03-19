@@ -266,6 +266,14 @@ class ReprTest(unittest.TestCase):
         string_val = String(list(u"foo"))
         self.assertEqual(string_val.repr(), '"foo"')
 
+    def test_integer_repr(self):
+        val = Integer(12)
+        self.assertEqual(val.repr(), '12')
+
+    def test_character_repr(self):
+        val = Character(u'a')
+        self.assertEqual(val.repr(), "'a'")
+
     def test_bool_repr(self):
         self.assertEqual(TRUE.repr(), "#true")
         self.assertEqual(FALSE.repr(), "#false")
