@@ -170,3 +170,17 @@
 (function not (value)
   (if value #false #true)
 )
+
+; TODOC
+; TODO: unit test
+(macro and (:rest values)
+  (if values
+    (quote (if
+        (unquote (first values))
+        (and (unquote* (rest values)))
+        (unquote (first values))
+      )
+    )
+    #true
+  )
+)
