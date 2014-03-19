@@ -4,9 +4,9 @@ Trifle supports characters. A character represents a single unicode
 code point. Characters are immutable.
 
 Character literals consist of single quotes around a single
-character, e.g. `'a'` and `' '`. Backslashes and single quotes are not
-permitted between single quotes. Any other character may occur, including
-newlines.
+character, e.g. `'a'` and `' '`. Any character may occur between
+single quotes (including newlines), except backslashes and single quotes. The following
+escaped characters are recognised: `'\\'`, `'\''`, `'\n'`.
 
 ## Character functions
 

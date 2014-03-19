@@ -156,8 +156,23 @@ class CharacterLexTest(unittest.TestCase):
             lex(u"'é'")[0], Character(u'é'))
 
     def test_lex_backslash(self):
+        # Backslashes should be an error if not escaped.
         with self.assertRaises(LexFailed):
             lex(u"'\\'")
+
+        self.assertEqual(
+            lex(u"'\\\\'")[0], Character(u'\\'))
+
+    def test_lex_newline(self):
+        self.assertEqual(
+            lex(u"'\n'")[0], Character(u'\n'))
+
+        self.assertEqual(
+            lex(u"'\\n'")[0], Character(u'\n'))
+
+    def test_lex_escaped_quote(self):
+        self.assertEqual(
+            lex(u"'\\''")[0], Character(u"'"))
 
 
 class BytestringLexTest(unittest.TestCase):

@@ -36,7 +36,7 @@ TOKENS = [
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"[^"\\]*"')),
-    (CHARACTER, get_code(r"'[^'\\]'")),
+    (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
 
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
 
@@ -48,10 +48,11 @@ LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
 
-    # todo: support some backslash patterns
+    # todo: support some backslash patterns in strings too.
     (STRING, get_code(r"\"[^\"\\]*\"$")),
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
-    (CHARACTER, get_code(r"'[^']'")),
+    # Either: '\\', '\n', '\'' or a simple character between quotes: 'x'
+    (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
 
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
@@ -193,7 +194,14 @@ def _lex(tokens):
 
                     lexed_tokens.append(Bytestring(bytearray(contents.encode("utf-8"))))
                 elif lexeme_name == CHARACTER:
-                    lexed_tokens.append(Character(token[1]))
+                    if token == u"'\\n'":
+                        lexed_tokens.append(Character(u'\n'))
+                    elif token == u"'\\\\'":
+                        lexed_tokens.append(Character(u'\\'))
+                    elif token == u"'\\''":
+                        lexed_tokens.append(Character(u"'"))
+                    else:
+                        lexed_tokens.append(Character(token[1]))
                 else:
                     assert False, u"Unrecognised token '%s'" % token
                 
