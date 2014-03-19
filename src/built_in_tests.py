@@ -274,6 +274,15 @@ class ReprTest(unittest.TestCase):
         val = Character(u'a')
         self.assertEqual(val.repr(), "'a'")
 
+        val = Character(u'\n')
+        self.assertEqual(val.repr(), "'\\n'")
+
+        val = Character(u"'")
+        self.assertEqual(val.repr(), "'\\''")
+
+        val = Character(u'\\')
+        self.assertEqual(val.repr(), "'\\\\'")
+
     def test_bool_repr(self):
         self.assertEqual(TRUE.repr(), "#true")
         self.assertEqual(FALSE.repr(), "#false")

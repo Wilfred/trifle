@@ -120,7 +120,14 @@ class Keyword(TrifleType):
 
 class Character(TrifleType):
     def repr(self):
-        return u"'%s'" % self.character
+        if self.character == '\n':
+            return u"'\\n'"
+        elif self.character == "'":
+            return u"'\\''"
+        elif self.character == "\\":
+            return u"'\\\\'"
+        else:
+            return u"'%s'" % self.character
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.character)
