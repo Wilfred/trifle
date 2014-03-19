@@ -125,7 +125,7 @@ Python which depends on how things were imported).
 
 `no-eval` (lisp: `backquote`)
 `eval` (lisp: `unquote`)
-`eval*` (lips: `unquote-splicing`)
+`eval*` (lisp: `unquote-splicing`)
 
 `"foo"` string (can contain newlines)
 `{a 1 b 2}` hash-map
