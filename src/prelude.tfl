@@ -171,14 +171,16 @@
   (if value #false #true)
 )
 
-; TODOC
-; TODO: unit test
 (macro and (:rest values)
   (if values
-    (quote (if
-        (unquote (first values))
-        (and (unquote* (rest values)))
-        (unquote (first values))
+    (let (symbol (fresh-symbol))
+      (quote
+        (let ((unquote symbol) (unquote (first values)))
+          (if (unquote symbol)
+            (and (unquote* (rest values)))
+            (unquote symbol)
+          )
+        )
       )
     )
     #true

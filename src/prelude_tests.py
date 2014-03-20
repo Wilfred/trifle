@@ -280,6 +280,47 @@ class NotTest(unittest.TestCase):
             FALSE)
 
 
+class AndTest(unittest.TestCase):
+    def test_and(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and #true #true)")),
+                     env_with_prelude()),
+            TRUE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and #true #false)")),
+                     env_with_prelude()),
+            FALSE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and #false #true)")),
+                     env_with_prelude()),
+            FALSE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and #false #false)")),
+                     env_with_prelude()),
+            FALSE)
+        
+    def test_and_arity(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and)")),
+                     env_with_prelude()),
+            TRUE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(and #true #true #true)")),
+                     env_with_prelude()),
+            TRUE)
+
+    def test_and_evaluation(self):
+        """Statements should not be evaluated more than once."""
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u"(set! x 0)"
+                u"(and (do (inc! x) #true))"
+                u"x")),
+                     env_with_prelude()),
+            Integer(1))
+
+
 class RestTest(unittest.TestCase):
     def test_rest(self):
         self.assertEqual(
