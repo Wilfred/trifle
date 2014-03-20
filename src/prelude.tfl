@@ -209,5 +209,5 @@
 ; TODO: unit test
 ; TODO: error on incomparable types
 (function > (x y)
-  (and (not (equal? x y)) (not (< x y)))
+  (and (not (< x y)) (not (equal? x y)))
 )
