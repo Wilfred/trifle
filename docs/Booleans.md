@@ -19,3 +19,4 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 1. [unless](Booleans-Unless.md)
 2. [case](Booleans-Case.md)
 3. [and](Booleans-And.md)
+4. [or](Booleans-Or.md)

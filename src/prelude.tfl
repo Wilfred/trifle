@@ -187,8 +187,6 @@
   )
 )
 
-; TODOC
-; TODO: unit test
 (macro or (:rest values)
   (if values
     (let (symbol (fresh-symbol))

@@ -321,6 +321,47 @@ class AndTest(unittest.TestCase):
             Integer(1))
 
 
+class OrTest(unittest.TestCase):
+    def test_or(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or #true #true)")),
+                     env_with_prelude()),
+            TRUE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or #true #false)")),
+                     env_with_prelude()),
+            TRUE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or #false #true)")),
+                     env_with_prelude()),
+            TRUE)
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or #false #false)")),
+                     env_with_prelude()),
+            FALSE)
+        
+    def test_or_arity(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or)")),
+                     env_with_prelude()),
+            FALSE)
+
+        self.assertEqual(
+            evaluate(parse_one(lex(u"(or #true #true #true)")),
+                     env_with_prelude()),
+            TRUE)
+
+    def test_or_evaluation(self):
+        """Statements should not be evaluated more than once."""
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u"(set! x 0)"
+                u"(or (do (inc! x) #true))"
+                u"x")),
+                     env_with_prelude()),
+            Integer(1))
+
+
 class RestTest(unittest.TestCase):
     def test_rest(self):
         self.assertEqual(
