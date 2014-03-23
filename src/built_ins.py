@@ -857,7 +857,6 @@ class SetIndex(Function):
         return NULL
 
 
-# TODOC
 class Insert(Function):
     def call(self, args):
         if len(args) != 3:
