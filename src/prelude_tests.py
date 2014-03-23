@@ -7,7 +7,7 @@ from main import env_with_prelude
 from evaluator import evaluate, evaluate_all
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError, ArityError
+from errors import TrifleValueError, TrifleTypeError, ArityError
 
 
 """Unit tests for functions and macros in the prelude. It's easier to
@@ -255,6 +255,106 @@ class LastTest(unittest.TestCase):
         # todo: we need a separate index error
         with self.assertRaises(TrifleValueError):
             evaluate(parse_one(lex(u"(last (list))")),
+                     env_with_prelude())
+
+
+class AppendTest(unittest.TestCase):
+    def test_append(self):
+        expected = List([Integer(1), Integer(2)])
+        
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u"(set-symbol! (quote x) (quote (1))) (append! x 2) x")),
+                         env_with_prelude()),
+            expected)
+
+    def test_append_bytestring(self):
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u'(set-symbol! (quote x) #bytes("a")) (append! x 98) x')),
+                         env_with_prelude()),
+            Bytestring(bytearray("ab")))
+
+    def test_append_string(self):
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u'(set-symbol! (quote x) "a") (append! x \'b\') x')),
+                         env_with_prelude()),
+            String(list(u"ab")))
+
+    def test_append_returns_null(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(
+                u"(append! (quote ()) 1)")),
+                     env_with_prelude()),
+            NULL)
+
+    def test_append_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(
+                u"(append! (quote ()))")),
+                     env_with_prelude())
+
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(
+                u"(append! (quote ()) 0 1)")),
+                     env_with_prelude())
+
+    def test_append_typeerror(self):
+        # first argument must be a list
+        with self.assertRaises(TrifleTypeError):
+            evaluate(parse_one(lex(
+                u"(append! #null 0)")),
+                     env_with_prelude())
+
+
+class PushTest(unittest.TestCase):
+    def test_push_list(self):
+        expected = List([Integer(1)])
+        
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u"(set-symbol! (quote x) (quote ())) (push! x 1) x")),
+                         env_with_prelude()),
+            expected)
+
+    def test_push_bytestring(self):
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x')),
+                         env_with_prelude()),
+            Bytestring(bytearray("abc")))
+
+    def test_push_string(self):
+        self.assertEqual(
+            evaluate_all(parse(lex(
+                u'(set-symbol! (quote x) "bc") (push! x \'a\') x')),
+                         env_with_prelude()),
+            String(list(u"abc")))
+
+    def test_push_returns_null(self):
+        self.assertEqual(
+            evaluate(parse_one(lex(
+                u"(push! (quote ()) 1)")),
+                     env_with_prelude()),
+            NULL)
+
+    def test_push_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(
+                u"(push! (quote ()))")),
+                     env_with_prelude())
+
+        with self.assertRaises(ArityError):
+            evaluate(parse_one(lex(
+                u"(push! (quote ()) 0 1)")),
+                     env_with_prelude())
+
+    def test_push_typeerror(self):
+        # first argument must be a list
+        with self.assertRaises(TrifleTypeError):
+            evaluate(parse_one(lex(
+                u"(push! #null 0)")),
                      env_with_prelude())
 
 

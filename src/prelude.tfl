@@ -58,6 +58,16 @@
   )
 )
 
+(function push! (sequence value)
+  "Insert VALUE at the start of SEQUENCE."
+  (insert! sequence 0 value)
+)
+
+(function append! (sequence value)
+  "Insert VALUE at the end of SEQUENCE."
+  (insert! sequence (length sequence) value)
+)
+
 (function map (func sequence)
   (let
     (result
