@@ -826,6 +826,7 @@ class SetIndex(Function):
         # todo: use a separate error class for index error
         if index.value >= sequence_length:
             raise TrifleValueError(
+                # TODO: pluralisation (to avoid '1 items')
                 u"the sequence has %d items, but you asked to set index %d"
                 % (sequence_length, index.value))
 
