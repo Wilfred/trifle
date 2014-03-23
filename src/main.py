@@ -20,6 +20,10 @@ from almost_python import raw_input
 
 
 def get_contents(filename):
+    """Return the contents of this filename, as a unicode object. Assumes
+    the file is UTF-8 encoded.
+
+    """
     fp = os.open(filename, os.O_RDONLY, 0777)
 
     program_contents = ""
