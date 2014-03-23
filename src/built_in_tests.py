@@ -1203,6 +1203,63 @@ class SetIndexTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(set-index! (quote (1)) 0 5 6)")))
 
 
+class InsertTest(unittest.TestCase):
+    def test_insert(self):
+        expected = List([Integer(1), Integer(2)])
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(set-symbol! (quote x) (quote (1))) (insert! x 1 2) x"))),
+            expected)
+
+    def test_insert_bytestring(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 98) x'))),
+            Bytestring(bytearray("ab")))
+
+    def test_insert_string(self):
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) "a") (insert! x 1 \'b\') x'))),
+            String(list(u"ab")))
+
+    def test_insert_returns_null(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote ()) 0 1)"))),
+            NULL)
+
+    def test_insert_arg_number(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote ()) 0)")))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote ()) 0 1 2)")))
+
+    def test_insert_indexerror(self):
+        with self.assertRaises(TrifleValueError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote ()) 1 #null)")))
+
+        with self.assertRaises(TrifleValueError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote (1 2)) -3 0)")))
+
+    def test_insert_typeerror(self):
+        # first argument must be a sequence
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! #null 0 0)")))
+
+        # second argument must be an integer
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u"(insert! (quote ()) 0.0 0)")))
+
+
 class AppendTest(unittest.TestCase):
     def test_append(self):
         expected = List([Integer(1), Integer(2)])

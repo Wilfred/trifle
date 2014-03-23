@@ -857,6 +857,66 @@ class SetIndex(Function):
         return NULL
 
 
+# TODOC
+class Insert(Function):
+    def call(self, args):
+        if len(args) != 3:
+            raise ArityError(
+                u"insert! takes 3 arguments, but got: %s" % List(args).repr())
+
+        sequence = args[0]
+        index = args[1]
+        value = args[2]
+
+        if isinstance(sequence, List):
+            sequence_length = len(sequence.values)
+        elif isinstance(sequence, Bytestring):
+            sequence_length = len(sequence.byte_value)
+        elif isinstance(sequence, String):
+            sequence_length = len(sequence.string)
+        else:
+            raise TrifleTypeError(
+                u"the first argument to insert! must be a sequence, but got: %s"
+                % sequence.repr())
+
+        if not isinstance(index, Integer):
+            raise TrifleTypeError(
+                u"the second argument to insert! must be an integer, but got: %s"
+                % index.repr())
+
+        # todo: use a separate error class for index error
+        if index.value > sequence_length:
+            raise TrifleValueError(
+                u"the sequence has %d items, but you asked to insert at index %d"
+                % (sequence_length, index.value))
+
+        if index.value < -1 * sequence_length:
+            raise TrifleValueError(
+                u"Can't set index %d of a %d element sequence (must be -%d or higher)"
+                % (index.value, sequence_length, sequence_length))
+
+        if isinstance(sequence, List):
+            sequence.values.insert(index.value, value)
+        elif isinstance(sequence, Bytestring):
+            if not isinstance(value, Integer):
+                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                                      % value.repr())
+
+            if not (0 <= value.value <= 255):
+                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                                       % value.repr())
+
+            sequence.byte_value.insert(index.value, value.value)
+        elif isinstance(sequence, String):
+            if not isinstance(value, Character):
+                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
+                                      % value.repr())
+
+            sequence.string.insert(index.value, value.character)
+
+        return NULL
+
+
 class Append(Function):
     def call(self, args):
         if len(args) != 2:
@@ -897,7 +957,6 @@ class Append(Function):
         return NULL
 
 
-# todo: replace with a prelude function that uses append!
 class Push(Function):
     def call(self, args):
         if len(args) != 2:
