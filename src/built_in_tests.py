@@ -178,7 +178,7 @@ class CharacterLexTest(unittest.TestCase):
 class BytestringLexTest(unittest.TestCase):
     def test_lex_bytestring(self):
         self.assertEqual(
-            lex(u'#bytes("foo")')[0], Bytestring(bytearray('foo')))
+            lex(u'#bytes("foo")')[0], Bytestring([ord(c) for c in 'foo']))
 
         with self.assertRaises(LexFailed):
             lex(u'#bytes("flambé")')
@@ -257,7 +257,7 @@ class EvaluatingLiteralsTest(unittest.TestCase):
     def test_eval_bytes(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u'#bytes("foobar")'))),
-            Bytestring(bytearray("foobar")))
+            Bytestring([ord(c) for c in "foobar"]))
 
     def test_eval_character(self):
         self.assertEqual(
@@ -271,7 +271,7 @@ class ReprTest(unittest.TestCase):
         self.assertEqual(list_val.repr(), '(1)')
 
     def test_bytes_repr(self):
-        bytes_val = Bytestring(bytearray("\\ souffl\xc3\xa9"))
+        bytes_val = Bytestring([ord(c) for c in "\\ souffl\xc3\xa9"])
 
         self.assertEqual(
             bytes_val.repr(),
@@ -957,9 +957,9 @@ class EqualTest(unittest.TestCase):
 
     def test_bytes_equal(self):
         env = fresh_environment()
-        env.set(u'x', Bytestring(bytearray(b"souffl\xc3\xa9")))
-        env.set(u'y', Bytestring(bytearray(b"souffl\xc3\xa9")))
-        env.set(u'z', Bytestring(bytearray(b"foo")))
+        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
+        env.set(u'y', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
+        env.set(u'z', Bytestring([ord(c) for c in b"foo"]))
         
         self.assertEqual(evaluate(parse_one(lex(u"(equal? x y)")), env),
                          TRUE)
@@ -1128,7 +1128,7 @@ class SetIndexTest(unittest.TestCase):
             expected)
 
     def test_set_index_bytestring(self):
-        expected = Bytestring(bytearray("bbc"))
+        expected = Bytestring([ord(c) for c in "bbc"])
         
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
@@ -1216,7 +1216,7 @@ class InsertTest(unittest.TestCase):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
                 u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 98) x'))),
-            Bytestring(bytearray("ab")))
+            Bytestring([ord(c) for c in "ab"]))
 
     def test_insert_string(self):
         self.assertEqual(
@@ -1523,7 +1523,7 @@ class ReadTest(unittest.TestCase):
 
         self.assertEqual(
             result,
-            Bytestring(bytearray("foo")))
+            Bytestring([ord(c) for c in "foo"]))
 
     def test_read_arity(self):
         with self.assertRaises(ArityError):
@@ -1590,7 +1590,7 @@ class EncodeTest(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(
                 u'(encode "soufflé")'))),
-            Bytestring(bytearray(b"souffl\xc3\xa9")))
+            Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
     
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):
@@ -1610,7 +1610,7 @@ class EncodeTest(unittest.TestCase):
 class DecodeTest(unittest.TestCase):
     def test_decode(self):
         env = fresh_environment()
-        env.set(u'x', Bytestring(bytearray(b"souffl\xc3\xa9")))
+        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
         self.assertEqual(evaluate(parse_one(lex(u"(decode x)")), env),
                          String(list(u"soufflé")))
 
@@ -1625,7 +1625,7 @@ class DecodeTest(unittest.TestCase):
                 u'(decode)')))
     
         env = fresh_environment()
-        env.set(u'x', Bytestring(bytearray(b"souffl\xc3\xa9")))
+        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
         with self.assertRaises(ArityError):
             evaluate(parse_one(lex(u'(decode x 2)')), env)
     

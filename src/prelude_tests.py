@@ -131,7 +131,7 @@ class MapTest(unittest.TestCase):
         self.assertEqual(
             evaluate(parse_one(lex(u'(map (lambda (x) (+ x 1)) #bytes("abc"))')),
                      env_with_prelude()),
-            Bytestring(bytearray("bcd")))
+            Bytestring([ord(c) for c in "bcd"]))
 
     def test_map_string(self):
         self.assertEqual(
@@ -273,7 +273,7 @@ class AppendTest(unittest.TestCase):
             evaluate_all(parse(lex(
                 u'(set-symbol! (quote x) #bytes("a")) (append! x 98) x')),
                          env_with_prelude()),
-            Bytestring(bytearray("ab")))
+            Bytestring([ord(c) for c in "ab"]))
 
     def test_append_string(self):
         self.assertEqual(
@@ -323,7 +323,7 @@ class PushTest(unittest.TestCase):
             evaluate_all(parse(lex(
                 u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x')),
                          env_with_prelude()),
-            Bytestring(bytearray("abc")))
+            Bytestring([ord(c) for c in b"abc"]))
 
     def test_push_string(self):
         self.assertEqual(
@@ -475,7 +475,7 @@ class RestTest(unittest.TestCase):
         self.assertEqual(
             evaluate(parse_one(lex(u'(rest #bytes("abc"))')),
                      env_with_prelude()),
-            Bytestring(bytearray(b"bc")))
+            Bytestring([ord(c) for c in b"bc"]))
         
     def test_rest_string(self):
         self.assertEqual(

@@ -894,8 +894,15 @@ class Insert(Function):
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
+        target_index = index.value
+        if target_index < 0:
+            target_index = target_index % sequence_length
+
+        if target_index < 0: # Never true, but need to keep RPython happy
+            target_index = 0
+
         if isinstance(sequence, List):
-            sequence.values.insert(index.value, value)
+            sequence.values.insert(target_index, value)
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
                 raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
@@ -905,13 +912,13 @@ class Insert(Function):
                 raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                                        % value.repr())
 
-            sequence.byte_value.insert(index.value, value.value)
+            sequence.byte_value.insert(target_index, value.value)
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
                 raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
                                       % value.repr())
 
-            sequence.string.insert(index.value, value.character)
+            sequence.string.insert(target_index, value.character)
 
         return NULL
 
@@ -1071,7 +1078,7 @@ class Read(Function):
                 u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
-        return Bytestring(bytearray(handle.file_handle.read()))
+        return Bytestring([ord(c) for c in handle.file_handle.read()])
 
 
 class Write(Function):
@@ -1099,7 +1106,7 @@ class Write(Function):
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
 
-        handle.file_handle.write(str(to_write.byte_value))
+        handle.file_handle.write("".join([chr(c) for c in to_write.byte_value]))
 
         return NULL
 
@@ -1118,7 +1125,8 @@ class Encode(Function):
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
-        return Bytestring(bytearray(string.as_unicode().encode('utf-8')))
+        string_as_bytestring = string.as_unicode().encode('utf-8')
+        return Bytestring([ord(c) for c in string_as_bytestring])
 
 
 # TODO: take a second argument that specifies the encoding.
@@ -1136,7 +1144,8 @@ class Decode(Function):
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())
 
-        py_unicode = str(bytestring.byte_value).decode('utf-8')
+        bytestring_chars = [chr(c) for c in bytestring.byte_value]
+        py_unicode = b"".join(bytestring_chars).decode('utf-8')
         return String([char for char in py_unicode])
 
 

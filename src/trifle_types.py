@@ -195,7 +195,9 @@ class List(TrifleType):
 
 class Bytestring(TrifleType):
     def __init__(self, byte_value):
-        assert isinstance(byte_value, bytearray)
+        assert isinstance(byte_value, list)
+        if byte_value:
+            assert isinstance(byte_value[0], int)
         self.byte_value = byte_value
 
     def __eq__(self, other):
@@ -210,7 +212,8 @@ class Bytestring(TrifleType):
 
         printable_chars = []
 
-        for char in str(self.byte_value):
+        for char_code in self.byte_value:
+            char = chr(char_code)
             if SMALLEST_PRINTABLE_CHAR <= char <= LARGEST_PRINTABLE_CHAR:
                 if char == "\\":
                     printable_chars.append("\\\\")

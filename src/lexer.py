@@ -192,7 +192,7 @@ def _lex(tokens):
                         # Unreachable.
                         contents = u""
 
-                    lexed_tokens.append(Bytestring(bytearray(contents.encode("utf-8"))))
+                    lexed_tokens.append(Bytestring([ord(c) for c in contents.encode("utf-8")]))
                 elif lexeme_name == CHARACTER:
                     if token == u"'\\n'":
                         lexed_tokens.append(Character(u'\n'))
