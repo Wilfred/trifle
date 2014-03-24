@@ -14,6 +14,7 @@
 
 ; todo: macros should check argument types to aid debugging
 (macro set! (symbol value)
+  "Set SYMBOL to VALUE in the current scope."
   (quote
     (set-symbol! (quote (unquote symbol)) (unquote value))
   )
@@ -22,6 +23,8 @@
 ; todo: macros should check argument types to aid debugging
 ; todo: unit test
 (macro function (name params :rest body)
+  "Define a function called NAME with parameters PARAMS
+and body BODY."
   (quote
     (set! (unquote name)
       (lambda (unquote params) (unquote* body))
@@ -29,15 +32,24 @@
   )
 )
 
-(function list (:rest items) items)
+(function list (:rest items)
+  "Create a new list of ITEMS."
+  items
+)
 
-(function inc (x) (+ x 1))
+(function inc (x)
+  "Add one to X."
+  (+ x 1)
+)
 
 (macro inc! (x)
   (quote (set! (unquote x) (inc (unquote x))))
 )
 
-(function dec (x) (- x 1))
+(function dec (x)
+  "Subtract one from X."
+  (- x 1)
+)
 
 (macro dec! (x)
   (quote (set! (unquote x) (dec (unquote x))))
