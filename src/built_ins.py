@@ -130,6 +130,7 @@ class DefineMacro(Special):
 # TODO: unit test
 # TODOC
 # TODO: add an expand-all-macros special too.
+# TODO: Could we make this a function?
 class ExpandMacro(Special):
     """Given an expression that is a macro call, expand it one step and
     return the resulting (unevaluated) expression.
