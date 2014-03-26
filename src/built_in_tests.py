@@ -877,11 +877,6 @@ class SameTest(unittest.TestCase):
             evaluate_all_with_fresh_env(parse(lex(u"(set-symbol! (quote x) (lambda () 1)) (same? x x)"))),
             TRUE)
 
-    def test_special_same(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(same? if if)"))),
-            TRUE)
-
     def test_different_types(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(same? #true 1)"))),
@@ -979,11 +974,6 @@ class EqualTest(unittest.TestCase):
     def test_lambda_equal(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(u"(set-symbol! (quote x) (lambda () 1)) (equal? x x)"))),
-            TRUE)
-
-    def test_special_equal(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(equal? if if)"))),
             TRUE)
 
     def test_different_types(self):

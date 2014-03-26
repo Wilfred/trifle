@@ -93,6 +93,17 @@ class Environment(object):
         return Environment(self.scopes + [inner_scope])
 
 
+special_expressions = {
+    u'let': Let(),
+    u'if': If(),
+    u'while': While(),
+    u'lambda': LambdaFactory(),
+    u'macro': DefineMacro(),
+    u'expand-macro': ExpandMacro(),
+    u'quote': Quote(),
+}
+
+
 def fresh_environment():
     """Return a new environment that only contains the built-ins.
 
@@ -114,14 +125,7 @@ def fresh_environment():
         u'insert!': Insert(),
         u'same?': Same(),
         u'equal?': Equal(),
-        u'quote': Quote(),
         u'set-symbol!': SetSymbol(),
-        u'let': Let(),
-        u'if': If(),
-        u'while': While(),
-        u'lambda': LambdaFactory(),
-        u'macro': DefineMacro(),
-        u'expand-macro': ExpandMacro(),
         u'fresh-symbol': FreshSymbol(),
         u'print!': Print(),
         u'input': Input(),

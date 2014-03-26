@@ -1,11 +1,11 @@
 from trifle_types import (List, Bytestring, Character, Symbol,
                           Integer, Float,
                           Null, NULL,
-                          Function, FunctionWithEnv, Lambda, Macro, Special, Boolean,
+                          Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String)
 from errors import UnboundVariable, TrifleTypeError
 from almost_python import zip
-from environment import Scope
+from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
@@ -85,8 +85,17 @@ def expand_macro(macro, arguments, environment):
 # todo: error on evaluating an empty list
 def evaluate_list(node, environment):
     list_elements = node.values
-    function = evaluate(list_elements[0], environment)
+    head = list_elements[0]
     raw_arguments = list_elements[1:]
+
+    # Evaluate special expressions if this list starts with a symbol
+    # representing a special expression.
+    if isinstance(head, Symbol):
+        if head.symbol_name in special_expressions:
+            special_expression = special_expressions[head.symbol_name]
+            return special_expression.call(raw_arguments, environment)
+    
+    function = evaluate(list_elements[0], environment)
 
     if isinstance(function, Function):
         arguments = [
@@ -103,9 +112,6 @@ def evaluate_list(node, environment):
 
         # Evaluate the expanded expression
         return evaluate(expression, environment)
-
-    elif isinstance(function, Special):
-        return function.call(raw_arguments, environment)
 
     elif isinstance(function, Lambda):
         # First, evaluate the arguments to this lambda.
