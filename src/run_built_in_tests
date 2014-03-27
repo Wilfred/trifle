@@ -1,0 +1,3 @@
+#!/bin/bash
+
+PYTHONPATH=pypy nosetests built_in_tests.py "$@"
