@@ -20,23 +20,14 @@ from errors import (UnboundVariable, TrifleTypeError,
                     TrifleValueError, UsingClosedFile)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
+from .test_utils import (
+    evaluate_with_fresh_env, evaluate_all_with_fresh_env
+)
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
 
 """
-
-
-def evaluate_all_with_fresh_env(expressions):
-    """Evaluate a trifle List of expressions, starting with a fresh environment
-    containing only the built-in functions, special expressions and macros.
-
-    """
-    return evaluate_all(expressions, fresh_environment())
-
-
-def evaluate_with_fresh_env(expression):
-    return evaluate(expression, fresh_environment())
 
 
 class CommentLexTest(unittest.TestCase):
