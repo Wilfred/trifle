@@ -35,7 +35,7 @@ TOKENS = [
     (CLOSE_PAREN, get_code(r"\)")),
 
     (ATOM, get_code('[:a-z0-9*/+?!<>=_.-]+')),
-    (STRING, get_code(r'"[^"\\]*"')),
+    (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"')),
     (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
 
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
@@ -48,8 +48,7 @@ LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
 
-    # todo: support some backslash patterns in strings too.
-    (STRING, get_code(r"\"[^\"\\]*\"$")),
+    (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"$')),
     (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
     # Either: '\\', '\n', '\'' or a simple character between quotes: 'x'
     (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
@@ -94,6 +93,32 @@ def remove_char(string, unwanted_char):
             chars.append(char)
 
     return "".join(chars)
+
+def unescape_chars(string, quote_character):
+    """Convert a string with Trifle escape sequences in it to a Python
+    string.
+
+    >>> unescape_chars(u'\\"')
+    u'"'
+
+    """
+    chars = []
+
+    while string:
+        if string.startswith(u'\\n'):
+            chars.append(u'\n')
+            string = string[2:]
+        elif string.startswith(u'\\\\'):
+            chars.append(u'\\')
+            string = string[2:]
+        elif string.startswith(u'\\%s' % quote_character):
+            chars.append(quote_character)
+            string = string[2:]
+        else:
+            chars.append(string[0])
+            string = string[1:]
+        
+    return chars
 
 
 def split_tokens(text):
@@ -171,15 +196,6 @@ def _lex(tokens):
                 elif lexeme_name == KEYWORD:
                     # todoc
                     lexed_tokens.append(Keyword(token[1:]))
-                elif lexeme_name == STRING:
-                    string_end = match.match_end - 1
-
-                    # This is always true, but RPython doesn't support
-                    # negative indexes on slices and can't prove the
-                    # slice is non-negative.
-                    if string_end >= 0:
-                        string_contents = token[1:string_end]
-                        lexed_tokens.append(String([char for char in string_contents]))
                 elif lexeme_name == BYTESTRING:
                     string_end = match.match_end - 2
 
@@ -193,7 +209,21 @@ def _lex(tokens):
                         contents = u""
 
                     lexed_tokens.append(Bytestring([ord(c) for c in contents.encode("utf-8")]))
+                    
+                elif lexeme_name == STRING:
+                    string_end = match.match_end - 1
+
+                    # This is always true, but RPython doesn't support
+                    # negative indexes on slices and can't prove the
+                    # slice is non-negative.
+                    if string_end >= 0:
+                        
+                        string_contents = token[1:string_end]
+
+                        lexed_tokens.append(String(unescape_chars(string_contents, u'"')))
                 elif lexeme_name == CHARACTER:
+
+                    # TODO: use unescape_chars
                     if token == u"'\\n'":
                         lexed_tokens.append(Character(u'\n'))
                     elif token == u"'\\\\'":

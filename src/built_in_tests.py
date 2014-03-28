@@ -136,6 +136,25 @@ class StringLexTest(unittest.TestCase):
         self.assertEqual(
             lex(u'"flambé"')[0], String(list(u'flambé')))
 
+    def test_lex_backslash(self):
+        # Backslashes should be an error if not escaped.
+        with self.assertRaises(LexFailed):
+            lex(u'"\\"')
+
+        self.assertEqual(
+            lex(u'"\\\\"')[0], String(list(u'\\')))
+
+    def test_lex_newline(self):
+        self.assertEqual(
+            lex(u'"\n"')[0], String(list(u'\n')))
+
+        self.assertEqual(
+            lex(u'"\\n"')[0], String(list(u'\n')))
+
+    def test_lex_escaped_quote(self):
+        self.assertEqual(
+            lex(u'"\\""')[0], String(list(u'"')))
+
 
 class CharacterLexTest(unittest.TestCase):
     def test_lex_character(self):
