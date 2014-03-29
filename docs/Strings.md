@@ -4,9 +4,10 @@ Trifle supports strings. Strings are mutable sequences of
 [characters](Characters.md).
 
 String literals consist of unicode characters between double quotes,
-e.g. `"blancmange"` and `"flambé"`. Backslashes are not permitted
-between double quotes. Any other character may occur, including
-newlines.
+e.g. `"blancmange"` and `"flambé"`. Any character may occur between
+double quotes (including newlines), except backslashes and single
+quotes. The following escaped characters are recognised: `"\\"`,
+`"\""`, `"\n"`.
 
 ## String functions
 

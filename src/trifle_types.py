@@ -147,7 +147,18 @@ class Character(TrifleType):
 
 class String(TrifleType):
     def repr(self):
-        return u'"%s"' % self.as_unicode()
+        printable_chars = []
+        for char in self.string:
+            if char == u'\n':
+                printable_chars.append(u"\\n")
+            elif char == u'"':
+                printable_chars.append(u'\\"')
+            elif char == u"\\":
+                printable_chars.append(u"\\\\")
+            else:
+                printable_chars.append(char)
+            
+        return u'"%s"' % u"".join(printable_chars)
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.string)

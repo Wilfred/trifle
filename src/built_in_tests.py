@@ -291,6 +291,18 @@ class ReprTest(unittest.TestCase):
         string_val = String(list(u"foo"))
         self.assertEqual(string_val.repr(), '"foo"')
 
+        string_val = String(list(u'"'))
+        self.assertEqual(string_val.repr(), '"\\""')
+
+        string_val = String(list(u"'"))
+        self.assertEqual(string_val.repr(), '"\'"')
+
+        string_val = String(list(u"\n"))
+        self.assertEqual(string_val.repr(), '"\\n"')
+
+        string_val = String(list(u'\\'))
+        self.assertEqual(string_val.repr(), '"\\\\"')
+
     def test_integer_repr(self):
         val = Integer(12)
         self.assertEqual(val.repr(), '12')
