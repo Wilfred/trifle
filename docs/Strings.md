@@ -18,8 +18,9 @@ Predicates:
 Creating a new string:
 
 1. [input](Strings-Input.md)
-2. [map](Sequences-Map.md)
-3. [rest](Sequences-Rest.md)
+2. [rest](Sequences-Rest.md)
+3. [map](Sequences-Map.md)
+4. [filter](Sequences-Filter.md)
 
 Accessing:
 

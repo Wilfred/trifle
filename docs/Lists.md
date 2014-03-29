@@ -15,9 +15,10 @@ Predicates:
 Creating a new list:
 
 1. [list](Lists-List.md)
-2. [map](Sequences-Map.md)
-3. [rest](Sequences-Rest.md)
-4. [range](Lists-Range.md)
+2. [rest](Sequences-Rest.md)
+3. [map](Sequences-Map.md)
+4. [filter](Sequences-Filter.md)
+5. [range](Lists-Range.md)
 
 Accessing:
 
