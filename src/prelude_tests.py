@@ -3,13 +3,11 @@ import unittest
 from trifle_types import (List, Bytestring, String, Character,
                           Integer,
                           TRUE, FALSE, NULL)
-from main import env_with_prelude
-from evaluator import evaluate
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import TrifleValueError, TrifleTypeError, ArityError
 
-from .test_utils import (
+from test_utils import (
     evaluate_with_prelude, evaluate_all_with_prelude
 )
 

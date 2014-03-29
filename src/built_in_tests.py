@@ -20,7 +20,7 @@ from errors import (UnboundVariable, TrifleTypeError,
                     TrifleValueError, UsingClosedFile)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
-from .test_utils import (
+from test_utils import (
     evaluate_with_fresh_env, evaluate_all_with_fresh_env
 )
 
