@@ -136,6 +136,25 @@ class MapTest(unittest.TestCase):
             String(list(u"zzz")))
 
 
+class FilterTest(unittest.TestCase):
+    def test_filter(self):
+        expected = List([Integer(2)])
+
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(filter (lambda (x) (equal? x 2)) (list 1 2 3))"))),
+            expected)
+
+    def test_map_bytestring(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u'(filter (lambda (x) (equal? x 98)) #bytes("abc"))'))),
+            Bytestring([ord("b")]))
+
+    def test_map_string(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u'(filter (lambda (x) (equal? x \'b\')) "abc")'))),
+            String(list(u"b")))
+
+
 class NthItemTest(unittest.TestCase):
     def test_first(self):
         self.assertEqual(

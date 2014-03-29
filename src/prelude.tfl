@@ -96,6 +96,27 @@ and body BODY."
   )
 )
 
+;TODO: write a when macro, and use it here.
+(function filter (func sequence)
+  "Return a fresh sequence containing the elements 
+for which (FUNC element) is truthy."
+  (let
+    (result
+      (case
+        ((list? sequence) (list))
+        ((string? sequence) "")
+        (:else #bytes(""))
+      )
+    )
+    (for-each item sequence
+      (if (func item)
+        (append! result item)
+      )
+    )
+    result
+  )
+)
+
 ;TODO: unit test
 ;TODOC
 (function join! (seq1 seq2)
