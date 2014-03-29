@@ -21,8 +21,6 @@ the prelude very often.
 # TODO: we should shell out to the RPython-compiled binary instead of
 # assuming CPython behaves the same.
 
-# TODO: factor out evaluating with fresh env
-
 class SetTest(unittest.TestCase):
     def test_set(self):
         self.assertEqual(
