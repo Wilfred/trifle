@@ -988,6 +988,11 @@ class EqualTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(equal? \"foo\" \"foo\")"))),
             TRUE)
 
+    def test_character_equal(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u"(equal? 'a' 'a')"))),
+            TRUE)
+
     def test_function_equal(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(equal? equal? equal?)"))),

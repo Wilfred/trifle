@@ -409,9 +409,9 @@ def is_equal(x, y):
 
         return False
 
-    elif isinstance(x, Integer):
-        if isinstance(y, Integer):
-            return x.value == y.value
+    elif isinstance(x, Character):
+        if isinstance(y, Character):
+            return x.character == y.character
 
         return False
 
