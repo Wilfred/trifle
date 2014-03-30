@@ -2,4 +2,4 @@
 
 set -x
 
-PYTHONPATH=pypy nosetests prelude_tests.py "$@"
+PYTHONPATH=pypy nosetests prelude_tests.py --with-id "$@"
