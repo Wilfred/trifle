@@ -154,7 +154,7 @@ to not be `equal?` if they are not `same?`. Identical characters are
 now equal, so `(equal? 'a' a')` is `#true`.
 
 Lists: Added the built-in function `insert!`. `append!` and `push!` have been
-rewritten as Trifle functions in the prelude.
+rewritten as Trifle functions in the prelude. Added the function `filter`.
 
 Special expressions: Special expressions are no longer first class
 values. You can no longer do things like `(set! foo if)` or
