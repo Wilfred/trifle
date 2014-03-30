@@ -13,6 +13,9 @@
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
+    - [v0.6](#v06)
+    - [v0.5](#v05)
+    - [v0.4](#v04)
     - [v0.3](#v03)
     - [v0.2](#v02)
     - [v0.1](#v01)
@@ -129,6 +132,34 @@ I run it in the browser?', 'how do I scale it to multiple cores?' and
 language, we are cheerfully ignoring these questions for now.
 
 ## Release History
+
+### v0.6
+
+Installation: It's now possible to do `make install` and `make
+uninstall` to install a Trifle interpreter.
+
+Prelude: The interpreter is now more helpful when it can't find the
+prelude (instead of crashing).
+
+Escape sequences: Trifle now supports backslash escape sequences in
+strings and characters, so `'\''` and `"they said \"hello\""` are now
+legal literals.
+
+Booleans: Added short-circuiting macros `and` and `or`.
+
+Numbers: Added the functions `>`, `>=` and `<=`.
+
+Equality: Fixed a bug where character equality considered characters
+to not be `equal?` if they are not `same?`. Identical characters are
+now equal, so `(equal? 'a' a')` is `#true`.
+
+Lists: Added the built-in function `insert!`. `append!` and `push!` have been
+rewritten as Trifle functions in the prelude.
+
+Special expressions: Special expressions are no longer first class
+values. You can no longer do things like `(set! foo if)` or
+`((lambda (f x y) (f x y)) if #true 1)`. This is intended to make
+static analysis more tractable.
 
 ### v0.5
 
