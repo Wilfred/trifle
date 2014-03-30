@@ -552,3 +552,58 @@ class RangeTest(unittest.TestCase):
             evaluate_with_prelude(parse_one(lex(u"(range 5)"))),
             evaluate_with_prelude(parse_one(lex(u"(list 0 1 2 3 4)")))
         )
+
+
+class InequalityTest(unittest.TestCase):
+    def test_greater_than(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(> 2 1)"))),
+            TRUE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(> 2 2)"))),
+            FALSE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(> 2 3)"))),
+            FALSE
+        )
+
+    def test_greater_or_equal(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(>= 2 1)"))),
+            TRUE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(>= 2 2)"))),
+            TRUE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(>= 2 3)"))),
+            FALSE
+        )
+        
+    def test_less_or_equal(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(<= 2 1)"))),
+            FALSE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(<= 2 2)"))),
+            TRUE
+        )
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(<= 2 3)"))),
+            TRUE
+        )
+
+    def test_incomparable_types(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_prelude(parse_one(lex(u"(> 1 #null)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_prelude(parse_one(lex(u"(>= 1 #null)")))
+
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_prelude(parse_one(lex(u"(<= 1 #null)")))
+
