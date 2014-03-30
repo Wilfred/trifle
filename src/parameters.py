@@ -2,6 +2,7 @@ from trifle_types import List, Symbol, Keyword
 from errors import TrifleTypeError, ArityError
 
 
+# TODO: (lambda (x x) 1) should be an error.
 def validate_parameters(parameter_list):
     """Ensure that parameter_list is a trifle list that only contains
     variables, or :rest in the correct position.
