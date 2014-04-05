@@ -783,7 +783,7 @@ class WhileTest(unittest.TestCase):
             Integer(2))
         
     def test_while_wrong_number_of_args(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex(u"(while)")))
 
