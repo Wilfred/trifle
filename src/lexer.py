@@ -68,19 +68,6 @@ LEXEMES = [
 
 DIGITS = u'0123456789'
 
-def starts_like_integer(text):
-    if not text:
-        return False
-
-    if text[0] in DIGITS:
-        return True
-
-    if len(text) > 1:
-        if text[0] == u'-' and text[1] in DIGITS:
-            return True
-
-    return False
-
 
 def remove_char(string, unwanted_char):
     """Return string with all instances of char removed.  We're forced to
