@@ -192,7 +192,7 @@ Lists: Added the functions `list?`, `rest` and `range`.
 
 Booleans: The literal boolean syntax has changed to `#true` and
 `#false`. Added the macros `unless` and `case`. `truthy?` has moved to
-the prelude. The values `""`, `#bytes("")` and `0.0` are now considerd
+the prelude. The values `""`, `#bytes("")` and `0.0` are now considered
 to be falsey.
 
 Null: The literal null syntax has changed to `#null`.
