@@ -217,10 +217,6 @@ for which (FUNC element) is truthy."
   )
 )
 
-(function truthy? (value)
-  (if value #true #false)
-)
-
 (function not (value)
   (if value #false #true)
 )

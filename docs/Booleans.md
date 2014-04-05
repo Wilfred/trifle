@@ -9,10 +9,9 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 
 ## Boolean functions
 
-1. [truthy?](Booleans-Truthy.md)
-2. [same?](Booleans-Same.md)
-3. [equal?](Booleans-Equal.md)
-4. [not](Booleans-Not.md)
+1. [same?](Booleans-Same.md)
+2. [equal?](Booleans-Equal.md)
+3. [not](Booleans-Not.md)
 
 ## Boolean macros
 
