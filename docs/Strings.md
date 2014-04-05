@@ -40,7 +40,6 @@ Modifying:
 3. [append!](Sequences-Append.md)
 4. [push!](Sequences-Push.md)
 
-Other:
+Converting to other types:
 
-1. [print!](Strings-Print.md)
-2. [encode](Strings-Encode.md)
+1. [encode](Strings-Encode.md)

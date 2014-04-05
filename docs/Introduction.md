@@ -25,16 +25,18 @@ the data types they take as arguments.
 2.4. [Symbols](Symbols.md)  
 2.5. [Lists](Lists.md)  
 2.6. [Strings](Strings.md)  
-2.7. [Bytestrings](Bytestrings.md)__
-2.8. [File handles](File-Handles.md)__
-2.9. [Functions](Functions.md)  
-2.10. [Macros](Macros.md)
+2.7. [Bytestrings](Bytestrings.md)  
+2.8. [File handles](File-Handles.md)  
+2.9. [Generic functions](Generic-Functions.md)
 
-2.11. [Variables](Variables.md)  
-2.12. [Loops](Loops.md)  
-2.13. [Evaluation](Evaluation.md)  
-2.14. [Special expressions](Special-Expressions.md)  
-2.15. [Comments](Comments.md)
+2.10. [Functions](Functions.md)  
+2.11. [Macros](Macros.md)
+
+2.12. [Variables](Variables.md)  
+2.13. [Loops](Loops.md)  
+2.14. [Evaluation](Evaluation.md)  
+2.15. [Special expressions](Special-Expressions.md)  
+2.16. [Comments](Comments.md)
 
 ### Contributing
 
