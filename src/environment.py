@@ -93,6 +93,7 @@ class Environment(object):
         return Environment(self.scopes + [inner_scope])
 
 
+# TODO: expose this as a runtime variable
 special_expressions = {
     u'let': Let(),
     u'if': If(),
