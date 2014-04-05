@@ -13,9 +13,10 @@ Examples:
 
 ```lisp
 > (let (i 1 total 0)
-    (while (< i 11)
+    ; Sum numbers from 1 to 10.
+    (while (<= i 10)
         (set! total (+ total i))
-        (set! i (+ i 1)) ;; todo: use inc!
+        (inc! i)
     )
     total
   )
