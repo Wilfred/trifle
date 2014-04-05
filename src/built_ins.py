@@ -313,6 +313,7 @@ def is_truthy(value):
 class While(Special):
     def call(self, args, env):
         if not args:
+            # TODO: should be an arity error
             raise TrifleTypeError(
                 u"while takes at least one argument.")
 

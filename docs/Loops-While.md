@@ -4,8 +4,8 @@
 
 The special expression `while` takes a condition and a variable number
 of EXPRESSIONS. It evaluates the EXPRESSIONS if CONDITION
-evaluates to a truthy value, then repeats until CONDITION
-evaluates to a falsey value.
+evaluates to `#true`, then repeats until CONDITION
+evaluates to `#false`.
 
 Always returns `#null`.
 
