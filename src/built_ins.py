@@ -278,38 +278,6 @@ class If(Special):
             raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
 
 
-def is_truthy(value):
-    """Convert the value to the trifle values `#true` or `#false`
-    depending on its truthiness.
-
-    """
-    if isinstance(value, Boolean):
-        if value == FALSE:
-            return FALSE
-
-    if isinstance(value, Integer):
-        if value.value == 0:
-            return FALSE
-
-    if isinstance(value, Float):
-        if value.float_value == 0.0:
-            return FALSE
-
-    if isinstance(value, List):
-        if len(value.values) == 0:
-            return FALSE
-
-    if isinstance(value, String):
-        if len(value.string) == 0:
-            return FALSE
-
-    if isinstance(value, Bytestring):
-        if len(value.byte_value) == 0:
-            return FALSE
-
-    return TRUE
-
-        
 class While(Special):
     def call(self, args, env):
         if not args:
@@ -319,8 +287,12 @@ class While(Special):
         from evaluator import evaluate
         while True:
             condition = evaluate(args[0], env)
-            if is_truthy(condition) == FALSE:
+            if condition == FALSE:
                 break
+            elif condition != TRUE:
+                raise TrifleTypeError(
+                    u"The condition for `while` should be a boolean, "
+                    u"but got: %s" % condition.repr())
 
             for arg in args[1:]:
                 evaluate(arg, env)

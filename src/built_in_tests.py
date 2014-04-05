@@ -787,6 +787,11 @@ class WhileTest(unittest.TestCase):
             evaluate_with_fresh_env(
                 parse_one(lex(u"(while)")))
 
+    def test_while_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(
+                parse_one(lex(u"(while 1 (foo))")))
+
 
 class PrintTest(unittest.TestCase):
     def test_print_returns_null(self):
