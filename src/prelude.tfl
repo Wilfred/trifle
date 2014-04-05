@@ -70,6 +70,12 @@ and body BODY."
   )
 )
 
+; TODO: unit test, document, error on non-sequence
+(function empty? (sequence)
+  "Return #true if SEQUENCE contains no elements."
+  (zero? (length sequence))
+)
+
 (function push! (sequence value)
   "Insert VALUE at the start of SEQUENCE."
   (insert! sequence 0 value)
