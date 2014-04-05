@@ -32,6 +32,11 @@ and body BODY."
   )
 )
 
+(function identity (value)
+  "Return VALUE unchanged."
+  value
+)
+
 (function list (:rest items)
   "Create a new list of ITEMS."
   items

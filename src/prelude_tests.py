@@ -47,6 +47,13 @@ class DoTest(unittest.TestCase):
             NULL)
 
 
+class IdentityTest(unittest.TestCase):
+    def test_identity(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(identity 123)"))),
+            Integer(123))
+
+
 class IncTest(unittest.TestCase):
     def test_inc(self):
         self.assertEqual(
