@@ -10,6 +10,10 @@ quotes, e.g. `#bytes("foo")`.
 
 ## Bytestring functions
 
+Predicates:
+
+1. [bytestring?](Bytestrings-BytestringPredicate.md)
+
 Creating a new bytestring:
 
 1. [rest](Sequences-Rest.md)

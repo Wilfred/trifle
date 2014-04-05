@@ -714,6 +714,20 @@ class StringPredicate(Function):
             return FALSE
 
 
+class BytestringPredicate(Function):
+    def call(self, args):
+        if len(args) != 1:
+            raise ArityError(
+                u"bytestring? takes 1 argument, but got: %s" % List(args).repr())
+
+        value = args[0]
+
+        if isinstance(value, Bytestring):
+            return TRUE
+        else:
+            return FALSE
+
+
 class CharacterPredicate(Function):
     def call(self, args):
         if len(args) != 1:

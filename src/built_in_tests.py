@@ -1713,6 +1713,39 @@ class StringPredicateTest(unittest.TestCase):
                 u'(string? #null #null)')))
 
 
+class BytestringPredicateTest(unittest.TestCase):
+    def test_is_bytestring(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring? #bytes(""))'))),
+            TRUE)
+
+    def test_is_not_bytestring(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring? "")'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring? #null)'))),
+            FALSE)
+
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring? 1.0)'))),
+            FALSE)
+
+    def test_is_bytestring_arity(self):
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring?)')))
+
+        with self.assertRaises(ArityError):
+            evaluate_with_fresh_env(parse_one(lex(
+                u'(bytestring? #null #null)')))
+
+
 class CharacterPredicateTest(unittest.TestCase):
     def test_is_character(self):
         self.assertEqual(
