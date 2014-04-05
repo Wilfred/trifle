@@ -748,6 +748,10 @@ class IfTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(if #false 4 5)"))),
             Integer(5))
 
+    def test_if_type_error(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_with_fresh_env(parse_one(lex(u"(if 1 2 3)")))
+
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
