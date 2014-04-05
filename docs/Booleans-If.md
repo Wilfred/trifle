@@ -4,12 +4,12 @@
 `(if CONDITION THEN ELSE)`
 
 The special expression `if` takes two or three arguments. If the
-condition evaluates to a [truthy](Booleans-Truthy.md) value, the THEN
+condition evaluates to `#true`, the THEN
 expression is evaluated and returned. Otherwise, the ELSE expression
 is evaluated and returned.
 
-If no ELSE expression is given and CONDITION is not truthy, `if`
-returns `#null`.
+If no ELSE expression is given and CONDITION is `#false`, `if` returns
+`#null`.
 
 Examples:
 
@@ -19,7 +19,7 @@ Examples:
     > (if #false 1 2)
     2
 
-    > (if (quote (foo)) 1 2)
+    > (if (equal? "a" "b") 1 2)
     1
 
     > (if #false 1)

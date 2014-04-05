@@ -350,15 +350,6 @@ class NotTest(unittest.TestCase):
             evaluate_with_prelude(parse_one(lex(u"(not #false)"))),
             TRUE)
 
-    def test_not_truthiness(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(not (list))"))),
-            TRUE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(not 123)"))),
-            FALSE)
-
 
 class AndTest(unittest.TestCase):
     def test_and(self):
@@ -481,69 +472,6 @@ class CaseTest(unittest.TestCase):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u"(let (x 2) (case (#false 1) (#true x)))"))),
             Integer(2))
-
-
-class TruthyTest(unittest.TestCase):
-    def test_truthy_integers(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? 2)"))),
-            TRUE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? 0)"))),
-            FALSE)
-
-    def test_truthy_floats(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? -0.2)"))),
-            TRUE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? 0.0)"))),
-            FALSE)
-
-    def test_truthy_bools(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? #false)"))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u'(truthy? "foo")'))),
-            TRUE)
-
-    def test_truthy_strings(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u'(truthy? "")'))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u'(truthy? "foo")'))),
-            TRUE)
-
-    def test_truthy_bytestrings(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u'(truthy? #bytes(""))'))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u'(truthy? #bytes("foo"))'))),
-            TRUE)
-
-    def test_truthy_lists(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? (list))"))),
-            FALSE)
-        
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(truthy? (list (list)))"))),
-            TRUE)
-
-    def test_truthy_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(u"(truthy?)")))
-
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(u"(truthy? 1 2)")))
 
 
 class RangeTest(unittest.TestCase):

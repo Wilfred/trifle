@@ -750,9 +750,8 @@ class IfTest(unittest.TestCase):
 
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
-            # An empty list is falsey.
             evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote ())) (if x 2 3)"))),
+                u"(set-symbol! (quote x) #false) (if x 2 3)"))),
             Integer(3))
 
     def test_if_wrong_number_of_args(self):

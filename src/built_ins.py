@@ -259,18 +259,23 @@ class If(Special):
             raise ArityError(
                 u"if takes 2 or 3 arguments, but got: %s" % List(args).repr())
 
-        condition = args[0]
+        from evaluator import evaluate
+
+        raw_condition = args[0]
+        condition = evaluate(raw_condition, env)
+        
         then = args[1]
 
-        from evaluator import evaluate
-        if is_truthy(evaluate(condition, env)) == TRUE:
+        if condition == TRUE:
             return evaluate(then, env)
-        else:
+        elif condition == FALSE:
             if len(args) == 3:
                 otherwise = args[2]
                 return evaluate(otherwise, env)
             else:
                 return NULL
+        else:
+            raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
 
 
 def is_truthy(value):

@@ -199,7 +199,7 @@ for which (FUNC element) is truthy."
 ; TODO: case should throw an error on invalid input
 ; e.g. (case ())
 (macro case (:rest clauses)
-  (if clauses
+  (if (not (empty? clauses))
     (let (clause (first clauses))
       (quote
         (if (unquote (first clause))
@@ -212,7 +212,7 @@ for which (FUNC element) is truthy."
 )
 
 (function do (:rest args)
-  (if args
+  (if (not (empty? args))
     (last args)
   )
 )
@@ -222,7 +222,7 @@ for which (FUNC element) is truthy."
 )
 
 (macro and (:rest values)
-  (if values
+  (if (not (empty? values))
     (let (symbol (fresh-symbol))
       (quote
         (let ((unquote symbol) (unquote (first values)))
@@ -238,7 +238,7 @@ for which (FUNC element) is truthy."
 )
 
 (macro or (:rest values)
-  (if values
+  (if (not (empty? values))
     (let (symbol (fresh-symbol))
       (quote
         (let ((unquote symbol) (unquote (first values)))
