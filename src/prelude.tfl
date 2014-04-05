@@ -81,14 +81,7 @@ and body BODY."
 )
 
 (function map (func sequence)
-  (let
-    (result
-      (case
-        ((list? sequence) (list))
-        ((string? sequence) "")
-        (:else #bytes(""))
-      )
-    )
+  (let (result (empty sequence))
     (for-each item sequence
       (append! result (func item))
     )
@@ -96,18 +89,21 @@ and body BODY."
   )
 )
 
+;TODO: unit test, docs, helpful error on non-sequence
+(function empty (sequence)
+  "Return an empty sequence of the same type as SEQUENCE."
+  (case
+    ((list? sequence) (list))
+    ((string? sequence) "")
+    ((bytestring? sequence) #bytes(""))
+  )
+)
+
 ;TODO: write a when macro, and use it here.
 (function filter (func sequence)
   "Return a fresh sequence containing the elements 
 for which (FUNC element) is truthy."
-  (let
-    (result
-      (case
-        ((list? sequence) (list))
-        ((string? sequence) "")
-        (:else #bytes(""))
-      )
-    )
+  (let (result (empty sequence))
     (for-each item sequence
       (if (func item)
         (append! result item)
