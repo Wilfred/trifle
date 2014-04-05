@@ -2,8 +2,8 @@
 
 `(call VALUE LIST)`
 
-The function `call` calls VALUE (which must be a function or macro)
-with LIST as its arguments.
+The built-in function `call` calls VALUE (which must be a function or
+macro) with LIST as its arguments.
 
 ```lisp
 > (call + (list 1 2))
