@@ -2,8 +2,8 @@
 
 `(not VALUE)`
 
-The function `not` returns `#true` if VALUE is not
-[truthy](Booleans-Truthy.md), and `false otherwise.
+The function `not` returns `#true` if VALUE is `#false`, and returns
+`#false` otherwise.
 
 Examples:
 
@@ -12,8 +12,5 @@ Examples:
 #false
 
 > (not #false)
-#true
-
-> (not (list))
 #true
 ```

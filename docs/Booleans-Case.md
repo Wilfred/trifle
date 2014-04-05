@@ -3,7 +3,8 @@
 `(case (CONDITION EXPRESSION...)...)`
 
 `case` implements a case statement. Each CONDITION is evaluated in
-order. If CONDITION is truthy EXPRESSION... is evaluated and returned.
+order. If CONDITION evaluates to `#true`, EXPRESSION... is evaluated
+and returned.
 
 Examples:
 

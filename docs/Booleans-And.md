@@ -3,9 +3,9 @@
 `(and EXPRESSION...)`
 
 The macro `and` evaluates each of the EXPRESSIONS in turn
-(left-to-right). If any are falsey, a falsey value is returned
-immediately (without evaluating the remaining arguments). Otherwise, the
-final truthy value is returned.
+(left-to-right). If any are `#false`, `#false` is returned
+immediately (without evaluating the remaining arguments). Otherwise,
+returns `#true`.
 
 Examples:
 

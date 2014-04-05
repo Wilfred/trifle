@@ -108,7 +108,7 @@ and body BODY."
 ;TODO: write a when macro, and use it here.
 (function filter (func sequence)
   "Return a fresh sequence containing the elements 
-for which (FUNC element) is truthy."
+for which (FUNC element) is #true."
   (let (result (empty sequence))
     (for-each item sequence
       (if (func item)

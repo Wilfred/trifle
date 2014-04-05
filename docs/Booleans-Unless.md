@@ -2,8 +2,9 @@
 
 `(unless CONDITION EXPRESSION...)`
 
-`unless` evaluates CONDITION, and if the condition is not truthy, it evaluates all
-the other EXPRESSIONs given and returns the value of the last one.
+`unless` evaluates CONDITION, and if the condition is `#false`, it
+evaluates all the other EXPRESSIONs given and returns the value of the
+last one.
 
 Examples:
 

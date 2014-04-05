@@ -3,7 +3,7 @@
 `(filter FUNCTION SEQUENCE)`
 
 The function `filter` returns a sequence containing all the elements
-in SEQUENCE where `(FUNCTION element)` is truthy.
+in SEQUENCE where `(FUNCTION element)` is `#true`.
 
 Examples:
 
