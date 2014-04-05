@@ -637,6 +637,7 @@ class LessThan(Function):
 
             for arg in args[1:]:
                 if isinstance(arg, Integer):
+                    # TODO: we should document which direcction we round in this situation.
                     number = float(arg.value)
                 else:
                     number = arg.float_value
