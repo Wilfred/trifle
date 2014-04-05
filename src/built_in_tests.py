@@ -1237,17 +1237,40 @@ class InsertTest(unittest.TestCase):
                 u"(set-symbol! (quote x) (quote (1))) (insert! x 1 2) x"))),
             expected)
 
+    def test_insert_negative(self):
+        expected = List([Integer(1), Integer(5), Integer(2)])
+        
+        self.assertEqual(
+            evaluate_all_with_fresh_env(parse(lex(
+                u"(set-symbol! (quote x) (quote (1 2))) (insert! x -1 5) x"))),
+            expected)
+
     def test_insert_bytestring(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
                 u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 98) x'))),
             Bytestring([ord(c) for c in "ab"]))
 
+    def test_insert_bytestring_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)')))
+
+    def test_insert_bytestring_invalid_value(self):
+        with self.assertRaises(TrifleValueError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)')))
+
     def test_insert_string(self):
         self.assertEqual(
             evaluate_all_with_fresh_env(parse(lex(
                 u'(set-symbol! (quote x) "a") (insert! x 1 \'b\') x'))),
             String(list(u"ab")))
+
+    def test_insert_string_invalid_type(self):
+        with self.assertRaises(TrifleTypeError):
+            evaluate_all_with_fresh_env(parse(lex(
+                u'(set-symbol! (quote x) "a") (insert! x 1 #null)')))
 
     def test_insert_returns_null(self):
         self.assertEqual(
