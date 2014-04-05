@@ -1393,6 +1393,7 @@ class EvaluatingMacrosTest(unittest.TestCase):
             evaluate_all_with_fresh_env(parse(lex(
                 u"(macro ignore (x) #null) (ignore)")))
 
+    # FIXME: we shouldn't depend on the prelude here.
     def test_macro_rest_args(self):
         self.assertEqual(
             evaluate_all(parse(lex(
