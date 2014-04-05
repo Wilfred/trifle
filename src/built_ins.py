@@ -952,7 +952,6 @@ class Call(FunctionWithEnv):
         function = args[0]
         arguments = args[1]
 
-        # TODO: should call accept specials too?
         if not (isinstance(function, Function) or
                 isinstance(function, Lambda) or
                 isinstance(function, Macro)):
