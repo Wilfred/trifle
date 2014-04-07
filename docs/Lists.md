@@ -19,6 +19,7 @@ Creating a new list:
 3. [map](Sequences-Map.md)
 4. [filter](Sequences-Filter.md)
 5. [range](Lists-Range.md)
+6. [sort](Sequences-Sort.md)
 
 Accessing:
 

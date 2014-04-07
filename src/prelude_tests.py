@@ -542,3 +542,17 @@ class InequalityTest(unittest.TestCase):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_prelude(parse_one(lex(u"(<= 1 #null)")))
 
+
+class SortTest(unittest.TestCase):
+    def test_sort_empty(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(sort (list))"))),
+            List()
+        )
+        pass
+
+    def test_sort_list(self):
+        self.assertEqual(
+            evaluate_with_prelude(parse_one(lex(u"(sort (list 5 4 3 2 1))"))),
+            List([Integer(1), Integer(2), Integer(3), Integer(4), Integer(5)])
+        )

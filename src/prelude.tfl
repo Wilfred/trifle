@@ -295,34 +295,20 @@ for which (FUNC element) is #true."
   (or (< x y) (equal? x y))
 )
 
-; TODO: > should handle strings, characters etc too.
+; TODO: > should handle strings, characters etc, not just numbers.
 ; TODO: fix stack overflow.
 ; TODO: allow specifying a custom comparison function
-(function sort! (sequence)
-  "Modify SEQUENCE so it is sorted in ascending order."
-
-  ; TODO: Inline functions like this work, but their names could leak
-  ; if any of these functions names are used as globals.  A macro for
-  ; this use case would be nice.
-  (function swap! (i j)
-    "Swap the element at index I with the element at index J."
-    (let (temp (get-index sequence i))
-      (set-index! sequence i (get-index sequence j))
-      (set-index! sequence j temp)
+; TODO: add mutating version
+(function sort (sequence)
+  "Return a sorted copy of SEQUENCE."
+  (if (< (length sequence) 2)
+    sequence
+    (let (pivot (first sequence)
+          unsorted (rest sequence)
+          lesser (filter (lambda (x) (< x pivot)) unsorted)
+          greater (filter (lambda (x) (>= x pivot)) unsorted)
+         )
+      (join (sort lesser) (list pivot) (sort greater))
     )
   )
-
-  (function partition-from-to! (low high)
-    "Partition the sequence by a pivot between LOW and HIGH (inclusive)."
-    (unless (equal? low high)
-      (let (
-          pivot-index (div (+ low high) 2)
-          pivot (get-index sequence pivot-index)
-        )
-        (swap! pivot-index high)
-      )
-    )
-  )
-  
-  (sort-from-to! 0 (length sequence))
 )
