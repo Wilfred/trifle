@@ -903,7 +903,7 @@ class Call(FunctionWithEnv):
         from evaluator import evaluate
         return evaluate(expression, env)
         
-
+# todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
     def call(self, args, env):
         check_args(u'defined?', args, 1, 1)
