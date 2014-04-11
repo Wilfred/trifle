@@ -95,7 +95,6 @@ class LambdaFactory(Special):
         return Lambda(parameters, lambda_body, env)
 
 
-# todo: do we want to support anonymous macros, similar to lambda?
 # todo: expose macro expand functions to the user
 # todo: support docstrings
 class DefineMacro(Special):
