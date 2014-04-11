@@ -95,7 +95,6 @@ class LambdaFactory(Special):
         return Lambda(parameters, lambda_body, env)
 
 
-# todo: expose macro expand functions to the user
 # todo: support docstrings
 class DefineMacro(Special):
     """Create a new macro object and bind it to the variable name given,
