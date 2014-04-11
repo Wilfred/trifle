@@ -307,6 +307,10 @@ class ReprTest(unittest.TestCase):
         val = Integer(12)
         self.assertEqual(val.repr(), '12')
 
+    def test_float_repr(self):
+        val = Float(1.2)
+        self.assertEqual(val.repr(), '1.200000')
+
     def test_character_repr(self):
         val = Character(u'a')
         self.assertEqual(val.repr(), "'a'")
