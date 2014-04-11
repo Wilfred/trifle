@@ -66,6 +66,25 @@ class Integer(TrifleType):
         self.value = value
 
 
+# TODOC
+class Fraction(TrifleType):
+    def repr(self):
+        return u"%d/%d" % (self.numerator, self.denominator)
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return (self.numerator == other.numerator and
+                self.denominator == other.denominator)
+
+    def __init__(self, numerator, denominator):
+        assert isinstance(numerator, int)
+        assert isinstance(denominator, int)
+        self.numerator = numerator
+        self.denominator = denominator
+
+
 class Float(TrifleType):
     def repr(self):
         return u"%f" % self.float_value

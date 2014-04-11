@@ -1,5 +1,5 @@
 from trifle_types import (List, Bytestring, Character, Symbol,
-                          Integer, Float,
+                          Integer, Float, Fraction,
                           Null, NULL,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String)
@@ -136,7 +136,10 @@ def evaluate_value(value, environment):
         # Integers evaluate to themselves
         return value
     elif isinstance(value, Float):
-        # Integers evaluate to themselves
+        # Floats evaluate to themselves
+        return value
+    elif isinstance(value, Fraction):
+        # Fractions evaluate to themselves
         return value
     elif isinstance(value, Boolean):
         # Booleans evaluate to themselves

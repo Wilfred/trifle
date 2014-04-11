@@ -8,7 +8,7 @@ from mock import patch, Mock
 
 from lexer import lex
 from trifle_parser import parse_one, parse
-from trifle_types import (List, Integer, Float,
+from trifle_types import (List, Integer, Float, Fraction,
                           Symbol, Keyword, String, Character,
                           Lambda,
                           TRUE, FALSE, NULL,
@@ -88,6 +88,16 @@ class FloatLexTest(unittest.TestCase):
 
         with self.assertRaises(LexFailed):
             lex(u"123.456abc")
+
+
+class FractionLexTest(unittest.TestCase):
+    def test_lex_fraction(self):
+        self.assertEqual(
+            lex(u"1/3")[0], Fraction(1, 3))
+
+    def test_lex_invalid_fraction(self):
+        with self.assertRaises(LexFailed):
+            lex(u"1/3/4")
 
 
 class SymbolLexTest(unittest.TestCase):
@@ -248,6 +258,11 @@ class EvaluatingLiteralsTest(unittest.TestCase):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"123.4"))),
             Float(123.4))
+
+    def test_eval_fraction(self):
+        self.assertEqual(
+            evaluate_with_fresh_env(parse_one(lex(u"1/4"))),
+            Fraction(1, 4))
 
     def test_eval_null(self):
         self.assertEqual(

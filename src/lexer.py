@@ -2,7 +2,8 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import (OpenParen, CloseParen, Integer, Float,
+from trifle_types import (OpenParen, CloseParen,
+                          Integer, Float, Fraction,
                           Symbol, Keyword,
                           String, Bytestring, Character,
                           TRUE, FALSE, NULL)
@@ -16,6 +17,7 @@ COMMENT = 'comment'
 OPEN_PAREN = 'open-paren'
 CLOSE_PAREN = 'close-paren'
 INTEGER = 'integer'
+FRACTION = 'fraction'
 SYMBOL = 'symbol'
 KEYWORD = 'keyword'
 STRING = 'string'
@@ -57,6 +59,8 @@ LEXEMES = [
 
     # TODO: support 0x123, 0o123
     (INTEGER, get_code('-?[0-9_]+$')),
+
+    (FRACTION, get_code('-?[0-9_]+/[0-9_]+$')),
 
     (BOOLEAN, get_code('(#true|#false)$')),
     (NULL_TYPE, get_code('#null$')),
@@ -175,6 +179,17 @@ def _lex(tokens):
                     float_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Float(float(float_string)))
+                    except ValueError:
+                        raise LexFailed(u"Invalid float: '%s'" % token)
+
+                elif lexeme_name == FRACTION:
+                    fraction_string = remove_char(token, "_")
+                    fraction_parts = fraction_string.split('/')
+                    numerator = fraction_parts[0]
+                    denominator = fraction_parts[1]
+
+                    try:
+                        lexed_tokens.append(Fraction(int(numerator), int(denominator)))
                     except ValueError:
                         raise LexFailed(u"Invalid float: '%s'" % token)
 
