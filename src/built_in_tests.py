@@ -421,7 +421,7 @@ class FreshSymbolTest(unittest.TestCase):
             Symbol(u"1-unnamed"))
 
     def test_fresh_symbol_wrong_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
                 parse_one(lex(u"(fresh-symbol 1)")))
 
@@ -1078,10 +1078,10 @@ class LengthTest(unittest.TestCase):
             evaluate_with_fresh_env(parse_one(lex(u"(length 1)")))
             
     def test_length_arg_number(self):
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(length)")))
             
-        with self.assertRaises(TrifleTypeError):
+        with self.assertRaises(ArityError):
             evaluate_with_fresh_env(parse_one(lex(u"(length (quote ()) 1)")))
             
 

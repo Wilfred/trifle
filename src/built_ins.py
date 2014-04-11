@@ -8,13 +8,12 @@ from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
+from arguments import check_args
 
 
 class SetSymbol(FunctionWithEnv):
     def call(self, args, env):
-        if len(args) != 2:
-            raise ArityError(
-                u"set-symbol! takes 2 arguments, but got: %s" % List(args).repr())
+        check_args(u"set-symbol!", args, 2, 2)
 
         variable_name = args[0]
         variable_value = args[1]
@@ -31,9 +30,7 @@ class SetSymbol(FunctionWithEnv):
 
 class Let(Special):
     def call(self, args, env):
-        if not args:
-            raise ArityError(
-                u"let takes at least 1 argument, but got: %s" % List(args).repr())
+        check_args(u'let', args, 1)
 
         bindings = args[0]
         expressions = args[1:]
@@ -83,9 +80,7 @@ class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 
     def call(self, args, env):
-        if not args:
-            raise ArityError(
-                u"lambda takes at least 1 argument, but got 0.")
+        check_args(u'lambda', args, 1)
 
         parameters = args[0]
 
@@ -103,9 +98,7 @@ class DefineMacro(Special):
     """
 
     def call(self, args, env):
-        if len(args) < 3:
-            raise ArityError(
-                u"macro takes at least 3 arguments, but got: %s" % List(args).repr())
+        check_args(u'macro', args, 3)
 
         macro_name = args[0]
         parameters = args[1]
@@ -135,9 +128,7 @@ class ExpandMacro(Special):
 
     """
     def call(self, args, env):
-        if len(args) != 1:
-            raise ArityError(
-                u"expand-macro takes 1 argument, but got: %s" % List(args).repr())
+        check_args(u'expand-macro', args, 1)
 
         expr = args[0]
 
@@ -235,9 +226,7 @@ class Quote(Special):
         return expression
     
     def call(self, args, env):
-        if len(args) != 1:
-            raise ArityError(
-                u"quote takes 1 argument, but got: %s" % List(args).repr())
+        check_args(u'quote', args, 1, 1)
 
         if isinstance(args[0], List) and args[0].values:
             list_head = args[0].values[0]
@@ -253,9 +242,7 @@ class Quote(Special):
 
 class If(Special):
     def call(self, args, env):
-        if len(args) not in [2, 3]:
-            raise ArityError(
-                u"if takes 2 or 3 arguments, but got: %s" % List(args).repr())
+        check_args(u'if', args, 2, 3)
 
         from evaluator import evaluate
 
@@ -278,9 +265,7 @@ class If(Special):
 
 class While(Special):
     def call(self, args, env):
-        if not args:
-            raise ArityError(
-                u"while takes at least one argument.")
+        check_args(u'while', args, 1)
 
         from evaluator import evaluate
         while True:
@@ -303,9 +288,7 @@ class While(Special):
 # todo: allow a separator argument, Python 3 style
 class Print(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"print takes 1 argument, but got %s." % List(args).repr())
+        check_args(u'print', args, 1, 1)
 
         if isinstance(args[0], String):
             print args[0].as_unicode()
@@ -318,10 +301,7 @@ class Print(Function):
 # todo: implement in prelude in terms of stdin and stdout
 class Input(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"input takes 1 argument, but got %s." % List(args).repr())
-
+        check_args(u'input', args, 1, 1)
         prefix = args[0]
 
         if not isinstance(prefix, String):
@@ -335,9 +315,7 @@ class Input(Function):
 
 class Same(Function):
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"same? takes 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'same?', args, 2, 2)
 
         # Sadly, we can't access .__class__ in RPython.
         # TODO: proper symbol interning.
@@ -421,9 +399,7 @@ def is_equal(x, y):
 # We're inconsistent between grouping by input type or output type.
 class Equal(Function):
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"equal? takes 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'equal?', args, 2, 2)
 
         if is_equal(args[0], args[1]):
             return TRUE
@@ -436,9 +412,7 @@ class FreshSymbol(Function):
         self.count = 1
 
     def call(self, args):
-        if args:
-            raise TrifleTypeError(
-                u"fresh-symbol takes 0 arguments, but got: %s" % List(args).repr())
+        check_args(u'fresh-symbol', args, 0, 0)
 
         symbol_name = u"%d-unnamed" % self.count
         self.count += 1
@@ -544,9 +518,7 @@ class Multiply(Function):
 
 class Divide(Function):
     def call(self, args):
-        if len(args) < 2:
-            raise ArityError(
-                u"/ takes at least 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'/', args, 2)
 
         for arg in args:
             if not isinstance(arg, Integer) and not isinstance(arg, Float):
@@ -573,9 +545,7 @@ class Divide(Function):
 # TODO: it would be nice to support floats too
 class Mod(Function):
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"mod takes 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'mod', args, 2, 2)
 
         for arg in args:
             if not isinstance(arg, Integer):
@@ -597,9 +567,7 @@ class Div(Function):
 
     """
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"div takes 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'div', args, 2, 2)
 
         for arg in args:
             if not isinstance(arg, Integer):
@@ -614,9 +582,7 @@ class Div(Function):
 
 class LessThan(Function):
     def call(self, args):
-        if len(args) < 2:
-            raise ArityError(
-                u"< takes at least 2 arguments, but got: %s" % List(args).repr())
+        check_args(u'<', args, 2)
         
         float_args = False
         for arg in args:
@@ -664,10 +630,7 @@ class LessThan(Function):
 # TODO: name other FOO? functions as FooPredicate, and update doc names accordingly
 class ListPredicate(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"list? takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'list?', args, 1, 1)
         value = args[0]
 
         if isinstance(value, List):
@@ -678,10 +641,7 @@ class ListPredicate(Function):
 
 class StringPredicate(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"string? takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'string?', args, 1, 1)
         value = args[0]
 
         if isinstance(value, String):
@@ -692,10 +652,7 @@ class StringPredicate(Function):
 
 class BytestringPredicate(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"bytestring? takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'bytestring?', args, 1, 1)
         value = args[0]
 
         if isinstance(value, Bytestring):
@@ -706,10 +663,7 @@ class BytestringPredicate(Function):
 
 class CharacterPredicate(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"character? takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'character?', args, 1, 1)
         value = args[0]
 
         if isinstance(value, Character):
@@ -720,10 +674,7 @@ class CharacterPredicate(Function):
 
 class GetIndex(Function):
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"get-index takes 2 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'get-index', args, 2, 2)
         sequence = args[0]
         index = args[1]
 
@@ -767,10 +718,7 @@ class GetIndex(Function):
 
 class Length(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise TrifleTypeError(
-                u"length takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'length', args, 1, 1)
         sequence = args[0]
 
         if isinstance(sequence, List):
@@ -787,10 +735,7 @@ class Length(Function):
 
 class SetIndex(Function):
     def call(self, args):
-        if len(args) != 3:
-            raise ArityError(
-                u"set-index! takes 3 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'set-index!', args, 3, 3)
         sequence = args[0]
         index = args[1]
         value = args[2]
@@ -850,10 +795,7 @@ class SetIndex(Function):
 
 class Insert(Function):
     def call(self, args):
-        if len(args) != 3:
-            raise ArityError(
-                u"insert! takes 3 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'insert!', args, 3, 3)
         sequence = args[0]
         index = args[1]
         value = args[2]
@@ -916,10 +858,7 @@ class Insert(Function):
 
 class Parse(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"parse takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'parse', args, 1, 1)
         program_string = args[0]
 
         if not isinstance(program_string, String):
@@ -934,9 +873,7 @@ class Parse(Function):
 # todo: consider allowing the user to pass in an environment for sandboxing
 class Eval(FunctionWithEnv):
     def call(self, args, env):
-        if len(args) != 1:
-            raise ArityError(
-                u"eval takes 1 argument, but got: %s" % List(args).repr())
+        check_args(u'eval', args, 1, 1)
 
         from evaluator import evaluate
         return evaluate(args[0], env)
@@ -944,10 +881,7 @@ class Eval(FunctionWithEnv):
 
 class Call(FunctionWithEnv):
     def call(self, args, env):
-        if len(args) != 2:
-            raise ArityError(
-                u"call takes 2 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'call', args, 2, 2)
         function = args[0]
         arguments = args[1]
 
@@ -972,12 +906,7 @@ class Call(FunctionWithEnv):
 
 class Defined(FunctionWithEnv):
     def call(self, args, env):
-        # TODO: a utility function for arity checking, which prints
-        # both the number of args and shows the args themselves.
-        if len(args) != 1:
-            raise ArityError(
-                u"defined? takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'defined?', args, 1, 1)
         symbol = args[0]
 
         if not isinstance(symbol, Symbol):
@@ -993,11 +922,7 @@ class Defined(FunctionWithEnv):
 # TODO: other errors the file system can throw at us
 class Open(Function):
     def call(self, args):
-        # todo: a utility function for arity checking.
-        if len(args) != 2:
-            raise ArityError(
-                u"open takes 2 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'open', args, 2, 2)
         path = args[0]
 
         if not isinstance(path, String):
@@ -1033,11 +958,7 @@ class Open(Function):
 
 class Close(Function):
     def call(self, args):
-        # todo: a utility function for arity checking.
-        if len(args) != 1:
-            raise ArityError(
-                u"close! takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'close!', args, 1, 1)
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
@@ -1057,10 +978,7 @@ class Close(Function):
 # TODO: specify a limit for how much to read.
 class Read(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"read takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'read', args, 1, 1)
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
@@ -1073,10 +991,7 @@ class Read(Function):
 
 class Write(Function):
     def call(self, args):
-        if len(args) != 2:
-            raise ArityError(
-                u"write! takes 2 argument, but got: %s" % List(args).repr())
-
+        check_args(u'write!', args, 2, 2)
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
@@ -1104,10 +1019,7 @@ class Write(Function):
 # TODO: take a second argument that specifies the encoding.
 class Encode(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"encode takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'encode', args, 1, 1)
         string = args[0]
 
         if not isinstance(string, String):
@@ -1123,10 +1035,7 @@ class Encode(Function):
 # TODO: throw an exception on bytes that aren't valid UTF-8.
 class Decode(Function):
     def call(self, args):
-        if len(args) != 1:
-            raise ArityError(
-                u"decode takes 1 argument, but got: %s" % List(args).repr())
-
+        check_args(u'decode', args, 1, 1)
         bytestring = args[0]
 
         if not isinstance(bytestring, Bytestring):
@@ -1143,9 +1052,5 @@ class Decode(Function):
 # TODOC
 class Exit(Function):
     def call(self, args):
-        if args:
-            # TODO: unit test this error
-            raise ArityError(
-                u"exit! takes 0 arguments, but got: %s" % List(args).repr())
-
+        check_args(u'exit!', args, 0, 0)
         raise SystemExit()
