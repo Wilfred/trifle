@@ -7,7 +7,7 @@ from trifle_types import (OpenParen, CloseParen,
                           Symbol, Keyword,
                           String, Bytestring, Character,
                           TRUE, FALSE, NULL)
-from errors import LexFailed
+from errors import LexFailed, DivideByZero
 
 
 # Note this an incomplete list and is purely to give us convenient
@@ -189,14 +189,20 @@ def _lex(tokens):
                     denominator = fraction_parts[1]
 
                     try:
-                        fraction = Fraction(int(numerator), int(denominator))
-
-                        if fraction.denominator == 1:
-                            lexed_tokens.append(Integer(fraction.numerator))
-                        else:
-                            lexed_tokens.append(fraction)
+                        numerator = int(numerator)
+                        denominator = int(denominator)
                     except ValueError:
                         raise LexFailed(u"Invalid fraction: '%s'" % token)
+
+                    if denominator == 0:
+                        raise DivideByZero("Can't have fraction denominator of zero: '%s'" % token)
+
+                    fraction = Fraction(numerator, denominator)
+
+                    if fraction.denominator == 1:
+                        lexed_tokens.append(Integer(fraction.numerator))
+                    else:
+                        lexed_tokens.append(fraction)
 
                 elif lexeme_name == SYMBOL:
                     lexed_tokens.append(Symbol(token))
