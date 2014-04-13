@@ -191,7 +191,7 @@ def _lex(tokens):
                     try:
                         lexed_tokens.append(Fraction(int(numerator), int(denominator)))
                     except ValueError:
-                        raise LexFailed(u"Invalid float: '%s'" % token)
+                        raise LexFailed(u"Invalid fraction: '%s'" % token)
 
                 elif lexeme_name == SYMBOL:
                     lexed_tokens.append(Symbol(token))
