@@ -5,17 +5,11 @@
 The function `-` performs subtraction on a variable number of
 arguments. It returns 0 if no arguments are provided.
 
-If any arguments provided are floats, then `-` will return a
-float. Otherwise, it will return an integer.
-
 Examples:
 
 ```lisp
 > (- 10 1)
 9
-
-> (- 10.0 1)
-9.0
 
 > (-)
 0
@@ -31,4 +25,15 @@ Examples:
 
 > (- -2)
 2
+```
+
+`-` will coerce integers to fractions, and fractions to floats, if
+necessary.
+
+```lisp
+> (- 10.0 1)
+9.0
+
+> (- 5/2 1)
+3/2
 ```

@@ -522,13 +522,18 @@ class Add(Function):
 class Subtract(Function):
     def call(self, args):
         float_args = False
+        fraction_args = False
+        
         for arg in args:
-            if not isinstance(arg, Integer):
-                if isinstance(arg, Float):
-                    float_args = True
-                else:
-                    raise TrifleTypeError(
-                        u"- requires numbers, but got: %s." % arg.repr())
+            if isinstance(arg, Integer):
+                pass
+            elif isinstance(arg, Fraction):
+                fraction_args = True
+            elif isinstance(arg, Float):
+                float_args = True
+            else:
+                raise TrifleTypeError(
+                    u"- requires numbers, but got: %s." % arg.repr())
 
         if not args:
             return Integer(0)
@@ -536,22 +541,36 @@ class Subtract(Function):
         if len(args) == 1:
             if isinstance(args[0], Integer):
                 return Integer(-args[0].value)
+            elif isinstance(args[0], Fraction):
+                return Fraction(-args[0].numerator, args[0].denominator)
             else:
                 return Float(-args[0].float_value)
 
+        args = coerce_numbers(args)
+
         if float_args:
-            if isinstance(args[0], Integer):
-                total = float(args[0].value)
-            else:
-                total = args[0].float_value
+            total = args[0].float_value
                 
             for arg in args[1:]:
-                if isinstance(arg, Integer):
-                    total -= float(arg.value)
-                else:
-                    total -= arg.float_value
+                total -= arg.float_value
 
             return Float(total)
+
+        elif fraction_args:
+            total = args[0]
+                
+            for arg in args[1:]:
+                # a/b - c/d == (ad - bc) / bd
+                total = Fraction(
+                    total.numerator * arg.denominator - arg.numerator * total.denominator,
+                    arg.denominator * total.denominator
+                )
+
+            if total.denominator == 1:
+                return Integer(total.numerator)
+
+            return total
+
         else:
             total = args[0].value
             for arg in args[1:]:

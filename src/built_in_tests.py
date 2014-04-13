@@ -667,6 +667,19 @@ class SubtractTest(unittest.TestCase):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(- 0.0 1)"))),
                          Float(-1.0))
         
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(- 0.0 1/2)"))),
+                         Float(-0.5))
+        
+    def test_subtract_fractions(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(- 1/2)"))),
+                         Fraction(-1, 2))
+
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(- 1/2 1/4)"))),
+                         Fraction(1, 4))
+
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(- 3/2 1/2)"))),
+                         Integer(1))
+
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(u"(- -)")))
