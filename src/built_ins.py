@@ -1,5 +1,6 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
-                          Integer, Float, List, Keyword,
+                          Integer, Float, Fraction,
+                          List, Keyword,
                           FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
@@ -420,28 +421,93 @@ class FreshSymbol(Function):
         return Symbol(symbol_name)
 
 
+def coerce_numbers(nums):
+    """Given a list of Trifle numbers, coerce them all to be the same
+    type. Convert to the lower common denominator if necessary.
+
+    Assumes all elements are numbers.
+
+    >>> coerce_numbers([Integer(1)])
+    [Integer(1)]
+    >>> coerce_numbers([Fraction(1, 2), Float(1.0)])
+    [Float(0.5), Float(1.0)]
+
+    """
+    contains_floats = False
+    contains_fractions = False
+    
+    for num in nums:
+        if isinstance(num, Float):
+            contains_floats = True
+            break
+        elif isinstance(num, Fraction):
+            contains_fractions = True
+
+    result = []
+    if contains_floats:
+
+        for num in nums:
+            if isinstance(num, Integer):
+                result.append(Float(float(num.value)))
+            elif isinstance(num, Fraction):
+                result.append(Float(num.numerator * 1.0 / num.denominator))
+            elif isinstance(num, Float):
+                result.append(num)
+
+        return result
+        
+    elif contains_fractions:
+        for num in nums:
+            if isinstance(num, Integer):
+                result.append(Fraction(num.value, 1))
+            elif isinstance(num, Fraction):
+                result.append(num)
+
+        return result
+
+    else:
+        return nums
+
+
 class Add(Function):
     def call(self, args):
         float_args = False
+        fraction_args = False
+        
         for arg in args:
-            if not isinstance(arg, Integer):
-                if isinstance(arg, Float):
-                    float_args = True
-                else:
-                    raise TrifleTypeError(
-                        u"+ requires numbers, but got: %s." % arg.repr())
+            if isinstance(arg, Integer):
+                pass
+            elif isinstance(arg, Fraction):
+                fraction_args = True
+            elif isinstance(arg, Float):
+                float_args = True
+            else:
+                raise TrifleTypeError(
+                    u"+ requires numbers, but got: %s." % arg.repr())
+
+        args = coerce_numbers(args)
 
         if float_args:
             total = 0.0
             for arg in args:
-                if isinstance(arg, Integer):
-                    total += float(arg.value)
-                else:
-                    total += arg.float_value
+                total += arg.float_value
 
             return Float(total)
 
+        elif fraction_args:
+            total = Fraction(0, 1)
+
+            for arg in args:
+                # a/b + c/d == (ad + bc) / bd
+                total = Fraction(
+                    total.numerator * arg.denominator + arg.numerator * total.denominator,
+                    arg.denominator * total.denominator
+                )
+
+            return total
+
         else:
+            # Just integers.
             total = 0
             for arg in args:
                 total += arg.value

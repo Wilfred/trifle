@@ -615,9 +615,19 @@ class AddTest(unittest.TestCase):
     def test_add_floats(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1.0 2.0)"))),
                          Float(3.0))
-        
+
+        # Mixing floats with other things:
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1 2.0)"))),
                          Float(3.0))
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1/2 2.0)"))),
+                         Float(2.5))
+
+    def test_add_fractions(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1/3 1/2)"))),
+                         Fraction(5, 6))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1 1/2)"))),
+                         Fraction(3, 2))
         
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
