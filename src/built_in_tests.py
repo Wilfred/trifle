@@ -95,6 +95,10 @@ class FractionLexTest(unittest.TestCase):
         self.assertEqual(
             lex(u"1/3")[0], Fraction(1, 3))
 
+    def test_lex_fraction_not_simplified(self):
+        self.assertEqual(
+            lex(u"2/6")[0], Fraction(1, 3))
+
     def test_lex_invalid_fraction(self):
         with self.assertRaises(LexFailed):
             lex(u"1/3/4")

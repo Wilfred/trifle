@@ -66,6 +66,19 @@ class Integer(TrifleType):
         self.value = value
 
 
+def greatest_common_divisor(a, b):
+    """Find the largest number that divides both a and b.
+    We use the Euclidean algorithm for simplicity:
+    http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+    """
+    while b != 0:
+       temp = b
+       b = a % b
+       a = temp
+
+    return a
+
 # TODOC
 class Fraction(TrifleType):
     def repr(self):
@@ -83,6 +96,13 @@ class Fraction(TrifleType):
         assert isinstance(denominator, int)
 
         assert denominator != 0
+
+        common_factor = greatest_common_divisor(
+            abs(numerator), abs(denominator))
+        if common_factor != 1:
+            numerator = numerator / common_factor
+            denominator = denominator / common_factor
+        
         self.numerator = numerator
         self.denominator = denominator
 
