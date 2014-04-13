@@ -581,23 +581,41 @@ class Subtract(Function):
 class Multiply(Function):
     def call(self, args):
         float_args = False
+        fraction_args = False
+        
         for arg in args:
-            if not isinstance(arg, Integer):
-                if isinstance(arg, Float):
-                    float_args = True
-                else:
-                    raise TrifleTypeError(
-                        u"* requires numbers, but got: %s." % arg.repr())
+            if isinstance(arg, Integer):
+                pass
+            elif isinstance(arg, Fraction):
+                fraction_args = True
+            elif isinstance(arg, Float):
+                float_args = True
+            else:
+                raise TrifleTypeError(
+                    u"* requires numbers, but got: %s." % arg.repr())
+
+        args = coerce_numbers(args)
 
         if float_args:
             product = 1.0
             for arg in args:
-                if isinstance(arg, Integer):
-                    product *= float(arg.value)
-                else:
-                    product *= arg.float_value
+                product *= arg.float_value
 
             return Float(product)
+
+        elif fraction_args:
+            product = Fraction(1, 1)
+
+            for arg in args:
+                product = Fraction(
+                    product.numerator * arg.numerator,
+                    product.denominator * arg.denominator,
+                )
+
+            if product.denominator == 1:
+                return Integer(product.numerator)
+
+            return product
 
         else:
             product = 1

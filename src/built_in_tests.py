@@ -703,6 +703,19 @@ class MultiplyTest(unittest.TestCase):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(* 2 3.0)"))),
                          Float(6.0))
 
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(* 1/2 1.0)"))),
+                         Float(0.5))
+
+    def test_multiply_fractions(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(* 1/2 3/5)"))),
+                         Fraction(3, 10))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(* 1/3 2)"))),
+                         Fraction(2, 3))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(* 2 1/2)"))),
+                         Integer(1))
+
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(u"(* 1 #null)")))
