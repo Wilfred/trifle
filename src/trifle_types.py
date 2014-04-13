@@ -95,7 +95,7 @@ class Fraction(TrifleType):
         assert isinstance(numerator, int)
         assert isinstance(denominator, int)
 
-        assert denominator != 0
+        assert denominator > 0
 
         common_factor = greatest_common_divisor(
             abs(numerator), abs(denominator))
