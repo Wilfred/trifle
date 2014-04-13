@@ -506,6 +506,9 @@ class Add(Function):
                     arg.denominator * total.denominator
                 )
 
+            if total.denominator == 1:
+                return Integer(total.numerator)
+
             return total
 
         else:

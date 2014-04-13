@@ -635,6 +635,9 @@ class AddTest(unittest.TestCase):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 1 1/2)"))),
                          Fraction(3, 2))
         
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(+ 3/2 1/2)"))),
+                         Integer(2))
+        
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             evaluate_with_fresh_env(parse_one(lex(u"(+ +)")))
