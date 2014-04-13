@@ -195,7 +195,7 @@ def _lex(tokens):
                         raise LexFailed(u"Invalid fraction: '%s'" % token)
 
                     if denominator == 0:
-                        raise DivideByZero("Can't have fraction denominator of zero: '%s'" % token)
+                        raise DivideByZero(u"Can't have fraction denominator of zero: '%s'" % token)
 
                     fraction = Fraction(numerator, denominator)
 
