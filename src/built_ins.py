@@ -628,26 +628,66 @@ class Divide(Function):
     def call(self, args):
         check_args(u'/', args, 2)
 
+        float_args = False
+        
         for arg in args:
-            if not isinstance(arg, Integer) and not isinstance(arg, Float):
+            if isinstance(arg, Integer):
+                pass
+            elif isinstance(arg, Fraction):
+                pass
+            elif isinstance(arg, Float):
+                float_args = True
+            else:
                 raise TrifleTypeError(
                     u"/ requires numbers, but got: %s." % arg.repr())
 
-        if isinstance(args[0], Integer):
-            quotient = float(args[0].value)
-        else:
+        args = coerce_numbers(args)
+
+        if float_args:
             quotient = args[0].float_value
 
-        for arg in args[1:]:
-            try:
-                if isinstance(arg, Integer):
-                    quotient /= float(arg.value)
-                else:
+            for arg in args[1:]:
+                try:
                     quotient /= arg.float_value
-            except ZeroDivisionError:
-                raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                except ZeroDivisionError:
+                    raise DivideByZero(u"Divided by zero: %s" % arg.repr())
 
-        return Float(quotient)
+            return Float(quotient)
+
+        else:
+            if isinstance(args[0], Integer):
+                quotient = Fraction(args[0].value, 1)
+            elif isinstance(args[0], Fraction):
+                quotient = args[0]
+            else:
+                # Never happens, but to keep RPython happy.
+                quotient = Fraction(1, 1)
+                
+            for arg in args[1:]:
+                if isinstance(arg, Integer):
+                    if arg.value == 0:
+                        raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                    
+                    quotient = Fraction(
+                        quotient.numerator, quotient.denominator * arg.value
+                    )
+
+                elif isinstance(arg, Fraction):
+                    # Since fractions are always non-zero, we can't get a
+                    # zero division error here.
+
+                    # a/b / b/c == ac/bd
+
+                    # 1/3 / 2/5 == 1/3 * 5/2 == 5/6
+                    quotient = Fraction(
+                        quotient.numerator * arg.denominator,
+                        quotient.denominator * arg.numerator,
+                    )
+
+            if quotient.denominator == 1:
+                return Integer(quotient.numerator)
+
+            return quotient
             
 
 # TODO: it would be nice to support floats too

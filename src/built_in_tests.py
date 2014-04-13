@@ -728,14 +728,24 @@ class MultiplyTest(unittest.TestCase):
 class DivideTest(unittest.TestCase):
     def test_divide(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1 2)"))),
-                         Float(0.5))
+                         Fraction(1, 2))
 
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1 2 2)"))),
-                         Float(0.25))
+                         Fraction(1, 4))
 
     def test_divide_floats(self):
         self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1.0 2)"))),
                          Float(0.5))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1.0 1/2)"))),
+                         Float(2.0))
+        
+    def test_divide_fractions(self):
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1/2 1/3)"))),
+                         Fraction(3, 2))
+        
+        self.assertEqual(evaluate_with_fresh_env(parse_one(lex(u"(/ 1/2 1/2)"))),
+                         Integer(1))
         
     def test_divide_by_zero(self):
         with self.assertRaises(DivideByZero):
