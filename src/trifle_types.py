@@ -81,6 +81,8 @@ class Fraction(TrifleType):
     def __init__(self, numerator, denominator):
         assert isinstance(numerator, int)
         assert isinstance(denominator, int)
+
+        assert denominator != 0
         self.numerator = numerator
         self.denominator = denominator
 
