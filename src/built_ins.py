@@ -448,6 +448,8 @@ def coerce_numbers(nums):
 
         for num in nums:
             if isinstance(num, Integer):
+                # TODO: This could overflow if the integer is outside
+                # the range of acceptable floats.
                 result.append(Float(float(num.value)))
             elif isinstance(num, Fraction):
                 result.append(Float(num.numerator * 1.0 / num.denominator))
