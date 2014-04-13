@@ -189,7 +189,12 @@ def _lex(tokens):
                     denominator = fraction_parts[1]
 
                     try:
-                        lexed_tokens.append(Fraction(int(numerator), int(denominator)))
+                        fraction = Fraction(int(numerator), int(denominator))
+
+                        if fraction.denominator == 1:
+                            lexed_tokens.append(Integer(fraction.numerator))
+                        else:
+                            lexed_tokens.append(fraction)
                     except ValueError:
                         raise LexFailed(u"Invalid fraction: '%s'" % token)
 
