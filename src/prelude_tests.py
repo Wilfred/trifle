@@ -20,93 +20,74 @@ the prelude very often.
 
 # TODO: we should shell out to the RPython-compiled binary instead of
 # assuming CPython behaves the same.
+class PreludeTestCase(unittest.TestCase):
+    def eval(self, program):
+        """Evaluate this program in a fresh environment with the prelude
+        already included. Returns the result of the last expression.
 
-class SetTest(unittest.TestCase):
+        """
+        return evaluate_all_with_prelude(
+            parse(lex(program)))
+
+    def assertEvalsTo(self, program, expected_result):
+        result = self.eval(program)
+        self.assertEqual(result, expected_result)
+
+
+class SetTest(PreludeTestCase):
     def test_set(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(
-                parse(lex(u"(set! x 1) x"))),
-            Integer(1))
+        self.assertEvalsTo(u"(set! x 1) x", Integer(1))
 
     def test_set_returns_null(self):
-        self.assertEqual(
-            evaluate_with_prelude(
-                parse_one(lex(u"(set! x 1)"))),
-            NULL)
+        self.assertEvalsTo(u"(set! x 1)", NULL)
 
 
-class DoTest(unittest.TestCase):
+class DoTest(PreludeTestCase):
     def test_do(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(do 1 2)"))),
-            Integer(2))
+        self.assertEvalsTo(u"(do 1 2)", Integer(2))
 
     def test_do_no_args(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(do)"))),
-            NULL)
+        self.assertEvalsTo(u"(do)", NULL)
 
 
-class IdentityTest(unittest.TestCase):
+class IdentityTest(PreludeTestCase):
     def test_identity(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(identity 123)"))),
-            Integer(123))
+        self.assertEvalsTo(u"(identity 123)", Integer(123))
 
 
-class IncTest(unittest.TestCase):
+class IncTest(PreludeTestCase):
     def test_inc(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(inc 5)"))),
-            Integer(6))
+        self.assertEvalsTo(u"(inc 5)", Integer(6))
 
     def test_inc_macro(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(u"(set! x 2) (inc! x) x"))),
-            Integer(3))
+        self.assertEvalsTo(u"(set! x 2) (inc! x) x", Integer(3))
 
 
-class ZeroPredicateTest(unittest.TestCase):
+class ZeroPredicateTest(PreludeTestCase):
     def test_not_zero(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? 5)"))),
-            FALSE)
+        self.assertEvalsTo(u"(zero? 5)", FALSE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? -3)"))),
-            FALSE)
+        self.assertEvalsTo(u"(zero? -3)", FALSE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? #null)"))),
-            FALSE)
+        self.assertEvalsTo(u"(zero? #null)", FALSE)
 
     def test_zero(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? 0)"))),
-            TRUE)
+        self.assertEvalsTo(u"(zero? 0)", TRUE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? 0.0)"))),
-            TRUE)
+        self.assertEvalsTo(u"(zero? 0.0)", TRUE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(zero? -0.0)"))),
-            TRUE)
+        self.assertEvalsTo(u"(zero? -0.0)", TRUE)
 
 
-class DecTest(unittest.TestCase):
+class DecTest(PreludeTestCase):
     def test_dec(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(dec 5)"))),
-            Integer(4))
+        self.assertEvalsTo(u"(dec 5)", Integer(4))
 
     def test_dec_macro(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(u"(set! x 2) (dec! x) x"))),
-            Integer(1))
+        self.assertEvalsTo(u"(set! x 2) (dec! x) x", Integer(1))
 
 
-class ForEachTest(unittest.TestCase):
+class ForEachTest(PreludeTestCase):
     def test_for_each(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u"""(let (total 0 numbers (list 1 2 3 4))
@@ -115,22 +96,16 @@ class ForEachTest(unittest.TestCase):
             Integer(10))
 
 
-class ListTest(unittest.TestCase):
+class ListTest(PreludeTestCase):
     def test_list(self):
         expected = List([Integer(1), Integer(2), Integer(3)])
-
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(list 1 2 3)"))),
-            expected)
+        self.assertEvalsTo(u"(list 1 2 3)", expected)
 
 
-class MapTest(unittest.TestCase):
+class MapTest(PreludeTestCase):
     def test_map(self):
         expected = List([Integer(2), Integer(3), Integer(4)])
-
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(map (lambda (x) (+ x 1)) (list 1 2 3))"))),
-            expected)
+        self.assertEvalsTo(u"(map (lambda (x) (+ x 1)) (list 1 2 3))", expected)
 
     def test_map_bytestring(self):
         self.assertEqual(
@@ -143,13 +118,10 @@ class MapTest(unittest.TestCase):
             String(list(u"zzz")))
 
 
-class FilterTest(unittest.TestCase):
+class FilterTest(PreludeTestCase):
     def test_filter(self):
-        expected = List([Integer(2)])
-
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(filter (lambda (x) (equal? x 2)) (list 1 2 3))"))),
-            expected)
+        self.assertEvalsTo(u"(filter (lambda (x) (equal? x 2)) (list 1 2 3))",
+                           List([Integer(2)]))
 
     def test_map_bytestring(self):
         self.assertEqual(
@@ -162,11 +134,9 @@ class FilterTest(unittest.TestCase):
             String(list(u"b")))
 
 
-class NthItemTest(unittest.TestCase):
+class NthItemTest(PreludeTestCase):
     def test_first(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(first (list 1 2 3 4 5))"))),
-            Integer(1))
+        self.assertEvalsTo(u"(first (list 1 2 3 4 5))", Integer(1))
         
     def test_first_bytestring(self):
         self.assertEqual(
@@ -179,9 +149,7 @@ class NthItemTest(unittest.TestCase):
             Character(u'a'))
         
     def test_second(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(second (list 1 2 3 4 5))"))),
-            Integer(2))
+        self.assertEvalsTo(u"(second (list 1 2 3 4 5))", Integer(2))
         
     def test_second_bytestring(self):
         self.assertEqual(
@@ -194,9 +162,7 @@ class NthItemTest(unittest.TestCase):
             Character(u'b'))
         
     def test_third(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(third (list 1 2 3 4 5))"))),
-            Integer(3))
+        self.assertEvalsTo(u"(third (list 1 2 3 4 5))", Integer(3))
         
     def test_third_bytestring(self):
         self.assertEqual(
@@ -209,9 +175,7 @@ class NthItemTest(unittest.TestCase):
             Character(u'c'))
         
     def test_fourth(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(fourth (list 1 2 3 4 5))"))),
-            Integer(4))
+        self.assertEvalsTo(u"(fourth (list 1 2 3 4 5))", Integer(4))
         
     def test_fourth_bytestring(self):
         self.assertEqual(
@@ -224,9 +188,7 @@ class NthItemTest(unittest.TestCase):
             Character(u'd'))
         
     def test_fifth(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(fifth (list 1 2 3 4 5))"))),
-            Integer(5))
+        self.assertEvalsTo(u"(fifth (list 1 2 3 4 5))", Integer(5))
 
     def test_fifth_bytestring(self):
         self.assertEqual(
@@ -239,11 +201,9 @@ class NthItemTest(unittest.TestCase):
             Character(u'e'))
         
 
-class LastTest(unittest.TestCase):
+class LastTest(PreludeTestCase):
     def test_last(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(last (list 1 2 3 4 5))"))),
-            Integer(5))
+        self.assertEvalsTo(u"(last (list 1 2 3 4 5))", Integer(5))
 
     def test_last_bytestring(self):
         self.assertEqual(
@@ -261,7 +221,7 @@ class LastTest(unittest.TestCase):
             evaluate_with_prelude(parse_one(lex(u"(last (list))")))
 
 
-class AppendTest(unittest.TestCase):
+class AppendTest(PreludeTestCase):
     def test_append(self):
         expected = List([Integer(1), Integer(2)])
         
@@ -304,7 +264,7 @@ class AppendTest(unittest.TestCase):
                 u"(append! #null 0)")))
 
 
-class PushTest(unittest.TestCase):
+class PushTest(PreludeTestCase):
     def test_push_list(self):
         expected = List([Integer(1)])
         
@@ -347,40 +307,24 @@ class PushTest(unittest.TestCase):
                 u"(push! #null 0)")))
 
 
-class NotTest(unittest.TestCase):
+class NotTest(PreludeTestCase):
     def test_not_booleans(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(not #true)"))),
-            FALSE)
+        self.assertEvalsTo(u"(not #true)", FALSE)
         
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(not #false)"))),
-            TRUE)
+        self.assertEvalsTo(u"(not #false)", TRUE)
 
 
-class AndTest(unittest.TestCase):
+class AndTest(PreludeTestCase):
     def test_and(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and #true #true)"))),
-            TRUE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and #true #false)"))),
-            FALSE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and #false #true)"))),
-            FALSE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and #false #false)"))),
-            FALSE)
+        self.assertEvalsTo(u"(and #true #true)", TRUE)
+        self.assertEvalsTo(u"(and #true #false)", FALSE)
+        self.assertEvalsTo(u"(and #false #true)", FALSE)
+        self.assertEvalsTo(u"(and #false #false)", FALSE)
         
     def test_and_arity(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and)"))),
-            TRUE)
+        self.assertEvalsTo(u"(and)", TRUE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(and #true #true #true)"))),
-            TRUE)
+        self.assertEvalsTo(u"(and #true #true #true)", TRUE)
 
     def test_and_evaluation(self):
         """Statements should not be evaluated more than once."""
@@ -392,29 +336,17 @@ class AndTest(unittest.TestCase):
             Integer(1))
 
 
-class OrTest(unittest.TestCase):
+class OrTest(PreludeTestCase):
     def test_or(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or #true #true)"))),
-            TRUE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or #true #false)"))),
-            TRUE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or #false #true)"))),
-            TRUE)
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or #false #false)"))),
-            FALSE)
+        self.assertEvalsTo(u"(or #true #true)", TRUE)
+        self.assertEvalsTo(u"(or #true #false)", TRUE)
+        self.assertEvalsTo(u"(or #false #true)", TRUE)
+        self.assertEvalsTo(u"(or #false #false)", FALSE)
         
     def test_or_arity(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or)"))),
-            FALSE)
+        self.assertEvalsTo(u"(or)", FALSE)
 
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(or #true #true #true)"))),
-            TRUE)
+        self.assertEvalsTo(u"(or #true #true #true)", TRUE)
 
     def test_or_evaluation(self):
         """Statements should not be evaluated more than once."""
@@ -426,11 +358,9 @@ class OrTest(unittest.TestCase):
             Integer(1))
 
 
-class RestTest(unittest.TestCase):
+class RestTest(PreludeTestCase):
     def test_rest(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(rest (list 1 2 3))"))),
-            List([Integer(2), Integer(3)]))
+        self.assertEvalsTo(u"(rest (list 1 2 3))", List([Integer(2), Integer(3)]))
         
     def test_rest_bytestring(self):
         self.assertEqual(
@@ -443,94 +373,50 @@ class RestTest(unittest.TestCase):
             String(list(u"bc")))
         
     def test_rest_empty_list(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(rest (list))"))),
-            List())
+        self.assertEvalsTo(u"(rest (list))", List())
         
         
-class UnlessTest(unittest.TestCase):
+class UnlessTest(PreludeTestCase):
     def test_unless_true(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(unless #true 1)"))),
-            NULL)
+        self.assertEvalsTo(u"(unless #true 1)", NULL)
         
     def test_unless_false(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(unless #false 1 2)"))),
-            Integer(2))
+        self.assertEvalsTo(u"(unless #false 1 2)", Integer(2))
         
-class CaseTest(unittest.TestCase):
+class CaseTest(PreludeTestCase):
     def test_case_true(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(case (#true 1))"))),
-            Integer(1))
+        self.assertEvalsTo(u"(case (#true 1))", Integer(1))
 
     def test_case_first_match(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(case (#true 1) (#true 2))"))),
-            Integer(1))
+        self.assertEvalsTo(u"(case (#true 1) (#true 2))", Integer(1))
 
     def test_case_second_match(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(case (#false 1) (#true 2))"))),
-            Integer(2))
+        self.assertEvalsTo(u"(case (#false 1) (#true 2))", Integer(2))
 
     def test_clause_body_in_correct_scope(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(let (x 2) (case (#false 1) (#true x)))"))),
-            Integer(2))
+        self.assertEvalsTo(u"(let (x 2) (case (#false 1) (#true x)))", Integer(2))
 
 
-class RangeTest(unittest.TestCase):
+class RangeTest(PreludeTestCase):
     def test_range(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(range 5)"))),
-            evaluate_with_prelude(parse_one(lex(u"(list 0 1 2 3 4)")))
-        )
+        self.assertEvalsTo(u"(range 5)", self.eval(u"(list 0 1 2 3 4)"))
 
 
-class InequalityTest(unittest.TestCase):
+class InequalityTest(PreludeTestCase):
     def test_greater_than(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(> 2 1)"))),
-            TRUE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(> 2 2)"))),
-            FALSE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(> 2 3)"))),
-            FALSE
-        )
+        self.assertEvalsTo(u"(> 2 1)", TRUE)
+        self.assertEvalsTo(u"(> 2 2)", FALSE)
+        self.assertEvalsTo(u"(> 2 3)", FALSE)
 
     def test_greater_or_equal(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(>= 2 1)"))),
-            TRUE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(>= 2 2)"))),
-            TRUE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(>= 2 3)"))),
-            FALSE
-        )
+        self.assertEvalsTo(u"(>= 2 1)", TRUE)
+        self.assertEvalsTo(u"(>= 2 2)", TRUE)
+        self.assertEvalsTo(u"(>= 2 3)", FALSE)
         
     def test_less_or_equal(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(<= 2 1)"))),
-            FALSE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(<= 2 2)"))),
-            TRUE
-        )
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(<= 2 3)"))),
-            TRUE
-        )
+        self.assertEvalsTo(u"(<= 2 1)", FALSE)
+        self.assertEvalsTo(u"(<= 2 2)", TRUE)
+        self.assertEvalsTo(u"(<= 2 3)", TRUE)
 
     def test_incomparable_types(self):
         with self.assertRaises(TrifleTypeError):
@@ -543,16 +429,11 @@ class InequalityTest(unittest.TestCase):
             evaluate_with_prelude(parse_one(lex(u"(<= 1 #null)")))
 
 
-class SortTest(unittest.TestCase):
+class SortTest(PreludeTestCase):
     def test_sort_empty(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(sort (list))"))),
-            List()
-        )
-        pass
+        self.assertEvalsTo(u"(sort (list))", List())
 
     def test_sort_list(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(u"(sort (list 5 4 3 2 1))"))),
+        self.assertEvalsTo(u"(sort (list 5 4 3 2 1))",
             List([Integer(1), Integer(2), Integer(3), Integer(4), Integer(5)])
         )
