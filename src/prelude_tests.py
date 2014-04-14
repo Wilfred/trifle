@@ -463,4 +463,4 @@ class EmptyPredicateTest(PreludeTestCase):
 
     def test_not_empty(self):
         self.assertEvalsTo(u'(empty? #bytes("a"))', FALSE)
-        self.assertEvalsTo(u'(empty? (list 1 2))', TRUE)
+        self.assertEvalsTo(u'(empty? (list 1 2))', FALSE)
