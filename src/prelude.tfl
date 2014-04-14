@@ -131,8 +131,6 @@ for which (FUNC element) is #true."
   )
 )
 
-;TODO: unit test
-;TODOC
 (function join! (sequence :rest sequences)
   "Modify SEQUENCE by appending all the elements from each of SEQUENCES."
   (for-each additional-sequence sequences

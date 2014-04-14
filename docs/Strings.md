@@ -42,6 +42,7 @@ Modifying:
 2. [insert!](Sequences-Insert.md)
 3. [append!](Sequences-Append.md)
 4. [push!](Sequences-Push.md)
+5. [join!](Sequences-JoinMutate.md)
 
 Converting to other types:
 

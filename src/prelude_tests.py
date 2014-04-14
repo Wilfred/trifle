@@ -472,3 +472,10 @@ class CopyTest(PreludeTestCase):
 
     def test_copy_not_same(self):
         self.assertEvalsTo(u"(set! x (list)) (same? x (copy x))", FALSE)
+
+
+class JoinMutateTest(PreludeTestCase):
+    def test_join(self):
+        self.assertEvalsTo(
+            u"(set! x (list 1)) (join! x (list 2)) x",
+            List([Integer(1), Integer(2)]))
