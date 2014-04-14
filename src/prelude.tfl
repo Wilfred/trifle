@@ -75,7 +75,7 @@ and body BODY."
   )
 )
 
-; TODO: unit test, document, error on non-sequence
+; TODO: error on non-sequence
 (function empty? (sequence)
   "Return #true if SEQUENCE contains no elements."
   (zero? (length sequence))

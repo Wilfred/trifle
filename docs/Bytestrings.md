@@ -13,6 +13,7 @@ quotes, e.g. `#bytes("foo")`.
 Predicates:
 
 1. [bytestring?](Bytestrings-BytestringPredicate.md)
+2. [empty?](Sequences-EmptyPredicate.md)
 
 Creating a new bytestring:
 

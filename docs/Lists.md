@@ -11,6 +11,7 @@ and updating.
 Predicates:
 
 1. [list?](Lists-ListPredicate.md)
+2. [empty?](Sequences-EmptyPredicate.md)
 
 Creating a new list:
 

@@ -14,6 +14,7 @@ quotes. The following escaped characters are recognised: `"\\"`,
 Predicates:
 
 1. [string?](Strings-StringPredicate.md)
+2. [empty?](Sequences-EmptyPredicate.md)
 
 Creating a new string:
 

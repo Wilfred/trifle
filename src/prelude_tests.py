@@ -455,3 +455,12 @@ class EmptyTest(PreludeTestCase):
     def test_result_is_copy(self):
         self.assertEvalsTo(u'(set! x "") (same? x (empty x))', FALSE)
 
+
+class EmptyPredicateTest(PreludeTestCase):
+    def test_empty(self):
+        self.assertEvalsTo(u'(empty? "")', TRUE)
+        self.assertEvalsTo(u'(empty? (list))', TRUE)
+
+    def test_not_empty(self):
+        self.assertEvalsTo(u'(empty? #bytes("a"))', FALSE)
+        self.assertEvalsTo(u'(empty? (list 1 2))', TRUE)
