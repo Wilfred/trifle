@@ -241,6 +241,8 @@ class Quote(Special):
         return result.values[0]
 
 
+# TODO: Only support three arguments, and add a `when` macro for when
+# users only want two arguments.
 class If(Special):
     def call(self, args, env):
         check_args(u'if', args, 2, 3)
