@@ -23,6 +23,7 @@ Creating a new string:
 3. [map](Sequences-Map.md)
 4. [filter](Sequences-Filter.md)
 5. [empty](Sequences-Empty.md)
+6. [copy](Sequences-Copy.md)
 
 Accessing:
 

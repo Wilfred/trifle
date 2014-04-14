@@ -464,3 +464,11 @@ class EmptyPredicateTest(PreludeTestCase):
     def test_not_empty(self):
         self.assertEvalsTo(u'(empty? #bytes("a"))', FALSE)
         self.assertEvalsTo(u'(empty? (list 1 2))', FALSE)
+
+
+class CopyTest(PreludeTestCase):
+    def test_copy_equal(self):
+        self.assertEvalsTo(u"(copy (list 1 2))", List([Integer(1), Integer(2)]))
+
+    def test_copy_not_same(self):
+        self.assertEvalsTo(u"(set! x (list)) (same? x (copy x))", FALSE)

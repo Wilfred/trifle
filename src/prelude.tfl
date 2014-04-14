@@ -100,7 +100,7 @@ and body BODY."
   )
 )
 
-;TODO: unit test, docs, helpful error on non-sequence
+;TODO: helpful error on non-sequence
 (function copy (sequence)
   "Return a fresh copy of SEQUENCE.
 This is a shallow copy operation, so the copy shares the values."
