@@ -18,8 +18,9 @@ Creating a new list:
 2. [rest](Sequences-Rest.md)
 3. [map](Sequences-Map.md)
 4. [filter](Sequences-Filter.md)
-5. [range](Lists-Range.md)
-6. [sort](Sequences-Sort.md)
+5. [empty](Sequences-Empty.md)
+6. [range](Lists-Range.md)
+7. [sort](Sequences-Sort.md)
 
 Accessing:
 

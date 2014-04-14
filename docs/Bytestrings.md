@@ -19,6 +19,7 @@ Creating a new bytestring:
 1. [rest](Sequences-Rest.md)
 2. [map](Sequences-Map.md)
 3. [filter](Sequences-Filter.md)
+4. [empty](Sequences-Empty.md)
 
 Converting:
 

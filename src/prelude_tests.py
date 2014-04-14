@@ -437,3 +437,21 @@ class SortTest(PreludeTestCase):
         self.assertEvalsTo(u"(sort (list 5 4 3 2 1))",
             List([Integer(1), Integer(2), Integer(3), Integer(4), Integer(5)])
         )
+
+
+class EmptyTest(PreludeTestCase):
+    def test_empty_list(self):
+        self.assertEvalsTo(u"(empty (list))", List())
+        self.assertEvalsTo(u"(empty (list 1 2 3))", List())
+
+    def test_empty_bytestring(self):
+        self.assertEvalsTo(u'(empty #bytes("abc"))', Bytestring([]))
+        self.assertEvalsTo(u'(empty #bytes(""))', Bytestring([]))
+
+    def test_empty_string(self):
+        self.assertEvalsTo(u'(empty "abc")', String([]))
+        self.assertEvalsTo(u'(empty "")', String([]))
+
+    def test_result_is_copy(self):
+        self.assertEvalsTo(u'(set! x "") (same? x (empty x))', FALSE)
+

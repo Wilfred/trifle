@@ -107,7 +107,7 @@ This is a shallow copy operation, so the copy shares the values."
   (map identity sequence)
 )
 
-;TODO: unit test, docs, helpful error on non-sequence
+;TODO: helpful error on non-sequence
 (function empty (sequence)
   "Return an empty sequence of the same type as SEQUENCE."
   (case

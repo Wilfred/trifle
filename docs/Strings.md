@@ -21,6 +21,7 @@ Creating a new string:
 2. [rest](Sequences-Rest.md)
 3. [map](Sequences-Map.md)
 4. [filter](Sequences-Filter.md)
+5. [empty](Sequences-Empty.md)
 
 Accessing:
 
