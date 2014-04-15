@@ -133,6 +133,25 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.7 (unreleased)
+
+Bytestrings: Added the function `bytestring?`.
+
+Sequences: Added the functions `empty`, `empty?`, `copy` and `join!`.
+
+Booleans: Removed `truthy?`. `if` and `while` now require booleans for
+their conditions, instead of just truthy values.
+
+Docs: Added a 'generic functions' section.
+
+Generic functions: Added `identity`.
+
+Numbers: Added a fraction type (TODOC). Added support for fractions to `+`,
+`-`, `*` and `/`.
+
+Errors: Various minor improvements to error messages to be more
+consistent and helpful.
+
 ### v0.6
 
 Installation: It's now possible to do `make install` and `make
