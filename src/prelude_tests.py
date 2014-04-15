@@ -479,3 +479,15 @@ class JoinMutateTest(PreludeTestCase):
         self.assertEvalsTo(
             u"(set! x (list 1)) (join! x (list 2)) x",
             List([Integer(1), Integer(2)]))
+
+
+class JoinTest(PreludeTestCase):
+    def test_join(self):
+        self.assertEvalsTo(
+            u"(join (list 1) (list) (list 2 3))",
+            List([Integer(1), Integer(2), Integer(3)]))
+
+    def test_join_string(self):
+        self.assertEvalsTo(
+            u'(join "foo" "bar")',
+            String(list(u"foobar")))

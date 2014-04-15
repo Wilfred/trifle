@@ -140,8 +140,6 @@ for which (FUNC element) is #true."
   )
 )
 
-;TODO: unit test
-;TODOC
 (function join (sequence :rest sequences)
   "Return a copy of SEQUENCE with all the elements from SEQUENCES appended."
   (let (result (copy sequence))

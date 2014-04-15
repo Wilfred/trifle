@@ -22,7 +22,8 @@ Creating a new list:
 5. [empty](Sequences-Empty.md)
 6. [copy](Sequences-Copy.md)
 7. [range](Lists-Range.md)
-8. [sort](Sequences-Sort.md)
+8. [join](Sequences-Join.md)
+9. [sort](Sequences-Sort.md)
 
 Accessing:
 

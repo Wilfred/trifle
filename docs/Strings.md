@@ -24,6 +24,7 @@ Creating a new string:
 4. [filter](Sequences-Filter.md)
 5. [empty](Sequences-Empty.md)
 6. [copy](Sequences-Copy.md)
+7. [join](Sequences-Join.md)
 
 Accessing:
 
