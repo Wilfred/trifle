@@ -114,7 +114,7 @@ class DefineMacro(Special):
 
         macro_body = List(args[2:])
         env.set_global(macro_name.symbol_name,
-                       Macro(parameters, macro_body))
+                       Macro(macro_name.symbol_name, parameters, macro_body))
 
         return NULL
 

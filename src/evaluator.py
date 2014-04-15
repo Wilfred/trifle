@@ -33,7 +33,7 @@ def evaluate(expression, environment):
 
 
 # todo: this would be simpler if `values` was also a trifle List
-def build_scope(parameters, values):
+def build_scope(name, parameters, values):
     """Build a single scope where every value in values (a python list) is
     bound to a symbol according to the parameters List given.
 
@@ -51,7 +51,7 @@ def build_scope(parameters, values):
         normal_parameters = parameters.values
 
     # Ensure we have the right number of arguments:
-    check_parameters(parameters, List(values))
+    check_parameters(name, parameters, List(values))
 
     scope = Scope({})
     for variable, value in zip(normal_parameters, values):
@@ -75,7 +75,7 @@ def expand_macro(macro, arguments, environment):
 
     """
     # Build a new environment to evaluate with.
-    inner_scope = build_scope(macro.arguments, arguments)
+    inner_scope = build_scope(macro.name, macro.arguments, arguments)
     macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
     expression = evaluate_all(macro.body, macro_env)
@@ -119,7 +119,7 @@ def evaluate_list(node, environment):
             evaluate(el, environment) for el in raw_arguments]
 
         # Build a new environment to evaluate with.
-        inner_scope = build_scope(function.arguments, arguments)
+        inner_scope = build_scope(u"<lambda>", function.arguments, arguments)
 
         lambda_env = function.env.with_nested_scope(inner_scope)
 

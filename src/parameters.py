@@ -39,7 +39,7 @@ def is_variable_arity(parameter_list):
 
 
 # todo: optional arguments (due to default values), keyword arguments
-def check_parameters(parameter_list, given_args):
+def check_parameters(name, parameter_list, given_args):
     """Ensure that we have been given sufficient arguments for this
     parameter list.
 
@@ -48,8 +48,8 @@ def check_parameters(parameter_list, given_args):
         minimum_args = len(parameter_list.values) - 2
         if len(given_args.values) < minimum_args:
             # todo: can we say *what* was expecting these arguments?
-            raise ArityError(u"Expected at least %d argument%s, but got %d." %
-                             (minimum_args,
+            raise ArityError(u"%s expected at least %d argument%s, but got %d." %
+                             (name, minimum_args,
                               u"s" if minimum_args > 1 else u"",
                               len(given_args.values)))
     else:

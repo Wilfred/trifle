@@ -336,7 +336,8 @@ class Macro(TrifleType):
     intepreter to evaluate at run time.
 
     """
-    def __init__(self, arguments, body):
+    def __init__(self, name, arguments, body):
+        self.name = name
         self.arguments = arguments
         self.body = body
 
