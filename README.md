@@ -146,7 +146,7 @@ Docs: Added a 'generic functions' section.
 
 Generic functions: Added `identity`.
 
-Numbers: Added a fraction type (TODOC). Added support for fractions to `+`,
+Numbers: Added a fraction type. Added support for fractions to `+`,
 `-`, `*` and `/`.
 
 Errors: Various minor improvements to error messages to be more
