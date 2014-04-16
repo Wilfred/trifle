@@ -13,6 +13,7 @@
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
+    - [v0.7](#v07)
     - [v0.6](#v06)
     - [v0.5](#v05)
     - [v0.4](#v04)
@@ -133,7 +134,7 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
-### v0.7 (unreleased)
+### v0.7
 
 Bytestrings: Added the function `bytestring?`.
 
