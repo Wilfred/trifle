@@ -138,7 +138,8 @@ language, we are cheerfully ignoring these questions for now.
 
 Bytestrings: Added the function `bytestring?`.
 
-Sequences: Added the functions `empty`, `empty?`, `copy` and `join!`.
+Sequences: Added the functions `empty`, `empty?`, `copy`, `join!` and
+`join`.
 
 Booleans: Removed `truthy?`. `if` and `while` now require booleans for
 their conditions, instead of just truthy values.
