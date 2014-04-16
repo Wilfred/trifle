@@ -95,6 +95,10 @@ class FractionLexTest(unittest.TestCase):
         self.assertEqual(
             lex(u"1/3")[0], Fraction(1, 3))
 
+    def test_lex_fraction_underscore(self):
+        self.assertEqual(
+            lex(u"1/3_0")[0], Fraction(1, 30))
+
     def test_lex_fraction_to_integer(self):
         self.assertEqual(
             lex(u"2/1")[0], Integer(2))
