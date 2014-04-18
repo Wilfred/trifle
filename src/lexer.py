@@ -203,9 +203,7 @@ def _lex(tokens):
             if match:
                 found_match = True
 
-                if lexeme_name in [WHITESPACE, COMMENT]:
-                    pass
-                elif lexeme_name == OPEN_PAREN:
+                if lexeme_name == OPEN_PAREN:
                     lexed_tokens.append(OpenParen())
                 elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
