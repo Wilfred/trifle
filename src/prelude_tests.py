@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 from trifle_types import (List, Bytestring, String, Character,
                           Integer,
@@ -6,6 +7,8 @@ from trifle_types import (List, Bytestring, String, Character,
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import TrifleValueError, TrifleTypeError, ArityError
+from main import env_with_prelude
+from evaluator import evaluate_all
 
 from test_utils import (
     evaluate_with_prelude, evaluate_all_with_prelude
@@ -21,13 +24,17 @@ the prelude very often.
 # TODO: we should shell out to the RPython-compiled binary instead of
 # assuming CPython behaves the same.
 class PreludeTestCase(unittest.TestCase):
+    env = env_with_prelude()
+    
     def eval(self, program):
         """Evaluate this program in a fresh environment with the prelude
         already included. Returns the result of the last expression.
 
         """
-        return evaluate_all_with_prelude(
-            parse(lex(program)))
+        # Fresh copy of the environment so tests don't interfere with one another.
+        env = deepcopy(self.env)
+
+        return evaluate_all(parse(lex(program)), env)
 
     def assertEvalsTo(self, program, expected_result):
         result = self.eval(program)

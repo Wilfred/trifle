@@ -47,6 +47,12 @@ class Null(TrifleType):
     def repr(self):
         return u"#null"
 
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return True
+
 
 NULL = Null()
 
