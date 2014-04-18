@@ -376,13 +376,22 @@ class RestTest(PreludeTestCase):
         self.assertEvalsTo(u"(rest (list))", List())
         
         
-class UnlessTest(PreludeTestCase):
-    def test_unless_true(self):
-        self.assertEvalsTo(u"(unless #true 1)", NULL)
+class WhenTest(PreludeTestCase):
+    def test_when_true(self):
+        self.assertEvalsTo(u"(when #true 1)", Integer(1))
         
-    def test_unless_false(self):
-        self.assertEvalsTo(u"(unless #false 1 2)", Integer(2))
+    def test_when_false(self):
+        self.assertEvalsTo(u"(when #false 1 2)", NULL)
+
+
+class WhenNotTest(PreludeTestCase):
+    def test_when_not_true(self):
+        self.assertEvalsTo(u"(when-not #true 1)", NULL)
         
+    def test_when_not_false(self):
+        self.assertEvalsTo(u"(when-not #false 1 2)", Integer(2))
+
+
 class CaseTest(PreludeTestCase):
     def test_case_true(self):
         self.assertEvalsTo(u"(case (#true 1))", Integer(1))

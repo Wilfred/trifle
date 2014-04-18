@@ -816,16 +816,7 @@ class DivTest(unittest.TestCase):
 
 
 class IfTest(unittest.TestCase):
-    def test_if_one_arg(self):
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if #true 1)"))),
-            Integer(1))
-
-        self.assertEqual(
-            evaluate_with_fresh_env(parse_one(lex(u"(if #false 1)"))),
-            NULL)
-
-    def test_if_two_args(self):
+    def test_if(self):
         self.assertEqual(
             evaluate_with_fresh_env(parse_one(lex(u"(if #true 2 3)"))),
             Integer(2))
@@ -847,7 +838,7 @@ class IfTest(unittest.TestCase):
     def test_if_wrong_number_of_args(self):
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
-                parse_one(lex(u"(if)")))
+                parse_one(lex(u"(if #true)")))
 
         with self.assertRaises(ArityError):
             evaluate_with_fresh_env(
@@ -1514,7 +1505,7 @@ class EvaluatingMacrosTest(unittest.TestCase):
     def test_macro_rest_args(self):
         self.assertEqual(
             evaluate_all(parse(lex(
-                u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)))))"
+                u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)) #null)))"
                 u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
             Integer(2)
         )

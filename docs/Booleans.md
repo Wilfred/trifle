@@ -15,7 +15,8 @@ Trifle lisp has a boolean datatype. There are two boolean literals,
 
 ## Boolean macros
 
-1. [unless](Booleans-Unless.md)
-2. [case](Booleans-Case.md)
-3. [and](Booleans-And.md)
-4. [or](Booleans-Or.md)
+1. [when](Booleans-When.md)
+2. [when-not](Booleans-WhenNot.md)
+3. [case](Booleans-Case.md)
+4. [and](Booleans-And.md)
+5. [or](Booleans-Or.md)

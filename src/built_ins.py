@@ -241,11 +241,9 @@ class Quote(Special):
         return result.values[0]
 
 
-# TODO: Only support three arguments, and add a `when` macro for when
-# users only want two arguments.
 class If(Special):
     def call(self, args, env):
-        check_args(u'if', args, 2, 3)
+        check_args(u'if', args, 3, 3)
 
         from evaluator import evaluate
 
@@ -253,15 +251,12 @@ class If(Special):
         condition = evaluate(raw_condition, env)
         
         then = args[1]
+        otherwise = args[2]
 
         if condition == TRUE:
             return evaluate(then, env)
         elif condition == FALSE:
-            if len(args) == 3:
-                otherwise = args[2]
-                return evaluate(otherwise, env)
-            else:
-                return NULL
+            return evaluate(otherwise, env)
         else:
             raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
 

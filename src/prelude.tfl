@@ -123,7 +123,7 @@ This is a shallow copy operation, so the copy shares the values."
 for which (FUNC element) is #true."
   (let (result (empty sequence))
     (for-each item sequence
-      (if (func item)
+      (when (func item)
         (append! result item)
       )
     )
@@ -176,9 +176,21 @@ for which (FUNC element) is #true."
   (equal? x 0)
 )
 
-(macro unless (condition :rest body)
+(macro when (condition :rest body)
+  "Evaluate BODY when CONDITION evaluates to #true."
   (quote
-    (if (not (unquote condition))
+    (if (unquote condition)
+      (do (unquote* body))
+      #null
+    )
+  )
+)
+
+(macro when-not (condition :rest body)
+  "Evaluate BODY when CONDITION evaluates to #false."
+  (quote
+    (if (unquote condition)
+      #null
       (do (unquote* body))
     )
   )
@@ -197,7 +209,7 @@ for which (FUNC element) is #true."
                )
        )
     (for-each item seq
-      (unless (equal? i 0)
+      (when-not (equal? i 0)
         (append! result item)
       )
       (inc! i)
@@ -232,12 +244,15 @@ for which (FUNC element) is #true."
         )
       )
     )
+    #null
   )
 )
 
 (function do (:rest args)
+  ; We can't use when-not here, since it depends on do.
   (if (not (empty? args))
     (last args)
+    #null
   )
 )
 
