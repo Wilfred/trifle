@@ -40,7 +40,7 @@ TOKENS = [
     (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"')),
     (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
 
-    (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
+    (BYTESTRING, get_code(r'#bytes\("[a-zA-Z0-9\\]*"\)')),
 
     (HASH_LITERAL, get_code('#[a-zA-Z]*')),
 ]
@@ -51,7 +51,8 @@ LEXEMES = [
     (CLOSE_PAREN, get_code(r"\)")),
 
     (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"$')),
-    (BYTESTRING, get_code(r'#bytes\("[ -~]*"\)')),
+    (BYTESTRING, get_code(r'#bytes\("[a-zA-Z0-9\\]*"\)')),
+
     # Either: '\\', '\n', '\'' or a simple character between quotes: 'x'
     (CHARACTER, get_code(r"'([^'\\]|\\\\|\\n|\\')'")),
 
