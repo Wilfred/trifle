@@ -11,7 +11,7 @@ from main import env_with_prelude
 from evaluator import evaluate_all
 
 from test_utils import (
-    evaluate_with_prelude, evaluate_all_with_prelude
+    evaluate_with_prelude
 )
 
 
@@ -231,65 +231,52 @@ class LastTest(PreludeTestCase):
 class AppendTest(PreludeTestCase):
     def test_append(self):
         expected = List([Integer(1), Integer(2)])
-        
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u"(set-symbol! (quote x) (quote (1))) (append! x 2) x"))),
+
+        self.assertEvalsTo(
+            u"(set-symbol! (quote x) (quote (1))) (append! x 2) x",
             expected)
 
     def test_append_bytestring(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u'(set-symbol! (quote x) #bytes("a")) (append! x 98) x'))),
+        self.assertEvalsTo(
+            u'(set-symbol! (quote x) #bytes("a")) (append! x 98) x',
             Bytestring([ord(c) for c in "ab"]))
 
     def test_append_string(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u'(set-symbol! (quote x) "a") (append! x \'b\') x'))),
+        self.assertEvalsTo(
+            u'(set-symbol! (quote x) "a") (append! x \'b\') x',
             String(list(u"ab")))
 
     def test_append_returns_null(self):
-        self.assertEqual(
-            evaluate_with_prelude(parse_one(lex(
-                u"(append! (quote ()) 1)"))),
+        self.assertEvalsTo(
+            u"(append! (quote ()) 1)",
             NULL)
 
     def test_append_arg_number(self):
         with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(append! (quote ()))")))
+            self.eval(u"(append! (quote ()))")
 
         with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(append! (quote ()) 0 1)")))
+            self.eval(u"(append! (quote ()) 0 1)")
 
     def test_append_typeerror(self):
         # first argument must be a list
         with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(append! #null 0)")))
+            self.eval(u"(append! #null 0)")
 
 
 class PushTest(PreludeTestCase):
     def test_push_list(self):
         expected = List([Integer(1)])
-        
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u"(set-symbol! (quote x) (quote ())) (push! x 1) x"))),
-            expected)
+        self.assertEvalsTo(u"(set-symbol! (quote x) (quote ())) (push! x 1) x", expected)
 
     def test_push_bytestring(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x'))),
+        self.assertEvalsTo(
+            u'(set-symbol! (quote x) #bytes("bc")) (push! x 97) x',
             Bytestring([ord(c) for c in b"abc"]))
 
     def test_push_string(self):
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u'(set-symbol! (quote x) "bc") (push! x \'a\') x'))),
+        self.assertEvalsTo(
+            u'(set-symbol! (quote x) "bc") (push! x \'a\') x',
             String(list(u"abc")))
 
     def test_push_returns_null(self):
@@ -335,11 +322,10 @@ class AndTest(PreludeTestCase):
 
     def test_and_evaluation(self):
         """Statements should not be evaluated more than once."""
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u"(set! x 0)"
-                u"(and (do (inc! x) #true))"
-                u"x"))),
+        self.assertEvalsTo(
+            (u"(set! x 0)"
+             u"(and (do (inc! x) #true))"
+             u"x"),
             Integer(1))
 
 
@@ -357,11 +343,10 @@ class OrTest(PreludeTestCase):
 
     def test_or_evaluation(self):
         """Statements should not be evaluated more than once."""
-        self.assertEqual(
-            evaluate_all_with_prelude(parse(lex(
-                u"(set! x 0)"
-                u"(or (do (inc! x) #true))"
-                u"x"))),
+        self.assertEvalsTo(
+            (u"(set! x 0)"
+             u"(or (do (inc! x) #true))"
+             u"x"),
             Integer(1))
 
 
