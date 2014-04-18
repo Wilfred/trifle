@@ -1509,6 +1509,15 @@ class EvaluatingMacrosTest(BuiltInTestCase):
             self.eval(u"(macro 123 (bar) #null)")
 
 
+class ExpandMacroTest(BuiltInTestCase):
+    def test_expand_macro(self):
+        self.assertEqual(
+            self.eval(
+                u"(macro just-x (ignored-arg) (quote x))"
+                u"(expand-macro (just-x y))"),
+            Symbol(u'x'))
+
+
 class DefinedTest(BuiltInTestCase):
     def test_defined(self):
         self.assertEqual(
