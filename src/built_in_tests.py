@@ -1059,16 +1059,14 @@ class EqualTest(BuiltInTestCase):
             FALSE)
 
     def test_bytes_equal(self):
-        env = fresh_environment()
-        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
-        env.set(u'y', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
-        env.set(u'z', Bytestring([ord(c) for c in b"foo"]))
+        self.assertEqual(
+            self.eval(u'(equal? #bytes("foo") #bytes("foo"))'),
+            TRUE)
         
-        self.assertEqual(evaluate(parse_one(lex(u"(equal? x y)")), env),
-                         TRUE)
-        self.assertEqual(evaluate(parse_one(lex(u"(equal? y z)")), env),
-                         FALSE)
-
+        self.assertEqual(
+            self.eval(u'(equal? #bytes("foo") #bytes("bar"))'),
+            FALSE)
+        
     def test_string_equal(self):
         self.assertEqual(
             self.eval(u"(equal? \"foo\" \"foo\")"),
@@ -1682,10 +1680,9 @@ class EncodeTest(BuiltInTestCase):
 
 class DecodeTest(BuiltInTestCase):
     def test_decode(self):
-        env = fresh_environment()
-        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
-        self.assertEqual(evaluate(parse_one(lex(u"(decode x)")), env),
-                         String(list(u"soufflé")))
+        self.assertEqual(
+            self.eval(u'(decode #bytes("souffl\\xc3\\xa9"))'),
+            String(list(u"soufflé")))
 
     def test_encode_type_error(self):
         with self.assertRaises(TrifleTypeError):
@@ -1695,10 +1692,8 @@ class DecodeTest(BuiltInTestCase):
         with self.assertRaises(ArityError):
             self.eval(u'(decode)')
     
-        env = fresh_environment()
-        env.set(u'x', Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
         with self.assertRaises(ArityError):
-            evaluate(parse_one(lex(u'(decode x 2)')), env)
+            self.eval(u'(decode #bytes("souffl\\xc3\\xa9") 1)')
     
 
 class ListPredicateTest(BuiltInTestCase):
