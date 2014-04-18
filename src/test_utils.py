@@ -13,9 +13,3 @@ def evaluate_all_with_fresh_env(expressions):
 
     """
     return evaluate_all(expressions, fresh_environment())
-
-
-def evaluate_with_fresh_env(expression):
-    return evaluate(expression, fresh_environment())
-
-
