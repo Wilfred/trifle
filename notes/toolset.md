@@ -7,6 +7,17 @@ Trifle aboslutely needs a basic REPL. This should be just another
 package, so it can evolve separately or be replaced by other
 implementations as the user wishes.
 
+The UI should be something like:
+
+In [1]: (/ 20
+...: 25)
+
+Out [1]: 10/13 [Fraction, roughly 0.77]
+
+In [2]: (list 1 2 3)
+
+Out [2]: (1 2 3) [Mutable list, 3 elements]
+
 ### Extension: Emacs Integration
 
 This would be a great help. Getting basic inferior-lisp functionality
