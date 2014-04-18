@@ -20,9 +20,6 @@ from errors import (UnboundVariable, TrifleTypeError,
                     TrifleValueError, UsingClosedFile)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
-from test_utils import (
-    evaluate_all_with_fresh_env
-)
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -435,8 +432,7 @@ class EvaluatingLambdaTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(u"(set-symbol! (quote x) 1) ((lambda () (set-symbol! (quote x) 2))) x"))),
+            self.eval(u"(set-symbol! (quote x) 1) ((lambda () (set-symbol! (quote x) 2))) x"),
             Integer(2))
 
     # TODO: make this pass.
@@ -444,8 +440,7 @@ class EvaluatingLambdaTest(BuiltInTestCase):
     @unittest.skip("We don't keep track of the stack yet.")
     def test_stack_overflow(self):
         with self.assertRaises(StackOverflow):
-            evaluate_all_with_fresh_env(
-                parse(lex(u"(set-symbol! (quote f) (lambda () (f))) (f)")))
+            self.eval(u"(set-symbol! (quote f) (lambda () (f))) (f)")
 
 
 class FreshSymbolTest(BuiltInTestCase):
@@ -462,8 +457,7 @@ class FreshSymbolTest(BuiltInTestCase):
 class SetSymbolTest(BuiltInTestCase):
     def test_set_symbol(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(u"(set-symbol! (quote x) (quote y)) x"))),
+            self.eval(u"(set-symbol! (quote x) (quote y)) x"),
             Symbol(u"y"))
 
     def test_set_symbol_wrong_arg_number(self):
@@ -483,14 +477,12 @@ class SetSymbolTest(BuiltInTestCase):
 class LetTest(BuiltInTestCase):
     def test_let(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(u"(let (x 1) x)"))),
+            self.eval(u"(let (x 1) x)"),
             Integer(1))
 
     def test_let_access_previous_bindings(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(u"(let (x 1 y (+ x 1)) y)"))),
+            self.eval(u"(let (x 1 y (+ x 1)) y)"),
             Integer(2))
 
     def test_let_malformed_bindings(self):
@@ -514,9 +506,7 @@ class LetTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(
-                    u"(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"))),
+            self.eval(u"(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"),
             Integer(1))
 
     def test_let_not_function_scope(self):
@@ -525,9 +515,7 @@ class LetTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            evaluate_all_with_fresh_env(
-                parse(lex(
-                    u"(let () (set-symbol! (quote x) 3)) x"))),
+            self.eval(u"(let () (set-symbol! (quote x) 3)) x"),
             Integer(3))
 
 
@@ -551,56 +539,48 @@ class QuoteTest(BuiltInTestCase):
 
     def test_unquote(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(quote (unquote (+ 1 2)))"))),
+            self.eval(u"(quote (unquote (+ 1 2)))"),
             Integer(3))
 
     def test_unquote_nested(self):
         expected = List([Symbol(u'x'), Integer(1)])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) 1) (quote (x (unquote x)))"))),
+            self.eval(u"(set-symbol! (quote x) 1) (quote (x (unquote x)))"),
             expected)
 
     def test_unquote_star(self):
         expected = parse_one(lex(u"(baz foo bar)"))
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote (foo bar))) (quote (baz (unquote* x)))"))),
+            self.eval(u"(set-symbol! (quote x) (quote (foo bar))) (quote (baz (unquote* x)))"),
             expected)
 
     def test_unquote_wrong_arg_number(self):
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) 1) (quote (unquote x x))")))
+            self.eval(u"(set-symbol! (quote x) 1) (quote (unquote x x))")
 
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(quote (unquote))")))
+            self.eval(u"(quote (unquote))")
 
     def test_unquote_star_wrong_arg_number(self):
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))")))
+            self.eval(u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))")
 
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(quote (list (unquote*)))")))
+            self.eval(u"(quote (list (unquote*)))")
 
     def test_unquote_star_top_level(self):
         with self.assertRaises(TrifleValueError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(quote (unquote* #null))")))
+            self.eval(u"(quote (unquote* #null))")
 
     def test_unquote_star_after_unquote(self):
         expected = parse_one(lex(u"(if #true (do 1 2))"))
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
+            self.eval(
                 u"(set-symbol! (quote x) #true) (set-symbol! (quote y) (quote (1 2)))"
-                u"(quote (if (unquote x) (do (unquote* y))))"))),
+                u"(quote (if (unquote x) (do (unquote* y))))"),
             expected)
         
 
@@ -820,8 +800,7 @@ class IfTest(BuiltInTestCase):
 
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) #false) (if x 2 3)"))),
+            self.eval(u"(set-symbol! (quote x) #false) (if x 2 3)"),
             Integer(3))
 
     def test_if_wrong_number_of_args(self):
@@ -844,10 +823,10 @@ class WhileTest(BuiltInTestCase):
         # `(while)` is an error, but this should work as while should
         # not evaluate the body here.
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
+            self.eval(
                 u"(set-symbol! (quote x) #true) (set-symbol! (quote y) 1)"
                 u"(while x (set-symbol! (quote x) #false) (set-symbol! (quote y) 2))"
-                u"y"))),
+                u"y"),
             Integer(2))
         
     def test_while_wrong_number_of_args(self):
@@ -948,7 +927,7 @@ class SameTest(BuiltInTestCase):
 
     def test_list_same(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(u"(set-symbol! (quote x) (quote ())) (same? x x)"))),
+            self.eval(u"(set-symbol! (quote x) (quote ())) (same? x x)"),
             TRUE)
 
     def test_function_same(self):
@@ -958,7 +937,7 @@ class SameTest(BuiltInTestCase):
 
     def test_lambda_same(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(u"(set-symbol! (quote x) (lambda () 1)) (same? x x)"))),
+            self.eval(u"(set-symbol! (quote x) (lambda () 1)) (same? x x)"),
             TRUE)
 
     def test_different_types(self):
@@ -1060,7 +1039,7 @@ class EqualTest(BuiltInTestCase):
 
     def test_lambda_equal(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(u"(set-symbol! (quote x) (lambda () 1)) (equal? x x)"))),
+            self.eval(u"(set-symbol! (quote x) (lambda () 1)) (equal? x x)"),
             TRUE)
 
     def test_different_types(self):
@@ -1190,24 +1169,21 @@ class SetIndexTest(BuiltInTestCase):
         expected = List([Integer(1)])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"))),
+            self.eval(u"(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"),
             expected)
 
     def test_set_index_string(self):
         expected = String(list(u"bbc"))
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) "abc") (set-index! x 0 \'b\') x'))),
+            self.eval(u'(set-symbol! (quote x) "abc") (set-index! x 0 \'b\') x'),
             expected)
 
     def test_set_index_bytestring(self):
         expected = Bytestring([ord(c) for c in "bbc"])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) #bytes("abc")) (set-index! x 0 98) x'))),
+            self.eval(u'(set-symbol! (quote x) #bytes("abc")) (set-index! x 0 98) x'),
             expected)
 
     def test_set_index_bytestring_type_error(self):
@@ -1232,8 +1208,7 @@ class SetIndexTest(BuiltInTestCase):
         expected = List([Integer(10), Integer(1)])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote (10 20))) (set-index! x -1 1) x"))),
+            self.eval(u"(set-symbol! (quote x) (quote (10 20))) (set-index! x -1 1) x"),
             expected)
 
     def test_set_index_returns_null(self):
@@ -1277,44 +1252,37 @@ class InsertTest(BuiltInTestCase):
         expected = List([Integer(1), Integer(2)])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote (1))) (insert! x 1 2) x"))),
+            self.eval(u"(set-symbol! (quote x) (quote (1))) (insert! x 1 2) x"),
             expected)
 
     def test_insert_negative(self):
         expected = List([Integer(1), Integer(5), Integer(2)])
         
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(set-symbol! (quote x) (quote (1 2))) (insert! x -1 5) x"))),
+            self.eval(u"(set-symbol! (quote x) (quote (1 2))) (insert! x -1 5) x"),
             expected)
 
     def test_insert_bytestring(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 98) x'))),
+            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 98) x'),
             Bytestring([ord(c) for c in "ab"]))
 
     def test_insert_bytestring_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)')))
+            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)')
 
     def test_insert_bytestring_invalid_value(self):
         with self.assertRaises(TrifleValueError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)')))
+            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)')
 
     def test_insert_string(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) "a") (insert! x 1 \'b\') x'))),
+            self.eval(u'(set-symbol! (quote x) "a") (insert! x 1 \'b\') x'),
             String(list(u"ab")))
 
     def test_insert_string_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) "a") (insert! x 1 #null)')))
+            self.eval(u'(set-symbol! (quote x) "a") (insert! x 1 #null)')
 
     def test_insert_returns_null(self):
         self.assertEqual(
@@ -1389,50 +1357,43 @@ class ParseTest(BuiltInTestCase):
 class CallTest(BuiltInTestCase):
     def test_call(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(call + (quote (1 2 3)))"))),
+            self.eval(u"(call + (quote (1 2 3)))"),
             Integer(6)
         )
 
     def test_call_macro(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
+            self.eval(
                 u"(macro add1 (x) (quote (+ 1 (unquote x))))"
-                u"(call add1 (quote (1)))"))),
+                u"(call add1 (quote (1)))"),
             Integer(2)
         )
 
     def test_call_arg_number(self):
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(call + (quote (1 2 3)) 1)")))
+            self.eval(u"(call + (quote (1 2 3)) 1)")
 
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(call +)")))
+            self.eval(u"(call +)")
 
     def test_call_type(self):
         with self.assertRaises(TrifleTypeError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(call #null (quote (1 2 3)))")))
+            self.eval(u"(call #null (quote (1 2 3)))")
 
         with self.assertRaises(TrifleTypeError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(call + #null)")))
+            self.eval(u"(call + #null)")
 
 
 class EvalTest(BuiltInTestCase):
     def test_eval(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(eval (quote (+ 1 2 3)))"))),
+            self.eval(u"(eval (quote (+ 1 2 3)))"),
             Integer(6)
         )
 
     def test_eval_modifies_scope(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) 0) (eval (quote (set-symbol! (quote x) 1))) x'))),
+            self.eval(u'(set-symbol! (quote x) 0) (eval (quote (set-symbol! (quote x) 1))) x'),
             Integer(1)
         )
 
@@ -1440,20 +1401,17 @@ class EvalTest(BuiltInTestCase):
 class EvaluatingMacrosTest(BuiltInTestCase):
     def test_macro(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(macro just-x (ignored-arg) (quote x)) (set-symbol! (quote x) 1) (just-x y)"))),
+            self.eval(u"(macro just-x (ignored-arg) (quote x)) (set-symbol! (quote x) 1) (just-x y)"),
             Integer(1)
         )
 
     def test_call_macro_too_few_args(self):
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(macro ignore (x) #null) (ignore 1 2)")))
+            self.eval(u"(macro ignore (x) #null) (ignore 1 2)")
 
     def test_call_macro_too_many_args(self):
         with self.assertRaises(ArityError):
-            evaluate_all_with_fresh_env(parse(lex(
-                u"(macro ignore (x) #null) (ignore)")))
+            self.eval(u"(macro ignore (x) #null) (ignore)")
 
     # FIXME: we shouldn't depend on the prelude here.
     def test_macro_rest_args(self):
@@ -1543,15 +1501,13 @@ class OpenTest(BuiltInTestCase):
 
 class CloseTest(BuiltInTestCase):
     def test_close(self):
-        result = evaluate_all_with_fresh_env(parse(lex(
-            u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) x')))
+        result = self.eval(u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) x')
 
         self.assertTrue(result.file_handle.closed)
 
     def test_close_twice_error(self):
         with self.assertRaises(UsingClosedFile):
-            evaluate_all_with_fresh_env(parse(lex(
-                u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')))
+            self.eval(u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')
 
     def test_close_returns_null(self):
         result = self.eval(u'(close! (open "/tmp/foo" :write))')
@@ -1597,9 +1553,9 @@ class ReadTest(BuiltInTestCase):
 class WriteTest(BuiltInTestCase):
     def test_write(self):
         self.assertEqual(
-            evaluate_all_with_fresh_env(parse(lex(
+            self.eval(
                 u'(set-symbol! (quote f) (open "test.txt" :write))'
-                u'(write! f (encode "foo")) (close! f)'))),
+                u'(write! f (encode "foo")) (close! f)'),
             NULL)
 
         self.assertTrue(os.path.exists("test.txt"), "File was not created!")
@@ -1612,9 +1568,9 @@ class WriteTest(BuiltInTestCase):
     # todo: we should also test reading from a write-only handle.
     def test_write_read_only_handle(self):
         with self.assertRaises(ValueError):
-            evaluate_all_with_fresh_env(parse(lex(
+            self.eval(
                 u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
-                u'(write! f (encode "foo"))')))
+                u'(write! f (encode "foo"))')
 
     def test_write_arity(self):
         # Too few args.
