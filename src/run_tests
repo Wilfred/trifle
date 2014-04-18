@@ -1,3 +1,11 @@
 #!/bin/bash
 
-PYTHONPATH=pypy nosetests tests.py --with-id "$@"
+# Helper script for running tests during local development.
+#
+# --with-id allows you to run `./run_tests --failed` to only re-run
+# failed tests.
+#
+# --processes=4 parallelises the tests. Note Jenkins does not run the
+# test in parallel, to ensure determinism if we accidentally write
+# impure tests (which should be fixed).
+PYTHONPATH=pypy nosetests tests.py --with-id --processes=4 "$@"
