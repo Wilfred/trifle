@@ -224,6 +224,7 @@ class BytestringLexTest(BuiltInTestCase):
         self.assertEqual(
             lex(u'#bytes("foo")')[0], Bytestring([ord(c) for c in 'foo']))
 
+    def test_lex_invalid_byte(self):
         with self.assertRaises(LexFailed):
             lex(u'#bytes("flambé")')
 
