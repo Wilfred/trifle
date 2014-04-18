@@ -112,6 +112,55 @@ def unescape_chars(string, quote_character):
     return chars
 
 
+def unescape_bytestring_chars(string):
+    """Convert a string with Trifle bytestring escape sequences to a Python
+    list.
+
+    >>> unescape_chars(u'ab\\x00')
+    [97, 98, 0]
+
+    """
+    chars = []
+
+    while string:
+        if string.startswith(u"\\\\"):
+            chars.append(ord('\\'))
+            string = string[2:]
+        
+        # Convert hexadecimal escapes. E.g. \xFF -> 255
+        # TODOC
+        elif string.startswith(u'\\'):
+            if len(string) < 4:
+                # TODO: we should give examples of valid escape sequences.
+                # (same for strings too)
+                raise LexFailed(u"Invalid hexadecimal escape sequence: %s" % string)
+
+            hexadecimal = string[1:4]
+
+            valid_chars = [
+                u'a', u'b', u'c', u'd', u'e', u'f',
+                u'A', u'B', u'C', u'D', u'E', u'F',
+                u'0', u'1', u'2', u'3', u'4', u'5', u'6', u'7', u'8', u'9'
+            ]
+
+            if (hexadecimal[0] != u'x' or hexadecimal[1] not in valid_chars
+                or hexadecimal[2] not in valid_chars):
+                raise LexFailed(u"Invalid hexadecimal escape sequence: %s" % hexadecimal)
+
+            chars.append(int(hexadecimal[1:].encode('utf-8'), 16))
+            string = string[4:]
+                
+        else:
+            char = string[0].encode('utf-8')
+            # The [0] here is redundant, but RPython needs it to be
+            # certain that we only pass a single character to
+            # ord(). It can't see that one_char.encode('utf-8) has a length of 1.
+            chars.append(ord(char[0]))
+            string = string[1:]
+        
+    return chars
+
+
 def split_tokens(text):
     """Given the raw text of a trifle program, split it into things that
     look like tokens.
@@ -221,7 +270,7 @@ def _lex(tokens):
                         # Unreachable.
                         contents = u""
 
-                    lexed_tokens.append(Bytestring([ord(c) for c in contents.encode("utf-8")]))
+                    lexed_tokens.append(Bytestring(unescape_bytestring_chars(contents)))
                     
                 elif lexeme_name == STRING:
                     string_end = match.match_end - 1

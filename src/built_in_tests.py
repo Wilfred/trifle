@@ -227,6 +227,40 @@ class BytestringLexTest(BuiltInTestCase):
         with self.assertRaises(LexFailed):
             lex(u'#bytes("flambé")')
 
+    def test_lex_backslash(self):
+        # Backslashes should be an error if not escaped.
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\")')
+
+        self.assertEqual(
+            lex(u'#bytes("\\\\")')[0], Bytestring([ord('\\')]))
+
+    def test_lex_escaped_byte(self):
+        self.assertEqual(
+            lex(u'#bytes("\\xff")')[0], Bytestring([255]))
+
+        self.assertEqual(
+            lex(u'#bytes("\\xFF")')[0], Bytestring([255]))
+
+    def test_lex_invalid_escaped_byte(self):
+        # Not hexadecimal characters:
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\xgg")')
+
+        # Not starting with \x
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\yff")')
+
+        # Insufficient characters:
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\xa")')
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\x")')
+            
+        # Insufficient characters before next escaped character:
+        with self.assertRaises(LexFailed):
+            lex(u'#bytes("\\xa\\xaa")')
+
 
 class BooleanLexTest(BuiltInTestCase):
     def test_lex_boolean(self):
