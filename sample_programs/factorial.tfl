@@ -1,0 +1,15 @@
+; Iterative implementation of a factorial function in Trifle.
+(function factorial (x)
+  (if (< x 3)
+      x
+    (let (result x)
+      (while (> x 1)
+        (set! result (* result x))
+        (dec! x)
+      )
+      result
+    )
+  )
+)
+
+(print! (factorial 10))
