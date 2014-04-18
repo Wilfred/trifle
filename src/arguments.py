@@ -23,7 +23,7 @@ def check_args(name, args, min=ANY, max=ANY):
                 )
             else:
                 raise ArityError(
-                    u"%s takes %d arguments, but got %d: %s" % (name, len(args), min, List(args).repr())
+                    u"%s takes %d arguments, but got %d: %s" % (name, min, len(args), List(args).repr())
                 )
 
     elif max == ANY:
