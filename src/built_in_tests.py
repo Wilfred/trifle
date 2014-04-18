@@ -1003,12 +1003,19 @@ class EqualTest(BuiltInTestCase):
             TRUE)
 
     def test_list_equal(self):
+        # Equal
         self.assertEqual(
             self.eval(u"(equal? (quote (1 (2))) (quote (1 (2))))"),
             TRUE)
 
+        # Same length, different values.
         self.assertEqual(
             self.eval(u"(equal? (quote (1 (2))) (quote (1 (3))))"),
+            FALSE)
+
+        # Different lengths.
+        self.assertEqual(
+            self.eval(u"(equal? (quote (1 (2))) (quote (1)))"),
             FALSE)
 
     def test_bytes_equal(self):
@@ -1045,6 +1052,30 @@ class EqualTest(BuiltInTestCase):
     def test_different_types(self):
         self.assertEqual(
             self.eval(u"(equal? #true 1)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u"(equal? (quote x) #null)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 1.0 #null)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 1 #null)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 'a' #null)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(equal? "a" #null)'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(equal? #bytes("a") #null)'),
             FALSE)
 
     def test_equal_wrong_number_of_args(self):
