@@ -65,7 +65,13 @@ def env_with_prelude():
     return env
 
 
-# todo: some unit tests to ensure the top level works
+USAGE = """Usage:
+./trifle
+./trifle -i <code snippet>
+./trifle <path to script>"""
+
+
+# TODO: unit tests for passing a path to the interpreter, and ideally the REPL too.
 def entry_point(argv):
     """Either a file name:
     $ ./trifle ~/files/foo.tfl
@@ -141,12 +147,8 @@ def entry_point(argv):
                 return 0
             return 0
             
-    print """Usage:
-./trifle
-./trifle -i <code snippet>
-./trifle <path to script>"""
+    print USAGE
     return 1
-        
 
 
 def target(*args):
