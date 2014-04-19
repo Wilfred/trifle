@@ -32,7 +32,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
-        return evaluate_all(parse(lex(program)), fresh_environment())
+        return evaluate_all(parse(lex(program)), fresh_environment(), [])
 
 
 
@@ -1387,7 +1387,7 @@ class EnvironmentVariablesTest(BuiltInTestCase):
         env = Environment([Scope({
             u'x': Integer(1),
         })])
-        self.assertEqual(evaluate(parse_one(lex(u"x")), env),
+        self.assertEqual(evaluate(parse_one(lex(u"x")), env, []),
                          Integer(1))
 
     def test_unbound_variable(self):
@@ -1487,7 +1487,7 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         self.assertEqual(
             evaluate_all(parse(lex(
                 u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)) #null)))"
-                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
+                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude(), []),
             Integer(2)
         )
 

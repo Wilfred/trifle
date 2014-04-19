@@ -9,7 +9,7 @@ from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
-def evaluate_all(expressions, environment):
+def evaluate_all(expressions, environment, stack):
     """Evaluate a trifle List of expressions, starting with a fresh environment
     containing only the built-in functions, special expressions and macros.
 
@@ -17,19 +17,19 @@ def evaluate_all(expressions, environment):
     result = NULL
     
     for expression in expressions.values:
-        result = evaluate(expression, environment)
+        result = evaluate(expression, environment, stack)
 
     return result
 
 
-def evaluate(expression, environment):
+def evaluate(expression, environment, stack):
     """Evaluate the given expression in the given environment.
 
     """
     if isinstance(expression, List):
-        return evaluate_list(expression, environment)
+        return evaluate_list(expression, environment, stack)
     else:
-        return evaluate_value(expression, environment)
+        return evaluate_value(expression, environment, stack)
 
 
 # todo: this would be simpler if `values` was also a trifle List
@@ -69,7 +69,7 @@ def build_scope(name, parameters, values):
     return scope
 
 
-def expand_macro(macro, arguments, environment):
+def expand_macro(macro, arguments, environment, stack):
     """Expand the given macro by one iteration. Arguments should be a
     Python list of unevaluated Trifle values.
 
@@ -78,12 +78,12 @@ def expand_macro(macro, arguments, environment):
     inner_scope = build_scope(macro.name, macro.arguments, arguments)
     macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
-    expression = evaluate_all(macro.body, macro_env)
+    expression = evaluate_all(macro.body, macro_env, stack)
     return expression
 
 
 # todo: error on evaluating an empty list
-def evaluate_list(node, environment):
+def evaluate_list(node, environment, stack):
     list_elements = node.values
     head = list_elements[0]
     raw_arguments = list_elements[1:]
@@ -93,30 +93,30 @@ def evaluate_list(node, environment):
     if isinstance(head, Symbol):
         if head.symbol_name in special_expressions:
             special_expression = special_expressions[head.symbol_name]
-            return special_expression.call(raw_arguments, environment)
+            return special_expression.call(raw_arguments, environment, stack)
     
-    function = evaluate(list_elements[0], environment)
+    function = evaluate(list_elements[0], environment, stack)
 
     if isinstance(function, Function):
         arguments = [
-            evaluate(el, environment) for el in raw_arguments]
+            evaluate(el, environment, stack) for el in raw_arguments]
         return function.call(arguments)
         
     if isinstance(function, FunctionWithEnv):
         arguments = [
-            evaluate(el, environment) for el in raw_arguments]
-        return function.call(arguments, environment)
+            evaluate(el, environment, stack) for el in raw_arguments]
+        return function.call(arguments, environment, stack)
         
     elif isinstance(function, Macro):
-        expression = expand_macro(function, raw_arguments, environment)
+        expression = expand_macro(function, raw_arguments, environment, stack)
 
         # Evaluate the expanded expression
-        return evaluate(expression, environment)
+        return evaluate(expression, environment, stack)
 
     elif isinstance(function, Lambda):
         # First, evaluate the arguments to this lambda.
         arguments = [
-            evaluate(el, environment) for el in raw_arguments]
+            evaluate(el, environment, stack) for el in raw_arguments]
 
         # Build a new environment to evaluate with.
         inner_scope = build_scope(u"<lambda>", function.arguments, arguments)
@@ -124,14 +124,14 @@ def evaluate_list(node, environment):
         lambda_env = function.env.with_nested_scope(inner_scope)
 
         # Evaluate the lambda's body in our new environment.
-        return evaluate_all(function.body, lambda_env)
+        return evaluate_all(function.body, lambda_env, stack)
     else:
         # todoc: this error
         raise TrifleTypeError(u"%s isn't a function or macro."
                               % function.repr())
 
 
-def evaluate_value(value, environment):
+def evaluate_value(value, environment, stack):
     if isinstance(value, Integer):
         # Integers evaluate to themselves
         return value

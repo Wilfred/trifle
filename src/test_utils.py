@@ -3,4 +3,4 @@ from main import env_with_prelude
 
 
 def evaluate_with_prelude(expression):
-    return evaluate(expression, env_with_prelude())
+    return evaluate(expression, env_with_prelude(), [])

@@ -13,7 +13,7 @@ from arguments import check_args
 
 
 class SetSymbol(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u"set-symbol!", args, 2, 2)
 
         variable_name = args[0]
@@ -30,7 +30,7 @@ class SetSymbol(FunctionWithEnv):
 
 
 class Let(Special):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'let', args, 1)
 
         bindings = args[0]
@@ -71,16 +71,16 @@ class Let(Special):
         # expression. We allow access to previous symbols in this let.
         for i in range(len(bindings.values) / 2):
             symbol = bindings.values[2 * i]
-            value = evaluate(bindings.values[2 * i + 1], let_env)
+            value = evaluate(bindings.values[2 * i + 1], let_env, stack)
             let_scope.set(symbol.symbol_name, value)
 
-        return evaluate_all(list_expressions, let_env)
+        return evaluate_all(list_expressions, let_env, stack)
 
 
 class LambdaFactory(Special):
     """Return a fresh Lambda object every time it's called."""
 
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'lambda', args, 1)
 
         parameters = args[0]
@@ -98,7 +98,7 @@ class DefineMacro(Special):
 
     """
 
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'macro', args, 3)
 
         macro_name = args[0]
@@ -128,7 +128,7 @@ class ExpandMacro(Special):
     return the resulting (unevaluated) expression.
 
     """
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'expand-macro', args, 1)
 
         expr = args[0]
@@ -144,14 +144,14 @@ class ExpandMacro(Special):
         macro_name = expr.values[0]
 
         from evaluator import evaluate, expand_macro
-        macro = evaluate(macro_name, env)
+        macro = evaluate(macro_name, env, [])
 
         if not isinstance(macro, Macro):
             raise TrifleTypeError(
                 u"Expected a macro, but got: %s" % macro.repr())
 
         macro_args = expr.values[1:]
-        return expand_macro(macro, macro_args, env)
+        return expand_macro(macro, macro_args, env, [])
 
 
 # todo: it would be nice to define this as a trifle macro using a 'literal' primitive
@@ -192,7 +192,7 @@ class Quote(Special):
         return True
     
     # todo: fix the potential stack overflow
-    def evaluate_unquote_calls(self, expression, env):
+    def evaluate_unquote_calls(self, expression, env, stack):
         from evaluator import evaluate
         if isinstance(expression, List):
             for index, item in enumerate(copy(expression).values):
@@ -203,7 +203,7 @@ class Quote(Special):
                             u"unquote takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    expression.values[index] = evaluate(unquote_argument, env)
+                    expression.values[index] = evaluate(unquote_argument, env, stack)
                     
                 elif self.is_unquote_star(item):
                     if len(item.values) != 2:
@@ -211,7 +211,7 @@ class Quote(Special):
                             u"unquote* takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    values_list = evaluate(unquote_argument, env)
+                    values_list = evaluate(unquote_argument, env, stack)
 
                     if not isinstance(values_list, List):
                         raise TrifleTypeError(
@@ -222,11 +222,11 @@ class Quote(Special):
 
                 elif isinstance(item, List):
                     # recurse the nested list
-                    self.evaluate_unquote_calls(item, env)
+                    self.evaluate_unquote_calls(item, env, stack)
 
         return expression
     
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'quote', args, 1, 1)
 
         if isinstance(args[0], List) and args[0].values:
@@ -237,37 +237,37 @@ class Quote(Special):
                     raise TrifleValueError(
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
-        result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env)
+        result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env, stack)
         return result.values[0]
 
 
 class If(Special):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'if', args, 3, 3)
 
         from evaluator import evaluate
 
         raw_condition = args[0]
-        condition = evaluate(raw_condition, env)
+        condition = evaluate(raw_condition, env, stack)
         
         then = args[1]
         otherwise = args[2]
 
         if condition == TRUE:
-            return evaluate(then, env)
+            return evaluate(then, env, stack)
         elif condition == FALSE:
-            return evaluate(otherwise, env)
+            return evaluate(otherwise, env, stack)
         else:
             raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
 
 
 class While(Special):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'while', args, 1)
 
         from evaluator import evaluate
         while True:
-            condition = evaluate(args[0], env)
+            condition = evaluate(args[0], env, stack)
             if condition == FALSE:
                 break
             elif condition != TRUE:
@@ -276,7 +276,7 @@ class While(Special):
                     u"but got: %s" % condition.repr())
 
             for arg in args[1:]:
-                evaluate(arg, env)
+                evaluate(arg, env, stack)
 
         return NULL
 
@@ -1017,15 +1017,15 @@ class Parse(Function):
 
 # todo: consider allowing the user to pass in an environment for sandboxing
 class Eval(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'eval', args, 1, 1)
 
         from evaluator import evaluate
-        return evaluate(args[0], env)
+        return evaluate(args[0], env, stack)
 
 
 class Call(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'call', args, 2, 2)
         function = args[0]
         arguments = args[1]
@@ -1046,11 +1046,11 @@ class Call(FunctionWithEnv):
         expression = List([function] + arguments.values)
 
         from evaluator import evaluate
-        return evaluate(expression, env)
+        return evaluate(expression, env, stack)
         
 # todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'defined?', args, 1, 1)
         symbol = args[0]
 

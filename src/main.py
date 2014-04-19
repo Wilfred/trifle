@@ -60,7 +60,7 @@ def env_with_prelude():
     parse_tree = parse(lexed_tokens)
 
     env = fresh_environment()
-    evaluate_all(parse_tree, env)
+    evaluate_all(parse_tree, env, [])
 
     return env
 
@@ -92,7 +92,7 @@ def entry_point(argv):
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
 
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
+                print evaluate_all(parse_tree, env, []).repr().encode('utf-8')
             except TrifleError as e:
                 print u"Error: %s" % e.message
             except SystemExit:
@@ -114,7 +114,7 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            evaluate_all(parse_tree, env).repr()
+            evaluate_all(parse_tree, env, []).repr()
         except TrifleError as e:
             print u"Error: %s" % e.message
             return 1
@@ -133,7 +133,7 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             try:
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
+                print evaluate_all(parse_tree, env, []).repr().encode('utf-8')
             except TrifleError as e:
                 print u"Error: %s" % e.message
                 return 1
