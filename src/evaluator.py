@@ -3,7 +3,7 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Null, NULL,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String)
-from errors import UnboundVariable, TrifleTypeError
+from errors import UnboundVariable, TrifleTypeError, StackOverflow
 from almost_python import zip
 from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
@@ -82,53 +82,69 @@ def expand_macro(macro, arguments, environment, stack):
     return expression
 
 
+# TODO: allow users to change this at runtime.
+MAX_STACK_DEPTH = 100
+
+
 # todo: error on evaluating an empty list
 def evaluate_list(node, environment, stack):
+    """Given a List representing a single line of Trifle code, execute it
+    in this environment.
+
+    """
+    stack.append(node)
+
+    if len(stack) > MAX_STACK_DEPTH:
+        raise StackOverflow(u"Stack overflow")
+    
     list_elements = node.values
     head = list_elements[0]
     raw_arguments = list_elements[1:]
 
     # Evaluate special expressions if this list starts with a symbol
     # representing a special expression.
-    if isinstance(head, Symbol):
-        if head.symbol_name in special_expressions:
+    if isinstance(head, Symbol) and head.symbol_name in special_expressions:
             special_expression = special_expressions[head.symbol_name]
-            return special_expression.call(raw_arguments, environment, stack)
-    
-    function = evaluate(list_elements[0], environment, stack)
+            result = special_expression.call(raw_arguments, environment, stack)
 
-    if isinstance(function, Function):
-        arguments = [
-            evaluate(el, environment, stack) for el in raw_arguments]
-        return function.call(arguments)
-        
-    if isinstance(function, FunctionWithEnv):
-        arguments = [
-            evaluate(el, environment, stack) for el in raw_arguments]
-        return function.call(arguments, environment, stack)
-        
-    elif isinstance(function, Macro):
-        expression = expand_macro(function, raw_arguments, environment, stack)
-
-        # Evaluate the expanded expression
-        return evaluate(expression, environment, stack)
-
-    elif isinstance(function, Lambda):
-        # First, evaluate the arguments to this lambda.
-        arguments = [
-            evaluate(el, environment, stack) for el in raw_arguments]
-
-        # Build a new environment to evaluate with.
-        inner_scope = build_scope(u"<lambda>", function.arguments, arguments)
-
-        lambda_env = function.env.with_nested_scope(inner_scope)
-
-        # Evaluate the lambda's body in our new environment.
-        return evaluate_all(function.body, lambda_env, stack)
     else:
-        # todoc: this error
-        raise TrifleTypeError(u"%s isn't a function or macro."
-                              % function.repr())
+        function = evaluate(list_elements[0], environment, stack)
+
+        if isinstance(function, Function):
+            arguments = [
+                evaluate(el, environment, stack) for el in raw_arguments]
+            result = function.call(arguments)
+
+        elif isinstance(function, FunctionWithEnv):
+            arguments = [
+                evaluate(el, environment, stack) for el in raw_arguments]
+            result = function.call(arguments, environment, stack)
+
+        elif isinstance(function, Macro):
+            expression = expand_macro(function, raw_arguments, environment, stack)
+
+            # Evaluate the expanded expression
+            result = evaluate(expression, environment, stack)
+
+        elif isinstance(function, Lambda):
+            # First, evaluate the arguments to this lambda.
+            arguments = [
+                evaluate(el, environment, stack) for el in raw_arguments]
+
+            # Build a new environment to evaluate with.
+            inner_scope = build_scope(u"<lambda>", function.arguments, arguments)
+
+            lambda_env = function.env.with_nested_scope(inner_scope)
+
+            # Evaluate the lambda's body in our new environment.
+            result = evaluate_all(function.body, lambda_env, stack)
+        else:
+            # todoc: this error
+            raise TrifleTypeError(u"%s isn't a function or macro."
+                                  % function.repr())
+
+    stack.pop()
+    return result
 
 
 def evaluate_value(value, environment, stack):
