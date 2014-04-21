@@ -233,6 +233,7 @@ for which (FUNC element) is #true."
 )
 
 ; TODO: case should throw an error on invalid input
+; TODO: add a nice way of writing an :else clause.
 ; e.g. (case ())
 (macro case (:rest clauses)
   (if (not (empty? clauses))
