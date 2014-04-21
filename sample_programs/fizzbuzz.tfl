@@ -9,6 +9,6 @@
     ((zero? (mod i 15)) (print! "FizzBuzz"))
     ((zero? (mod i 5)) (print! "Buzz"))
     ((zero? (mod i 3)) (print! "Fizz"))
-    (:else (print! i))
+    (#true (print! i))
   )
 )
