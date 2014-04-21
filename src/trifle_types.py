@@ -85,7 +85,7 @@ def greatest_common_divisor(a, b):
 
     return a
 
-# TODOC
+
 class Fraction(TrifleType):
     def repr(self):
         return u"%d/%d" % (self.numerator, self.denominator)
