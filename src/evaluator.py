@@ -43,15 +43,53 @@ def evaluate_all(expressions, environment, stack):
     return result
 
 
-def evaluate(expression, environment, stack):
+def evaluate(expression, environment):
     """Evaluate the given expression in the given environment.
 
     """
-    if isinstance(expression, List):
-        return evaluate_list(expression, environment, stack)
-    else:
-        return evaluate_value(expression, environment, stack)
+    stack = [Frame(expression)]
 
+    while stack:
+        frame = stack[-1]
+        print frame
+
+        if isinstance(frame.expression, List):
+            list_elements = frame.expression.values
+            head = list_elements[0]
+            raw_arguments = list_elements[1:]
+            
+            # Handle special expressions.
+            if isinstance(head, Symbol) and head.symbol_name in special_expressions:
+                special_expression = special_expressions[head.symbol_name]
+                result = special_expression.call(raw_arguments, environment, stack)
+
+                # Special expressions either return None, meaning keep
+                # going, or a Trifle value, in which case they're done.
+                if not result is None:
+                    stack.pop()
+
+                    if stack:
+                        frame = stack[-1]
+                        frame.evalled.append(result)
+                    else:
+                        # We evaluated a value at the top level, nothing left to do.
+                        return result
+
+            else:
+                assert False, "TODO: %s" % frame.expression
+
+        else:
+            result = evaluate_value(frame.expression, environment)
+
+            stack.pop()
+
+            if stack:
+                frame = stack[-1]
+                frame.evalled.append(result)
+            else:
+                # We evaluated a value at the top level, nothing left to do.
+                return result
+            
 
 # todo: this would be simpler if `values` was also a trifle List
 def build_scope(name, parameters, values):
@@ -113,7 +151,7 @@ def evaluate_list(node, environment, stack):
     in this environment.
 
     """
-    stack.append(node)
+    stack.append(Frame(node))
 
     if len(stack) > MAX_STACK_DEPTH:
         raise StackOverflow(u"Stack overflow")
@@ -125,8 +163,8 @@ def evaluate_list(node, environment, stack):
     # Evaluate special expressions if this list starts with a symbol
     # representing a special expression.
     if isinstance(head, Symbol) and head.symbol_name in special_expressions:
-            special_expression = special_expressions[head.symbol_name]
-            result = special_expression.call(raw_arguments, environment, stack)
+        special_expression = special_expressions[head.symbol_name]
+        result = special_expression.call(raw_arguments, environment, stack)
 
     else:
         function = evaluate(list_elements[0], environment, stack)
@@ -168,7 +206,7 @@ def evaluate_list(node, environment, stack):
     return result
 
 
-def evaluate_value(value, environment, stack):
+def evaluate_value(value, environment):
     if isinstance(value, Integer):
         # Integers evaluate to themselves
         return value

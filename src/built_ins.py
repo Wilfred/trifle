@@ -245,20 +245,52 @@ class If(Special):
     def call(self, args, env, stack):
         check_args(u'if', args, 3, 3)
 
-        from evaluator import evaluate
-
-        raw_condition = args[0]
-        condition = evaluate(raw_condition, env, stack)
-        
+        condition = args[0]
         then = args[1]
         otherwise = args[2]
 
-        if condition == TRUE:
-            return evaluate(then, env, stack)
-        elif condition == FALSE:
-            return evaluate(otherwise, env, stack)
+        frame = stack[-1]
+
+        # TODO: Move Frame to separate module to fix the cyclic import.
+        from evaluator import Frame
+        
+        if frame.expression_index == 0:
+            # We don't evaluate the if symbol.
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 1:
+            # Evaluate the condition.
+            stack.append(Frame(condition))
+
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 2:
+            # We've evaluated the condition, so either evaluate 'then'
+            # or 'otherwise' depending on the return value.
+            evalled_condition = frame.evalled[-1]
+            
+            if evalled_condition == TRUE:
+                stack.append(Frame(then))
+                
+                frame.expression_index += 1
+                return None
+
+            elif evalled_condition == FALSE:
+                stack.append(Frame(otherwise))
+                
+                frame.expression_index += 2
+                return None
+
+            else:
+                raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" %
+                                      evalled_condition.repr())
+                
         else:
-            raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
+            # We've evaluated the condition and either 'then' or
+            # 'otherwise', so pop this frame and return.
+            return frame.evalled[-1]
 
 
 class While(Special):
