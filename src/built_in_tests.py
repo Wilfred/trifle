@@ -1141,6 +1141,23 @@ class LessThanTest(BuiltInTestCase):
             self.eval(u"(< 3.0 2.0)"),
             FALSE)
 
+    def test_less_than_fractions(self):
+        self.assertEqual(
+            self.eval(u"(< 1 3/2)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(< 1/2 1/3)"),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u"(< -1/2 1/3)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(< 1/2 0.1)"),
+            FALSE)
+
     def test_less_than_typeerror(self):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(< #true #false)")

@@ -728,46 +728,56 @@ class Div(Function):
 class LessThan(Function):
     def call(self, args):
         check_args(u'<', args, 2)
-        
-        float_args = False
-        for arg in args:
-            if not isinstance(arg, Integer):
-                if isinstance(arg, Float):
-                    float_args = True
-                else:
-                    raise TrifleTypeError(
-                        u"< requires numbers, but got: %s." % arg.repr())
 
-        if float_args:
-            if isinstance(args[0], Integer):
-                previous_number = float(args[0].value)
+        float_args = False
+        fraction_args = False
+
+        for arg in args:
+            if isinstance(arg, Integer):
+                pass
+            elif isinstance(arg, Fraction):
+                fraction_args = True
+            elif isinstance(arg, Float):
+                float_args = True
             else:
-                previous_number = args[0].float_value
+                raise TrifleTypeError(
+                    u"< requires numbers, but got: %s." % arg.repr())
+
+        args = coerce_numbers(args)
+                
+        previous_number = args[0]
+        if float_args:
 
             for arg in args[1:]:
-                if isinstance(arg, Integer):
-                    # TODO: we should document which direcction we round in this situation.
-                    number = float(arg.value)
-                else:
-                    number = arg.float_value
-
-                if not previous_number < number:
+                if not previous_number.float_value < arg.float_value:
                     return FALSE
 
-                previous_number = number
+                previous_number = arg
+                    
+            return TRUE
 
+        elif fraction_args:
+            
+            for arg in args[1:]:
+                # To find out if a/b is less than c/d, we compare whether
+                # ad < bc. This is safe because b and d are always positive.
+                ad = previous_number.numerator * arg.denominator
+                bc = arg.numerator * previous_number.denominator
+
+                if not ad < bc:
+                    return FALSE
+
+                previous_number = arg
+                    
             return TRUE
 
         else:
             # Only integers.
-            previous_number = args[0].value
             for arg in args[1:]:
-                number = arg.value
-
-                if not previous_number < number:
+                if not previous_number.value < arg.value:
                     return FALSE
 
-                previous_number = number
+                previous_number = arg
 
             return TRUE
 
