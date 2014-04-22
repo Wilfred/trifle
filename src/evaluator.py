@@ -9,6 +9,27 @@ from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
+# TODO: a stack class with push, pop and peek methods so we can call
+# StackOverflow at the right time.
+
+class Frame(object):
+    def __init__(self, expression):
+        # The expression we're evaluating, e.g. (if x y 2)
+        self.expression = expression
+
+        # The current point we've executed up to in the expression, e.g. 2.
+        self.expression_index = 0
+
+        # Results of parts of the expression that we have evaluated, e.g.
+        # [TRUE, Integer(3)]
+        self.evalled = []
+
+    def __repr__(self):
+        return ("expession: %r, index: %d, evalled: %r" %
+                (self.expression, self.expression_index, self.evalled))
+
+
+
 def evaluate_all(expressions, environment, stack):
     """Evaluate a trifle List of expressions, starting with a fresh environment
     containing only the built-in functions, special expressions and macros.
