@@ -187,6 +187,8 @@ def split_tokens(text):
                 break
 
         if not found_match:
+            # TODO: It would be nice to suggest where open
+            # brackets/quotation marks started, to give the user a hint.
             raise LexFailed(u"Could not lex remainder: '%s'" % text)
 
     return tokens
