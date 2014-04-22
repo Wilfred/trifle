@@ -211,4 +211,4 @@ def evaluate_value(value, environment, stack):
             raise UnboundVariable(u"No such variable defined: '%s'"
                                   % symbol_name)
     else:
-        assert False, "I don't know how to evaluate that value."
+        assert False, "I don't know how to evaluate that value: %s" % value
