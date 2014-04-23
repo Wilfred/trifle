@@ -48,6 +48,10 @@ def evaluate(expression, environment):
     """
     stack = [Frame(expression)]
 
+    # We evaluate expressions by pushing them on the stack, then
+    # iterating through the elements of the list, evaluating as
+    # appropriate. This ensures recursion in the Trifle program does
+    # not require recursion in the interpreter.
     while stack:
         frame = stack[-1]
         print frame
@@ -62,24 +66,15 @@ def evaluate(expression, environment):
                 special_expression = special_expressions[head.symbol_name]
                 result = special_expression.call(raw_arguments, environment, stack)
 
-                # Special expressions either return None, meaning keep
-                # going, or a Trifle value, in which case they're done.
-                if not result is None:
-                    stack.pop()
-
-                    if stack:
-                        frame = stack[-1]
-                        frame.evalled.append(result)
-                    else:
-                        # We evaluated a value at the top level, nothing left to do.
-                        return result
-
             else:
                 assert False, "TODO: %s" % frame.expression
 
         else:
             result = evaluate_value(frame.expression, environment)
 
+        # Returning None means we have work left to do, but a Triflfe value means
+        # we're done with this frame.
+        if not result is None:
             stack.pop()
 
             if stack:
@@ -88,7 +83,7 @@ def evaluate(expression, environment):
             else:
                 # We evaluated a value at the top level, nothing left to do.
                 return result
-            
+
 
 # todo: this would be simpler if `values` was also a trifle List
 def build_scope(name, parameters, values):
