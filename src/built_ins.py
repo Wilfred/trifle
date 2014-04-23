@@ -249,7 +249,7 @@ class If(Special):
         then = args[1]
         otherwise = args[2]
 
-        frame = stack[-1]
+        frame = stack.peek()
 
         # TODO: Move Frame to separate module to fix the cyclic import.
         from evaluator import Frame
@@ -261,7 +261,7 @@ class If(Special):
 
         elif frame.expression_index == 1:
             # Evaluate the condition.
-            stack.append(Frame(condition))
+            stack.push(Frame(condition))
 
             frame.expression_index += 1
             return None
@@ -272,13 +272,13 @@ class If(Special):
             evalled_condition = frame.evalled[-1]
             
             if evalled_condition == TRUE:
-                stack.append(Frame(then))
+                stack.push(Frame(then))
                 
                 frame.expression_index += 1
                 return None
 
             elif evalled_condition == FALSE:
-                stack.append(Frame(otherwise))
+                stack.push(Frame(otherwise))
                 
                 frame.expression_index += 2
                 return None

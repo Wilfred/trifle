@@ -9,8 +9,29 @@ from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
-# TODO: a stack class with push, pop and peek methods so we can call
-# StackOverflow at the right time.
+# TODO: allow users to change this at runtime.
+MAX_STACK_DEPTH = 100
+
+
+class Stack(object):
+    def __init__(self):
+        self.values = []
+
+    def push(self, value):
+        if len(self.values) > MAX_STACK_DEPTH:
+            raise StackOverflow(u"Stack Overflow")
+        
+        self.values.append(value)
+
+    def pop(self):
+        return self.values.pop()
+
+    def peek(self):
+        return self.values[-1]
+
+    def is_empty(self):
+        return bool(self.values)
+
 
 class Frame(object):
     def __init__(self, expression):
@@ -46,14 +67,15 @@ def evaluate(expression, environment):
     """Evaluate the given expression in the given environment.
 
     """
-    stack = [Frame(expression)]
+    stack = Stack()
+    stack.push(Frame(expression))
 
     # We evaluate expressions by pushing them on the stack, then
     # iterating through the elements of the list, evaluating as
     # appropriate. This ensures recursion in the Trifle program does
     # not require recursion in the interpreter.
     while stack:
-        frame = stack[-1]
+        frame = stack.peek()
         print frame
 
         if isinstance(frame.expression, List):
@@ -77,8 +99,8 @@ def evaluate(expression, environment):
         if not result is None:
             stack.pop()
 
-            if stack:
-                frame = stack[-1]
+            if stack.is_empty():
+                frame = stack.peek()
                 frame.evalled.append(result)
             else:
                 # We evaluated a value at the top level, nothing left to do.
@@ -135,22 +157,18 @@ def expand_macro(macro, arguments, environment, stack):
     return expression
 
 
-# TODO: allow users to change this at runtime.
-MAX_STACK_DEPTH = 100
-
-
 # todo: error on evaluating an empty list
 def evaluate_function_call(expression, environment, stack):
     """Given a List representing a single Trifle function call (not a
     special expression), execute it in this environment.
 
     """
-    frame = stack[-1]
+    frame = stack.peek()
     
     if frame.expression_index < len(expression.values):
         # Evaluate all of the elmenest of this list (we work left-to-right).
         raw_argument = expression.values[frame.expression_index]
-        stack.append(Frame(raw_argument))
+        stack.push(Frame(raw_argument))
 
         frame.expression_index += 1
         return None
