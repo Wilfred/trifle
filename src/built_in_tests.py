@@ -1401,7 +1401,7 @@ class EnvironmentVariablesTest(BuiltInTestCase):
         env = Environment([Scope({
             u'x': Integer(1),
         })])
-        self.assertEqual(evaluate(parse_one(lex(u"x")), env, []),
+        self.assertEqual(evaluate(parse_one(lex(u"x")), env),
                          Integer(1))
 
     def test_unbound_variable(self):

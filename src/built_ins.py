@@ -203,7 +203,7 @@ class Quote(Special):
                             u"unquote takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    expression.values[index] = evaluate(unquote_argument, env, stack)
+                    expression.values[index] = evaluate(unquote_argument, env)
                     
                 elif self.is_unquote_star(item):
                     if len(item.values) != 2:
@@ -211,7 +211,7 @@ class Quote(Special):
                             u"unquote* takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    values_list = evaluate(unquote_argument, env, stack)
+                    values_list = evaluate(unquote_argument, env)
 
                     if not isinstance(values_list, List):
                         raise TrifleTypeError(
@@ -242,7 +242,7 @@ class Quote(Special):
 
 
 class If(Special):
-    def call(self, args, env, stack):
+    def call(self, args, environment, stack):
         check_args(u'if', args, 3, 3)
 
         condition = args[0]
@@ -299,7 +299,7 @@ class While(Special):
 
         from evaluator import evaluate
         while True:
-            condition = evaluate(args[0], env, stack)
+            condition = evaluate(args[0], env)
             if condition == FALSE:
                 break
             elif condition != TRUE:
@@ -308,7 +308,7 @@ class While(Special):
                     u"but got: %s" % condition.repr())
 
             for arg in args[1:]:
-                evaluate(arg, env, stack)
+                evaluate(arg, env)
 
         return NULL
 
