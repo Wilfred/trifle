@@ -30,15 +30,14 @@ class Frame(object):
 
 
 
-def evaluate_all(expressions, environment, stack):
-    """Evaluate a trifle List of expressions, starting with a fresh environment
-    containing only the built-in functions, special expressions and macros.
+def evaluate_all(expressions, environment):
+    """Evaluate a trifle List of expressions in the given environment.
 
     """
     result = NULL
     
     for expression in expressions.values:
-        result = evaluate(expression, environment, stack)
+        result = evaluate(expression, environment)
 
     return result
 

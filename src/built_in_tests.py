@@ -32,8 +32,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
-        return evaluate_all(parse(lex(program)), fresh_environment(), [])
-
+        return evaluate_all(parse(lex(program)), fresh_environment())
 
 
 class CommentLexTest(BuiltInTestCase):
