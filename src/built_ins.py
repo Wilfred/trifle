@@ -13,7 +13,7 @@ from arguments import check_args
 
 
 class SetSymbol(FunctionWithEnv):
-    def call(self, args, env, stack):
+    def call(self, args, env):
         check_args(u"set-symbol!", args, 2, 2)
 
         variable_name = args[0]
@@ -71,10 +71,10 @@ class Let(Special):
         # expression. We allow access to previous symbols in this let.
         for i in range(len(bindings.values) / 2):
             symbol = bindings.values[2 * i]
-            value = evaluate(bindings.values[2 * i + 1], let_env, stack)
+            value = evaluate(bindings.values[2 * i + 1], let_env)
             let_scope.set(symbol.symbol_name, value)
 
-        return evaluate_all(list_expressions, let_env, stack)
+        return evaluate_all(list_expressions, let_env)
 
 
 class LambdaFactory(Special):
@@ -1059,15 +1059,15 @@ class Parse(Function):
 
 # todo: consider allowing the user to pass in an environment for sandboxing
 class Eval(FunctionWithEnv):
-    def call(self, args, env, stack):
+    def call(self, args, env):
         check_args(u'eval', args, 1, 1)
 
         from evaluator import evaluate
-        return evaluate(args[0], env, stack)
+        return evaluate(args[0], env)
 
 
 class Call(FunctionWithEnv):
-    def call(self, args, env, stack):
+    def call(self, args, env):
         check_args(u'call', args, 2, 2)
         function = args[0]
         arguments = args[1]
@@ -1088,11 +1088,11 @@ class Call(FunctionWithEnv):
         expression = List([function] + arguments.values)
 
         from evaluator import evaluate
-        return evaluate(expression, env, stack)
+        return evaluate(expression, env)
         
 # todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
-    def call(self, args, env, stack):
+    def call(self, args, env):
         check_args(u'defined?', args, 1, 1)
         symbol = args[0]
 
