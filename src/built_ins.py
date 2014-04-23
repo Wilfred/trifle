@@ -261,7 +261,7 @@ class If(Special):
 
         elif frame.expression_index == 1:
             # Evaluate the condition.
-            stack.push(Frame(condition))
+            stack.push(Frame(condition, environment))
 
             frame.expression_index += 1
             return None
@@ -272,13 +272,13 @@ class If(Special):
             evalled_condition = frame.evalled[-1]
             
             if evalled_condition == TRUE:
-                stack.push(Frame(then))
+                stack.push(Frame(then, environment))
                 
                 frame.expression_index += 1
                 return None
 
             elif evalled_condition == FALSE:
-                stack.push(Frame(otherwise))
+                stack.push(Frame(otherwise, environment))
                 
                 frame.expression_index += 2
                 return None

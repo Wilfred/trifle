@@ -34,9 +34,13 @@ class Stack(object):
 
 
 class Frame(object):
-    def __init__(self, expression):
+    def __init__(self, expression, environment):
         # The expression we're evaluating, e.g. (if x y 2)
         self.expression = expression
+
+        # The lexical environment, so any variables defined in this
+        # function context and any enclosing contexts.
+        self.environment = environment
 
         # The current point we've executed up to in the expression, e.g. 2.
         self.expression_index = 0
@@ -68,7 +72,7 @@ def evaluate(expression, environment):
 
     """
     stack = Stack()
-    stack.push(Frame(expression))
+    stack.push(Frame(expression, environment))
 
     # We evaluate expressions by pushing them on the stack, then
     # iterating through the elements of the list, evaluating as
@@ -76,7 +80,6 @@ def evaluate(expression, environment):
     # not require recursion in the interpreter.
     while stack:
         frame = stack.peek()
-        print frame
 
         if isinstance(frame.expression, List):
             list_elements = frame.expression.values
@@ -86,13 +89,13 @@ def evaluate(expression, environment):
             # Handle special expressions.
             if isinstance(head, Symbol) and head.symbol_name in special_expressions:
                 special_expression = special_expressions[head.symbol_name]
-                result = special_expression.call(raw_arguments, environment, stack)
+                result = special_expression.call(raw_arguments, frame.environment, stack)
 
             else:
-                result = evaluate_function_call(frame.expression, environment, stack)
+                result = evaluate_function_call(stack)
 
         else:
-            result = evaluate_value(frame.expression, environment)
+            result = evaluate_value(frame.expression, frame.environment)
 
         # Returning None means we have work left to do, but a Triflfe value means
         # we're done with this frame.
@@ -158,22 +161,24 @@ def expand_macro(macro, arguments, environment, stack):
 
 
 # todo: error on evaluating an empty list
-def evaluate_function_call(expression, environment, stack):
-    """Given a List representing a single Trifle function call (not a
-    special expression), execute it in this environment.
+def evaluate_function_call(stack):
+    """Given a stack where the the top element is a single Trifle call it,
+    execute it iteratively.
 
     """
     frame = stack.peek()
+    environment = frame.environment
+    expression = frame.expression
     
     if frame.expression_index < len(expression.values):
         # Evaluate all of the elmenest of this list (we work left-to-right).
         raw_argument = expression.values[frame.expression_index]
-        stack.push(Frame(raw_argument))
+        stack.push(Frame(raw_argument, environment))
 
         frame.expression_index += 1
         return None
 
-    else:
+    elif frame.expression_index == len(expression.values):
         # We've evaluated the function and its arguments, now call the
         # function with the evalled arguments.
         function = frame.evalled[0]
@@ -195,13 +200,20 @@ def evaluate_function_call(expression, environment, stack):
             lambda_env = function.env.with_nested_scope(inner_scope)
 
             # Evaluate the lambda's body in our new environment.
-            # TODO: use the stack
-            return evaluate_all(function.body, lambda_env, stack)
+            # TODO: by replacing the stack here, we could do TCO.
+            stack.push(Frame(function.body, lambda_env))
+
+            frame.expression_index += 1
+            return None
 
         else:
             # todoc: this error
             raise TrifleTypeError(u"%s isn't a function or macro."
                                   % function.repr())
+
+    else:
+        # We had a lambda body and we've now evalled it, so we're done.
+        return frame.evalled[0]
 
 
 def evaluate_value(value, environment):
