@@ -34,7 +34,7 @@ class Stack(object):
 
 
 class Frame(object):
-    def __init__(self, expression, environment):
+    def __init__(self, expression, environment, is_lambda=False):
         # The expression we're evaluating, e.g. (if x y 2)
         self.expression = expression
 
@@ -49,10 +49,14 @@ class Frame(object):
         # [TRUE, Integer(3)]
         self.evalled = []
 
-    def __repr__(self):
-        return ("expession: %r, index: %d, evalled: %r" %
-                (self.expression, self.expression_index, self.evalled))
+        # Is this the body of a lambda expression? If so, we will
+        # evaluate each list element and return the last.
+        self.is_lambda = is_lambda
 
+    def __repr__(self):
+        return ("expession: %r,\tindex: %d,\tis_lambda: %s,\tevalled: %r" %
+                (self.expression, self.expression_index, self.is_lambda,
+                 self.evalled))
 
 
 def evaluate_all(expressions, environment):
@@ -179,6 +183,11 @@ def evaluate_function_call(stack):
         return None
 
     elif frame.expression_index == len(expression.values):
+        # We've evalled all the elements of the list.
+
+        if frame.is_lambda:
+            return frame.evalled[-1]
+        
         # We've evaluated the function and its arguments, now call the
         # function with the evalled arguments.
         function = frame.evalled[0]
@@ -201,7 +210,7 @@ def evaluate_function_call(stack):
 
             # Evaluate the lambda's body in our new environment.
             # TODO: by replacing the stack here, we could do TCO.
-            stack.push(Frame(function.body, lambda_env))
+            stack.push(Frame(function.body, lambda_env, is_lambda=True))
 
             frame.expression_index += 1
             return None
@@ -213,7 +222,7 @@ def evaluate_function_call(stack):
 
     else:
         # We had a lambda body and we've now evalled it, so we're done.
-        return frame.evalled[0]
+        return frame.evalled[-1]
 
 
 def evaluate_value(value, environment):
