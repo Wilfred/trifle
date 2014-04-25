@@ -144,14 +144,14 @@ class ExpandMacro(Special):
         macro_name = expr.values[0]
 
         from evaluator import evaluate, expand_macro
-        macro = evaluate(macro_name, env, [])
+        macro = evaluate(macro_name, env)
 
         if not isinstance(macro, Macro):
             raise TrifleTypeError(
                 u"Expected a macro, but got: %s" % macro.repr())
 
         macro_args = expr.values[1:]
-        return expand_macro(macro, macro_args, env, [])
+        return expand_macro(macro, macro_args, env)
 
 
 # todo: it would be nice to define this as a trifle macro using a 'literal' primitive

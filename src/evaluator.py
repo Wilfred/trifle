@@ -151,7 +151,7 @@ def build_scope(name, parameters, values):
     return scope
 
 
-def expand_macro(macro, arguments, environment, stack):
+def expand_macro(macro, arguments, environment):
     """Expand the given macro by one iteration. Arguments should be a
     Python list of unevaluated Trifle values.
 
@@ -160,22 +160,37 @@ def expand_macro(macro, arguments, environment, stack):
     inner_scope = build_scope(macro.name, macro.arguments, arguments)
     macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
-    expression = evaluate_all(macro.body, macro_env, stack)
+    expression = evaluate_all(macro.body, macro_env)
     return expression
 
 
 # todo: error on evaluating an empty list
 def evaluate_function_call(stack):
-    """Given a stack where the the top element is a single Trifle call it,
-    execute it iteratively.
+    """Given a stack, where the the top element is a single Trifle call
+    (either a function or a macro), execute it iteratively.
 
     """
     frame = stack.peek()
     environment = frame.environment
     expression = frame.expression
-    
+
+    if frame.expression_index == 1:
+        # If the head of the list evaluated to a macro, we skip
+        # evaluating the arguments. Otherwise, continue as evaluating
+        # as normal.
+        evalled_head = frame.evalled[-1]
+        macro_arguments = frame.expression.values[1:]
+        
+        if isinstance(evalled_head, Macro):
+            expanded = expand_macro(evalled_head, macro_arguments, environment)
+            stack.push(Frame(expanded, environment))
+
+            # Ensure we don't evaluate any of arguments to the macro.
+            frame.expression_index = len(expression.values) + 1
+            return None
+
     if frame.expression_index < len(expression.values):
-        # Evaluate all of the elmenest of this list (we work left-to-right).
+        # Evaluate the remaining elements of this list (we work left-to-right).
         raw_argument = expression.values[frame.expression_index]
         stack.push(Frame(raw_argument, environment))
 
@@ -185,6 +200,8 @@ def evaluate_function_call(stack):
     elif frame.expression_index == len(expression.values):
         # We've evalled all the elements of the list.
 
+        # This list doesn't represent a function call, rather it's
+        # just a lambda body. We just want the last result.
         if frame.is_lambda:
             return frame.evalled[-1]
         
@@ -198,9 +215,6 @@ def evaluate_function_call(stack):
 
         elif isinstance(function, FunctionWithEnv):
             return function.call(arguments, environment)
-
-        elif isinstance(function, Macro):
-            assert False, "TODO: macros"
 
         elif isinstance(function, Lambda):
             # Build a new environment to evaluate with.
@@ -221,7 +235,8 @@ def evaluate_function_call(stack):
                                   % function.repr())
 
     else:
-        # We had a lambda body and we've now evalled it, so we're done.
+        # We had a lambda body or expanded macro and we've now evalled
+        # it, so we're done.
         return frame.evalled[-1]
 
 

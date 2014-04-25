@@ -1514,12 +1514,13 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         with self.assertRaises(ArityError):
             self.eval(u"(macro ignore (x) #null) (ignore)")
 
-    # FIXME: we shouldn't depend on the prelude here.
+    # TODO: we shouldn't depend on the prelude here.
+    # TODO: find a way to just call self.eval.
     def test_macro_rest_args(self):
         self.assertEqual(
             evaluate_all(parse(lex(
                 u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)) #null)))"
-                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude(), []),
+                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
             Integer(2)
         )
 

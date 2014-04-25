@@ -34,7 +34,7 @@ class PreludeTestCase(unittest.TestCase):
         # Fresh copy of the environment so tests don't interfere with one another.
         env = deepcopy(self.env)
 
-        return evaluate_all(parse(lex(program)), env, [])
+        return evaluate_all(parse(lex(program)), env)
 
     def assertEvalsTo(self, program, expected_result):
         result = self.eval(program)
