@@ -416,6 +416,19 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"((lambda (x) x) 1)"),
             Integer(1))
 
+    def test_call_not_lambda(self):
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(1)")
+
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(#null)")
+
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u'("a")')
+    
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u'((quote (1)))')
+    
     def test_call_lambda_variable_arguments(self):
         expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
         
