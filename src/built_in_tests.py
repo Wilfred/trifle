@@ -416,6 +416,11 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"((lambda (x) x) 1)"),
             Integer(1))
 
+    def test_call_lambda_last_value(self):
+        self.assertEqual(
+            self.eval(u"((lambda () 1 2))"),
+            Integer(2))
+
     def test_call_not_lambda(self):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(1)")
