@@ -297,21 +297,46 @@ class While(Special):
     def call(self, args, env, stack):
         check_args(u'while', args, 1)
 
-        from evaluator import evaluate
-        while True:
-            condition = evaluate(args[0], env)
-            if condition == FALSE:
-                break
-            elif condition != TRUE:
-                raise TrifleTypeError(
-                    u"The condition for `while` should be a boolean, "
-                    u"but got: %s" % condition.repr())
+        condition = args[0]
+        body = List(args[1:])
 
-            for arg in args[1:]:
-                evaluate(arg, env)
+        frame = stack.peek()
 
-        return NULL
+        from evaluator import Frame
 
+        if frame.expression_index == 0:
+            # We don't evaluate the while symbol.
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 1:
+            # Evaluate the condition.
+            stack.push(Frame(condition, env))
+
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 2:
+            # We've evaluated the condition, so either evaluate the body, or return.
+            evalled_condition = frame.evalled[-1]
+            
+            if evalled_condition == TRUE:
+                stack.push(Frame(body, env, is_lambda=True))
+
+                # Once we've evaluated the body, we should evaluate
+                # the condition again.
+                frame.expression_index = 1
+
+                return None
+
+            elif evalled_condition == FALSE:
+                # while loops always return #null when done.
+                return NULL
+
+            else:
+                raise TrifleTypeError(u"The first argument to while must be a boolean, but got: %s" %
+                                      evalled_condition.repr())
+        
 
 # todo: implement in prelude in terms of writing to stdout
 # todo: just print a newline if called without any arguments.
