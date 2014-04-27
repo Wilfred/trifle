@@ -13,7 +13,7 @@ from arguments import check_args
 
 
 class SetSymbol(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u"set-symbol!", args, 2, 2)
 
         variable_name = args[0]
@@ -1084,7 +1084,7 @@ class Parse(Function):
 
 # todo: consider allowing the user to pass in an environment for sandboxing
 class Eval(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'eval', args, 1, 1)
 
         from evaluator import evaluate
@@ -1092,7 +1092,7 @@ class Eval(FunctionWithEnv):
 
 
 class Call(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'call', args, 2, 2)
         function = args[0]
         arguments = args[1]
@@ -1117,7 +1117,7 @@ class Call(FunctionWithEnv):
         
 # todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
-    def call(self, args, env):
+    def call(self, args, env, stack):
         check_args(u'defined?', args, 1, 1)
         symbol = args[0]
 

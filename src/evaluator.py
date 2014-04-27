@@ -215,7 +215,7 @@ def evaluate_function_call(stack):
             return function.call(arguments)
 
         elif isinstance(function, FunctionWithEnv):
-            return function.call(arguments, environment)
+            return function.call(arguments, environment, stack)
 
         elif isinstance(function, Lambda):
             # Build a new environment to evaluate with.

@@ -309,6 +309,7 @@ class Function(TrifleType):
         return u"<built-in function>"
 
 
+# TODO: rename this, since it also takes the stack as an argument.
 class FunctionWithEnv(TrifleType):
     """A function provided by the interpreter. Subclasses must provide a
     call method that takes arguments and the environment. Arguments
