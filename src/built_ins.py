@@ -1112,8 +1112,7 @@ class Call(FunctionWithEnv):
         function = args[0]
         arguments = args[1]
 
-        if not (isinstance(function, Function) or
-                isinstance(function, Lambda)):
+        if not isinstance(function, (Function, FunctionWithEnv, Lambda)):
             raise TrifleTypeError(
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
@@ -1123,12 +1122,34 @@ class Call(FunctionWithEnv):
                 u"the second argument to call must be a list, but got: %s"
                 % arguments.repr())
 
-        # Build an equivalent expression
-        expression = List([function] + arguments.values)
+        frame = stack.peek()
 
-        from evaluator import evaluate
-        return evaluate(expression, env)
-        
+        # Note that the expression index will already be 3, since
+        # evaluate_function_call will have iterated over our
+        # arguments. We just increment from there.
+        if frame.expression_index == 3:
+            # Build an equivalent expression
+            expression = List([function] + arguments.values)
+
+            from evaluator import Frame
+            new_frame = Frame(expression, env)
+
+            # Ensure that we don't evaluate the arguments to the function
+            # a second time.
+            new_frame.expression_index = len(arguments.values) + 1
+            new_frame.evalled = [function] + arguments.values
+
+            # Call the function.
+            stack.push(new_frame)
+
+            frame.expression_index += 1
+            return None
+
+        else:
+            # Done evaluating, return the result.
+            return frame.evalled[-1]
+
+
 # todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
     def call(self, args, env, stack):
