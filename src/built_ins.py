@@ -1087,8 +1087,23 @@ class Eval(FunctionWithEnv):
     def call(self, args, env, stack):
         check_args(u'eval', args, 1, 1)
 
-        from evaluator import evaluate
-        return evaluate(args[0], env)
+        frame = stack.peek()
+
+        # Note that the expression index will already be 2, since
+        # evaluate_function_call will have iterated over our
+        # arguments. We just increment from there.
+        from evaluator import Frame
+
+        if frame.expression_index == 2:
+            # Evaluate our argument.
+            stack.push(Frame(args[0], env))
+
+            frame.expression_index += 1
+            return None
+
+        else:
+            # We've evaluated our argument, just return it.
+            return frame.evalled[-1]
 
 
 class Call(FunctionWithEnv):
