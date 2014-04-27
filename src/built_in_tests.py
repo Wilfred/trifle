@@ -386,6 +386,10 @@ class ReprTest(BuiltInTestCase):
         val = Integer(12)
         self.assertEqual(val.repr(), '12')
 
+    def test_fraction_repr(self):
+        val = Fraction(1, 12)
+        self.assertEqual(val.repr(), '1/12')
+
     def test_float_repr(self):
         val = Float(1.2)
         self.assertEqual(val.repr(), '1.200000')
