@@ -1456,16 +1456,31 @@ class ParseTest(BuiltInTestCase):
 
 
 class CallTest(BuiltInTestCase):
-    def test_call(self):
+    def test_call_builtin_function(self):
         self.assertEqual(
             self.eval(u"(call + (quote (1 2 3)))"),
             Integer(6)
+        )
+
+    def test_call_function_with_env(self):
+        self.assertEqual(
+            self.eval(u"(call defined? (quote (x)))"),
+            FALSE
         )
 
     def test_call_lambda_literal(self):
         self.assertEqual(
             self.eval(u"(call (lambda (x) x) (quote (1)))"),
             Integer(1)
+        )
+
+    def test_call_evals_once(self):
+        """Ensure that `call` does not evaluate its arguments more than once.
+
+        """
+        self.assertEqual(
+            self.eval(u"(call (lambda (x) x) (quote (y)))"),
+            Symbol(u'y')
         )
 
     def test_call_arg_number(self):
