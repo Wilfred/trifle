@@ -1462,6 +1462,12 @@ class CallTest(BuiltInTestCase):
             Integer(6)
         )
 
+    def test_call_lambda_literal(self):
+        self.assertEqual(
+            self.eval(u"(call (lambda (x) x) (quote (1)))"),
+            Integer(1)
+        )
+
     def test_call_macro(self):
         self.assertEqual(
             self.eval(

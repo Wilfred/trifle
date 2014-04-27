@@ -269,8 +269,11 @@ def evaluate_value(value, environment):
     elif isinstance(value, Character):
         # Characters evaluate to themselves
         return value
+    elif isinstance(value, Lambda):
+        # Lambda functions evaluate to themselves
+        return value
     elif isinstance(value, Function):
-        # Functions evaluate to themselves
+        # Built-in functions evaluate to themselves
         return value
     elif isinstance(value, Macro):
         # Macros evaluate to themselves
