@@ -1468,14 +1468,6 @@ class CallTest(BuiltInTestCase):
             Integer(1)
         )
 
-    def test_call_macro(self):
-        self.assertEqual(
-            self.eval(
-                u"(macro add1 (x) (quote (+ 1 (unquote x))))"
-                u"(call add1 (quote (1)))"),
-            Integer(2)
-        )
-
     def test_call_arg_number(self):
         with self.assertRaises(ArityError):
             self.eval(u"(call + (quote (1 2 3)) 1)")

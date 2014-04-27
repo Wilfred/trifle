@@ -1,18 +1,10 @@
 # call
 
-`(call VALUE LIST)`
+`(call FUNCTION LIST)`
 
-The built-in function `call` calls VALUE (which must be a function or
-macro) with LIST as its arguments.
+The built-in function `call` calls FUNCTION with LIST as its arguments.
 
 ```lisp
 > (call + (list 1 2))
 3
-
-> (set! x 1)
-#null
-> (call inc! (list (quote x)))
-#null
-> x
-2
 ```

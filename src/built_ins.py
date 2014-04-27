@@ -1113,8 +1113,7 @@ class Call(FunctionWithEnv):
         arguments = args[1]
 
         if not (isinstance(function, Function) or
-                isinstance(function, Lambda) or
-                isinstance(function, Macro)):
+                isinstance(function, Lambda)):
             raise TrifleTypeError(
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
