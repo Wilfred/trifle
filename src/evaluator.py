@@ -34,7 +34,7 @@ class Stack(object):
 
 
 class Frame(object):
-    def __init__(self, expression, environment, is_lambda=False):
+    def __init__(self, expression, environment, as_block=False):
         # The expression we're evaluating, e.g. (if x y 2)
         self.expression = expression
 
@@ -49,13 +49,14 @@ class Frame(object):
         # [TRUE, Integer(3)]
         self.evalled = []
 
-        # Is this the body of a lambda expression? If so, we will
-        # evaluate each list element and return the last.
-        self.is_lambda = is_lambda
+        # Is this a single expression to evaluate, or a block? If it's
+        # a block, we evaluate each list element and return the
+        # last.
+        self.as_block = as_block
 
     def __repr__(self):
-        return ("expession: %r,\tindex: %d,\tis_lambda: %s,\tevalled: %r" %
-                (self.expression, self.expression_index, self.is_lambda,
+        return ("expession: %r,\tindex: %d,\tas_block: %s,\tevalled: %r" %
+                (self.expression, self.expression_index, self.as_block,
                  self.evalled))
 
 
@@ -202,7 +203,7 @@ def evaluate_function_call(stack):
 
         # This list doesn't represent a function call, rather it's
         # just a lambda body. We just want the last result.
-        if frame.is_lambda:
+        if frame.as_block:
             return frame.evalled[-1]
         
         # We've evaluated the function and its arguments, now call the
@@ -224,7 +225,7 @@ def evaluate_function_call(stack):
 
             # Evaluate the lambda's body in our new environment.
             # TODO: by replacing the stack here, we could do TCO.
-            stack.push(Frame(function.body, lambda_env, is_lambda=True))
+            stack.push(Frame(function.body, lambda_env, as_block=True))
 
             frame.expression_index += 1
             return None

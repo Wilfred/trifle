@@ -321,7 +321,7 @@ class While(Special):
             evalled_condition = frame.evalled[-1]
             
             if evalled_condition == TRUE:
-                stack.push(Frame(body, env, is_lambda=True))
+                stack.push(Frame(body, env, as_block=True))
 
                 # Once we've evaluated the body, we should evaluate
                 # the condition again.
