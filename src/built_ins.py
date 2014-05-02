@@ -31,14 +31,11 @@ class SetSymbol(FunctionWithEnv):
 
 class Let(Special):
     def call(self, args, env, stack):
+        # TODO: we should take at least two arguments.
         check_args(u'let', args, 1)
 
         bindings = args[0]
-        expressions = args[1:]
-
-        # todo: it would be easier if we passed List objects around,
-        # and implemented a slice method on them.
-        list_expressions = List(expressions)
+        body = args[1:]
 
         if not isinstance(bindings, List):
             raise TrifleTypeError(
@@ -60,21 +57,69 @@ class Let(Special):
                 % bindings.values[-1].repr())
 
         # Fix circular import by importing here.
-        from evaluator import evaluate, evaluate_all
         from environment import LetScope
+        from evaluator import Frame
+        
+        frame = stack.peek()
 
-        # Build a scope with the let variables
-        let_scope = LetScope({})
-        let_env = env.with_nested_scope(let_scope)
+        if frame.expression_index == 0:
+            # We don't evaluate the let symbol.
+            frame.expression_index += 1
+            return None
 
-        # Bind each symbol to the result of evaluating each
-        # expression. We allow access to previous symbols in this let.
-        for i in range(len(bindings.values) / 2):
-            symbol = bindings.values[2 * i]
-            value = evaluate(bindings.values[2 * i + 1], let_env)
-            let_scope.set(symbol.symbol_name, value)
+        elif frame.expression_index == 1:
+            # We evaluate each of the variable bindings and assign
+            # them, allowing bindings to access previous bindings in
+            # the same let block.
+            if frame.let_assignment_index == 0:
+                let_scope = LetScope({})
+                let_env = env.with_nested_scope(let_scope)
+                frame.let_environment = let_env
+            else:
+                let_env = frame.let_environment
 
-        return evaluate_all(list_expressions, let_env)
+            if frame.let_assignment_index * 2 >= len(bindings.values):
+                # We've finished setting up the bindings. Assign the
+                # last result into the environment.
+
+                # Unless we had no bindings at all, assign the final binding.
+                if frame.let_assignment_index > 0:
+                    previous_sym = bindings.values[2 * (frame.let_assignment_index - 1)]
+                    previous_value = frame.evalled.pop()
+
+                    let_scope = let_env.scopes[-1]
+                    let_scope.set(previous_sym.symbol_name, previous_value)
+                
+                frame.expression_index += 1
+                return None
+
+            if frame.let_assignment_index == 0:
+                # Evaluate the first assignment.
+                stack.push(Frame(bindings.values[1], let_env))
+                frame.let_assignment_index += 1
+                return None
+            else:
+                # Assign the previous result in the environment, and
+                # evaluate the next.
+                
+                previous_sym = bindings.values[2 * (frame.let_assignment_index - 1)]
+                previous_value = frame.evalled.pop()
+                let_env.set(previous_sym.symbol_name, previous_value)
+                
+                stack.push(Frame(bindings.values[2 * frame.let_assignment_index + 1], let_env))
+                frame.let_assignment_index += 1
+                return None
+                
+        elif frame.expression_index == 2:
+            # Evaluate the body now we have all the assignments.
+            stack.push(Frame(List(body), frame.let_environment, as_block=True))
+            
+            frame.expression_index += 1
+            return None
+
+        else:
+            # Evalled body, just return the result
+            return frame.evalled[-1]
 
 
 class LambdaFactory(Special):

@@ -45,6 +45,12 @@ class Frame(object):
         # The current point we've executed up to in the expression, e.g. 2.
         self.expression_index = 0
 
+        # Used by let to track which assignments have been evaluated.
+        self.let_assignment_index = 0
+
+        # Used to keep track of the let environment as we add bindings.
+        self.let_environment = None
+
         # Results of parts of the expression that we have evaluated, e.g.
         # [TRUE, Integer(3)]
         self.evalled = []
