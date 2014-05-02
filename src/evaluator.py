@@ -17,6 +17,9 @@ class Stack(object):
     def __init__(self):
         self.values = []
 
+    def __repr__(self):
+        return "<Stack: %r>\n" % "\n".join(map(repr, self.values))
+
     def push(self, value):
         if len(self.values) > MAX_STACK_DEPTH:
             raise StackOverflow(u"Stack Overflow")
