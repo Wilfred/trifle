@@ -1159,7 +1159,9 @@ class Call(FunctionWithEnv):
         function = args[0]
         arguments = args[1]
 
-        if not isinstance(function, (Function, FunctionWithEnv, Lambda)):
+        # Sadly, RPython doesn't support isinstance(x, (A, B)).
+        if not (isinstance(function, Function) or isinstance(function, FunctionWithEnv)
+                or isinstance(function, Lambda)):
             raise TrifleTypeError(
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
