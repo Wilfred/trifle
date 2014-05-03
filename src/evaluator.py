@@ -9,27 +9,119 @@ from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
-def evaluate_all(expressions, environment, stack):
-    """Evaluate a trifle List of expressions, starting with a fresh environment
-    containing only the built-in functions, special expressions and macros.
+# TODO: allow users to change this at runtime.
+MAX_STACK_DEPTH = 100
+
+
+class Stack(object):
+    def __init__(self):
+        self.values = []
+
+    def __repr__(self):
+        return "<Stack: %r>\n" % "\n".join(map(repr, self.values))
+
+    def push(self, value):
+        if len(self.values) > MAX_STACK_DEPTH:
+            raise StackOverflow(u"Stack Overflow")
+        
+        self.values.append(value)
+
+    def pop(self):
+        return self.values.pop()
+
+    def peek(self):
+        return self.values[-1]
+
+    def is_empty(self):
+        return bool(self.values)
+
+
+class Frame(object):
+    def __init__(self, expression, environment, as_block=False):
+        # The expression we're evaluating, e.g. (if x y 2)
+        self.expression = expression
+
+        # The lexical environment, so any variables defined in this
+        # function context and any enclosing contexts.
+        self.environment = environment
+
+        # The current point we've executed up to in the expression, e.g. 2.
+        self.expression_index = 0
+
+        # Used by let to track which assignments have been evaluated.
+        self.let_assignment_index = 0
+
+        # Used to keep track of the let environment as we add bindings.
+        self.let_environment = None
+
+        # Results of parts of the expression that we have evaluated, e.g.
+        # [TRUE, Integer(3)]
+        self.evalled = []
+
+        # Is this a single expression to evaluate, or a block? If it's
+        # a block, we evaluate each list element and return the
+        # last.
+        self.as_block = as_block
+
+    def __repr__(self):
+        return ("expession: %r,\tindex: %d,\tas_block: %s,\tevalled: %r" %
+                (self.expression, self.expression_index, self.as_block,
+                 self.evalled))
+
+
+def evaluate_all(expressions, environment):
+    """Evaluate a trifle List of expressions in the given environment.
 
     """
     result = NULL
     
     for expression in expressions.values:
-        result = evaluate(expression, environment, stack)
+        result = evaluate(expression, environment)
 
     return result
 
 
-def evaluate(expression, environment, stack):
+def evaluate(expression, environment):
     """Evaluate the given expression in the given environment.
 
     """
-    if isinstance(expression, List):
-        return evaluate_list(expression, environment, stack)
-    else:
-        return evaluate_value(expression, environment, stack)
+    stack = Stack()
+    stack.push(Frame(expression, environment))
+
+    # We evaluate expressions by pushing them on the stack, then
+    # iterating through the elements of the list, evaluating as
+    # appropriate. This ensures recursion in the Trifle program does
+    # not require recursion in the interpreter.
+    while stack:
+        frame = stack.peek()
+
+        if isinstance(frame.expression, List):
+            list_elements = frame.expression.values
+            head = list_elements[0]
+            raw_arguments = list_elements[1:]
+            
+            # Handle special expressions.
+            if isinstance(head, Symbol) and head.symbol_name in special_expressions:
+                special_expression = special_expressions[head.symbol_name]
+                result = special_expression.call(raw_arguments, frame.environment, stack)
+
+            else:
+                result = evaluate_function_call(stack)
+
+        else:
+            result = evaluate_value(frame.expression, frame.environment)
+
+        # Returning None means we have work left to do, but a Triflfe value means
+        # we're done with this frame.
+        if not result is None:
+            stack.pop()
+
+            if stack.is_empty():
+                frame = stack.peek()
+                frame.evalled.append(result)
+            else:
+                # We evaluated a value at the top level, nothing left to do.
+                return result
 
 
 # todo: this would be simpler if `values` was also a trifle List
@@ -69,7 +161,7 @@ def build_scope(name, parameters, values):
     return scope
 
 
-def expand_macro(macro, arguments, environment, stack):
+def expand_macro(macro, arguments, environment):
     """Expand the given macro by one iteration. Arguments should be a
     Python list of unevaluated Trifle values.
 
@@ -78,76 +170,87 @@ def expand_macro(macro, arguments, environment, stack):
     inner_scope = build_scope(macro.name, macro.arguments, arguments)
     macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
-    expression = evaluate_all(macro.body, macro_env, stack)
+    expression = evaluate_all(macro.body, macro_env)
     return expression
 
 
-# TODO: allow users to change this at runtime.
-MAX_STACK_DEPTH = 100
-
-
 # todo: error on evaluating an empty list
-def evaluate_list(node, environment, stack):
-    """Given a List representing a single line of Trifle code, execute it
-    in this environment.
+def evaluate_function_call(stack):
+    """Given a stack, where the the top element is a single Trifle call
+    (either a function or a macro), execute it iteratively.
 
     """
-    stack.append(node)
+    frame = stack.peek()
+    environment = frame.environment
+    expression = frame.expression
 
-    if len(stack) > MAX_STACK_DEPTH:
-        raise StackOverflow(u"Stack overflow")
-    
-    list_elements = node.values
-    head = list_elements[0]
-    raw_arguments = list_elements[1:]
+    if frame.expression_index == 1:
+        # If the head of the list evaluated to a macro, we skip
+        # evaluating the arguments. Otherwise, continue as evaluating
+        # as normal.
+        evalled_head = frame.evalled[-1]
+        macro_arguments = frame.expression.values[1:]
+        
+        if isinstance(evalled_head, Macro):
+            expanded = expand_macro(evalled_head, macro_arguments, environment)
+            stack.push(Frame(expanded, environment))
 
-    # Evaluate special expressions if this list starts with a symbol
-    # representing a special expression.
-    if isinstance(head, Symbol) and head.symbol_name in special_expressions:
-            special_expression = special_expressions[head.symbol_name]
-            result = special_expression.call(raw_arguments, environment, stack)
+            # Ensure we don't evaluate any of arguments to the macro.
+            frame.expression_index = len(expression.values) + 1
+            return None
 
-    else:
-        function = evaluate(list_elements[0], environment, stack)
+    if frame.expression_index < len(expression.values):
+        # Evaluate the remaining elements of this list (we work left-to-right).
+        raw_argument = expression.values[frame.expression_index]
+        stack.push(Frame(raw_argument, environment))
+
+        frame.expression_index += 1
+        return None
+
+    elif frame.expression_index == len(expression.values):
+        # We've evalled all the elements of the list.
+
+        # This list doesn't represent a function call, rather it's
+        # just a lambda body. We just want the last result.
+        if frame.as_block:
+            return frame.evalled[-1]
+        
+        # We've evaluated the function and its arguments, now call the
+        # function with the evalled arguments.
+        function = frame.evalled[0]
+        arguments = frame.evalled[1:]
 
         if isinstance(function, Function):
-            arguments = [
-                evaluate(el, environment, stack) for el in raw_arguments]
-            result = function.call(arguments)
+            return function.call(arguments)
 
         elif isinstance(function, FunctionWithEnv):
-            arguments = [
-                evaluate(el, environment, stack) for el in raw_arguments]
-            result = function.call(arguments, environment, stack)
-
-        elif isinstance(function, Macro):
-            expression = expand_macro(function, raw_arguments, environment, stack)
-
-            # Evaluate the expanded expression
-            result = evaluate(expression, environment, stack)
+            return function.call(arguments, environment, stack)
 
         elif isinstance(function, Lambda):
-            # First, evaluate the arguments to this lambda.
-            arguments = [
-                evaluate(el, environment, stack) for el in raw_arguments]
-
             # Build a new environment to evaluate with.
             inner_scope = build_scope(u"<lambda>", function.arguments, arguments)
 
             lambda_env = function.env.with_nested_scope(inner_scope)
 
             # Evaluate the lambda's body in our new environment.
-            result = evaluate_all(function.body, lambda_env, stack)
+            # TODO: by replacing the stack here, we could do TCO.
+            stack.push(Frame(function.body, lambda_env, as_block=True))
+
+            frame.expression_index += 1
+            return None
+
         else:
             # todoc: this error
             raise TrifleTypeError(u"%s isn't a function or macro."
                                   % function.repr())
 
-    stack.pop()
-    return result
+    else:
+        # We had a lambda body or expanded macro and we've now evalled
+        # it, so we're done.
+        return frame.evalled[-1]
 
 
-def evaluate_value(value, environment, stack):
+def evaluate_value(value, environment):
     if isinstance(value, Integer):
         # Integers evaluate to themselves
         return value
@@ -175,8 +278,11 @@ def evaluate_value(value, environment, stack):
     elif isinstance(value, Character):
         # Characters evaluate to themselves
         return value
+    elif isinstance(value, Lambda):
+        # Lambda functions evaluate to themselves
+        return value
     elif isinstance(value, Function):
-        # Functions evaluate to themselves
+        # Built-in functions evaluate to themselves
         return value
     elif isinstance(value, Macro):
         # Macros evaluate to themselves
@@ -190,4 +296,4 @@ def evaluate_value(value, environment, stack):
             raise UnboundVariable(u"No such variable defined: '%s'"
                                   % symbol_name)
     else:
-        assert False, "I don't know how to evaluate that value."
+        assert False, "I don't know how to evaluate that value: %s" % value

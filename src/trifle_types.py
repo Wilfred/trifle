@@ -208,7 +208,7 @@ class String(TrifleType):
         return u'"%s"' % u"".join(printable_chars)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.string)
+        return '<%s: "%s">' % (self.__class__.__name__, "".join(self.string))
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -309,6 +309,7 @@ class Function(TrifleType):
         return u"<built-in function>"
 
 
+# TODO: rename this, since it also takes the stack as an argument.
 class FunctionWithEnv(TrifleType):
     """A function provided by the interpreter. Subclasses must provide a
     call method that takes arguments and the environment. Arguments

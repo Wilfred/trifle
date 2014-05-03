@@ -17,7 +17,8 @@ from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile)
+                    TrifleValueError, UsingClosedFile,
+                    UnboundVariable)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -32,8 +33,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
-        return evaluate_all(parse(lex(program)), fresh_environment(), [])
-
+        return evaluate_all(parse(lex(program)), fresh_environment())
 
 
 class CommentLexTest(BuiltInTestCase):
@@ -421,6 +421,24 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"((lambda (x) x) 1)"),
             Integer(1))
 
+    def test_call_lambda_last_value(self):
+        self.assertEqual(
+            self.eval(u"((lambda () 1 2))"),
+            Integer(2))
+
+    def test_call_not_lambda(self):
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(1)")
+
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(#null)")
+
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u'("a")')
+    
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u'((quote (1)))')
+    
     def test_call_lambda_variable_arguments(self):
         expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
         
@@ -550,6 +568,14 @@ class LetTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"),
             Integer(1))
+
+    def test_let_variables_dont_leak(self):
+        """Ensure that variables defined in a let are undefined in the global scope.
+        Regression test for the first variable in the bindings.
+
+        """
+        with self.assertRaises(UnboundVariable):
+            self.eval(u"(let (x 1 y 2) #null) x")
 
     def test_let_not_function_scope(self):
         """Ensure that variables defined with set! are still available outside
@@ -1406,7 +1432,7 @@ class EnvironmentVariablesTest(BuiltInTestCase):
         env = Environment([Scope({
             u'x': Integer(1),
         })])
-        self.assertEqual(evaluate(parse_one(lex(u"x")), env, []),
+        self.assertEqual(evaluate(parse_one(lex(u"x")), env),
                          Integer(1))
 
     def test_unbound_variable(self):
@@ -1443,18 +1469,31 @@ class ParseTest(BuiltInTestCase):
 
 
 class CallTest(BuiltInTestCase):
-    def test_call(self):
+    def test_call_builtin_function(self):
         self.assertEqual(
             self.eval(u"(call + (quote (1 2 3)))"),
             Integer(6)
         )
 
-    def test_call_macro(self):
+    def test_call_function_with_env(self):
         self.assertEqual(
-            self.eval(
-                u"(macro add1 (x) (quote (+ 1 (unquote x))))"
-                u"(call add1 (quote (1)))"),
-            Integer(2)
+            self.eval(u"(call defined? (quote (x)))"),
+            FALSE
+        )
+
+    def test_call_lambda_literal(self):
+        self.assertEqual(
+            self.eval(u"(call (lambda (x) x) (quote (1)))"),
+            Integer(1)
+        )
+
+    def test_call_evals_once(self):
+        """Ensure that `call` does not evaluate its arguments more than once.
+
+        """
+        self.assertEqual(
+            self.eval(u"(call (lambda (x) x) (quote (y)))"),
+            Symbol(u'y')
         )
 
     def test_call_arg_number(self):
@@ -1501,12 +1540,13 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         with self.assertRaises(ArityError):
             self.eval(u"(macro ignore (x) #null) (ignore)")
 
-    # FIXME: we shouldn't depend on the prelude here.
+    # TODO: we shouldn't depend on the prelude here.
+    # TODO: find a way to just call self.eval.
     def test_macro_rest_args(self):
         self.assertEqual(
             evaluate_all(parse(lex(
                 u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)) #null)))"
-                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude(), []),
+                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
             Integer(2)
         )
 

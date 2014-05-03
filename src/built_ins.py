@@ -31,14 +31,11 @@ class SetSymbol(FunctionWithEnv):
 
 class Let(Special):
     def call(self, args, env, stack):
+        # TODO: we should take at least two arguments.
         check_args(u'let', args, 1)
 
         bindings = args[0]
-        expressions = args[1:]
-
-        # todo: it would be easier if we passed List objects around,
-        # and implemented a slice method on them.
-        list_expressions = List(expressions)
+        body = args[1:]
 
         if not isinstance(bindings, List):
             raise TrifleTypeError(
@@ -60,21 +57,71 @@ class Let(Special):
                 % bindings.values[-1].repr())
 
         # Fix circular import by importing here.
-        from evaluator import evaluate, evaluate_all
         from environment import LetScope
+        from evaluator import Frame
+        
+        frame = stack.peek()
 
-        # Build a scope with the let variables
-        let_scope = LetScope({})
-        let_env = env.with_nested_scope(let_scope)
+        if frame.expression_index == 0:
+            # We don't evaluate the let symbol.
+            frame.expression_index += 1
+            return None
 
-        # Bind each symbol to the result of evaluating each
-        # expression. We allow access to previous symbols in this let.
-        for i in range(len(bindings.values) / 2):
-            symbol = bindings.values[2 * i]
-            value = evaluate(bindings.values[2 * i + 1], let_env, stack)
-            let_scope.set(symbol.symbol_name, value)
+        elif frame.expression_index == 1:
+            # We evaluate each of the variable bindings and assign
+            # them, allowing bindings to access previous bindings in
+            # the same let block.
+            if frame.let_assignment_index == 0:
+                let_scope = LetScope({})
+                let_env = env.with_nested_scope(let_scope)
+                frame.let_environment = let_env
+            else:
+                let_env = frame.let_environment
 
-        return evaluate_all(list_expressions, let_env, stack)
+            if frame.let_assignment_index * 2 >= len(bindings.values):
+                # We've finished setting up the bindings. Assign the
+                # last result into the environment.
+
+                # Unless we had no bindings at all, assign the final binding.
+                if frame.let_assignment_index > 0:
+                    previous_sym = bindings.values[2 * (frame.let_assignment_index - 1)]
+                    previous_value = frame.evalled.pop()
+
+                    let_scope = let_env.scopes[-1]
+                    let_scope.set(previous_sym.symbol_name, previous_value)
+                
+                frame.expression_index += 1
+                return None
+
+            if frame.let_assignment_index == 0:
+                # Evaluate the first assignment.
+                stack.push(Frame(bindings.values[1], let_env))
+                frame.let_assignment_index += 1
+                return None
+            else:
+                # Assign the previous result in the environment, and
+                # evaluate the next.
+                
+                previous_sym = bindings.values[2 * (frame.let_assignment_index - 1)]
+                previous_value = frame.evalled.pop()
+                
+                let_scope = let_env.scopes[-1]
+                let_scope.set(previous_sym.symbol_name, previous_value)
+                
+                stack.push(Frame(bindings.values[2 * frame.let_assignment_index + 1], let_env))
+                frame.let_assignment_index += 1
+                return None
+                
+        elif frame.expression_index == 2:
+            # Evaluate the body now we have all the assignments.
+            stack.push(Frame(List(body), frame.let_environment, as_block=True))
+            
+            frame.expression_index += 1
+            return None
+
+        else:
+            # Evalled body, just return the result
+            return frame.evalled[-1]
 
 
 class LambdaFactory(Special):
@@ -144,14 +191,14 @@ class ExpandMacro(Special):
         macro_name = expr.values[0]
 
         from evaluator import evaluate, expand_macro
-        macro = evaluate(macro_name, env, [])
+        macro = evaluate(macro_name, env)
 
         if not isinstance(macro, Macro):
             raise TrifleTypeError(
                 u"Expected a macro, but got: %s" % macro.repr())
 
         macro_args = expr.values[1:]
-        return expand_macro(macro, macro_args, env, [])
+        return expand_macro(macro, macro_args, env)
 
 
 # todo: it would be nice to define this as a trifle macro using a 'literal' primitive
@@ -203,7 +250,7 @@ class Quote(Special):
                             u"unquote takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    expression.values[index] = evaluate(unquote_argument, env, stack)
+                    expression.values[index] = evaluate(unquote_argument, env)
                     
                 elif self.is_unquote_star(item):
                     if len(item.values) != 2:
@@ -211,7 +258,7 @@ class Quote(Special):
                             u"unquote* takes 1 argument, but got: %s" % item.repr())
             
                     unquote_argument = item.values[1]
-                    values_list = evaluate(unquote_argument, env, stack)
+                    values_list = evaluate(unquote_argument, env)
 
                     if not isinstance(values_list, List):
                         raise TrifleTypeError(
@@ -242,44 +289,101 @@ class Quote(Special):
 
 
 class If(Special):
-    def call(self, args, env, stack):
+    def call(self, args, environment, stack):
         check_args(u'if', args, 3, 3)
 
-        from evaluator import evaluate
-
-        raw_condition = args[0]
-        condition = evaluate(raw_condition, env, stack)
-        
+        condition = args[0]
         then = args[1]
         otherwise = args[2]
 
-        if condition == TRUE:
-            return evaluate(then, env, stack)
-        elif condition == FALSE:
-            return evaluate(otherwise, env, stack)
+        frame = stack.peek()
+
+        # TODO: Move Frame to separate module to fix the cyclic import.
+        from evaluator import Frame
+        
+        if frame.expression_index == 0:
+            # We don't evaluate the if symbol.
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 1:
+            # Evaluate the condition.
+            stack.push(Frame(condition, environment))
+
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 2:
+            # We've evaluated the condition, so either evaluate 'then'
+            # or 'otherwise' depending on the return value.
+            evalled_condition = frame.evalled[-1]
+            
+            if evalled_condition == TRUE:
+                stack.push(Frame(then, environment))
+                
+                frame.expression_index += 1
+                return None
+
+            elif evalled_condition == FALSE:
+                stack.push(Frame(otherwise, environment))
+                
+                frame.expression_index += 2
+                return None
+
+            else:
+                raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" %
+                                      evalled_condition.repr())
+                
         else:
-            raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" % condition.repr())
+            # We've evaluated the condition and either 'then' or
+            # 'otherwise', so pop this frame and return.
+            return frame.evalled[-1]
 
 
 class While(Special):
     def call(self, args, env, stack):
         check_args(u'while', args, 1)
 
-        from evaluator import evaluate
-        while True:
-            condition = evaluate(args[0], env, stack)
-            if condition == FALSE:
-                break
-            elif condition != TRUE:
-                raise TrifleTypeError(
-                    u"The condition for `while` should be a boolean, "
-                    u"but got: %s" % condition.repr())
+        condition = args[0]
+        body = List(args[1:])
 
-            for arg in args[1:]:
-                evaluate(arg, env, stack)
+        frame = stack.peek()
 
-        return NULL
+        from evaluator import Frame
 
+        if frame.expression_index == 0:
+            # We don't evaluate the while symbol.
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 1:
+            # Evaluate the condition.
+            stack.push(Frame(condition, env))
+
+            frame.expression_index += 1
+            return None
+
+        elif frame.expression_index == 2:
+            # We've evaluated the condition, so either evaluate the body, or return.
+            evalled_condition = frame.evalled[-1]
+            
+            if evalled_condition == TRUE:
+                stack.push(Frame(body, env, as_block=True))
+
+                # Once we've evaluated the body, we should evaluate
+                # the condition again.
+                frame.expression_index = 1
+
+                return None
+
+            elif evalled_condition == FALSE:
+                # while loops always return #null when done.
+                return NULL
+
+            else:
+                raise TrifleTypeError(u"The first argument to while must be a boolean, but got: %s" %
+                                      evalled_condition.repr())
+        
 
 # todo: implement in prelude in terms of writing to stdout
 # todo: just print a newline if called without any arguments.
@@ -1030,8 +1134,23 @@ class Eval(FunctionWithEnv):
     def call(self, args, env, stack):
         check_args(u'eval', args, 1, 1)
 
-        from evaluator import evaluate
-        return evaluate(args[0], env, stack)
+        frame = stack.peek()
+
+        # Note that the expression index will already be 2, since
+        # evaluate_function_call will have iterated over our
+        # arguments. We just increment from there.
+        from evaluator import Frame
+
+        if frame.expression_index == 2:
+            # Evaluate our argument.
+            stack.push(Frame(args[0], env))
+
+            frame.expression_index += 1
+            return None
+
+        else:
+            # We've evaluated our argument, just return it.
+            return frame.evalled[-1]
 
 
 class Call(FunctionWithEnv):
@@ -1040,9 +1159,9 @@ class Call(FunctionWithEnv):
         function = args[0]
         arguments = args[1]
 
-        if not (isinstance(function, Function) or
-                isinstance(function, Lambda) or
-                isinstance(function, Macro)):
+        # Sadly, RPython doesn't support isinstance(x, (A, B)).
+        if not (isinstance(function, Function) or isinstance(function, FunctionWithEnv)
+                or isinstance(function, Lambda)):
             raise TrifleTypeError(
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
@@ -1052,12 +1171,34 @@ class Call(FunctionWithEnv):
                 u"the second argument to call must be a list, but got: %s"
                 % arguments.repr())
 
-        # Build an equivalent expression
-        expression = List([function] + arguments.values)
+        frame = stack.peek()
 
-        from evaluator import evaluate
-        return evaluate(expression, env, stack)
-        
+        # Note that the expression index will already be 3, since
+        # evaluate_function_call will have iterated over our
+        # arguments. We just increment from there.
+        if frame.expression_index == 3:
+            # Build an equivalent expression
+            expression = List([function] + arguments.values)
+
+            from evaluator import Frame
+            new_frame = Frame(expression, env)
+
+            # Ensure that we don't evaluate the arguments to the function
+            # a second time.
+            new_frame.expression_index = len(arguments.values) + 1
+            new_frame.evalled = [function] + arguments.values
+
+            # Call the function.
+            stack.push(new_frame)
+
+            frame.expression_index += 1
+            return None
+
+        else:
+            # Done evaluating, return the result.
+            return frame.evalled[-1]
+
+
 # todo: rename to DefinedPredicate
 class Defined(FunctionWithEnv):
     def call(self, args, env, stack):

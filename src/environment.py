@@ -14,6 +14,9 @@ class Scope(object):
     def __init__(self, bindings):
         self.bindings = bindings
 
+    def __repr__(self):
+        return "<%s: %r>" % (self.__class__.__name__, sorted(self.bindings.keys()))
+
     def contains(self, symbol):
         return symbol in self.bindings
 
@@ -39,9 +42,11 @@ class Environment(object):
     globals and so on.
 
     """
-    
     def __init__(self, scopes):
         self.scopes = scopes
+
+    def __repr__(self):
+        return "<Environment %r>" % self.scopes
 
     # we can't use __get__ and __set__ in RPython, so we use normal methods
     def get(self, variable_name):
