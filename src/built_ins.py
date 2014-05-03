@@ -104,7 +104,9 @@ class Let(Special):
                 
                 previous_sym = bindings.values[2 * (frame.let_assignment_index - 1)]
                 previous_value = frame.evalled.pop()
-                let_env.set(previous_sym.symbol_name, previous_value)
+                
+                let_scope = let_env.scopes[-1]
+                let_scope.set(previous_sym.symbol_name, previous_value)
                 
                 stack.push(Frame(bindings.values[2 * frame.let_assignment_index + 1], let_env))
                 frame.let_assignment_index += 1

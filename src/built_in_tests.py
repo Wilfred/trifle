@@ -17,7 +17,8 @@ from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile)
+                    TrifleValueError, UsingClosedFile,
+                    UnboundVariable)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -563,6 +564,14 @@ class LetTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"),
             Integer(1))
+
+    def test_let_variables_dont_leak(self):
+        """Ensure that variables defined in a let are undefined in the global scope.
+        Regression test for the first variable in the bindings.
+
+        """
+        with self.assertRaises(UnboundVariable):
+            self.eval(u"(let (x 1 y 2) #null) x")
 
     def test_let_not_function_scope(self):
         """Ensure that variables defined with set! are still available outside
