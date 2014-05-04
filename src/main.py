@@ -17,6 +17,7 @@ from evaluator import evaluate_all
 from errors import TrifleError
 from environment import fresh_environment
 from almost_python import raw_input
+from trifle_types import TrifleExceptionInstance
 
 
 def get_contents(filename):
@@ -97,8 +98,16 @@ def entry_point(argv):
                 user_input = raw_input(u'> ')
                 lexed_tokens = lex(user_input)
                 parse_tree = parse(lexed_tokens)
+                result = evaluate_all(parse_tree, env)
 
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
+                if isinstance(result, TrifleExceptionInstance):
+                    # TODO: a proper stack trace.
+                    print u'Uncaught error: %s: %s' % (result.exception_type.name,
+                                              result.message)
+                else:
+                    print result.repr().encode('utf-8')
+
+            # TODO: Once TrifleError has been removed, we can remove this.
             except TrifleError as e:
                 print u"Error: %s" % e.message
             except SystemExit:
@@ -120,7 +129,13 @@ def entry_point(argv):
         lexed_tokens = lex(code)
         parse_tree = parse(lexed_tokens)
         try:
-            evaluate_all(parse_tree, env).repr()
+            result = evaluate_all(parse_tree, env)
+
+            if isinstance(result, TrifleExceptionInstance):
+                # TODO: a proper stack trace.
+                print u'Uncaught error: %s: %s' % (result.exception_type.name,
+                                          result.message)
+                return 1
         except TrifleError as e:
             print u"Error: %s" % e.message
             return 1
@@ -139,7 +154,16 @@ def entry_point(argv):
             parse_tree = parse(lexed_tokens)
 
             try:
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
+                result = evaluate_all(parse_tree, env)
+
+                if isinstance(result, TrifleExceptionInstance):
+                    # TODO: a proper stack trace.
+                    print u'Uncaught error: %s: %s' % (result.exception_type.name,
+                                              result.message)
+                    return 1
+                else:
+                    print result.repr().encode('utf-8')
+                
             except TrifleError as e:
                 print u"Error: %s" % e.message
                 return 1
