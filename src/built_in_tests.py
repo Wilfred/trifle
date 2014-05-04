@@ -792,6 +792,9 @@ class DivideTest(BuiltInTestCase):
         with self.assertRaises(DivideByZero):
             self.eval(u"(/ 1 0)")
 
+        with self.assertRaises(DivideByZero):
+            self.eval(u"(/ 1.0 0.0)")
+
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(/ 1 #null)")
