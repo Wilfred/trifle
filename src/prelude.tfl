@@ -117,7 +117,6 @@ This is a shallow copy operation, so the copy shares the values."
   )
 )
 
-;TODO: write a when macro, and use it here.
 (function filter (func sequence)
   "Return a fresh sequence containing the elements 
 for which (FUNC element) is #true."
