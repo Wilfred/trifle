@@ -241,7 +241,7 @@ def evaluate_function_call(stack):
 
         else:
             # todoc: this error
-            raise TrifleTypeError(u"%s isn't a function or macro."
+            raise TrifleTypeError(u"You can only call functions or macros, but got: %s"
                                   % function.repr())
 
     else:
