@@ -17,8 +17,7 @@ from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile,
-                    UnboundVariable)
+                    TrifleValueError, UsingClosedFile)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -1879,3 +1878,60 @@ class ExitTest(BuiltInTestCase):
     def test_exit(self):
         with self.assertRaises(SystemExit):
             self.eval(u'(exit!)')
+
+
+class TryTest(BuiltInTestCase):
+    def test_try_with_matching_error(self):
+        """If an error occurs, we should evaluate the catch block if it
+        matches.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch (zero-division-error #null))"),
+            NULL)
+
+    def test_try_without_matching_error(self):
+        """If an error occurs, we should not evaluate the catch block if it
+        does not match.
+
+        """
+        with self.assertRaises(ZeroDivisionError):
+            self.eval(u"(try (/ 1 0) :catch (no-such-variable-error #null))")
+
+    def test_try_without_error(self):
+        """If no error occurs, we should not evaluate the catch block.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try 1 :catch (no-such-variable-error #null))"),
+            Integer(1))
+
+    def test_try_arity(self):
+        # TODO: support multiple catch statements
+
+        # Too few arguments.
+        with self.assertRaises(ArityError):
+            self.eval(u"(try x :catch)")
+
+        # Too many arguments.
+        with self.assertRaises(ArityError):
+            self.eval(u"(try x :catch (zero-division-error #null) #null)")
+
+        # Too few arguments in catch.
+        with self.assertRaises(ArityError):
+            self.eval(u"(try x :catch (zero-division-error) #null)")
+
+    def test_catch_error_propagates(self):
+        """If an error occurs during the evaluation of the catch block, it
+        should propagate as usual.
+
+        """
+        with self.assertRaises(UnboundVariable):
+            self.eval(u"(try (/ 1 0) :catch (zero-division-error x))")
+
+    def test_try_types(self):
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(try (/ 1 0) :catch #null)")
+            
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(try (/ 1 0) #null (zero-division-error #null))")
