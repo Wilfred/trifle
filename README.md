@@ -134,6 +134,24 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.8 (unreleased)
+
+Sample programs: Added a factorial program.
+
+Errors: Improved wording on calling non-callables. Arity errors now
+include more information on the number of arguments received.
+
+Booleans: `if` now always requires three arguments. Added `when` for
+when users don't care about else. `unless` was renamed to `when-not`.
+
+Bytestrings: The lexer now understand all legal escapes in bytestring
+literals. Fixed a lexing bug with consecutive bytestring literals.
+
+Numbers: `>`, `>=`, `<` and `<=` now work with fractions too.
+
+Stack: Overflowing the stack now raises an error rather than crashing
+the interpreter.
+
 ### v0.7
 
 Bytestrings: Added the function `bytestring?`.
