@@ -32,4 +32,4 @@ use underscores in float literals: `1_000.000_001`.
 ## Number macros
 
 1. [inc!](Numbers-IncMacro.md)
-1. [dec!](Numbers-DecMacro.md)
+2. [dec!](Numbers-DecMacro.md)
