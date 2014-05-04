@@ -1,10 +1,9 @@
+from trifle_types import TrifleExceptionType
 
-# TODO: eventually we want users to be able to catch any of these
-# errors at runtime
 
 class TrifleError(Exception):
     # .message isn't available in RPython, so we manually assign it.
-    # todo: file a pypy to improve their docs
+    # todo: file a pypy bug to improve their docs
     def __init__(self, message):
         assert isinstance(message, unicode)
         self.message = message
@@ -37,6 +36,9 @@ class ArityError(TrifleError):
 
 class DivideByZero(TrifleError):
     pass
+
+
+zero_division_error = TrifleExceptionType(u"zero-division-error")
 
 
 class StackOverflow(TrifleError):

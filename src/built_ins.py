@@ -2,9 +2,10 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, Fraction,
                           List, Keyword,
                           FileHandle, Bytestring, Character,
-                          Boolean, TRUE, FALSE, NULL, Symbol, String)
+                          Boolean, TRUE, FALSE, NULL, Symbol, String,
+                          TrifleExceptionInstance)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
-                    TrifleValueError, UsingClosedFile)
+                    TrifleValueError, UsingClosedFile, zero_division_error)
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
@@ -751,7 +752,9 @@ class Divide(Function):
                 try:
                     quotient /= arg.float_value
                 except ZeroDivisionError:
-                    raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                    return TrifleExceptionInstance(
+                        zero_division_error,
+                        u"Divided %s by %s" % (quotient, arg.repr()))
 
             return Float(quotient)
 
@@ -767,7 +770,9 @@ class Divide(Function):
             for arg in args[1:]:
                 if isinstance(arg, Integer):
                     if arg.value == 0:
-                        raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                        return TrifleExceptionInstance(
+                            zero_division_error,
+                            u"Divided %s by %s" % (quotient, arg.repr()))
                     
                     quotient = Fraction(
                         quotient.numerator, quotient.denominator * arg.value
@@ -778,8 +783,6 @@ class Divide(Function):
                     # zero division error here.
 
                     # a/b / b/c == ac/bd
-
-                    # 1/3 / 2/5 == 1/3 * 5/2 == 5/6
                     quotient = Fraction(
                         quotient.numerator * arg.denominator,
                         quotient.denominator * arg.numerator,

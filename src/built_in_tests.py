@@ -8,11 +8,13 @@ from mock import patch, Mock
 
 from lexer import lex
 from trifle_parser import parse_one, parse
-from trifle_types import (List, Integer, Float, Fraction,
-                          Symbol, Keyword, String, Character,
-                          Lambda,
-                          TRUE, FALSE, NULL,
-                          FileHandle, Bytestring)
+from trifle_types import (
+    List, Integer, Float, Fraction,
+    Symbol, Keyword, String, Character,
+    Lambda,
+    TRUE, FALSE, NULL,
+    FileHandle, Bytestring,
+    TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
@@ -788,12 +790,12 @@ class DivideTest(BuiltInTestCase):
                          Integer(1))
         
     def test_divide_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(/ 1 0)")
-
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(/ 1.0 0.0)")
-
+        result = self.eval(u"(/ 1 0)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
+            
+        result = self.eval(u"(/ 1.0 0.0)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
+            
     def test_invalid_type(self):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(/ 1 #null)")
