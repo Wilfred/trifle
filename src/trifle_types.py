@@ -337,6 +337,23 @@ class Lambda(TrifleType):
         return u"<lambda>"
 
 
+# TODO: decide on whether we want to use the term 'error' or
+# 'exception', and use it consistently.
+class TrifleExceptionType(TrifleType):
+    def __init__(self, name):
+        assert isinstance(name, unicode)
+        self.name = name
+
+
+class TrifleExceptionInstance(TrifleType):
+    def __init__(self, exception_type, message):
+        assert isinstance(exception_type, TrifleExceptionType)
+        self.exception_type = exception_type
+        
+        assert isinstance(message, unicode)
+        self.message = message
+
+
 class Macro(TrifleType):
     """As with Function, subclasses must provide a call method. Macros are
     evaluated at compile time, and should return an expression for the
