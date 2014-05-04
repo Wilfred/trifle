@@ -2,7 +2,8 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Integer, Float, Fraction,
                           Null, NULL,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
-                          Keyword, String)
+                          Keyword, String,
+                          TrifleExceptionInstance)
 from errors import UnboundVariable, TrifleTypeError, StackOverflow
 from almost_python import zip
 from environment import Scope, special_expressions
@@ -111,17 +112,27 @@ def evaluate(expression, environment):
         else:
             result = evaluate_value(frame.expression, frame.environment)
 
-        # Returning None means we have work left to do, but a Triflfe value means
+        # Returning None means we have work left to do, but a Trifle value means
         # we're done with this frame.
         if not result is None:
-            stack.pop()
 
-            if stack.is_empty():
-                frame = stack.peek()
-                frame.evalled.append(result)
-            else:
-                # We evaluated a value at the top level, nothing left to do.
+            if isinstance(result, TrifleExceptionInstance):
+                # We search any try blocks starting from the
+                # innermost, and evaluate the first matching :catch we find.
+                # TODO
+
+                # Otherwise, just propagate the error to the toplevel.
                 return result
+
+            else:
+                stack.pop()
+
+                if stack.is_empty():
+                    frame = stack.peek()
+                    frame.evalled.append(result)
+                else:
+                    # We evaluated a value at the top level, nothing left to do.
+                    return result
 
 
 # todo: this would be simpler if `values` was also a trifle List
