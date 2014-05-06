@@ -25,6 +25,9 @@ class UnboundVariable(TrifleError):
     pass
 
 
+no_such_variable_error = TrifleExceptionType(u"no-such-variable-error")
+
+
 # Python already has a 'TypeError' exception
 class TrifleTypeError(TrifleError):
     pass

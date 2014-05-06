@@ -8,6 +8,9 @@ from built_ins import (Add, Subtract, Multiply, Divide, Mod, Div,
                        Print, Input, Exit,
                        Call, Parse, Eval, Defined,
                        Open, Close, Read, Write, Encode, Decode)
+from errors import (
+    zero_division_error, no_such_variable_error,
+)
 
 
 class Scope(object):
@@ -147,4 +150,8 @@ def fresh_environment():
         u'write!': Write(),
         u'encode': Encode(),
         u'decode': Decode(),
+
+        # TODOC
+        u'zero-division-error': zero_division_error,
+        u'no-such-variable-error': no_such_variable_error,
     })])
