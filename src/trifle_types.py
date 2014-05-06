@@ -353,6 +353,9 @@ class TrifleExceptionInstance(TrifleType):
         assert isinstance(message, unicode)
         self.message = message
 
+    def __repr__(self):
+        return '<%s: %s>' % (self.exception_type.name, self.message)
+
 
 class Macro(TrifleType):
     """As with Function, subclasses must provide a call method. Macros are
