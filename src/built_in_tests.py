@@ -1931,9 +1931,24 @@ class TryTest(BuiltInTestCase):
         with self.assertRaises(UnboundVariable):
             self.eval(u"(try (/ 1 0) :catch (zero-division-error x))")
 
+    def test_unknown_exception_throws_first(self):
+        """If we reference an unknown variable for our exception type, we
+        should always throw an exception. It signifies a bug, and it's
+        nice to catch it early.
+
+        """
+        with self.assertRaises(UnboundVariable):
+            self.eval(u"(try (/ 1 0) :catch (i-dont-exist #null))")
+
     def test_try_types(self):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(try (/ 1 0) :catch #null)")
             
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(try (/ 1 0) #null (zero-division-error #null))")
+
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(try (/ 1 0) :foo (zero-division-error #null))")
+            
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(try (/ 1 0) :catch (#null #null))")
