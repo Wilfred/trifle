@@ -3,7 +3,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           List, Keyword,
                           FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
-                          TrifleExceptionInstance)
+                          TrifleExceptionInstance, TrifleExceptionType)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
                     TrifleValueError, UsingClosedFile, zero_division_error)
 from almost_python import deepcopy, copy, raw_input, zip
@@ -1353,3 +1353,61 @@ class Exit(Function):
     def call(self, args):
         check_args(u'exit!', args, 0, 0)
         raise SystemExit()
+
+
+class Try(Special):
+    def call(self, args, env, stack):
+        # TODO: multiple catch blocks, finally, resuming.
+        check_args(u'try', args, 3, 3)
+
+        body = args[0]
+        catch_keyword = args[1]
+        exception_with_body = args[2]
+
+        if not isinstance(catch_keyword, Keyword) or catch_keyword.symbol_name != u"catch":
+            raise TrifleTypeError(
+                u"The second argument to try must be :catch, but got: %s"
+                % catch_keyword.repr())
+
+        if not isinstance(exception_with_body, List):
+            raise TrifleTypeError(
+                u"The third argument to try must be a list, but got: %s"
+                % exception_with_body.repr())
+
+        if len(exception_with_body.values) < 2:
+            raise TrifleTypeError(
+                u"The third argument to try must be a list of the form (ERROR EXPRESSION...), but got: %s"
+                % exception_with_body.repr())
+
+        raw_exception_type = exception_with_body.values[0]
+
+        frame = stack.peek()
+        from evaluator import Frame
+
+        # Note that we increment the expression index even though
+        # we evaluate the expected exception type first.
+        if frame.expression_index == 0:
+            # First, we evaluate the exception type.
+            stack.push(Frame(raw_exception_type, env))
+
+            frame.expression_index = 1
+            return None
+
+        elif frame.expression_index == 1:
+            exception_type = frame.evalled[-1]
+
+            if not isinstance(exception_type, TrifleExceptionType):
+                raise TrifleTypeError(
+                    u"Expected a trifle exception type for :catch, but got: %s"
+                    % exception_type.repr())
+
+            # Evaluate the body.
+            stack.push(Frame(body, env))
+
+            frame.expression_index = 2
+            return None
+
+        else:
+            # We've evaluated the body without any errors, just return
+            # the result.
+            return frame.evalled[-1]

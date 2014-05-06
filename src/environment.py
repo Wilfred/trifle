@@ -1,13 +1,15 @@
-from built_ins import (Add, Subtract, Multiply, Divide, Mod, Div,
-                       LessThan, Same, Equal,
-                       Quote, SetSymbol, Let, If, While,
-                       LambdaFactory, DefineMacro, ExpandMacro, FreshSymbol,
-                       Length, ListPredicate, StringPredicate,
-                       BytestringPredicate, CharacterPredicate,
-                       GetIndex, SetIndex, Insert,
-                       Print, Input, Exit,
-                       Call, Parse, Eval, Defined,
-                       Open, Close, Read, Write, Encode, Decode)
+from built_ins import (
+    Add, Subtract, Multiply, Divide, Mod, Div,
+    LessThan, Same, Equal,
+    Quote, SetSymbol, Let, If, While,
+    LambdaFactory, DefineMacro, ExpandMacro, FreshSymbol,
+    Length, ListPredicate, StringPredicate,
+    BytestringPredicate, CharacterPredicate,
+    GetIndex, SetIndex, Insert,
+    Print, Input, Exit,
+    Call, Parse, Eval, Defined, Try,
+    Open, Close, Read, Write, Encode, Decode,
+)
 from errors import (
     zero_division_error, no_such_variable_error,
 )
@@ -110,6 +112,7 @@ special_expressions = {
     u'macro': DefineMacro(),
     u'expand-macro': ExpandMacro(),
     u'quote': Quote(),
+    u'try': Try(),
 }
 
 
