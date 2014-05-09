@@ -19,7 +19,8 @@ from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile)
+                    TrifleValueError, UsingClosedFile,
+                    zero_division_error)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -35,6 +36,20 @@ class BuiltInTestCase(unittest.TestCase):
 
         """
         return evaluate_all(parse(lex(program)), fresh_environment())
+
+    def assertEvalError(self, program, error_type):
+        """Assert that this program raises an error of type error_type when
+        executed.
+
+        """
+        result = self.eval(program)
+
+        self.assertTrue(isinstance(result, TrifleExceptionInstance),
+                        "Expected an error, but got: %s" % result.repr())
+
+        self.assertEqual(result.exception_type, error_type,
+                         "Expected %s, but got %s" %
+                         (error_type.name, result.exception_type.name))
 
 
 class CommentLexTest(BuiltInTestCase):
@@ -1893,7 +1908,16 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            self.eval(u"(try (/ 1 0) :catch (zero-division-error #null))"),
+            self.eval(u"(try (/ 1 0) :catch (zero-division-error 1 #null))"),
+            NULL)
+
+    def test_try_with_matching_error_indirect(self):
+        """We should catch the error even if it occurs lower on the stack.
+
+        """
+        self.assertEqual(
+            self.eval(u"(set-symbol! (quote f) (lambda () (/ 1 0 )))"
+                      u"(try (f) :catch (zero-division-error 1 #null))"),
             NULL)
 
     def test_try_without_matching_error(self):
@@ -1901,8 +1925,9 @@ class TryTest(BuiltInTestCase):
         does not match.
 
         """
-        with self.assertRaises(ZeroDivisionError):
-            self.eval(u"(try (/ 1 0) :catch (no-such-variable-error #null))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch (no-such-variable-error #null))",
+            zero_division_error)
 
     def test_try_without_error(self):
         """If no error occurs, we should not evaluate the catch block.
@@ -1934,6 +1959,14 @@ class TryTest(BuiltInTestCase):
         """
         with self.assertRaises(UnboundVariable):
             self.eval(u"(try (/ 1 0) :catch (zero-division-error x))")
+
+    def test_catch_error_propagates_same_type(self):
+        """If an error occurs during the evaluation of the catch block, it
+        should propagate as usual, even if it's the type we were catching.
+
+        """
+        with self.assertRaises(UnboundVariable):
+            self.eval(u"(try (/ 1 0) :catch (zero-division-error (/ 1 0)))")
 
     def test_unknown_exception_throws_first(self):
         """If we reference an unknown variable for our exception type, we
