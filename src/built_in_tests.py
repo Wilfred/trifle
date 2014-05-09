@@ -415,6 +415,10 @@ class ReprTest(BuiltInTestCase):
     def test_null_repr(self):
         self.assertEqual(NULL.repr(), "#null")
 
+    def test_error_type_repr(self):
+        # TODO: unit test error instances too.
+        self.assertEqual(zero_division_error.repr(), '#error-type("zero-division-error")')
+
 
 class EvaluatingLambdaTest(BuiltInTestCase):
     def test_call_lambda(self):

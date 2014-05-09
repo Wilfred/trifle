@@ -344,6 +344,9 @@ class TrifleExceptionType(TrifleType):
         assert isinstance(name, unicode)
         self.name = name
 
+    def repr(self):
+        return u'#error-type("%s")' % self.name
+
 
 class TrifleExceptionInstance(TrifleType):
     def __init__(self, exception_type, message):
@@ -352,6 +355,10 @@ class TrifleExceptionInstance(TrifleType):
         
         assert isinstance(message, unicode)
         self.message = message
+
+    def repr(self):
+        # TODO: show the message too.
+        return u'#error(%s)' % self.exception_type.name
 
     def __repr__(self):
         return '<%s: %s>' % (self.exception_type.name, self.message)
