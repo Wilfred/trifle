@@ -1401,6 +1401,10 @@ class Try(Special):
                     u"Expected a trifle exception type for :catch, but got: %s"
                     % exception_type.repr())
 
+            # Mark the current frame as something we can come back to
+            # if we encounter an error.
+            frame.catch_error = exception_type
+
             # Evaluate the body.
             stack.push(Frame(body, env))
 

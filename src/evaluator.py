@@ -64,6 +64,9 @@ class Frame(object):
         # last.
         self.as_block = as_block
 
+        # Is this a try expression that will catch certain error types?
+        self.catch_error = None
+
     def __repr__(self):
         return ("expession: %r,\tindex: %d,\tas_block: %s,\tevalled: %r" %
                 (self.expression, self.expression_index, self.as_block,
@@ -119,10 +122,24 @@ def evaluate(expression, environment):
             if isinstance(result, TrifleExceptionInstance):
                 # We search any try blocks starting from the
                 # innermost, and evaluate the first matching :catch we find.
-                # TODO
 
-                # Otherwise, just propagate the error to the toplevel.
-                return result
+                while not stack.is_empty():
+                    # TODO: a proper condition system rather than
+                    # always unwinding the stack.
+                    frame = stack.pop()
+                    expected_error = frame.catch_error
+
+                    if expected_error and result.exception_type == expected_error:
+                        # Execute the catch body.
+                        catch = frame.expression.values[3]
+                        catch_body = List(catch.values[1:])
+
+                        stack.push(Frame(catch_body, frame.environment, as_block=True))
+                        break
+
+                else:
+                    # Otherwise, just propagate the error to the toplevel.
+                    return result
 
             else:
                 stack.pop()
