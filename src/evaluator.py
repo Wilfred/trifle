@@ -34,7 +34,7 @@ class Stack(object):
         return self.values[-1]
 
     def is_empty(self):
-        return bool(self.values)
+        return not bool(self.values)
 
 
 class Frame(object):
@@ -127,7 +127,7 @@ def evaluate(expression, environment):
             else:
                 stack.pop()
 
-                if stack.is_empty():
+                if not stack.is_empty():
                     frame = stack.peek()
                     frame.evalled.append(result)
                 else:
