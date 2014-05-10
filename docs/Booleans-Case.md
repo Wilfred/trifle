@@ -14,7 +14,7 @@ Examples:
 > (case
     ((zero? x) (print "x is zero!") 1)
     ((< x 10) (print "x is pretty small!") 2)
-    (:else (print "x has some other value!") 3)
+    (#true (print "x has some other value!") 3)
   )
 x is pretty small!
 2
