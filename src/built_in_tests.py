@@ -1965,8 +1965,9 @@ class TryTest(BuiltInTestCase):
         should propagate as usual, even if it's the type we were catching.
 
         """
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"(try (/ 1 0) :catch (zero-division-error (/ 1 0)))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch (zero-division-error (/ 1 0)))",
+            zero_division_error)
 
     def test_unknown_exception_throws_first(self):
         """If we reference an unknown variable for our exception type, we
