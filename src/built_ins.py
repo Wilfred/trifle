@@ -772,7 +772,7 @@ class Divide(Function):
                     if arg.value == 0:
                         return TrifleExceptionInstance(
                             zero_division_error,
-                            u"Divided %s by %s" % (quotient, arg.repr()))
+                            u"Divided %s by %s" % (quotient.repr(), arg.repr()))
                     
                     quotient = Fraction(
                         quotient.numerator, quotient.denominator * arg.value
