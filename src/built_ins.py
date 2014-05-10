@@ -754,7 +754,7 @@ class Divide(Function):
                 except ZeroDivisionError:
                     return TrifleExceptionInstance(
                         zero_division_error,
-                        u"Divided %s by %s" % (quotient, arg.repr()))
+                        u"Divided %f by %s" % (quotient, arg.repr()))
 
             return Float(quotient)
 
