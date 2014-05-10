@@ -5,7 +5,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
-                    TrifleValueError, UsingClosedFile, zero_division_error)
+                    TrifleValueError, UsingClosedFile, division_by_zero)
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
@@ -753,7 +753,7 @@ class Divide(Function):
                     quotient /= arg.float_value
                 except ZeroDivisionError:
                     return TrifleExceptionInstance(
-                        zero_division_error,
+                        division_by_zero,
                         u"Divided %f by %s" % (quotient, arg.repr()))
 
             return Float(quotient)
@@ -771,7 +771,7 @@ class Divide(Function):
                 if isinstance(arg, Integer):
                     if arg.value == 0:
                         return TrifleExceptionInstance(
-                            zero_division_error,
+                            division_by_zero,
                             u"Divided %s by %s" % (quotient.repr(), arg.repr()))
                     
                     quotient = Fraction(

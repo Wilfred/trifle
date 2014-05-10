@@ -25,7 +25,7 @@ class UnboundVariable(TrifleError):
     pass
 
 
-no_such_variable_error = TrifleExceptionType(u"no-such-variable-error")
+no_such_variable = TrifleExceptionType(u"no-such-variable")
 
 
 # Python already has a 'TypeError' exception
@@ -41,7 +41,7 @@ class DivideByZero(TrifleError):
     pass
 
 
-zero_division_error = TrifleExceptionType(u"zero-division-error")
+division_by_zero = TrifleExceptionType(u"division-by-zero")
 
 
 class StackOverflow(TrifleError):

@@ -20,7 +20,7 @@ from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
                     TrifleValueError, UsingClosedFile,
-                    zero_division_error)
+                    division_by_zero)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -432,7 +432,7 @@ class ReprTest(BuiltInTestCase):
 
     def test_error_type_repr(self):
         # TODO: unit test error instances too.
-        self.assertEqual(zero_division_error.repr(), '#error-type("zero-division-error")')
+        self.assertEqual(division_by_zero.repr(), '#error-type("division-by-zero")')
 
 
 class EvaluatingLambdaTest(BuiltInTestCase):
@@ -1908,7 +1908,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            self.eval(u"(try (/ 1 0) :catch (zero-division-error 1 #null))"),
+            self.eval(u"(try (/ 1 0) :catch (division-by-zero 1 #null))"),
             NULL)
 
     def test_try_with_matching_error_indirect(self):
@@ -1917,7 +1917,7 @@ class TryTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(set-symbol! (quote f) (lambda () (/ 1 0 )))"
-                      u"(try (f) :catch (zero-division-error 1 #null))"),
+                      u"(try (f) :catch (division-by-zero 1 #null))"),
             NULL)
 
     def test_try_without_matching_error(self):
@@ -1926,15 +1926,15 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (no-such-variable-error #null))",
-            zero_division_error)
+            u"(try (/ 1 0) :catch (no-such-variable #null))",
+            division_by_zero)
 
     def test_try_without_error(self):
         """If no error occurs, we should not evaluate the catch block.
 
         """
         self.assertEqual(
-            self.eval(u"(try 1 :catch (no-such-variable-error #null))"),
+            self.eval(u"(try 1 :catch (no-such-variable #null))"),
             Integer(1))
 
     def test_try_arity(self):
@@ -1946,11 +1946,11 @@ class TryTest(BuiltInTestCase):
 
         # Too many arguments.
         with self.assertRaises(ArityError):
-            self.eval(u"(try x :catch (zero-division-error #null) #null)")
+            self.eval(u"(try x :catch (division-by-zero #null) #null)")
 
         # Too few arguments in catch.
         with self.assertRaises(ArityError):
-            self.eval(u"(try x :catch (zero-division-error) #null)")
+            self.eval(u"(try x :catch (division-by-zero) #null)")
 
     def test_catch_error_propagates(self):
         """If an error occurs during the evaluation of the catch block, it
@@ -1958,7 +1958,7 @@ class TryTest(BuiltInTestCase):
 
         """
         with self.assertRaises(UnboundVariable):
-            self.eval(u"(try (/ 1 0) :catch (zero-division-error x))")
+            self.eval(u"(try (/ 1 0) :catch (division-by-zero x))")
 
     def test_catch_error_propagates_same_type(self):
         """If an error occurs during the evaluation of the catch block, it
@@ -1966,8 +1966,8 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (zero-division-error (/ 1 0)))",
-            zero_division_error)
+            u"(try (/ 1 0) :catch (division-by-zero (/ 1 0)))",
+            division_by_zero)
 
     def test_unknown_exception_throws_first(self):
         """If we reference an unknown variable for our exception type, we
@@ -1983,10 +1983,10 @@ class TryTest(BuiltInTestCase):
             self.eval(u"(try (/ 1 0) :catch #null)")
             
         with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) #null (zero-division-error #null))")
+            self.eval(u"(try (/ 1 0) #null (division-by-zero #null))")
 
         with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) :foo (zero-division-error #null))")
+            self.eval(u"(try (/ 1 0) :foo (division-by-zero #null))")
             
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(try (/ 1 0) :catch (#null #null))")

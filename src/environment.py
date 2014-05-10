@@ -11,7 +11,7 @@ from built_ins import (
     Open, Close, Read, Write, Encode, Decode,
 )
 from errors import (
-    zero_division_error, no_such_variable_error,
+    division_by_zero, no_such_variable,
 )
 
 
@@ -155,6 +155,6 @@ def fresh_environment():
         u'decode': Decode(),
 
         # TODOC
-        u'zero-division-error': zero_division_error,
-        u'no-such-variable-error': no_such_variable_error,
+        u'division-by-zero': division_by_zero,
+        u'no-such-variable': no_such_variable,
     })])
