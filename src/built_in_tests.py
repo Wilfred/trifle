@@ -1911,6 +1911,15 @@ class TryTest(BuiltInTestCase):
             self.eval(u"(try (/ 1 0) :catch (division-by-zero 1 #null))"),
             NULL)
 
+    def test_try_catch_everything(self):
+        """`error` should be a base exception that we can catch in the case of
+        any exception.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch (error 1 #null))"),
+            NULL)
+
     def test_try_with_matching_error_indirect(self):
         """We should catch the error even if it occurs lower on the stack.
 

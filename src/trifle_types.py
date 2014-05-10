@@ -340,9 +340,22 @@ class Lambda(TrifleType):
 # TODO: decide on whether we want to use the term 'error' or
 # 'exception', and use it consistently.
 class TrifleExceptionType(TrifleType):
-    def __init__(self, name):
+    """We catch exceptions by type. An exception type may declare a parent
+    (i.e. single inheritance).
+
+    Catching the parent exception will also catch any exception that
+    inherits from it.
+
+    """
+    def __init__(self, parent, name):
         assert isinstance(name, unicode)
         self.name = name
+
+        if parent is None:
+            self.parent = None
+        else:
+            assert isinstance(parent, TrifleExceptionType)
+            self.parent = parent
 
     def repr(self):
         return u'#error-type("%s")' % self.name

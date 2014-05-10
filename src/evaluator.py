@@ -85,6 +85,31 @@ def evaluate_all(expressions, environment):
     return result
 
 
+def error_is_instance(error_instance, error_type):
+    """Is the type of error_instance the same as error_type, or inherit from it?
+
+    >>> error_is_instance(division_by_zero_instance, division_by_zero)
+    True
+    >>> error_is_instance(division_by_zero_instance, error)
+    True
+    >>> error_is_instance(division_by_zero_instance, no_such_variable)
+    False
+
+    """
+    if not isinstance(error_instance, TrifleExceptionInstance):
+        return False
+
+    exception_type_found = error_instance.exception_type
+
+    while exception_type_found:
+        if exception_type_found == error_type:
+            return True
+
+        exception_type_found = exception_type_found.parent
+
+    return False
+
+
 def evaluate(expression, environment):
     """Evaluate the given expression in the given environment.
 
@@ -129,7 +154,7 @@ def evaluate(expression, environment):
                     frame = stack.pop()
                     expected_error = frame.catch_error
 
-                    if expected_error and result.exception_type == expected_error:
+                    if expected_error and error_is_instance(result, expected_error):
                         # Execute the catch body.
                         catch = frame.expression.values[3]
                         catch_body = List(catch.values[1:])
