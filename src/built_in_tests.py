@@ -551,8 +551,8 @@ class SetSymbolTest(BuiltInTestCase):
             NULL)
 
     def test_set_symbol_first_arg_symbol(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-symbol! 1 2)")
+        self.assertEvalError(
+            u"(set-symbol! 1 2)", wrong_type)
 
 
 class LetTest(BuiltInTestCase):
@@ -567,16 +567,16 @@ class LetTest(BuiltInTestCase):
             Integer(2))
 
     def test_let_malformed_bindings(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(let (1 1) #null)")
+        self.assertEvalError(
+            u"(let (1 1) #null)", wrong_type)
 
     def test_let_odd_bindings(self):
         with self.assertRaises(ArityError):
             self.eval(u"(let (x 1 y) #null)")
 
     def test_let_not_bindings(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(let #null #null)")
+        self.assertEvalError(
+            u"(let #null #null)", wrong_type)
 
         with self.assertRaises(ArityError):
             self.eval(u"(let)")
@@ -887,8 +887,8 @@ class IfTest(BuiltInTestCase):
             Integer(5))
 
     def test_if_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(if 1 2 3)")
+        self.assertEvalError(
+            u"(if 1 2 3)", wrong_type)
 
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
@@ -1588,8 +1588,9 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         with self.assertRaises(TrifleTypeError):
             self.eval(u"(macro foo (1) #null)")
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro 123 (bar) #null)")
+    def test_macro_bad_name(self):
+        self.assertEvalError(
+            u"(macro 123 (bar) #null)", wrong_type)
 
 
 class ExpandMacroTest(BuiltInTestCase):
@@ -1683,8 +1684,8 @@ class CloseTest(BuiltInTestCase):
             self.eval(u'(close!)')
 
     def test_close_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(close! #null)')
+        self.assertEvalError(
+            u'(close! #null)', wrong_type)
 
 
 class ReadTest(BuiltInTestCase):
@@ -1707,8 +1708,8 @@ class ReadTest(BuiltInTestCase):
             self.eval(u'(read "/etc/foo" :read :read)')
             
     def test_read_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(read #null)")
+        self.assertEvalError(
+            u"(read #null)", wrong_type)
 
 
 class WriteTest(BuiltInTestCase):
@@ -1743,11 +1744,11 @@ class WriteTest(BuiltInTestCase):
             self.eval(u'(write! (open "foo.txt" :write) (encode "f") #null)')
             
     def test_write_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(write! #null (encode "f"))')
+        self.assertEvalError(
+            u'(write! #null (encode "f"))', wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(write! (open "foo.txt" :write) #null)')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write) #null)', wrong_type)
 
         os.remove('foo.txt')
 
@@ -1759,8 +1760,8 @@ class EncodeTest(BuiltInTestCase):
             Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
     
     def test_encode_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(encode #null)')
+        self.assertEvalError(
+            u'(encode #null)', wrong_type)
     
     def test_encode_arity_error(self):
         with self.assertRaises(ArityError):
@@ -1777,8 +1778,8 @@ class DecodeTest(BuiltInTestCase):
             String(list(u"soufflé")))
 
     def test_encode_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(decode #null)')
+        self.assertEvalError(
+            u'(decode #null)', wrong_type)
     
     def test_encode_arity_error(self):
         with self.assertRaises(ArityError):

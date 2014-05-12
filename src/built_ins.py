@@ -24,7 +24,8 @@ class SetSymbol(FunctionWithEnv):
         variable_value = args[1]
 
         if not isinstance(variable_name, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to set-symbol! must be a symbol, but got: %s"
                 % variable_name.repr())
 
@@ -42,7 +43,8 @@ class Let(Special):
         body = args[1:]
 
         if not isinstance(bindings, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"let requires a list as its first argument, but got: %s"
                 % bindings.repr()
             )
@@ -50,7 +52,8 @@ class Let(Special):
         for index, expression in enumerate(bindings.values):
             if index % 2 == 0:
                 if not isinstance(expression, Symbol):
-                    raise TrifleTypeError(
+                    return TrifleExceptionInstance(
+                        wrong_type,
                         u"Expected a symbol for a let-bound variable, but got: %s"
                         % expression.repr()
                     )
@@ -156,7 +159,8 @@ class DefineMacro(Special):
         parameters = args[1]
         
         if not isinstance(macro_name, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"macro name should be a symbol, but got: %s" %
                 macro_name.repr())
 
@@ -335,8 +339,10 @@ class If(Special):
                 return None
 
             else:
-                raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" %
-                                      evalled_condition.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"The first argument to if must be a boolean, but got: %s" %
+                    evalled_condition.repr())
                 
         else:
             # We've evaluated the condition and either 'then' or
@@ -1264,7 +1270,8 @@ class Close(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to close! must be a file handle, but got: %s"
                 % handle.repr())
 
@@ -1284,7 +1291,8 @@ class Read(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
@@ -1297,7 +1305,8 @@ class Write(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to write! must be a file handle, but got: %s"
                 % handle.repr())
 
@@ -1310,7 +1319,8 @@ class Write(Function):
         to_write = args[1]
 
         if not isinstance(to_write, Bytestring):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
 
@@ -1326,7 +1336,8 @@ class Encode(Function):
         string = args[0]
 
         if not isinstance(string, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
@@ -1342,7 +1353,8 @@ class Decode(Function):
         bytestring = args[0]
 
         if not isinstance(bytestring, Bytestring):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())
 
