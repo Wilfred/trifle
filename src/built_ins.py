@@ -4,8 +4,11 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
-from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
-                    TrifleValueError, UsingClosedFile, division_by_zero)
+from errors import (
+    TrifleTypeError, ArityError, DivideByZero, FileNotFound,
+    TrifleValueError, UsingClosedFile, division_by_zero,
+    wrong_type,
+)
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
@@ -1365,17 +1368,20 @@ class Try(Special):
         exception_with_body = args[2]
 
         if not isinstance(catch_keyword, Keyword) or catch_keyword.symbol_name != u"catch":
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The second argument to try must be :catch, but got: %s"
                 % catch_keyword.repr())
 
         if not isinstance(exception_with_body, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The third argument to try must be a list, but got: %s"
                 % exception_with_body.repr())
 
         if len(exception_with_body.values) < 2:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The third argument to try must be a list of the form (ERROR EXPRESSION...), but got: %s"
                 % exception_with_body.repr())
 
@@ -1397,7 +1403,8 @@ class Try(Special):
             exception_type = frame.evalled[-1]
 
             if not isinstance(exception_type, TrifleExceptionType):
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"Expected a trifle exception type for :catch, but got: %s"
                     % exception_type.repr())
 

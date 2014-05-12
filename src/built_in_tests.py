@@ -20,7 +20,7 @@ from errors import (UnboundVariable, TrifleTypeError,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
                     TrifleValueError, UsingClosedFile,
-                    division_by_zero)
+                    division_by_zero, wrong_type)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -1989,14 +1989,18 @@ class TryTest(BuiltInTestCase):
             self.eval(u"(try (/ 1 0) :catch (i-dont-exist #null))")
 
     def test_try_types(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) :catch #null)")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch #null)",
+            wrong_type)
             
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) #null (division-by-zero #null))")
+        self.assertEvalError(
+            u"(try (/ 1 0) #null (division-by-zero #null))",
+            wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) :foo (division-by-zero #null))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :foo (division-by-zero #null))",
+            wrong_type)
             
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(try (/ 1 0) :catch (#null #null))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch (#null #null))",
+            wrong_type)
