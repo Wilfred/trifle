@@ -956,12 +956,14 @@ class GetIndex(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to get-index must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
@@ -999,7 +1001,8 @@ class Length(Function):
         elif isinstance(sequence, String):
             return Integer(len(sequence.string))
 
-        raise TrifleTypeError(
+        return TrifleExceptionInstance(
+            wrong_type,
             u"the first argument to length must be a sequence, but got: %s"
             % sequence.repr())
 
@@ -1018,12 +1021,14 @@ class SetIndex(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to set-index! must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
@@ -1046,8 +1051,10 @@ class SetIndex(Function):
             sequence.values[index.value] = value
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
-                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             if not (0 <= value.value <= 255):
                 raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
@@ -1056,8 +1063,10 @@ class SetIndex(Function):
             sequence.byte_value[index.value] = value.value
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
-                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside strings are only characters, but got: %s"
+                    % value.repr())
 
             sequence.string[index.value] = value.character
 

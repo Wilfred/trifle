@@ -1241,8 +1241,8 @@ class LengthTest(BuiltInTestCase):
             Integer(3))
 
     def test_length_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(length 1)")
+        self.assertEvalError(
+            u"(length 1)", wrong_type)
             
     def test_length_arg_number(self):
         with self.assertRaises(ArityError):
@@ -1278,11 +1278,11 @@ class GetIndexTest(BuiltInTestCase):
             self.eval(u"(get-index (quote (2 3)) -3)")
 
     def test_get_index_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(get-index #null 0)")
+        self.assertEvalError(
+            u"(get-index #null 0)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(get-index (quote (1)) #false)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) #false)", wrong_type)
 
     def test_get_index_indexerror(self):
         with self.assertRaises(TrifleValueError):
@@ -1325,15 +1325,15 @@ class SetIndexTest(BuiltInTestCase):
             expected)
 
     def test_set_index_bytestring_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! #bytes("a") 0 #null)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 #null)', wrong_type)
         
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! #bytes("a") 0 1.0)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 1.0)', wrong_type)
         
     def test_set_index_string_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! "abc" 0 #null)')
+        self.assertEvalError(
+            u'(set-index! "abc" 0 #null)', wrong_type)
         
     def test_set_index_bytestring_range_error(self):
         with self.assertRaises(TrifleValueError):
@@ -1355,11 +1355,11 @@ class SetIndexTest(BuiltInTestCase):
             NULL)
 
     def test_set_index_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-index! #null 0 0)")
+        self.assertEvalError(
+            u"(set-index! #null 0 0)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-index! (quote (1)) #false #false)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) #false #false)", wrong_type)
 
     def test_set_index_indexerror(self):
         with self.assertRaises(TrifleValueError):
