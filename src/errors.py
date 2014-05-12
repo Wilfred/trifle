@@ -32,6 +32,12 @@ error = TrifleExceptionType(None, u"error")
 no_such_variable = TrifleExceptionType(error, u"no-such-variable")
 
 
+wrong_type = TrifleExceptionType(error, u"wrong-type")
+
+
+wrong_argument_number = TrifleExceptionType(error, u"wrong-argument-number")
+
+
 # Python already has a 'TypeError' exception
 class TrifleTypeError(TrifleError):
     pass

@@ -11,7 +11,7 @@ from built_ins import (
     Open, Close, Read, Write, Encode, Decode,
 )
 from errors import (
-    error, division_by_zero, no_such_variable,
+    error, division_by_zero, no_such_variable, wrong_type, wrong_argument_number,
 )
 
 
@@ -158,4 +158,6 @@ def fresh_environment():
         u'error': error,
         u'division-by-zero': division_by_zero,
         u'no-such-variable': no_such_variable,
+        u'wrong-type': wrong_type,
+        u'wrong-argument-number': wrong_argument_number,
     })])
