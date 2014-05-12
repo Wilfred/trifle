@@ -35,6 +35,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
+        assert isinstance(program, unicode)
         return evaluate_all(parse(lex(program)), fresh_environment())
 
     def assertEvalError(self, program, error_type):
