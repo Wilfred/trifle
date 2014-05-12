@@ -1302,6 +1302,7 @@ class Write(Function):
                 % handle.repr())
 
         if handle.mode.symbol_name != u"write":
+            # TODO: this doesn't inherit from TrifleError, so crashes the interpreter!
             raise ValueError(
                 u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
