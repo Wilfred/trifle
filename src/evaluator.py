@@ -151,6 +151,8 @@ def evaluate(expression, environment):
                 while not stack.is_empty():
                     # TODO: a proper condition system rather than
                     # always unwinding the stack.
+                    # TODO: disinguish between a function throwing an
+                    # exception and returning it.
                     frame = stack.pop()
                     expected_error = frame.catch_error
 
