@@ -396,8 +396,10 @@ class While(Special):
                 return NULL
 
             else:
-                raise TrifleTypeError(u"The first argument to while must be a boolean, but got: %s" %
-                                      evalled_condition.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"The first argument to while must be a boolean, but got: %s" %
+                    evalled_condition.repr())
         
 
 # todo: implement in prelude in terms of writing to stdout
@@ -1249,7 +1251,8 @@ class Defined(FunctionWithEnv):
         symbol = args[0]
 
         if not isinstance(symbol, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to defined? must be a symbol, but got: %s"
                 % symbol.repr())
 

@@ -920,8 +920,8 @@ class WhileTest(BuiltInTestCase):
             self.eval(u"(while)")
 
     def test_while_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(while 1 (foo))")
+        self.assertEvalError(
+            u"(while 1 (foo))", wrong_type)
 
 
 class PrintTest(BuiltInTestCase):
@@ -1609,8 +1609,8 @@ class DefinedTest(BuiltInTestCase):
             FALSE)
 
     def test_defined_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(defined? 1)")
+        self.assertEvalError(
+            u"(defined? 1)", wrong_type)
 
     def test_defined_arity_error(self):
         with self.assertRaises(ArityError):

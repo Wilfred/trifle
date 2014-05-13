@@ -1,4 +1,3 @@
-import unittest
 from copy import deepcopy
 
 from trifle_types import (List, Bytestring, String, Character,
@@ -6,7 +5,7 @@ from trifle_types import (List, Bytestring, String, Character,
                           TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError, TrifleTypeError, ArityError, wrong_type
+from errors import TrifleValueError, ArityError, wrong_type
 from main import env_with_prelude
 from evaluator import evaluate_all
 
