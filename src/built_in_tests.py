@@ -314,12 +314,6 @@ class ParsingTest(BuiltInTestCase):
                          List([Integer(1), Integer(2)]))
 
 
-class EvaluatingTest(BuiltInTestCase):
-    def test_invalid_function(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(1)")
-
-
 class EvaluatingLiteralsTest(BuiltInTestCase):
     def test_eval_boolean(self):
         self.assertEqual(
