@@ -16,7 +16,7 @@ from trifle_types import (
     FileHandle, Bytestring,
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
-from errors import (UnboundVariable, TrifleTypeError,
+from errors import (UnboundVariable,
                     LexFailed, ParseFailed, ArityError,
                     DivideByZero, StackOverflow, FileNotFound,
                     TrifleValueError, UsingClosedFile,
@@ -654,8 +654,8 @@ class QuoteTest(BuiltInTestCase):
             self.eval(u"(quote (list (unquote*)))")
 
     def test_unquote_star_wrong_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(quote (list (unquote* 1)))")
+        self.assertEvalError(
+            u"(quote (list (unquote* 1)))", wrong_type)
 
     def test_unquote_star_top_level(self):
         with self.assertRaises(TrifleValueError):
@@ -1654,11 +1654,11 @@ class OpenTest(BuiltInTestCase):
             self.eval(u'(open "/foo/bar" :write :write)')
 
     def test_open_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(open "/foo/bar" #null)')
+        self.assertEvalError(
+            u'(open "/foo/bar" #null)', wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(open #null :write)")
+        self.assertEvalError(
+            u"(open #null :write)", wrong_type)
 
 
 class CloseTest(BuiltInTestCase):

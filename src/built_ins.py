@@ -5,7 +5,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
-    TrifleTypeError, ArityError, DivideByZero, FileNotFound,
+    ArityError, DivideByZero, FileNotFound,
     TrifleValueError, UsingClosedFile, division_by_zero,
     wrong_type,
 )
@@ -194,11 +194,13 @@ class ExpandMacro(Special):
         expr = args[0]
 
         if not isinstance(expr, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to expand-macro must be a list, but got: %s" % args[0].repr())
 
         if not expr.values:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to expand-macro must be a non-empty list.")
 
         macro_name = expr.values[0]
@@ -207,7 +209,8 @@ class ExpandMacro(Special):
         macro = evaluate(macro_name, env)
 
         if not isinstance(macro, Macro):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"Expected a macro, but got: %s" % macro.repr())
 
         macro_args = expr.values[1:]
@@ -274,7 +277,8 @@ class Quote(Special):
                     values_list = evaluate(unquote_argument, env)
 
                     if not isinstance(values_list, List):
-                        raise TrifleTypeError(
+                        return TrifleExceptionInstance(
+                            wrong_type,
                             u"unquote* must be used with a list, but got a %s" % values_list.repr())
 
                     # Splice in the result of evaluating the unquote* argument
@@ -282,7 +286,10 @@ class Quote(Special):
 
                 elif isinstance(item, List):
                     # recurse the nested list
-                    self.evaluate_unquote_calls(item, env, stack)
+                    result = self.evaluate_unquote_calls(item, env, stack)
+
+                    if isinstance(result, TrifleExceptionInstance):
+                        return result
 
         return expression
     
@@ -298,7 +305,11 @@ class Quote(Special):
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
         result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env, stack)
-        return result.values[0]
+
+        if isinstance(result, TrifleExceptionInstance):
+            return result
+        elif isinstance(result, List):
+            return result.values[0]
 
 
 class If(Special):
@@ -1268,14 +1279,16 @@ class Open(Function):
         path = args[0]
 
         if not isinstance(path, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to open must be a string, but got: %s"
                 % path.repr())
 
         flag = args[1]
 
         if not isinstance(flag, Keyword):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to open must be a keyword, but got: %s"
                 % flag.repr())
 

@@ -40,11 +40,6 @@ wrong_type = TrifleExceptionType(error, u"wrong-type")
 wrong_argument_number = TrifleExceptionType(error, u"wrong-argument-number")
 
 
-# Python already has a 'TypeError' exception
-class TrifleTypeError(TrifleError):
-    pass
-
-    
 class ArityError(TrifleError):
     pass
 
