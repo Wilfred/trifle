@@ -32,6 +32,8 @@ error = TrifleExceptionType(None, u"error")
 no_such_variable = TrifleExceptionType(error, u"no-such-variable")
 
 
+# TODO: we need a syntax-error too, since (try x #null) and (let (1 1))
+# can be checked at compile time and don't depend on runtime types.
 wrong_type = TrifleExceptionType(error, u"wrong-type")
 
 
