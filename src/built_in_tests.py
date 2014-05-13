@@ -1524,11 +1524,11 @@ class CallTest(BuiltInTestCase):
             self.eval(u"(call +)")
 
     def test_call_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(call #null (quote (1 2 3)))")
+        self.assertEvalError(
+            u"(call #null (quote (1 2 3)))", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(call + #null)")
+        self.assertEvalError(
+            u"(call + #null)", wrong_type)
 
 
 class EvalTest(BuiltInTestCase):

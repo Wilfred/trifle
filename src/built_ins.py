@@ -1203,12 +1203,14 @@ class Call(FunctionWithEnv):
         # Sadly, RPython doesn't support isinstance(x, (A, B)).
         if not (isinstance(function, Function) or isinstance(function, FunctionWithEnv)
                 or isinstance(function, Lambda)):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
 
         if not isinstance(arguments, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to call must be a list, but got: %s"
                 % arguments.repr())
 
