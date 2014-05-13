@@ -4,7 +4,7 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String,
                           TrifleExceptionInstance)
-from errors import UnboundVariable, TrifleTypeError, StackOverflow
+from errors import UnboundVariable, StackOverflow, wrong_type
 from almost_python import zip
 from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
@@ -296,8 +296,10 @@ def evaluate_function_call(stack):
 
         else:
             # todoc: this error
-            raise TrifleTypeError(u"You can only call functions or macros, but got: %s"
-                                  % function.repr())
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"You can only call functions or macros, but got: %s"
+                % function.repr())
 
     else:
         # We had a lambda body or expanded macro and we've now evalled

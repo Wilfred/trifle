@@ -442,17 +442,17 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             Integer(2))
 
     def test_call_not_lambda(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(1)")
+        self.assertEvalError(
+            u"(1)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(#null)")
+        self.assertEvalError(
+            u"(#null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'("a")')
+        self.assertEvalError(
+            u'("a")', wrong_type)
     
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'((quote (1)))')
+        self.assertEvalError(
+            u'((quote (1)))', wrong_type)
     
     def test_call_lambda_variable_arguments(self):
         expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
