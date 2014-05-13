@@ -653,6 +653,10 @@ class QuoteTest(BuiltInTestCase):
         with self.assertRaises(ArityError):
             self.eval(u"(quote (list (unquote*)))")
 
+    def test_unquote_star_wrong_type(self):
+        with self.assertRaises(TrifleTypeError):
+            self.eval(u"(quote (list (unquote* 1)))")
+
     def test_unquote_star_top_level(self):
         with self.assertRaises(TrifleValueError):
             self.eval(u"(quote (unquote* #null))")
