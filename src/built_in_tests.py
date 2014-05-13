@@ -699,8 +699,8 @@ class AddTest(BuiltInTestCase):
                          Integer(2))
         
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(+ +)")
+        self.assertEvalError(
+            u"(+ +)", wrong_type)
 
 
 class SubtractTest(BuiltInTestCase):
@@ -741,8 +741,8 @@ class SubtractTest(BuiltInTestCase):
                          Integer(1))
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(- -)")
+        self.assertEvalError(
+            u"(- -)", wrong_type)
 
 
 class MultiplyTest(BuiltInTestCase):
@@ -777,8 +777,8 @@ class MultiplyTest(BuiltInTestCase):
                          Integer(1))
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(* 1 #null)")
+        self.assertEvalError(
+            u"(* 1 #null)", wrong_type)
 
 
 class DivideTest(BuiltInTestCase):
@@ -811,8 +811,8 @@ class DivideTest(BuiltInTestCase):
         self.assertTrue(isinstance(result, TrifleExceptionInstance))
             
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(/ 1 #null)")
+        self.assertEvalError(
+            u"(/ 1 #null)", wrong_type)
 
     def test_arity_error(self):
         with self.assertRaises(ArityError):
@@ -829,11 +829,11 @@ class ModTest(BuiltInTestCase):
             self.eval(u"(mod 1 0)")
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(mod 1 #null)")
+        self.assertEvalError(
+            u"(mod 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(mod 1 0.5)")
+        self.assertEvalError(
+            u"(mod 1 0.5)", wrong_type)
 
     def test_arity_error(self):
         with self.assertRaises(ArityError):
@@ -856,11 +856,11 @@ class DivTest(BuiltInTestCase):
             self.eval(u"(div 1 0)")
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(div 1 #null)")
+        self.assertEvalError(
+            u"(div 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(div 2.0 1.0)")
+        self.assertEvalError(
+            u"(div 2.0 1.0)", wrong_type)
 
     def test_arity_error(self):
         with self.assertRaises(ArityError):
@@ -970,8 +970,8 @@ class InputTest(BuiltInTestCase):
                 )
 
     def test_input_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(input 1)")
+        self.assertEvalError(
+            u"(input 1)", wrong_type)
 
     def test_input_arity_error(self):
         with self.assertRaises(ArityError):
@@ -1207,8 +1207,8 @@ class LessThanTest(BuiltInTestCase):
             FALSE)
 
     def test_less_than_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(< #true #false)")
+        self.assertEvalError(
+            u"(< #true #false)", wrong_type)
 
     def test_less_than_insufficient_args(self):
         with self.assertRaises(ArityError):
@@ -1400,8 +1400,9 @@ class InsertTest(BuiltInTestCase):
             Bytestring([ord(c) for c in "ab"]))
 
     def test_insert_bytestring_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)',
+            wrong_type)
 
     def test_insert_bytestring_invalid_value(self):
         with self.assertRaises(TrifleValueError):
@@ -1413,8 +1414,9 @@ class InsertTest(BuiltInTestCase):
             String(list(u"ab")))
 
     def test_insert_string_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-symbol! (quote x) "a") (insert! x 1 #null)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) "a") (insert! x 1 #null)',
+            wrong_type)
 
     def test_insert_returns_null(self):
         self.assertEqual(
@@ -1437,12 +1439,12 @@ class InsertTest(BuiltInTestCase):
 
     def test_insert_typeerror(self):
         # first argument must be a sequence
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(insert! #null 0 0)")
+        self.assertEvalError(
+            u"(insert! #null 0 0)", wrong_type)
 
         # second argument must be an integer
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(insert! (quote ()) 0.0 0)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0.0 0)", wrong_type)
 
 
 class EnvironmentVariablesTest(BuiltInTestCase):

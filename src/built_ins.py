@@ -417,7 +417,8 @@ class Input(Function):
         prefix = args[0]
 
         if not isinstance(prefix, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to input must be a string, but got: %s"
                 % prefix.repr())
 
@@ -595,7 +596,8 @@ class Add(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"+ requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -643,7 +645,8 @@ class Subtract(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"- requires numbers, but got: %s." % arg.repr())
 
         if not args:
@@ -702,7 +705,8 @@ class Multiply(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"* requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -749,7 +753,8 @@ class Divide(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"/ requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -810,7 +815,8 @@ class Mod(Function):
 
         for arg in args:
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"mod requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
@@ -832,7 +838,8 @@ class Div(Function):
 
         for arg in args:
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"div requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
@@ -856,7 +863,8 @@ class LessThan(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"< requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -1087,12 +1095,14 @@ class Insert(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to insert! must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to insert! must be an integer, but got: %s"
                 % index.repr())
 
@@ -1118,8 +1128,10 @@ class Insert(Function):
             sequence.values.insert(target_index, value)
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
-                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             if not (0 <= value.value <= 255):
                 raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
@@ -1128,8 +1140,10 @@ class Insert(Function):
             sequence.byte_value.insert(target_index, value.value)
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
-                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside strings are only characters, but got: %s"
+                    % value.repr())
 
             sequence.string.insert(target_index, value.character)
 

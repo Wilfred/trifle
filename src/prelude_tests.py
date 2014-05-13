@@ -6,13 +6,14 @@ from trifle_types import (List, Bytestring, String, Character,
                           TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError, TrifleTypeError, ArityError
+from errors import TrifleValueError, TrifleTypeError, ArityError, wrong_type
 from main import env_with_prelude
 from evaluator import evaluate_all
 
 from test_utils import (
     evaluate_with_prelude
 )
+from built_in_tests import BuiltInTestCase
 
 
 """Unit tests for functions and macros in the prelude. It's easier to
@@ -23,7 +24,7 @@ the prelude very often.
 
 # TODO: we should shell out to the RPython-compiled binary instead of
 # assuming CPython behaves the same.
-class PreludeTestCase(unittest.TestCase):
+class PreludeTestCase(BuiltInTestCase):
     env = env_with_prelude()
     
     def eval(self, program):
@@ -260,8 +261,8 @@ class AppendTest(PreludeTestCase):
 
     def test_append_typeerror(self):
         # first argument must be a list
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(append! #null 0)")
+        self.assertEvalError(
+            u"(append! #null 0)", wrong_type)
 
 
 class PushTest(PreludeTestCase):
@@ -296,9 +297,8 @@ class PushTest(PreludeTestCase):
 
     def test_push_typeerror(self):
         # first argument must be a list
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! #null 0)")))
+        self.assertEvalError(
+            u"(push! #null 0)", wrong_type)
 
 
 class NotTest(PreludeTestCase):
@@ -420,14 +420,14 @@ class InequalityTest(PreludeTestCase):
         self.assertEvalsTo(u"(<= 2 3)", TRUE)
 
     def test_incomparable_types(self):
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(> 1 #null)")))
+        self.assertEvalError(
+            u"(> 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(>= 1 #null)")))
+        self.assertEvalError(
+            u"(>= 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(<= 1 #null)")))
+        self.assertEvalError(
+            u"(<= 1 #null)", wrong_type)
 
 
 class SortTest(PreludeTestCase):
