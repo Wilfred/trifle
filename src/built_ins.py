@@ -139,7 +139,9 @@ class LambdaFactory(Special):
 
         parameters = args[0]
 
-        validate_parameters(parameters)
+        error = validate_parameters(parameters)
+        if error:
+            return error
 
         lambda_body = List(args[1:])
         return Lambda(parameters, lambda_body, env)
@@ -165,7 +167,10 @@ class DefineMacro(Special):
                 macro_name.repr())
 
         parameters = args[1]
-        validate_parameters(parameters)
+        error = validate_parameters(parameters)
+
+        if error:
+            return error
 
         macro_body = List(args[2:])
         env.set_global(macro_name.symbol_name,
@@ -1156,7 +1161,8 @@ class Parse(Function):
         program_string = args[0]
 
         if not isinstance(program_string, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to parse must be a string, but got: %s"
                 % program_string.repr())
 

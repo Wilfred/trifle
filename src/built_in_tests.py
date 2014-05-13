@@ -478,12 +478,12 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"(lambda)")
 
     def test_lambda_params_not_list(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(lambda foo bar)")
+        self.assertEvalError(
+            u"(lambda foo bar)", wrong_type)
 
     def test_lambda_params_not_symbols(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(lambda (1 2) bar)")
+        self.assertEvalError(
+            u"(lambda (1 2) bar)", wrong_type)
 
     def test_evaluate_lambda(self):
         lambda_obj = self.eval(u"(lambda (x) x)")
@@ -1484,8 +1484,8 @@ class ParseTest(BuiltInTestCase):
             self.eval(u'(parse "()" 1)')
 
     def test_parse_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(parse 123)")
+        self.assertEvalError(
+            u"(parse 123)", wrong_type)
 
 
 class CallTest(BuiltInTestCase):
@@ -1578,11 +1578,11 @@ class EvaluatingMacrosTest(BuiltInTestCase):
             self.eval(u"(macro foo (bar))")
 
     def test_macro_bad_arg_types(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro foo bar #null)")
+        self.assertEvalError(
+            u"(macro foo bar #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro foo (1) #null)")
+        self.assertEvalError(
+            u"(macro foo (1) #null)", wrong_type)
 
     def test_macro_bad_name(self):
         self.assertEvalError(

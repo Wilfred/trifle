@@ -1,5 +1,5 @@
-from trifle_types import List, Symbol, Keyword
-from errors import TrifleTypeError, ArityError
+from trifle_types import List, Symbol, Keyword, TrifleExceptionInstance
+from errors import ArityError, wrong_type
 
 
 # TODO: (lambda (x x) 1) should be an error.
@@ -9,8 +9,10 @@ def validate_parameters(parameter_list):
 
     """
     if not isinstance(parameter_list, List):
-        raise TrifleTypeError(
-            u"Parameter lists must be lists, but got: %s" % parameter_list.repr())
+        return TrifleExceptionInstance(
+            wrong_type,
+            u"Parameter lists must be lists, but got: %s"
+            % parameter_list.repr())
     
     for index, param in enumerate(parameter_list.values):
         if isinstance(param, Symbol):
@@ -21,7 +23,8 @@ def validate_parameters(parameter_list):
                 if index == len(parameter_list.values) - 2:
                     continue
 
-        raise TrifleTypeError(
+        return TrifleExceptionInstance(
+            wrong_type,
             u"Invalid parameter in parameter list: %s" %
             param.repr())
 
