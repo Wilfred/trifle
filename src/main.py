@@ -97,15 +97,24 @@ def entry_point(argv):
             try:
                 user_input = raw_input(u'> ')
                 lexed_tokens = lex(user_input)
-                parse_tree = parse(lexed_tokens)
-                result = evaluate_all(parse_tree, env)
 
-                if isinstance(result, TrifleExceptionInstance):
+                if isinstance(lexed_tokens, TrifleExceptionInstance):
                     # TODO: a proper stack trace.
-                    print u'Uncaught error: %s: %s' % (result.exception_type.name,
-                                              result.message)
+                    print u'Uncaught error: %s: %s' % (
+                        lexed_tokens.exception_type.name,
+                        lexed_tokens.message)
+
                 else:
-                    print result.repr().encode('utf-8')
+                    parse_tree = parse(lexed_tokens)
+                    result = evaluate_all(parse_tree, env)
+
+                    if isinstance(result, TrifleExceptionInstance):
+                        # TODO: a proper stack trace.
+                        print u'Uncaught error: %s: %s' % (
+                            result.exception_type.name,
+                            result.message)
+                    else:
+                        print result.repr().encode('utf-8')
 
             # TODO: Once TrifleError has been removed, we can remove this.
             except TrifleError as e:
@@ -127,6 +136,13 @@ def entry_point(argv):
             return 2
         code = get_contents(filename)
         lexed_tokens = lex(code)
+
+        if isinstance(lexed_tokens, TrifleExceptionInstance):
+            print u'Uncaught error: %s: %s' % (
+                lexed_tokens.exception_type.name,
+                lexed_tokens.message)
+            return 1
+
         parse_tree = parse(lexed_tokens)
         try:
             result = evaluate_all(parse_tree, env)
@@ -151,6 +167,13 @@ def entry_point(argv):
                 return 2
             code_snippet = argv[2].decode('utf-8')
             lexed_tokens = lex(code_snippet)
+
+            if isinstance(lexed_tokens, TrifleExceptionInstance):
+                print u'Uncaught error: %s: %s' % (
+                    lexed_tokens.exception_type.name,
+                    lexed_tokens.message)
+                return 1
+            
             parse_tree = parse(lexed_tokens)
 
             try:
