@@ -44,13 +44,15 @@ class BuiltInTestCase(unittest.TestCase):
 
         """
         result = self.eval(program)
+        self.assertTrifleError(result, error_type)
 
-        self.assertTrue(isinstance(result, TrifleExceptionInstance),
-                        "Expected an error, but got: %s" % result.repr())
+    def assertTrifleError(self, value, expected_error_type):
+        self.assertTrue(isinstance(value, TrifleExceptionInstance),
+                        "Expected an error, but got: %s" % value.repr())
 
-        self.assertEqual(result.exception_type, error_type,
+        self.assertEqual(value.exception_type, expected_error_type,
                          "Expected %s, but got %s" %
-                         (error_type.name, result.exception_type.name))
+                         (expected_error_type.name, value.exception_type.name))
 
 
 class CommentLexTest(BuiltInTestCase):
