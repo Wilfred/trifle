@@ -58,31 +58,31 @@ class BuiltInTestCase(unittest.TestCase):
 class CommentLexTest(BuiltInTestCase):
     def test_lex_comment(self):
         self.assertEqual(
-            lex(u"1 ; 2 \n 3"), [Integer(1), Integer(3)])
+            lex(u"1 ; 2 \n 3"), List([Integer(1), Integer(3)]))
 
 
 class IntegerLexTest(BuiltInTestCase):
     def test_lex_positive_number(self):
         self.assertEqual(
-            lex(u"123")[0], Integer(123))
+            lex(u"123").values[0], Integer(123))
 
         self.assertEqual(
-            lex(u"0123")[0], Integer(123))
+            lex(u"0123").values[0], Integer(123))
 
     def test_lex_negative_number(self):
         self.assertEqual(
-            lex(u"-123")[0], Integer(-123))
+            lex(u"-123").values[0], Integer(-123))
 
     def test_lex_number_with_underscores(self):
         self.assertEqual(
-            lex(u"1_000")[0], Integer(1000))
+            lex(u"1_000").values[0], Integer(1000))
 
     def test_lex_zero(self):
         self.assertEqual(
-            lex(u"0")[0], Integer(0))
+            lex(u"0").values[0], Integer(0))
 
         self.assertEqual(
-            lex(u"-0")[0], Integer(0))
+            lex(u"-0").values[0], Integer(0))
 
     def test_lex_invalid_number(self):
         with self.assertRaises(LexFailed):
@@ -92,19 +92,19 @@ class IntegerLexTest(BuiltInTestCase):
 class FloatLexTest(BuiltInTestCase):
     def test_lex_positive(self):
         self.assertEqual(
-            lex(u"123.0")[0], Float(123.0))
+            lex(u"123.0").values[0], Float(123.0))
 
     def test_lex_float_leading_zero(self):
         self.assertEqual(
-            lex(u"0123.0")[0], Float(123.0))
+            lex(u"0123.0").values[0], Float(123.0))
 
     def test_lex_negative(self):
         self.assertEqual(
-            lex(u"-123.0")[0], Float(-123.0))
+            lex(u"-123.0").values[0], Float(-123.0))
 
     def test_lex_with_underscores(self):
         self.assertEqual(
-            lex(u"1_000.000_2")[0], Float(1000.0002))
+            lex(u"1_000.000_2").values[0], Float(1000.0002))
         
 
     def test_lex_invalid(self):
@@ -118,17 +118,17 @@ class FloatLexTest(BuiltInTestCase):
 class FractionLexTest(BuiltInTestCase):
     def test_lex_fraction(self):
         self.assertEqual(
-            lex(u"1/3")[0], Fraction(1, 3))
+            lex(u"1/3").values[0], Fraction(1, 3))
 
     def test_lex_fraction_underscore(self):
         self.assertEqual(
-            lex(u"1/3_0")[0], Fraction(1, 30))
+            lex(u"1/3_0").values[0], Fraction(1, 30))
 
     def test_lex_fraction_to_integer(self):
         self.assertEqual(
-            lex(u"2/1")[0], Integer(2))
+            lex(u"2/1").values[0], Integer(2))
         self.assertEqual(
-            lex(u"3/3")[0], Integer(1))
+            lex(u"3/3").values[0], Integer(1))
 
     def test_lex_fraction_zero_denominator(self):
         with self.assertRaises(DivideByZero):
@@ -136,7 +136,7 @@ class FractionLexTest(BuiltInTestCase):
 
     def test_lex_fraction_not_simplified(self):
         self.assertEqual(
-            lex(u"2/6")[0], Fraction(1, 3))
+            lex(u"2/6").values[0], Fraction(1, 3))
 
     def test_lex_invalid_fraction(self):
         with self.assertRaises(LexFailed):
@@ -146,22 +146,22 @@ class FractionLexTest(BuiltInTestCase):
 class SymbolLexTest(BuiltInTestCase):
     def test_lex_symbol(self):
         self.assertEqual(
-            lex(u"x")[0], Symbol(u'x'))
+            lex(u"x").values[0], Symbol(u'x'))
 
         self.assertEqual(
-            lex(u"x1")[0], Symbol(u'x1'))
+            lex(u"x1").values[0], Symbol(u'x1'))
 
         self.assertEqual(
-            lex(u"foo?")[0], Symbol(u'foo?'))
+            lex(u"foo?").values[0], Symbol(u'foo?'))
 
         self.assertEqual(
-            lex(u"foo!")[0], Symbol(u'foo!'))
+            lex(u"foo!").values[0], Symbol(u'foo!'))
 
         self.assertEqual(
-            lex(u"foo_bar")[0], Symbol(u'foo_bar'))
+            lex(u"foo_bar").values[0], Symbol(u'foo_bar'))
 
         self.assertEqual(
-            lex(u"<=")[0], Symbol(u'<='))
+            lex(u"<=").values[0], Symbol(u'<='))
 
     def test_lex_invalid_symbol(self):
         with self.assertRaises(LexFailed):
@@ -171,7 +171,7 @@ class SymbolLexTest(BuiltInTestCase):
 class KeywordLexTest(BuiltInTestCase):
     def test_lex_keyword(self):
         self.assertEqual(
-            lex(u":x")[0], Keyword(u'x'))
+            lex(u":x").values[0], Keyword(u'x'))
 
     def test_lex_invalid_keyword(self):
         with self.assertRaises(LexFailed):
@@ -180,14 +180,14 @@ class KeywordLexTest(BuiltInTestCase):
 class StringLexTest(BuiltInTestCase):
     def test_lex_string(self):
         self.assertEqual(
-            lex(u'"foo"')[0], String(list(u'foo')))
+            lex(u'"foo"').values[0], String(list(u'foo')))
 
         self.assertEqual(
-            lex(u'"foo\nbar"')[0], String(list(u'foo\nbar')))
+            lex(u'"foo\nbar"').values[0], String(list(u'foo\nbar')))
 
     def test_lex_non_ascii_string(self):
         self.assertEqual(
-            lex(u'"flambé"')[0], String(list(u'flambé')))
+            lex(u'"flambé"').values[0], String(list(u'flambé')))
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
@@ -195,28 +195,28 @@ class StringLexTest(BuiltInTestCase):
             lex(u'"\\"')
 
         self.assertEqual(
-            lex(u'"\\\\"')[0], String(list(u'\\')))
+            lex(u'"\\\\"').values[0], String(list(u'\\')))
 
     def test_lex_newline(self):
         self.assertEqual(
-            lex(u'"\n"')[0], String(list(u'\n')))
+            lex(u'"\n"').values[0], String(list(u'\n')))
 
         self.assertEqual(
-            lex(u'"\\n"')[0], String(list(u'\n')))
+            lex(u'"\\n"').values[0], String(list(u'\n')))
 
     def test_lex_escaped_quote(self):
         self.assertEqual(
-            lex(u'"\\""')[0], String(list(u'"')))
+            lex(u'"\\""').values[0], String(list(u'"')))
 
 
 class CharacterLexTest(BuiltInTestCase):
     def test_lex_character(self):
         self.assertEqual(
-            lex(u"'a'")[0], Character(u'a'))
+            lex(u"'a'").values[0], Character(u'a'))
 
     def test_lex_non_ascii_character(self):
         self.assertEqual(
-            lex(u"'é'")[0], Character(u'é'))
+            lex(u"'é'").values[0], Character(u'é'))
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
@@ -224,28 +224,28 @@ class CharacterLexTest(BuiltInTestCase):
             lex(u"'\\'")
 
         self.assertEqual(
-            lex(u"'\\\\'")[0], Character(u'\\'))
+            lex(u"'\\\\'").values[0], Character(u'\\'))
 
     def test_lex_newline(self):
         self.assertEqual(
-            lex(u"'\n'")[0], Character(u'\n'))
+            lex(u"'\n'").values[0], Character(u'\n'))
 
         self.assertEqual(
-            lex(u"'\\n'")[0], Character(u'\n'))
+            lex(u"'\\n'").values[0], Character(u'\n'))
 
     def test_lex_escaped_quote(self):
         self.assertEqual(
-            lex(u"'\\''")[0], Character(u"'"))
+            lex(u"'\\''").values[0], Character(u"'"))
 
 
 class BytestringLexTest(BuiltInTestCase):
     def test_lex_bytestring(self):
         self.assertEqual(
-            lex(u'#bytes("foo")')[0], Bytestring([ord(c) for c in 'foo']))
+            lex(u'#bytes("foo")').values[0], Bytestring([ord(c) for c in 'foo']))
 
     def test_lex_multiple_bytestrings(self):
         self.assertEqual(
-            lex(u'#bytes("foo") #bytes("bar")')[1],
+            lex(u'#bytes("foo") #bytes("bar")').values[1],
             Bytestring([ord(c) for c in 'bar']))
 
     def test_lex_invalid_byte(self):
@@ -258,14 +258,14 @@ class BytestringLexTest(BuiltInTestCase):
             lex(u'#bytes("\\")')
 
         self.assertEqual(
-            lex(u'#bytes("\\\\")')[0], Bytestring([ord('\\')]))
+            lex(u'#bytes("\\\\")').values[0], Bytestring([ord('\\')]))
 
     def test_lex_escaped_byte(self):
         self.assertEqual(
-            lex(u'#bytes("\\xff")')[0], Bytestring([255]))
+            lex(u'#bytes("\\xff")').values[0], Bytestring([255]))
 
         self.assertEqual(
-            lex(u'#bytes("\\xFF")')[0], Bytestring([255]))
+            lex(u'#bytes("\\xFF")').values[0], Bytestring([255]))
 
     def test_lex_invalid_escaped_byte(self):
         # Not hexadecimal characters:
@@ -290,10 +290,10 @@ class BytestringLexTest(BuiltInTestCase):
 class BooleanLexTest(BuiltInTestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"#true")[0], TRUE)
+            lex(u"#true").values[0], TRUE)
 
         self.assertEqual(
-            lex(u"#false")[0], FALSE)
+            lex(u"#false").values[0], FALSE)
 
     def test_lex_symbol_leading_bool(self):
         """Ensure that a literal whose prefix is a valid boolean, is still a
@@ -307,7 +307,7 @@ class BooleanLexTest(BuiltInTestCase):
 class NullLexTest(BuiltInTestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"#null")[0], NULL)
+            lex(u"#null").values[0], NULL)
 
 
 class ParsingTest(BuiltInTestCase):

@@ -30,7 +30,7 @@ def parse_inner(tokens, top_level):
 
 
 def parse(tokens):
-    return parse_inner(tokens, True)
+    return parse_inner(tokens.values, True)
 
 
 def parse_one(tokens):

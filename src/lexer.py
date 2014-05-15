@@ -2,12 +2,13 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from trifle_types import (OpenParen, CloseParen,
-                          Integer, Float, Fraction,
-                          Symbol, Keyword,
-                          String, Bytestring, Character,
-                          TRUE, FALSE, NULL)
 from errors import LexFailed, DivideByZero
+from trifle_types import (
+    OpenParen, CloseParen,
+    Integer, Float, Fraction,
+    Symbol, Keyword, List,
+    String, Bytestring, Character,
+    TRUE, FALSE, NULL)
 
 
 # Note this an incomplete list and is purely to give us convenient
@@ -303,7 +304,7 @@ def _lex(tokens):
         if not found_match:
             raise LexFailed(u"Could not lex token: '%s'" % token)
 
-    return lexed_tokens
+    return List(lexed_tokens)
 
 
 def lex(text):
