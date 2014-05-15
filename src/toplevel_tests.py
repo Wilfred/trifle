@@ -1,6 +1,7 @@
 import unittest
 from cStringIO import StringIO
 from contextlib import contextmanager
+from tempfile import NamedTemporaryFile
 
 from mock import patch
 
@@ -48,3 +49,14 @@ class TopLevelSnippetTest(unittest.TestCase):
         """
         return_value = entry_point(['trifle', '-i', '(+ 1 i-dont-exist)'])
         self.assertNotEqual(return_value, 0)
+
+class TopLevelFileTest(unittest.TestCase):
+    def test_eval_file(self):
+        with mock_stdout() as stdout:
+            with NamedTemporaryFile() as f:
+                f.write('(print! "hello world")')
+                f.flush()
+                
+                entry_point(['trifle', f.name])
+
+        self.assertEqual(stdout.getvalue(), "hello world\n")
