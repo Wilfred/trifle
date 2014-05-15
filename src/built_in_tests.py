@@ -18,7 +18,7 @@ from trifle_types import (
 from evaluator import evaluate, evaluate_all
 from errors import (UnboundVariable,
                     LexFailed, ParseFailed, ArityError,
-                    DivideByZero, StackOverflow, FileNotFound,
+                    StackOverflow, FileNotFound,
                     TrifleValueError, UsingClosedFile,
                     division_by_zero, wrong_type)
 from environment import Environment, Scope, fresh_environment
@@ -131,8 +131,8 @@ class FractionLexTest(BuiltInTestCase):
             lex(u"3/3").values[0], Integer(1))
 
     def test_lex_fraction_zero_denominator(self):
-        with self.assertRaises(DivideByZero):
-            lex(u"1/0")
+        self.assertTrifleError(
+            lex(u"1/0"), division_by_zero)
 
     def test_lex_fraction_not_simplified(self):
         self.assertEqual(
@@ -831,8 +831,8 @@ class ModTest(BuiltInTestCase):
                          Integer(1))
 
     def test_mod_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(mod 1 0)")
+        self.assertEvalError(
+            u"(mod 1 0)", division_by_zero)
 
     def test_invalid_type(self):
         self.assertEvalError(
@@ -858,8 +858,8 @@ class DivTest(BuiltInTestCase):
                          Integer(-3))
 
     def test_div_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(div 1 0)")
+        self.assertEvalError(
+            u"(div 1 0)", division_by_zero)
 
     def test_invalid_type(self):
         self.assertEvalError(
@@ -1492,6 +1492,10 @@ class ParseTest(BuiltInTestCase):
     def test_parse_type_error(self):
         self.assertEvalError(
             u"(parse 123)", wrong_type)
+
+    def test_parse_zero_division_error(self):
+        self.assertEvalError(
+            u'(parse "1/0")', division_by_zero)
 
 
 class CallTest(BuiltInTestCase):

@@ -44,10 +44,6 @@ class ArityError(TrifleError):
     pass
 
 
-class DivideByZero(TrifleError):
-    pass
-
-
 division_by_zero = TrifleExceptionType(error, u"division-by-zero")
 
 

@@ -2,13 +2,14 @@
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
 
-from errors import LexFailed, DivideByZero
 from trifle_types import (
     OpenParen, CloseParen,
     Integer, Float, Fraction,
+    TrifleExceptionInstance,
     Symbol, Keyword, List,
     String, Bytestring, Character,
     TRUE, FALSE, NULL)
+from errors import LexFailed, division_by_zero
 
 
 # Note this an incomplete list and is purely to give us convenient
@@ -246,7 +247,9 @@ def _lex(tokens):
                         raise LexFailed(u"Invalid fraction: '%s'" % token)
 
                     if denominator == 0:
-                        raise DivideByZero(u"Can't have fraction denominator of zero: '%s'" % token)
+                        return TrifleExceptionInstance(
+                            division_by_zero,
+                            u"Can't have fraction denominator of zero: '%s'" % token)
 
                     fraction = Fraction(numerator, denominator)
 

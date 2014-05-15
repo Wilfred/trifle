@@ -5,7 +5,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
-    ArityError, DivideByZero, FileNotFound,
+    ArityError, FileNotFound,
     TrifleValueError, UsingClosedFile, division_by_zero,
     wrong_type,
 )
@@ -838,7 +838,9 @@ class Mod(Function):
                     u"mod requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
-            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+            return TrifleExceptionInstance(
+                division_by_zero,
+                u"Divided by zero: %s" % args[1].repr())
 
         return Integer(args[0].value % args[1].value)
 
@@ -861,7 +863,9 @@ class Div(Function):
                     u"div requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
-            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+            return TrifleExceptionInstance(
+                division_by_zero,
+                u"Divided by zero: %s" % args[1].repr())
 
         return Integer(args[0].value // args[1].value)
             
@@ -1180,6 +1184,10 @@ class Parse(Function):
                 % program_string.repr())
 
         tokens = lex(program_string.as_unicode())
+
+        if isinstance(tokens, TrifleExceptionInstance):
+            return tokens
+        
         return parse(tokens)
 
 
