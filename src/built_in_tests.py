@@ -19,8 +19,9 @@ from evaluator import evaluate, evaluate_all
 from errors import (
     LexFailed, ParseFailed, ArityError,
     StackOverflow, FileNotFound,
-    TrifleValueError, UsingClosedFile,
-    division_by_zero, wrong_type, no_such_variable)
+    TrifleValueError,
+    division_by_zero, wrong_type, no_such_variable,
+    changing_closed_handle)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -1674,8 +1675,9 @@ class CloseTest(BuiltInTestCase):
         self.assertTrue(result.file_handle.closed)
 
     def test_close_twice_error(self):
-        with self.assertRaises(UsingClosedFile):
-            self.eval(u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)',
+            changing_closed_handle)
 
     def test_close_returns_null(self):
         result = self.eval(u'(close! (open "/tmp/foo" :write))')
@@ -1739,6 +1741,13 @@ class WriteTest(BuiltInTestCase):
             self.eval(
                 u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
                 u'(write! f (encode "foo"))')
+
+    def test_write_closed_handle(self):
+        self.assertEvalError(
+            u'(set-symbol! (quote f) (open "foo.txt" :write))'
+            u'(close! f)'
+            u'(write! f (encode "foo"))',
+            changing_closed_handle)
 
     def test_write_arity(self):
         # Too few args.

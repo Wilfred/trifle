@@ -6,7 +6,7 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
     ArityError, FileNotFound,
-    TrifleValueError, UsingClosedFile, division_by_zero,
+    TrifleValueError, changing_closed_handle, division_by_zero,
     wrong_type,
 )
 from almost_python import deepcopy, copy, raw_input, zip
@@ -1331,7 +1331,9 @@ class Close(Function):
                 % handle.repr())
 
         if handle.is_closed:
-            raise UsingClosedFile(u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
+            return TrifleExceptionInstance(
+                changing_closed_handle,
+                u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
         else:
             handle.is_closed = True
             handle.file_handle.close()
@@ -1370,6 +1372,11 @@ class Write(Function):
             raise ValueError(
                 u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
+
+        if handle.is_closed:
+            return TrifleExceptionInstance(
+                changing_closed_handle,
+                u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
 
         to_write = args[1]
 

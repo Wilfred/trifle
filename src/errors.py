@@ -55,5 +55,5 @@ class TrifleValueError(TrifleError):
     pass
 
 
-class UsingClosedFile(TrifleError):
-    pass
+# TODO: find a better name here
+changing_closed_handle = TrifleExceptionType(error, u"changing-closed-handle")
