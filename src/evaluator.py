@@ -4,7 +4,7 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String,
                           TrifleExceptionInstance)
-from errors import UnboundVariable, StackOverflow, wrong_type
+from errors import StackOverflow, wrong_type, no_such_variable
 from almost_python import zip
 from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
@@ -350,7 +350,8 @@ def evaluate_value(value, environment):
             return environment.get(symbol_name)
         else:
             # TODO: suggest variables with similar spelling.
-            raise UnboundVariable(u"No such variable defined: '%s'"
-                                  % symbol_name)
+            return TrifleExceptionInstance(
+                no_such_variable,
+                u"No such variable defined: '%s'" % symbol_name)
     else:
         assert False, "I don't know how to evaluate that value: %s" % value

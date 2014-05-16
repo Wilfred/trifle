@@ -16,11 +16,11 @@ from trifle_types import (
     FileHandle, Bytestring,
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
-from errors import (UnboundVariable,
-                    LexFailed, ParseFailed, ArityError,
-                    StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile,
-                    division_by_zero, wrong_type)
+from errors import (
+    LexFailed, ParseFailed, ArityError,
+    StackOverflow, FileNotFound,
+    TrifleValueError, UsingClosedFile,
+    division_by_zero, wrong_type, no_such_variable)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -503,8 +503,8 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"((lambda () (set-symbol! (quote x) 2) x))"),
             Integer(2))
 
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"((lambda () (set-symbol! (quote x) 2)) x)")
+        self.assertEvalError(
+            u"((lambda () (set-symbol! (quote x) 2)) x)", no_such_variable)
 
     def test_closure_variables(self):
         """Ensure that we can update closure variables inside a lambda.
@@ -591,8 +591,8 @@ class LetTest(BuiltInTestCase):
         Regression test for the first variable in the bindings.
 
         """
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"(let (x 1 y 2) #null) x")
+        self.assertEvalError(
+            u"(let (x 1 y 2) #null) x", no_such_variable)
 
     def test_let_not_function_scope(self):
         """Ensure that variables defined with set! are still available outside
@@ -1462,8 +1462,8 @@ class EnvironmentVariablesTest(BuiltInTestCase):
                          Integer(1))
 
     def test_unbound_variable(self):
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"x")
+        self.assertEvalError(
+            u"x", no_such_variable)
 
 
 class ParseTest(BuiltInTestCase):
@@ -1974,8 +1974,8 @@ class TryTest(BuiltInTestCase):
         should propagate as usual.
 
         """
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"(try (/ 1 0) :catch (division-by-zero x))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch (division-by-zero x))", no_such_variable)
 
     def test_catch_error_propagates_same_type(self):
         """If an error occurs during the evaluation of the catch block, it
@@ -1992,8 +1992,8 @@ class TryTest(BuiltInTestCase):
         nice to catch it early.
 
         """
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"(try (/ 1 0) :catch (i-dont-exist #null))")
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch (i-dont-exist #null))", no_such_variable)
 
     def test_try_types(self):
         self.assertEvalError(

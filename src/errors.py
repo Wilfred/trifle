@@ -21,10 +21,6 @@ class ParseFailed(TrifleError):
     pass
     
 
-class UnboundVariable(TrifleError):
-    pass
-
-
 # Base exception.
 error = TrifleExceptionType(None, u"error")
 
