@@ -6,7 +6,7 @@ from trifle_types import (List, Bytestring, String, Character,
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import (
-    TrifleValueError, wrong_type, wrong_argument_number)
+    value_error, wrong_type, wrong_argument_number)
 from main import env_with_prelude
 from evaluator import evaluate_all
 
@@ -224,9 +224,9 @@ class LastTest(PreludeTestCase):
             Character(u'c'))
 
     def test_last_empty_list(self):
-        # todo: we need a separate index error
-        with self.assertRaises(TrifleValueError):
-            evaluate_with_prelude(parse_one(lex(u"(last (list))")))
+        # TODO: we need a separate index error
+        self.assertEvalError(
+            u"(last (list))", value_error)
 
 
 class AppendTest(PreludeTestCase):

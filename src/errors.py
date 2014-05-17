@@ -35,10 +35,6 @@ class StackOverflow(TrifleError):
     pass
 
 
-class TrifleValueError(TrifleError):
-    pass
-
-
 """External errors. These may be thrown and caught by users.
 
 TODO: add CPython assertion to ensure that all TrifleExceptionType instances
@@ -52,6 +48,10 @@ error = TrifleExceptionType(None, u"error")
 
 
 no_such_variable = TrifleExceptionType(error, u"no-such-variable")
+
+
+# TODO: this name is a Pythonism, can we do better?
+value_error = TrifleExceptionType(error, u"value-error")
 
 
 # TODO: we need a syntax-error too, since (try x #null) and (let (1 1))

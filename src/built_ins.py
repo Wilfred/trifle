@@ -5,8 +5,8 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
-    ArityError, TrifleValueError, changing_closed_handle, division_by_zero,
-    wrong_type, file_not_found,
+    ArityError, changing_closed_handle, division_by_zero,
+    wrong_type, file_not_found, value_error,
 )
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
@@ -300,7 +300,8 @@ class Quote(Special):
 
             if isinstance(list_head, Symbol):
                 if list_head.symbol_name == u"unquote*":
-                    raise TrifleValueError(
+                    return TrifleExceptionInstance(
+                        value_error,
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
         result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env, stack)
@@ -997,16 +998,20 @@ class GetIndex(Function):
                 % index.repr())
 
         if not sequence_length:
-            raise TrifleValueError(u"can't call get-item on an empty sequence")
+            return TrifleExceptionInstance(
+                value_error,
+                u"can't call get-item on an empty sequence")
 
         # todo: use a separate error class for index errors
         if index.value >= sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"the sequence has %d items, but you asked for index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't get index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -1062,17 +1067,21 @@ class SetIndex(Function):
                 % index.repr())
 
         if not sequence_length:
-            raise TrifleValueError(u"can't call set-index! on an empty sequence")
+            return TrifleExceptionInstance(
+                value_error,
+                u"can't call set-index! on an empty sequence")
 
         # todo: use a separate error class for index error
         if index.value >= sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 # TODO: pluralisation (to avoid '1 items')
                 u"the sequence has %d items, but you asked to set index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -1086,8 +1095,10 @@ class SetIndex(Function):
                     % value.repr())
 
             if not (0 <= value.value <= 255):
-                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                       % value.repr())
+                return TrifleExceptionInstance(
+                    value_error,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             sequence.byte_value[index.value] = value.value
         elif isinstance(sequence, String):
@@ -1129,12 +1140,14 @@ class Insert(Function):
 
         # todo: use a separate error class for index error
         if index.value > sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"the sequence has %d items, but you asked to insert at index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -1155,8 +1168,10 @@ class Insert(Function):
                     % value.repr())
 
             if not (0 <= value.value <= 255):
-                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                       % value.repr())
+                return TrifleExceptionInstance(
+                    value_error,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             sequence.byte_value.insert(target_index, value.value)
         elif isinstance(sequence, String):
@@ -1315,7 +1330,9 @@ class Open(Function):
                 # else:
                 #     raise
         else:
-            raise TrifleValueError(u"Invalid flag for open: :%s" % flag.symbol_name)
+            return TrifleExceptionInstance(
+                value_error,
+                u"Invalid flag for open: :%s" % flag.symbol_name)
 
         return FileHandle(path.as_unicode().encode('utf-8'), handle, flag)
 
@@ -1369,8 +1386,8 @@ class Write(Function):
                 % handle.repr())
 
         if handle.mode.symbol_name != u"write":
-            # TODO: this doesn't inherit from TrifleError, so crashes the interpreter!
-            raise ValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
 

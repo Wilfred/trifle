@@ -17,9 +17,8 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    LexFailed, ParseFailed,
-    StackOverflow, TrifleValueError,
-    file_not_found,
+    LexFailed, ParseFailed, StackOverflow,
+    file_not_found, value_error,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
@@ -664,8 +663,8 @@ class QuoteTest(BuiltInTestCase):
             u"(quote (list (unquote* 1)))", wrong_type)
 
     def test_unquote_star_top_level(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(quote (unquote* #null))")
+        self.assertEvalError(
+            u"(quote (unquote* #null))", value_error)
 
     def test_unquote_star_after_unquote(self):
         expected = parse_one(lex(u"(if #true (do 1 2))"))
@@ -1278,8 +1277,8 @@ class GetIndexTest(BuiltInTestCase):
             Integer(3))
 
     def test_get_index_negative_index_error(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote (2 3)) -3)")
+        self.assertEvalError(
+            u"(get-index (quote (2 3)) -3)", value_error)
 
     def test_get_index_typeerror(self):
         self.assertEvalError(
@@ -1289,11 +1288,11 @@ class GetIndexTest(BuiltInTestCase):
             u"(get-index (quote (1)) #false)", wrong_type)
 
     def test_get_index_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote ()) 0)")
+        self.assertEvalError(
+            u"(get-index (quote ()) 0)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote (1)) 2)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) 2)", value_error)
 
     def test_get_index_wrong_arg_number(self):
         self.assertEvalError(
@@ -1340,11 +1339,11 @@ class SetIndexTest(BuiltInTestCase):
             u'(set-index! "abc" 0 #null)', wrong_type)
         
     def test_set_index_bytestring_range_error(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-index! #bytes("a") 0 -1)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 -1)', value_error)
         
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-index! #bytes("a") 0 256)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 256)', value_error)
         
     def test_set_index_negative(self):
         expected = List([Integer(10), Integer(1)])
@@ -1366,14 +1365,14 @@ class SetIndexTest(BuiltInTestCase):
             u"(set-index! (quote (1)) #false #false)", wrong_type)
 
     def test_set_index_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote ()) 0 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote ()) 0 #true)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote (1)) 2 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 2 #true)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote (1 2 3)) -4 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote (1 2 3)) -4 #true)", value_error)
 
     def test_set_index_wrong_arg_number(self):
         self.assertEvalError(
@@ -1415,8 +1414,8 @@ class InsertTest(BuiltInTestCase):
             wrong_type)
 
     def test_insert_bytestring_invalid_value(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)', value_error)
 
     def test_insert_string(self):
         self.assertEqual(
@@ -1441,11 +1440,11 @@ class InsertTest(BuiltInTestCase):
             u"(insert! (quote ()) 0 1 2)", wrong_argument_number)
 
     def test_insert_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(insert! (quote ()) 1 #null)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 1 #null)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(insert! (quote (1 2)) -3 0)")
+        self.assertEvalError(
+            u"(insert! (quote (1 2)) -3 0)", value_error)
 
     def test_insert_typeerror(self):
         # first argument must be a sequence
@@ -1653,8 +1652,8 @@ class OpenTest(BuiltInTestCase):
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_invalid_flag(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(open "/tmp/foo" :foo)')
+        self.assertEvalError(
+            u'(open "/tmp/foo" :foo)', value_error)
 
     def test_open_arity_error(self):
         self.assertEvalError(
@@ -1740,10 +1739,9 @@ class WriteTest(BuiltInTestCase):
 
     # todo: we should also test reading from a write-only handle.
     def test_write_read_only_handle(self):
-        with self.assertRaises(ValueError):
-            self.eval(
-                u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
-                u'(write! f (encode "foo"))')
+        self.assertEvalError(
+            u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
+            u'(write! f (encode "foo"))', value_error)
 
     def test_write_closed_handle(self):
         self.assertEvalError(
