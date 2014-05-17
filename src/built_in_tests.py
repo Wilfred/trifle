@@ -17,8 +17,8 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    LexFailed, ParseFailed, StackOverflow,
-    file_not_found, value_error,
+    LexFailed, ParseFailed,
+    file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
@@ -518,8 +518,8 @@ class EvaluatingLambdaTest(BuiltInTestCase):
 
     # TODO: also test for stack overflow inside macros.
     def test_stack_overflow(self):
-        with self.assertRaises(StackOverflow):
-            self.eval(u"(set-symbol! (quote f) (lambda () (f))) (f)")
+        self.assertEvalError(
+            u"(set-symbol! (quote f) (lambda () (f))) (f)", stack_overflow)
 
 
 class FreshSymbolTest(BuiltInTestCase):

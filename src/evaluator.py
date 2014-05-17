@@ -5,7 +5,7 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Keyword, String,
                           TrifleExceptionInstance)
 from errors import (
-    StackOverflow, wrong_type, no_such_variable,
+    wrong_type, no_such_variable, stack_overflow,
     ArityError, wrong_argument_number)
 from almost_python import zip
 from environment import Scope, special_expressions
@@ -24,9 +24,7 @@ class Stack(object):
         return "<Stack: %r>\n" % "\n".join(map(repr, self.values))
 
     def push(self, value):
-        if len(self.values) > MAX_STACK_DEPTH:
-            raise StackOverflow(u"Stack Overflow")
-        
+        assert len(self.values) <= MAX_STACK_DEPTH + 1, "Stack should be checked for overflow!"
         self.values.append(value)
 
     def pop(self):
@@ -124,6 +122,12 @@ def evaluate(expression, environment):
     # appropriate. This ensures recursion in the Trifle program does
     # not require recursion in the interpreter.
     while stack:
+        if len(stack.values) > MAX_STACK_DEPTH:
+            return TrifleExceptionInstance(
+                # TODO: write a better exception message.
+                stack_overflow, u"Stack overflow"
+            )
+
         frame = stack.peek()
 
         if isinstance(frame.expression, List):

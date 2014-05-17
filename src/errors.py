@@ -31,10 +31,6 @@ class ParseFailed(TrifleError):
     pass
     
 
-class StackOverflow(TrifleError):
-    pass
-
-
 """External errors. These may be thrown and caught by users.
 
 TODO: add CPython assertion to ensure that all TrifleExceptionType instances
@@ -45,6 +41,9 @@ are defined in the global environment.
 
 # Base exception.
 error = TrifleExceptionType(None, u"error")
+
+
+stack_overflow = TrifleExceptionType(error, u"stack-overflow")
 
 
 no_such_variable = TrifleExceptionType(error, u"no-such-variable")
