@@ -5,7 +5,8 @@ from trifle_types import (List, Bytestring, String, Character,
                           TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError, ArityError, wrong_type
+from errors import (
+    TrifleValueError, wrong_type, wrong_argument_number)
 from main import env_with_prelude
 from evaluator import evaluate_all
 
@@ -252,11 +253,11 @@ class AppendTest(PreludeTestCase):
             NULL)
 
     def test_append_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(append! (quote ()))")
+        self.assertEvalError(
+            u"(append! (quote ()))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(append! (quote ()) 0 1)")
+        self.assertEvalError(
+            u"(append! (quote ()) 0 1)", wrong_argument_number)
 
     def test_append_typeerror(self):
         # first argument must be a list
@@ -286,13 +287,11 @@ class PushTest(PreludeTestCase):
             NULL)
 
     def test_push_arg_number(self):
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! (quote ()))")))
+        self.assertEvalError(
+            u"(push! (quote ()))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! (quote ()) 0 1)")))
+        self.assertEvalError(
+            u"(push! (quote ()) 0 1)", wrong_argument_number)
 
     def test_push_typeerror(self):
         # first argument must be a list

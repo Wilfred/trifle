@@ -4,7 +4,9 @@ from trifle_types import (List, Bytestring, Character, Symbol,
                           Function, FunctionWithEnv, Lambda, Macro, Boolean,
                           Keyword, String,
                           TrifleExceptionInstance)
-from errors import StackOverflow, wrong_type, no_such_variable
+from errors import (
+    StackOverflow, wrong_type, no_such_variable,
+    ArityError, wrong_argument_number)
 from almost_python import zip
 from environment import Scope, special_expressions
 from parameters import is_variable_arity, check_parameters
@@ -132,10 +134,21 @@ def evaluate(expression, environment):
             # Handle special expressions.
             if isinstance(head, Symbol) and head.symbol_name in special_expressions:
                 special_expression = special_expressions[head.symbol_name]
-                result = special_expression.call(raw_arguments, frame.environment, stack)
+
+                try:
+                    result = special_expression.call(raw_arguments, frame.environment, stack)
+                except ArityError as e:
+                    return TrifleExceptionInstance(
+                        wrong_argument_number, e.message)
 
             else:
-                result = evaluate_function_call(stack)
+                try:
+                    result = evaluate_function_call(stack)
+                except ArityError as e:
+                    return TrifleExceptionInstance(
+                        wrong_argument_number,
+                        e.message
+                    )
 
         else:
             result = evaluate_value(frame.expression, frame.environment)

@@ -17,11 +17,11 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    LexFailed, ParseFailed, ArityError,
+    LexFailed, ParseFailed,
     StackOverflow, FileNotFound,
     TrifleValueError,
     division_by_zero, wrong_type, no_such_variable,
-    changing_closed_handle)
+    changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -465,20 +465,20 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             expected)
 
     def test_call_lambda_too_few_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda (x) 1))")
+        self.assertEvalError(
+            u"((lambda (x) 1))", wrong_argument_number)
 
     def test_call_lambda_too_few_variable_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda (x y :rest args) x))")
+        self.assertEvalError(
+            u"((lambda (x y :rest args) x))", wrong_argument_number)
 
     def test_call_lambda_too_many_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda () 1) 2)")
+        self.assertEvalError(
+            u"((lambda () 1) 2)", wrong_argument_number)
 
     def test_lambda_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(lambda)")
+        self.assertEvalError(
+            u"(lambda)", wrong_argument_number)
 
     def test_lambda_params_not_list(self):
         self.assertEvalError(
@@ -528,8 +528,8 @@ class FreshSymbolTest(BuiltInTestCase):
             Symbol(u"1-unnamed"))
 
     def test_fresh_symbol_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(fresh-symbol 1)")
+        self.assertEvalError(
+            u"(fresh-symbol 1)", wrong_argument_number)
 
 
 class SetSymbolTest(BuiltInTestCase):
@@ -539,8 +539,8 @@ class SetSymbolTest(BuiltInTestCase):
             Symbol(u"y"))
 
     def test_set_symbol_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1 2)")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1 2)", wrong_argument_number)
 
     def test_set_symbol_returns_null(self):
         self.assertEqual(
@@ -568,15 +568,16 @@ class LetTest(BuiltInTestCase):
             u"(let (1 1) #null)", wrong_type)
 
     def test_let_odd_bindings(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(let (x 1 y) #null)")
+        self.assertEvalError(
+            u"(let (x 1 y) #null)", wrong_argument_number)
 
     def test_let_not_bindings(self):
+        # TODO: these should probably both be syntax errors.
         self.assertEvalError(
             u"(let #null #null)", wrong_type)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(let)")
+        self.assertEvalError(
+            u"(let)", wrong_argument_number)
 
     def test_let_shadowing(self):
         """Ensure that variables defined in a let shadow outer variables with
@@ -617,11 +618,11 @@ class QuoteTest(BuiltInTestCase):
             expected)
 
     def test_quote_wrong_number_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote foo bar)")
+        self.assertEvalError(
+            u"(quote foo bar)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote)")
+        self.assertEvalError(
+            u"(quote)", wrong_argument_number)
 
     def test_unquote(self):
         self.assertEqual(
@@ -643,18 +644,18 @@ class QuoteTest(BuiltInTestCase):
             expected)
 
     def test_unquote_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1) (quote (unquote x x))")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1) (quote (unquote x x))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote (unquote))")
+        self.assertEvalError(
+            u"(quote (unquote))", wrong_argument_number)
 
     def test_unquote_star_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote (list (unquote*)))")
+        self.assertEvalError(
+            u"(quote (list (unquote*)))", wrong_argument_number)
 
     def test_unquote_star_wrong_type(self):
         self.assertEvalError(
@@ -822,8 +823,8 @@ class DivideTest(BuiltInTestCase):
             u"(/ 1 #null)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(/ 1)")
+        self.assertEvalError(
+            u"(/ 1)", wrong_argument_number)
 
 
 class ModTest(BuiltInTestCase):
@@ -843,11 +844,11 @@ class ModTest(BuiltInTestCase):
             u"(mod 1 0.5)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(mod 1)")
+        self.assertEvalError(
+            u"(mod 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(mod 1 2 3)")
+        self.assertEvalError(
+            u"(mod 1 2 3)", wrong_argument_number)
 
 
 class DivTest(BuiltInTestCase):
@@ -870,11 +871,11 @@ class DivTest(BuiltInTestCase):
             u"(div 2.0 1.0)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(div 1)")
+        self.assertEvalError(
+            u"(div 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(div 1 2 3)")
+        self.assertEvalError(
+            u"(div 1 2 3)", wrong_argument_number)
 
 
 class IfTest(BuiltInTestCase):
@@ -897,11 +898,11 @@ class IfTest(BuiltInTestCase):
             Integer(3))
 
     def test_if_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(if #true)")
+        self.assertEvalError(
+            u"(if #true)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(if 1 2 3 4)")
+        self.assertEvalError(
+            u"(if 1 2 3 4)", wrong_argument_number)
 
 
 class WhileTest(BuiltInTestCase):
@@ -923,8 +924,8 @@ class WhileTest(BuiltInTestCase):
             Integer(2))
         
     def test_while_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(while)")
+        self.assertEvalError(
+            u"(while)", wrong_argument_number)
 
     def test_while_type_error(self):
         self.assertEvalError(
@@ -960,8 +961,8 @@ class PrintTest(BuiltInTestCase):
         self.assertEqual(mock_stdout.getvalue(), "1\n")
 
     def test_print_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(print! 1 2)")
+        self.assertEvalError(
+            u"(print! 1 2)", wrong_argument_number)
 
 
 class InputTest(BuiltInTestCase):
@@ -981,11 +982,11 @@ class InputTest(BuiltInTestCase):
             u"(input 1)", wrong_type)
 
     def test_input_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(input)")
+        self.assertEvalError(
+            u"(input)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(input \"foo\" 1)")
+        self.assertEvalError(
+            u"(input \"foo\" 1)", wrong_argument_number)
 
 
 class SameTest(BuiltInTestCase):
@@ -1039,11 +1040,11 @@ class SameTest(BuiltInTestCase):
             FALSE)
 
     def test_same_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(same? 1)")
+        self.assertEvalError(
+            u"(same? 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(same? 1 2 3)")
+        self.assertEvalError(
+            u"(same? 1 2 3)", wrong_argument_number)
 
 
 class EqualTest(BuiltInTestCase):
@@ -1170,11 +1171,11 @@ class EqualTest(BuiltInTestCase):
             FALSE)
 
     def test_equal_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(equal? 1)")
+        self.assertEvalError(
+            u"(equal? 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(equal? 1 2 3)")
+        self.assertEvalError(
+            u"(equal? 1 2 3)", wrong_argument_number)
 
 
 class LessThanTest(BuiltInTestCase):
@@ -1218,11 +1219,11 @@ class LessThanTest(BuiltInTestCase):
             u"(< #true #false)", wrong_type)
 
     def test_less_than_insufficient_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(<)")
+        self.assertEvalError(
+            u"(<)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(< 1)")
+        self.assertEvalError(
+            u"(< 1)", wrong_argument_number)
 
 
 class LengthTest(BuiltInTestCase):
@@ -1246,11 +1247,11 @@ class LengthTest(BuiltInTestCase):
             u"(length 1)", wrong_type)
             
     def test_length_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(length)")
+        self.assertEvalError(
+            u"(length)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u"(length (quote ()) 1)")
+        self.assertEvalError(
+            u"(length (quote ()) 1)", wrong_argument_number)
             
 
 class GetIndexTest(BuiltInTestCase):
@@ -1293,14 +1294,14 @@ class GetIndexTest(BuiltInTestCase):
             self.eval(u"(get-index (quote (1)) 2)")
 
     def test_get_index_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index)")
+        self.assertEvalError(
+            u"(get-index)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index (quote (1)))")
+        self.assertEvalError(
+            u"(get-index (quote (1)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index (quote (1)) 0 0)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) 0 0)", wrong_argument_number)
 
 
 class SetIndexTest(BuiltInTestCase):
@@ -1373,17 +1374,17 @@ class SetIndexTest(BuiltInTestCase):
             self.eval(u"(set-index! (quote (1 2 3)) -4 #true)")
 
     def test_set_index_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index!)")
+        self.assertEvalError(
+            u"(set-index!)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)))")
+        self.assertEvalError(
+            u"(set-index! (quote (1)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)) 0)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 0)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)) 0 5 6)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 0 5 6)", wrong_argument_number)
 
 
 class InsertTest(BuiltInTestCase):
@@ -1431,11 +1432,11 @@ class InsertTest(BuiltInTestCase):
             NULL)
 
     def test_insert_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(insert! (quote ()) 0)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(insert! (quote ()) 0 1 2)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0 1 2)", wrong_argument_number)
 
     def test_insert_indexerror(self):
         with self.assertRaises(TrifleValueError):
@@ -1484,11 +1485,11 @@ class ParseTest(BuiltInTestCase):
             self.eval(u'(parse "123abc")')
 
     def test_parse_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(parse)")
+        self.assertEvalError(
+            u"(parse)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(parse "()" 1)')
+        self.assertEvalError(
+            u'(parse "()" 1)', wrong_argument_number)
 
     def test_parse_type_error(self):
         self.assertEvalError(
@@ -1528,11 +1529,11 @@ class CallTest(BuiltInTestCase):
         )
 
     def test_call_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(call + (quote (1 2 3)) 1)")
+        self.assertEvalError(
+            u"(call + (quote (1 2 3)) 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(call +)")
+        self.assertEvalError(
+            u"(call +)", wrong_argument_number)
 
     def test_call_type(self):
         self.assertEvalError(
@@ -1564,12 +1565,12 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         )
 
     def test_call_macro_too_few_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro ignore (x) #null) (ignore 1 2)")
+        self.assertEvalError(
+            u"(macro ignore (x) #null) (ignore 1 2)", wrong_argument_number)
 
     def test_call_macro_too_many_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro ignore (x) #null) (ignore)")
+        self.assertEvalError(
+            u"(macro ignore (x) #null) (ignore)", wrong_argument_number)
 
     # TODO: we shouldn't depend on the prelude here.
     # TODO: find a way to just call self.eval.
@@ -1582,11 +1583,11 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         )
 
     def test_macro_bad_args_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro foo)")
+        self.assertEvalError(
+            u"(macro foo)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro foo (bar))")
+        self.assertEvalError(
+            u"(macro foo (bar))", wrong_argument_number)
 
     def test_macro_bad_arg_types(self):
         self.assertEvalError(
@@ -1624,11 +1625,11 @@ class DefinedTest(BuiltInTestCase):
             u"(defined? 1)", wrong_type)
 
     def test_defined_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(defined?)")
+        self.assertEvalError(
+            u"(defined?)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u"(defined? (quote foo) 1)")
+        self.assertEvalError(
+            u"(defined? (quote foo) 1)", wrong_argument_number)
 
 
 # TODO: error on nonexistent file, or file we can't read/write
@@ -1654,11 +1655,11 @@ class OpenTest(BuiltInTestCase):
             self.eval(u'(open "/tmp/foo" :foo)')
 
     def test_open_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(open "/foo/bar")')
+        self.assertEvalError(
+            u'(open "/foo/bar")', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(open "/foo/bar" :write :write)')
+        self.assertEvalError(
+            u'(open "/foo/bar" :write :write)', wrong_argument_number)
 
     def test_open_type_error(self):
         self.assertEvalError(
@@ -1685,11 +1686,11 @@ class CloseTest(BuiltInTestCase):
         self.assertEqual(result, NULL)
 
     def test_close_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(close! (open "/tmp/foo" :write) #null)')
+        self.assertEvalError(
+            u'(close! (open "/tmp/foo" :write) #null)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(close!)')
+        self.assertEvalError(
+            u'(close!)', wrong_argument_number)
 
     def test_close_type_error(self):
         self.assertEvalError(
@@ -1709,11 +1710,11 @@ class ReadTest(BuiltInTestCase):
             Bytestring([ord(c) for c in "foo"]))
 
     def test_read_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(read)")
+        self.assertEvalError(
+            u"(read)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u'(read "/etc/foo" :read :read)')
+        self.assertEvalError(
+            u'(read "/etc/foo" :read :read)', wrong_argument_number)
             
     def test_read_type_error(self):
         self.assertEvalError(
@@ -1751,12 +1752,12 @@ class WriteTest(BuiltInTestCase):
 
     def test_write_arity(self):
         # Too few args.
-        with self.assertRaises(ArityError):
-            self.eval(u'(write! (open "foo.txt" :write))')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write))', wrong_argument_number)
 
         # Too many args.
-        with self.assertRaises(ArityError):
-            self.eval(u'(write! (open "foo.txt" :write) (encode "f") #null)')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write) (encode "f") #null)', wrong_argument_number)
             
     def test_write_type_error(self):
         self.assertEvalError(
@@ -1779,11 +1780,11 @@ class EncodeTest(BuiltInTestCase):
             u'(encode #null)', wrong_type)
     
     def test_encode_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(encode)')
+        self.assertEvalError(
+            u'(encode)', wrong_argument_number)
     
-        with self.assertRaises(ArityError):
-            self.eval(u'(encode "foo" 2)')
+        self.assertEvalError(
+            u'(encode "foo" 2)', wrong_argument_number)
     
 
 class DecodeTest(BuiltInTestCase):
@@ -1797,11 +1798,11 @@ class DecodeTest(BuiltInTestCase):
             u'(decode #null)', wrong_type)
     
     def test_encode_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(decode)')
+        self.assertEvalError(
+            u'(decode)', wrong_argument_number)
     
-        with self.assertRaises(ArityError):
-            self.eval(u'(decode #bytes("souffl\\xc3\\xa9") 1)')
+        self.assertEvalError(
+            u'(decode #bytes("souffl\\xc3\\xa9") 1)', wrong_argument_number)
     
 
 class ListPredicateTest(BuiltInTestCase):
@@ -1824,11 +1825,11 @@ class ListPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_list_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(list?)')
+        self.assertEvalError(
+            u'(list?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(list? #null #null)')
+        self.assertEvalError(
+            u'(list? #null #null)', wrong_argument_number)
 
 
 class StringPredicateTest(BuiltInTestCase):
@@ -1851,11 +1852,11 @@ class StringPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_string_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(string?)')
+        self.assertEvalError(
+            u'(string?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(string? #null #null)')
+        self.assertEvalError(
+            u'(string? #null #null)', wrong_argument_number)
 
 
 class BytestringPredicateTest(BuiltInTestCase):
@@ -1878,11 +1879,11 @@ class BytestringPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_bytestring_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(bytestring?)')
+        self.assertEvalError(
+            u'(bytestring?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(bytestring? #null #null)')
+        self.assertEvalError(
+            u'(bytestring? #null #null)', wrong_argument_number)
 
 
 class CharacterPredicateTest(BuiltInTestCase):
@@ -1905,11 +1906,11 @@ class CharacterPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_character_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(character?)')
+        self.assertEvalError(
+            u'(character?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(character? #null #null)')
+        self.assertEvalError(
+            u'(character? #null #null)', wrong_argument_number)
 
 
 class ExitTest(BuiltInTestCase):
@@ -1967,16 +1968,16 @@ class TryTest(BuiltInTestCase):
         # TODO: support multiple catch statements
 
         # Too few arguments.
-        with self.assertRaises(ArityError):
-            self.eval(u"(try x :catch)")
+        self.assertEvalError(
+            u"(try x :catch)", wrong_argument_number)
 
         # Too many arguments.
-        with self.assertRaises(ArityError):
-            self.eval(u"(try x :catch (division-by-zero #null) #null)")
+        self.assertEvalError(
+            u"(try x :catch (division-by-zero #null) #null)", wrong_argument_number)
 
         # Too few arguments in catch.
-        with self.assertRaises(ArityError):
-            self.eval(u"(try x :catch (division-by-zero) #null)")
+        self.assertEvalError(
+            u"(try x :catch (division-by-zero) #null)", wrong_argument_number)
 
     def test_catch_error_propagates(self):
         """If an error occurs during the evaluation of the catch block, it
