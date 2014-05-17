@@ -27,9 +27,6 @@ class LexFailed(TrifleError):
     pass
 
 
-class ParseFailed(TrifleError):
-    pass
-    
 
 """External errors. These may be thrown and caught by users.
 
@@ -47,6 +44,11 @@ stack_overflow = TrifleExceptionType(error, u"stack-overflow")
 
 
 no_such_variable = TrifleExceptionType(error, u"no-such-variable")
+
+
+# TODO: parse and lex errors should distinuish between bad input and
+# incomplete input, so our REPL knows when input is incomplete.
+parse_failed = TrifleExceptionType(error, u"parse-failed")
 
 
 # TODO: this name is a Pythonism, can we do better?

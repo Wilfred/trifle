@@ -17,7 +17,7 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    LexFailed, ParseFailed,
+    LexFailed, parse_failed,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
@@ -1478,8 +1478,8 @@ class ParseTest(BuiltInTestCase):
             expected)
 
     def test_parse_invalid_parse(self):
-        with self.assertRaises(ParseFailed):
-            self.eval(u'(parse ")")')
+        self.assertEvalError(
+            u'(parse ")")', parse_failed)
 
     def test_parse_invalid_lex(self):
         with self.assertRaises(LexFailed):

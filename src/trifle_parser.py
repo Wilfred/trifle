@@ -1,8 +1,8 @@
-# There's already a 'parser' in the standard library, so we're forced
-# to call this trifle_parser.py.
+# There's already a 'parser' in the Python standard library, so we're
+# forced to call this trifle_parser.py.
 
-from trifle_types import List, OpenParen, CloseParen
-from errors import ParseFailed
+from trifle_types import List, OpenParen, CloseParen, TrifleExceptionInstance
+from errors import parse_failed
 
 
 def parse_inner(tokens, top_level):
@@ -16,7 +16,9 @@ def parse_inner(tokens, top_level):
             parse_tree.append(parse_inner(tokens, top_level=False))
         elif isinstance(token, CloseParen):
             if top_level:
-                raise ParseFailed(u'Closing paren does not have matching open paren.')
+                return TrifleExceptionInstance(
+                    parse_failed,
+                    u'Closing paren does not have matching open paren.')
             else:
                 saw_closing_paren = True
                 break
@@ -24,7 +26,8 @@ def parse_inner(tokens, top_level):
             parse_tree.append(token)
 
     if not top_level and not saw_closing_paren:
-        raise ParseFailed(u'Open paren was not closed.')
+        return TrifleExceptionInstance(
+            parse_failed, u'Open paren was not closed.')
 
     return parse_tree
 
@@ -38,4 +41,9 @@ def parse_one(tokens):
     code snippets.
 
     """
-    return parse(tokens).values[0]
+    parse_result = parse(tokens)
+
+    if isinstance(parse_result, TrifleExceptionInstance):
+        return parse_result
+    else:
+        return parse_result.values[0]
