@@ -1,6 +1,12 @@
 from trifle_types import TrifleExceptionType
 
 
+"""Internal errors. These are only used inside the interpreter and
+never exposed to the user.
+
+"""
+
+
 class TrifleError(Exception):
     # .message isn't available in RPython, so we manually assign it.
     # todo: file a pypy bug to improve their docs
@@ -13,6 +19,10 @@ class TrifleError(Exception):
         return self.message
 
 
+class ArityError(TrifleError):
+    pass
+
+
 class LexFailed(TrifleError):
     pass
 
@@ -20,6 +30,26 @@ class LexFailed(TrifleError):
 class ParseFailed(TrifleError):
     pass
     
+
+class StackOverflow(TrifleError):
+    pass
+
+
+class FileNotFound(TrifleError):
+    pass
+
+
+class TrifleValueError(TrifleError):
+    pass
+
+
+"""External errors. These may be thrown and caught by users.
+
+TODO: add CPython assertion to ensure that all TrifleExceptionType instances
+are defined in the global environment.
+
+"""
+
 
 # Base exception.
 error = TrifleExceptionType(None, u"error")
@@ -36,23 +66,7 @@ wrong_type = TrifleExceptionType(error, u"wrong-type")
 wrong_argument_number = TrifleExceptionType(error, u"wrong-argument-number")
 
 
-class ArityError(TrifleError):
-    pass
-
-
 division_by_zero = TrifleExceptionType(error, u"division-by-zero")
-
-
-class StackOverflow(TrifleError):
-    pass
-
-
-class FileNotFound(TrifleError):
-    pass
-
-
-class TrifleValueError(TrifleError):
-    pass
 
 
 # TODO: find a better name here
