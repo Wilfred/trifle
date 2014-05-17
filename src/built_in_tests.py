@@ -39,6 +39,8 @@ class BuiltInTestCase(unittest.TestCase):
         assert isinstance(program, unicode)
         return evaluate_all(parse(lex(program)), fresh_environment())
 
+    # TODO: It'd be clearer to remove this, requiring callers to use
+    # .eval and .assertTrifleError instead.
     def assertEvalError(self, program, error_type):
         """Assert that this program raises an error of type error_type when
         executed.
