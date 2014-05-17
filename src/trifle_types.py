@@ -348,7 +348,8 @@ class TrifleExceptionType(TrifleType):
 
     """
     def __init__(self, parent, name):
-        assert isinstance(name, unicode)
+        assert isinstance(name, unicode), \
+            "Exception type names must be unicode strings, but got %r" % name
         self.name = name
 
         if parent is None:
