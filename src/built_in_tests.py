@@ -17,7 +17,7 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    LexFailed, parse_failed,
+    lex_failed, parse_failed,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
@@ -87,8 +87,8 @@ class IntegerLexTest(BuiltInTestCase):
             lex(u"-0").values[0], Integer(0))
 
     def test_lex_invalid_number(self):
-        with self.assertRaises(LexFailed):
-            lex(u"123abc")
+        self.assertTrifleError(
+            lex(u"123abc"), lex_failed)
 
 
 class FloatLexTest(BuiltInTestCase):
@@ -110,11 +110,11 @@ class FloatLexTest(BuiltInTestCase):
         
 
     def test_lex_invalid(self):
-        with self.assertRaises(LexFailed):
-            lex(u"123.abc")
+        self.assertTrifleError(
+            lex(u"123.abc"), lex_failed)
 
-        with self.assertRaises(LexFailed):
-            lex(u"123.456abc")
+        self.assertTrifleError(
+            lex(u"123.456abc"), lex_failed)
 
 
 class FractionLexTest(BuiltInTestCase):
@@ -141,8 +141,8 @@ class FractionLexTest(BuiltInTestCase):
             lex(u"2/6").values[0], Fraction(1, 3))
 
     def test_lex_invalid_fraction(self):
-        with self.assertRaises(LexFailed):
-            lex(u"1/3/4")
+        self.assertTrifleError(
+            lex(u"1/3/4"), lex_failed)
 
 
 class SymbolLexTest(BuiltInTestCase):
@@ -166,8 +166,8 @@ class SymbolLexTest(BuiltInTestCase):
             lex(u"<=").values[0], Symbol(u'<='))
 
     def test_lex_invalid_symbol(self):
-        with self.assertRaises(LexFailed):
-            lex(u"\\")
+        self.assertTrifleError(
+            lex(u"\\"), lex_failed)
 
 
 class KeywordLexTest(BuiltInTestCase):
@@ -176,8 +176,8 @@ class KeywordLexTest(BuiltInTestCase):
             lex(u":x").values[0], Keyword(u'x'))
 
     def test_lex_invalid_keyword(self):
-        with self.assertRaises(LexFailed):
-            lex(u":123")
+        self.assertTrifleError(
+            lex(u":123"), lex_failed)
 
 class StringLexTest(BuiltInTestCase):
     def test_lex_string(self):
@@ -193,8 +193,8 @@ class StringLexTest(BuiltInTestCase):
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u'"\\"')
+        self.assertTrifleError(
+            lex(u'"\\"'), lex_failed)
 
         self.assertEqual(
             lex(u'"\\\\"').values[0], String(list(u'\\')))
@@ -222,8 +222,8 @@ class CharacterLexTest(BuiltInTestCase):
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u"'\\'")
+        self.assertTrifleError(
+            lex(u"'\\'"), lex_failed)
 
         self.assertEqual(
             lex(u"'\\\\'").values[0], Character(u'\\'))
@@ -251,13 +251,13 @@ class BytestringLexTest(BuiltInTestCase):
             Bytestring([ord(c) for c in 'bar']))
 
     def test_lex_invalid_byte(self):
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("flambé")')
+        self.assertTrifleError(
+            lex(u'#bytes("flambé")'), lex_failed)
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\")'), lex_failed)
 
         self.assertEqual(
             lex(u'#bytes("\\\\")').values[0], Bytestring([ord('\\')]))
@@ -271,22 +271,22 @@ class BytestringLexTest(BuiltInTestCase):
 
     def test_lex_invalid_escaped_byte(self):
         # Not hexadecimal characters:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xgg")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xgg")'), lex_failed)
 
         # Not starting with \x
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\yff")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\yff")'), lex_failed)
 
         # Insufficient characters:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xa")')
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\x")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xa")'), lex_failed)
+        self.assertTrifleError(
+            lex(u'#bytes("\\x")'), lex_failed)
             
         # Insufficient characters before next escaped character:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xa\\xaa")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xa\\xaa")'), lex_failed)
 
 
 class BooleanLexTest(BuiltInTestCase):
@@ -302,8 +302,8 @@ class BooleanLexTest(BuiltInTestCase):
         lex error.
 
         """
-        with self.assertRaises(LexFailed):
-            lex(u"#trueish")
+        self.assertTrifleError(
+            lex(u"#trueish"), lex_failed)
 
 
 class NullLexTest(BuiltInTestCase):
@@ -1482,8 +1482,8 @@ class ParseTest(BuiltInTestCase):
             u'(parse ")")', parse_failed)
 
     def test_parse_invalid_lex(self):
-        with self.assertRaises(LexFailed):
-            self.eval(u'(parse "123abc")')
+        self.assertEvalError(
+            u'(parse "123abc")', lex_failed)
 
     def test_parse_arg_number(self):
         self.assertEvalError(

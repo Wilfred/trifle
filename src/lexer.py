@@ -9,7 +9,7 @@ from trifle_types import (
     Symbol, Keyword, List,
     String, Bytestring, Character,
     TRUE, FALSE, NULL)
-from errors import LexFailed, division_by_zero
+from errors import LexFailed, division_by_zero, lex_failed
 
 
 # Note this an incomplete list and is purely to give us convenient
@@ -197,6 +197,10 @@ def split_tokens(text):
 
 
 def _lex(tokens):
+    """Given a Python list of unicodes that look roughly like tokens, lex
+    them. Returns a Trifle exception if they aren't valid tokens.
+
+    """
     lexed_tokens = []
 
     for token in tokens:
@@ -225,14 +229,16 @@ def _lex(tokens):
                     try:
                         lexed_tokens.append(Integer(int(integer_string)))
                     except ValueError:
-                        raise LexFailed(u"Invalid integer: '%s'" % token)
+                        return TrifleExceptionInstance(
+                            lex_failed, u"Invalid integer: '%s'" % token)
                         
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
                     try:
                         lexed_tokens.append(Float(float(float_string)))
                     except ValueError:
-                        raise LexFailed(u"Invalid float: '%s'" % token)
+                        return TrifleExceptionInstance(
+                            lex_failed, u"Invalid float: '%s'" % token)
 
                 elif lexeme_name == FRACTION:
                     fraction_string = remove_char(token, "_")
@@ -244,7 +250,8 @@ def _lex(tokens):
                         numerator = int(numerator)
                         denominator = int(denominator)
                     except ValueError:
-                        raise LexFailed(u"Invalid fraction: '%s'" % token)
+                        return TrifleExceptionInstance(
+                            lex_failed, u"Invalid fraction: '%s'" % token)
 
                     if denominator == 0:
                         return TrifleExceptionInstance(
@@ -305,10 +312,19 @@ def _lex(tokens):
                 break
 
         if not found_match:
-            raise LexFailed(u"Could not lex token: '%s'" % token)
+            return TrifleExceptionInstance(
+                lex_failed, u"Could not lex token: '%s'" % token)
 
     return List(lexed_tokens)
 
 
 def lex(text):
-    return _lex(split_tokens(text))
+    try:
+        raw_tokens = split_tokens(text)
+        if isinstance(raw_tokens, TrifleExceptionInstance):
+            return raw_tokens
+
+        return _lex(raw_tokens)
+    except LexFailed as e:
+        return TrifleExceptionInstance(
+            lex_failed, e.message)

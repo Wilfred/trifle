@@ -51,6 +51,9 @@ no_such_variable = TrifleExceptionType(error, u"no-such-variable")
 parse_failed = TrifleExceptionType(error, u"parse-failed")
 
 
+lex_failed = TrifleExceptionType(error, u"lex-failed")
+
+
 # TODO: this name is a Pythonism, can we do better?
 value_error = TrifleExceptionType(error, u"value-error")
 
