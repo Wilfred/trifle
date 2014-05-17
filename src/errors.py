@@ -35,10 +35,6 @@ class StackOverflow(TrifleError):
     pass
 
 
-class FileNotFound(TrifleError):
-    pass
-
-
 class TrifleValueError(TrifleError):
     pass
 
@@ -67,6 +63,10 @@ wrong_argument_number = TrifleExceptionType(error, u"wrong-argument-number")
 
 
 division_by_zero = TrifleExceptionType(error, u"division-by-zero")
+
+
+# TODO: We should group file errors into a common base exception.
+file_not_found = TrifleExceptionType(error, u"file-not-found")
 
 
 # TODO: find a better name here

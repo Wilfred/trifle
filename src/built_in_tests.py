@@ -18,8 +18,8 @@ from trifle_types import (
 from evaluator import evaluate, evaluate_all
 from errors import (
     LexFailed, ParseFailed,
-    StackOverflow, FileNotFound,
-    TrifleValueError,
+    StackOverflow, TrifleValueError,
+    file_not_found,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
@@ -1642,8 +1642,8 @@ class OpenTest(BuiltInTestCase):
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_read_no_such_file(self):
-        with self.assertRaises(FileNotFound):
-            self.eval(u'(open "this_file_doesnt_exist" :read)')
+        self.assertEvalError(
+            u'(open "this_file_doesnt_exist" :read)', file_not_found)
 
     def test_open_write(self):
         result = self.eval(u'(open "/tmp/foo" :write)')

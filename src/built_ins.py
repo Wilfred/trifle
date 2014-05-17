@@ -5,9 +5,8 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
-    ArityError, FileNotFound,
-    TrifleValueError, changing_closed_handle, division_by_zero,
-    wrong_type,
+    ArityError, TrifleValueError, changing_closed_handle, division_by_zero,
+    wrong_type, file_not_found,
 )
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
@@ -1308,7 +1307,9 @@ class Open(Function):
             except IOError as e:
                 # TODO: Fix RPython error that stops us inspecting .errno.
                 # This will throw on other IOErrors, such as permission problems.
-                raise FileNotFound(u"No file found: %s" % path.as_unicode())
+                return TrifleExceptionInstance(
+                    file_not_found,
+                    u"No file found: %s" % path.as_unicode())
                 # if e.errno == 2:
                 #     raise FileNotFound(u"No file found: %s" % path.as_unicode())
                 # else:
