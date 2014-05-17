@@ -253,7 +253,7 @@ class List(TrifleType):
 
 class Bytestring(TrifleType):
     def __init__(self, byte_value):
-        assert isinstance(byte_value, list)
+        assert isinstance(byte_value, list), "Expected a list, but got: %s" % byte_value
         if byte_value:
             assert isinstance(byte_value[0], int)
         self.byte_value = byte_value
