@@ -7,7 +7,7 @@ never exposed to the user.
 """
 
 
-class TrifleError(Exception):
+class InternalError(Exception):
     # .message isn't available in RPython, so we manually assign it.
     # todo: file a pypy bug to improve their docs
     def __init__(self, message):
@@ -19,11 +19,11 @@ class TrifleError(Exception):
         return self.message
 
 
-class ArityError(TrifleError):
+class ArityError(InternalError):
     pass
 
 
-class LexFailed(TrifleError):
+class LexFailed(InternalError):
     pass
 
 

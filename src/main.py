@@ -14,7 +14,6 @@ from rpython.rtyper.module.ll_os_environ import getenv_llimpl
 from lexer import lex
 from trifle_parser import parse
 from evaluator import evaluate_all
-from errors import TrifleError
 from environment import fresh_environment
 from almost_python import raw_input
 from trifle_types import TrifleExceptionInstance
@@ -117,9 +116,6 @@ def entry_point(argv):
                     else:
                         print result.repr().encode('utf-8')
 
-            # TODO: Once TrifleError has been removed, we can remove this.
-            except TrifleError as e:
-                print u"Error: %s" % e.message
             except SystemExit:
                 return 0
     
@@ -153,9 +149,6 @@ def entry_point(argv):
                 print u'Uncaught error: %s: %s' % (result.exception_type.name,
                                           result.message)
                 return 1
-        except TrifleError as e:
-            print u"Error: %s" % e.message
-            return 1
         except SystemExit:
             return 0
         return 0
@@ -188,9 +181,6 @@ def entry_point(argv):
                 else:
                     print result.repr().encode('utf-8')
                 
-            except TrifleError as e:
-                print u"Error: %s" % e.message
-                return 1
             except SystemExit:
                 return 0
             return 0
