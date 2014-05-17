@@ -56,7 +56,8 @@ def env_with_prelude():
         # permissions/other) and be more helpful.
         print "Could not find prelude.tfl. Have you set TRIFLEPATH?"
         raise
-        
+
+    # TODO: either of these could return errors, and we should handle that.
     lexed_tokens = lex(code)
     parse_tree = parse(lexed_tokens)
 
