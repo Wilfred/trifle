@@ -1510,7 +1510,8 @@ class Try(Special):
             return frame.evalled[-1]
 
 
-# TODO: rethrow, message
+# TODO: rethrow, to throw an exception but with the stacktrace from
+# the original call site.
 class Throw(Function):
     def call(self, args):
         check_args(u'throw', args, 2, 2)
@@ -1537,3 +1538,18 @@ class Throw(Function):
 
         return NULL
 
+
+class Message(Function):
+    def call(self, args):
+        check_args(u'message', args, 1, 1)
+
+        exception = args[0]
+        
+        if not isinstance(exception, TrifleExceptionInstance):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The first argument to message must be an exception, but got: %s"
+                % exception.repr())
+
+        # RPython won't let us use list(exception.message) here.
+        return String([x for x in exception.message])

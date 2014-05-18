@@ -9,7 +9,7 @@ from built_ins import (
     Print, Input, Exit,
     Call, Parse, Eval, Defined, Try,
     Open, Close, Read, Write, Encode, Decode,
-    Throw,
+    Throw, Message,
 )
 from errors import (
     error, stack_overflow, no_such_variable, parse_failed,
@@ -161,6 +161,7 @@ def fresh_environment():
         u'encode': Encode(),
         u'decode': Decode(),
         u'throw': Throw(),
+        u'message': Message(),
 
         # Exception types.
         u'error': error,
