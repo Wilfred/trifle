@@ -1935,7 +1935,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            self.eval(u"(try (/ 1 0) :catch (division-by-zero 1 #null))"),
+            self.eval(u"(try (/ 1 0) :catch division-by-zero e #null)"),
             NULL)
 
     def test_try_catch_everything(self):
@@ -1944,7 +1944,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            self.eval(u"(try (/ 1 0) :catch (error 1 #null))"),
+            self.eval(u"(try (/ 1 0) :catch error e #null)"),
             NULL)
 
     def test_try_with_matching_error_indirect(self):
@@ -1953,7 +1953,7 @@ class TryTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(set-symbol! (quote f) (lambda () (/ 1 0 )))"
-                      u"(try (f) :catch (division-by-zero 1 #null))"),
+                      u"(try (f) :catch division-by-zero e #null)"),
             NULL)
 
     def test_try_without_matching_error(self):
@@ -1962,7 +1962,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (no-such-variable #null))",
+            u"(try (/ 1 0) :catch no-such-variable e #null)",
             division_by_zero)
 
     def test_try_without_error(self):
@@ -1970,7 +1970,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEqual(
-            self.eval(u"(try 1 :catch (no-such-variable #null))"),
+            self.eval(u"(try 1 :catch no-such-variable e #null)"),
             Integer(1))
 
     def test_try_arity(self):
@@ -1978,15 +1978,11 @@ class TryTest(BuiltInTestCase):
 
         # Too few arguments.
         self.assertEvalError(
-            u"(try x :catch)", wrong_argument_number)
+            u"(try x :catch division-by-zero e)", wrong_argument_number)
 
         # Too many arguments.
         self.assertEvalError(
-            u"(try x :catch (division-by-zero #null) #null)", wrong_argument_number)
-
-        # Too few arguments in catch.
-        self.assertEvalError(
-            u"(try x :catch (division-by-zero) #null)", wrong_argument_number)
+            u"(try x :catch division-by-zero e #null #null)", wrong_argument_number)
 
     def test_catch_error_propagates(self):
         """If an error occurs during the evaluation of the catch block, it
@@ -1994,7 +1990,16 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (division-by-zero x))", no_such_variable)
+            u"(try (/ 1 0) :catch division-by-zero e x)", no_such_variable)
+
+    def test_exception_as_normal_value(self):
+        """If we save an error in a variable, it shouldn't propagate up the
+        stack.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch division-by-zero e (same? e 1))"),
+            FALSE)
 
     def test_catch_error_propagates_same_type(self):
         """If an error occurs during the evaluation of the catch block, it
@@ -2002,7 +2007,7 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (division-by-zero (/ 1 0)))",
+            u"(try (/ 1 0) :catch division-by-zero e (/ 1 0))",
             division_by_zero)
 
     def test_unknown_exception_throws_first(self):
@@ -2012,21 +2017,23 @@ class TryTest(BuiltInTestCase):
 
         """
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (i-dont-exist #null))", no_such_variable)
+            u"(try (/ 1 0) :catch i-dont-exist e #null)", no_such_variable)
 
     def test_try_types(self):
+        # Third argument isn't `:catch`
         self.assertEvalError(
-            u"(try (/ 1 0) :catch #null)",
+            u"(try (/ 1 0) :foo division-by-zero #null 1)",
             wrong_type)
-            
         self.assertEvalError(
-            u"(try (/ 1 0) #null (division-by-zero #null))",
+            u"(try (/ 1 0) #null division-by-zero e #null)",
             wrong_type)
 
+        # Fourth argument isn't an exception type
         self.assertEvalError(
-            u"(try (/ 1 0) :foo (division-by-zero #null))",
+            u"(try (/ 1 0) :catch #null e 1)",
             wrong_type)
-            
+
+        # Fifth argument isn't a symbol.
         self.assertEvalError(
-            u"(try (/ 1 0) :catch (#null #null))",
+            u"(try (/ 1 0) :catch division-by-zero #null 1)",
             wrong_type)

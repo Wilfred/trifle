@@ -9,7 +9,7 @@ from errors import (
     wrong_type, no_such_variable, stack_overflow,
     ArityError, wrong_argument_number)
 from almost_python import zip
-from environment import Scope, special_expressions
+from environment import Scope, LetScope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
@@ -86,14 +86,14 @@ def evaluate_all(expressions, environment):
     return result
 
 
-def error_is_instance(error_instance, error_type):
+def is_error_instance(error_instance, error_type):
     """Is the type of error_instance the same as error_type, or inherit from it?
 
-    >>> error_is_instance(division_by_zero_instance, division_by_zero)
+    >>> is_error_instance(division_by_zero_instance, division_by_zero)
     True
-    >>> error_is_instance(division_by_zero_instance, error)
+    >>> is_error_instance(division_by_zero_instance, error)
     True
-    >>> error_is_instance(division_by_zero_instance, no_such_variable)
+    >>> is_error_instance(division_by_zero_instance, no_such_variable)
     False
 
     """
@@ -109,6 +109,13 @@ def error_is_instance(error_instance, error_type):
         exception_type_found = exception_type_found.parent
 
     return False
+
+
+def is_thrown_exception(value, exception_type):
+    if not is_error_instance(value, exception_type):
+        return False
+    else:
+        return not value.caught
 
 
 def evaluate(expression, environment):
@@ -162,7 +169,7 @@ def evaluate(expression, environment):
         # we're done with this frame.
         if not result is None:
 
-            if isinstance(result, TrifleExceptionInstance):
+            if isinstance(result, TrifleExceptionInstance) and not result.caught:
                 # We search any try blocks starting from the
                 # innermost, and evaluate the first matching :catch we find.
 
@@ -174,12 +181,19 @@ def evaluate(expression, environment):
                     frame = stack.pop()
                     expected_error = frame.catch_error
 
-                    if expected_error and error_is_instance(result, expected_error):
+                    if expected_error and is_thrown_exception(result, expected_error):
+                        result.caught = True
+                        
                         # Execute the catch body.
-                        catch = frame.expression.values[3]
-                        catch_body = List(catch.values[1:])
+                        exception_symbol = frame.expression.values[4]
+                        catch_body = frame.expression.values[5]
+                        
+                        catch_body_scope = LetScope({
+                            exception_symbol.symbol_name: result
+                        })
+                        catch_env = frame.environment.with_nested_scope(catch_body_scope)
 
-                        stack.push(Frame(catch_body, frame.environment, as_block=True))
+                        stack.push(Frame(catch_body, catch_env))
                         break
 
                 else:

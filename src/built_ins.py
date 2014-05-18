@@ -1454,11 +1454,12 @@ class Exit(Function):
 class Try(Special):
     def call(self, args, env, stack):
         # TODO: multiple catch blocks, finally, resuming.
-        check_args(u'try', args, 3, 3)
+        check_args(u'try', args, 5, 5)
 
         body = args[0]
         catch_keyword = args[1]
-        exception_with_body = args[2]
+        raw_exception_type = args[2]
+        exception_binding = args[3]
 
         if not isinstance(catch_keyword, Keyword) or catch_keyword.symbol_name != u"catch":
             return TrifleExceptionInstance(
@@ -1466,19 +1467,11 @@ class Try(Special):
                 u"The second argument to try must be :catch, but got: %s"
                 % catch_keyword.repr())
 
-        if not isinstance(exception_with_body, List):
+        if not isinstance(exception_binding, Symbol):
             return TrifleExceptionInstance(
                 wrong_type,
-                u"The third argument to try must be a list, but got: %s"
-                % exception_with_body.repr())
-
-        if len(exception_with_body.values) < 2:
-            return TrifleExceptionInstance(
-                wrong_type,
-                u"The third argument to try must be a list of the form (ERROR EXPRESSION...), but got: %s"
-                % exception_with_body.repr())
-
-        raw_exception_type = exception_with_body.values[0]
+                u"The fourth argument to try must be a symbol, but got: %s"
+                % exception_binding.repr())
 
         frame = stack.peek()
         from evaluator import Frame

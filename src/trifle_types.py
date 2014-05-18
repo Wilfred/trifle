@@ -370,6 +370,8 @@ class TrifleExceptionInstance(TrifleType):
         assert isinstance(message, unicode)
         self.message = message
 
+        self.caught = False
+
     def repr(self):
         # TODO: show the message too.
         return u'#error(%s)' % self.exception_type.name

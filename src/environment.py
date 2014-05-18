@@ -34,6 +34,8 @@ class Scope(object):
         self.bindings[symbol] = value
 
 
+# TODO: This is also used inside try-catch, so we should find a better
+# name for it.
 class LetScope(Scope):
     """Behaves as a normal function scope, but only allows variables to be
     defined inside the first argument to `let`.
