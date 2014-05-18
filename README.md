@@ -138,8 +138,9 @@ language, we are cheerfully ignoring these questions for now.
 
 Sample programs: Added a factorial program.
 
-Errors: Improved wording on calling non-callables. Arity errors now
-include more information on the number of arguments received.
+Errors messages: Improved wording on calling non-callables. Arity
+errors now include more information on the number of arguments
+received.
 
 Booleans: `if` now always requires three arguments. Added `when` for
 when users don't care about else. `unless` was renamed to `when-not`.
