@@ -13,10 +13,10 @@ from rpython.rtyper.module.ll_os_environ import getenv_llimpl
 
 from lexer import lex
 from trifle_parser import parse
-from evaluator import evaluate_all
+from evaluator import evaluate_all, is_thrown_exception
 from environment import fresh_environment
 from almost_python import raw_input
-from trifle_types import TrifleExceptionInstance
+from errors import error
 
 
 def get_contents(filename):
@@ -98,7 +98,7 @@ def entry_point(argv):
                 user_input = raw_input(u'> ')
                 lexed_tokens = lex(user_input)
 
-                if isinstance(lexed_tokens, TrifleExceptionInstance):
+                if is_thrown_exception(lexed_tokens, error):
                     # TODO: a proper stack trace.
                     print u'Uncaught error: %s: %s' % (
                         lexed_tokens.exception_type.name,
@@ -108,7 +108,7 @@ def entry_point(argv):
                     parse_tree = parse(lexed_tokens)
                     result = evaluate_all(parse_tree, env)
 
-                    if isinstance(result, TrifleExceptionInstance):
+                    if is_thrown_exception(result, error):
                         # TODO: a proper stack trace.
                         print u'Uncaught error: %s: %s' % (
                             result.exception_type.name,
@@ -134,7 +134,7 @@ def entry_point(argv):
         code = get_contents(filename)
         lexed_tokens = lex(code)
 
-        if isinstance(lexed_tokens, TrifleExceptionInstance):
+        if is_thrown_exception(lexed_tokens, error):
             print u'Uncaught error: %s: %s' % (
                 lexed_tokens.exception_type.name,
                 lexed_tokens.message)
@@ -144,7 +144,7 @@ def entry_point(argv):
         try:
             result = evaluate_all(parse_tree, env)
 
-            if isinstance(result, TrifleExceptionInstance):
+            if is_thrown_exception(result, error):
                 # TODO: a proper stack trace.
                 print u'Uncaught error: %s: %s' % (result.exception_type.name,
                                           result.message)
@@ -162,7 +162,7 @@ def entry_point(argv):
             code_snippet = argv[2].decode('utf-8')
             lexed_tokens = lex(code_snippet)
 
-            if isinstance(lexed_tokens, TrifleExceptionInstance):
+            if is_thrown_exception(lexed_tokens, error):
                 print u'Uncaught error: %s: %s' % (
                     lexed_tokens.exception_type.name,
                     lexed_tokens.message)
@@ -173,7 +173,7 @@ def entry_point(argv):
             try:
                 result = evaluate_all(parse_tree, env)
 
-                if isinstance(result, TrifleExceptionInstance):
+                if is_thrown_exception(result, error):
                     # TODO: a proper stack trace.
                     print u'Uncaught error: %s: %s' % (result.exception_type.name,
                                               result.message)

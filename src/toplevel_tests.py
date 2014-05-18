@@ -50,6 +50,17 @@ class TopLevelSnippetTest(unittest.TestCase):
         return_value = entry_point(['trifle', '-i', '(+ 1 i-dont-exist)'])
         self.assertNotEqual(return_value, 0)
 
+    def test_snippet_error_as_value(self):
+        """If given a snippet that returns an error, we should have a return
+        code of zero.
+
+        """
+        return_value = entry_point([
+            'trifle', '-i',
+            '(try (/ 1 0) :catch error e e)'
+        ])
+        self.assertEqual(return_value, 0)
+
     def test_snippet_lex_error(self):
         """If given a snippet that throws an error during lexing, we should
         have a non-zero return code.
