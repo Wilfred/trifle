@@ -49,12 +49,17 @@ class BuiltInTestCase(unittest.TestCase):
         self.assertTrifleError(result, error_type)
 
     def assertTrifleError(self, value, expected_error_type):
+        """Assert that this value is a thrown error of the expected type.
+
+        """
         self.assertTrue(isinstance(value, TrifleExceptionInstance),
                         "Expected an error, but got: %s" % value.repr())
 
         self.assertEqual(value.exception_type, expected_error_type,
                          "Expected %s, but got %s" %
                          (expected_error_type.name, value.exception_type.name))
+
+        self.assertFalse(value.caught, "Expected a thrown exception, but this exception has been caught!")
 
 
 class CommentLexTest(BuiltInTestCase):
