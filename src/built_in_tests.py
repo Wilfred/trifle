@@ -8,17 +8,19 @@ from mock import patch, Mock
 
 from lexer import lex
 from trifle_parser import parse_one, parse
-from trifle_types import (List, Integer, Float, Fraction,
-                          Symbol, Keyword, String, Character,
-                          Lambda,
-                          TRUE, FALSE, NULL,
-                          FileHandle, Bytestring)
+from trifle_types import (
+    List, Integer, Float, Fraction,
+    Symbol, Keyword, String, Character,
+    Lambda,
+    TRUE, FALSE, NULL,
+    FileHandle, Bytestring,
+    TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
-from errors import (UnboundVariable, TrifleTypeError,
-                    LexFailed, ParseFailed, ArityError,
-                    DivideByZero, StackOverflow, FileNotFound,
-                    TrifleValueError, UsingClosedFile,
-                    UnboundVariable)
+from errors import (
+    error, lex_failed, parse_failed,
+    file_not_found, value_error, stack_overflow,
+    division_by_zero, wrong_type, no_such_variable,
+    changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
 from main import env_with_prelude
 
@@ -33,262 +35,286 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
+        assert isinstance(program, unicode)
         return evaluate_all(parse(lex(program)), fresh_environment())
+
+    # TODO: It'd be clearer to remove this, requiring callers to use
+    # .eval and .assertTrifleError instead.
+    def assertEvalError(self, program, error_type):
+        """Assert that this program raises an error of type error_type when
+        executed.
+
+        """
+        result = self.eval(program)
+        self.assertTrifleError(result, error_type)
+
+    def assertTrifleError(self, value, expected_error_type):
+        """Assert that this value is a thrown error of the expected type.
+
+        """
+        self.assertTrue(isinstance(value, TrifleExceptionInstance),
+                        "Expected an error, but got: %s" % value.repr())
+
+        self.assertEqual(value.exception_type, expected_error_type,
+                         "Expected %s, but got %s" %
+                         (expected_error_type.name, value.exception_type.name))
+
+        self.assertFalse(value.caught, "Expected a thrown exception, but this exception has been caught!")
 
 
 class CommentLexTest(BuiltInTestCase):
     def test_lex_comment(self):
         self.assertEqual(
-            lex(u"1 ; 2 \n 3"), [Integer(1), Integer(3)])
+            lex(u"1 ; 2 \n 3"), List([Integer(1), Integer(3)]))
 
 
 class IntegerLexTest(BuiltInTestCase):
     def test_lex_positive_number(self):
         self.assertEqual(
-            lex(u"123")[0], Integer(123))
+            lex(u"123").values[0], Integer(123))
 
         self.assertEqual(
-            lex(u"0123")[0], Integer(123))
+            lex(u"0123").values[0], Integer(123))
 
     def test_lex_negative_number(self):
         self.assertEqual(
-            lex(u"-123")[0], Integer(-123))
+            lex(u"-123").values[0], Integer(-123))
 
     def test_lex_number_with_underscores(self):
         self.assertEqual(
-            lex(u"1_000")[0], Integer(1000))
+            lex(u"1_000").values[0], Integer(1000))
 
     def test_lex_zero(self):
         self.assertEqual(
-            lex(u"0")[0], Integer(0))
+            lex(u"0").values[0], Integer(0))
 
         self.assertEqual(
-            lex(u"-0")[0], Integer(0))
+            lex(u"-0").values[0], Integer(0))
 
     def test_lex_invalid_number(self):
-        with self.assertRaises(LexFailed):
-            lex(u"123abc")
+        self.assertTrifleError(
+            lex(u"123abc"), lex_failed)
 
 
 class FloatLexTest(BuiltInTestCase):
     def test_lex_positive(self):
         self.assertEqual(
-            lex(u"123.0")[0], Float(123.0))
+            lex(u"123.0").values[0], Float(123.0))
 
     def test_lex_float_leading_zero(self):
         self.assertEqual(
-            lex(u"0123.0")[0], Float(123.0))
+            lex(u"0123.0").values[0], Float(123.0))
 
     def test_lex_negative(self):
         self.assertEqual(
-            lex(u"-123.0")[0], Float(-123.0))
+            lex(u"-123.0").values[0], Float(-123.0))
 
     def test_lex_with_underscores(self):
         self.assertEqual(
-            lex(u"1_000.000_2")[0], Float(1000.0002))
+            lex(u"1_000.000_2").values[0], Float(1000.0002))
         
 
     def test_lex_invalid(self):
-        with self.assertRaises(LexFailed):
-            lex(u"123.abc")
+        self.assertTrifleError(
+            lex(u"123.abc"), lex_failed)
 
-        with self.assertRaises(LexFailed):
-            lex(u"123.456abc")
+        self.assertTrifleError(
+            lex(u"123.456abc"), lex_failed)
 
 
 class FractionLexTest(BuiltInTestCase):
     def test_lex_fraction(self):
         self.assertEqual(
-            lex(u"1/3")[0], Fraction(1, 3))
+            lex(u"1/3").values[0], Fraction(1, 3))
 
     def test_lex_fraction_underscore(self):
         self.assertEqual(
-            lex(u"1/3_0")[0], Fraction(1, 30))
+            lex(u"1/3_0").values[0], Fraction(1, 30))
 
     def test_lex_fraction_to_integer(self):
         self.assertEqual(
-            lex(u"2/1")[0], Integer(2))
+            lex(u"2/1").values[0], Integer(2))
         self.assertEqual(
-            lex(u"3/3")[0], Integer(1))
+            lex(u"3/3").values[0], Integer(1))
 
     def test_lex_fraction_zero_denominator(self):
-        with self.assertRaises(DivideByZero):
-            lex(u"1/0")
+        self.assertTrifleError(
+            lex(u"1/0"), division_by_zero)
 
     def test_lex_fraction_not_simplified(self):
         self.assertEqual(
-            lex(u"2/6")[0], Fraction(1, 3))
+            lex(u"2/6").values[0], Fraction(1, 3))
 
     def test_lex_invalid_fraction(self):
-        with self.assertRaises(LexFailed):
-            lex(u"1/3/4")
+        self.assertTrifleError(
+            lex(u"1/3/4"), lex_failed)
 
 
 class SymbolLexTest(BuiltInTestCase):
     def test_lex_symbol(self):
         self.assertEqual(
-            lex(u"x")[0], Symbol(u'x'))
+            lex(u"x").values[0], Symbol(u'x'))
 
         self.assertEqual(
-            lex(u"x1")[0], Symbol(u'x1'))
+            lex(u"x1").values[0], Symbol(u'x1'))
 
         self.assertEqual(
-            lex(u"foo?")[0], Symbol(u'foo?'))
+            lex(u"foo?").values[0], Symbol(u'foo?'))
 
         self.assertEqual(
-            lex(u"foo!")[0], Symbol(u'foo!'))
+            lex(u"foo!").values[0], Symbol(u'foo!'))
 
         self.assertEqual(
-            lex(u"foo_bar")[0], Symbol(u'foo_bar'))
+            lex(u"foo_bar").values[0], Symbol(u'foo_bar'))
 
         self.assertEqual(
-            lex(u"<=")[0], Symbol(u'<='))
+            lex(u"<=").values[0], Symbol(u'<='))
 
     def test_lex_invalid_symbol(self):
-        with self.assertRaises(LexFailed):
-            lex(u"\\")
+        self.assertTrifleError(
+            lex(u"\\"), lex_failed)
 
 
 class KeywordLexTest(BuiltInTestCase):
     def test_lex_keyword(self):
         self.assertEqual(
-            lex(u":x")[0], Keyword(u'x'))
+            lex(u":x").values[0], Keyword(u'x'))
 
     def test_lex_invalid_keyword(self):
-        with self.assertRaises(LexFailed):
-            lex(u":123")
+        self.assertTrifleError(
+            lex(u":123"), lex_failed)
 
 class StringLexTest(BuiltInTestCase):
     def test_lex_string(self):
         self.assertEqual(
-            lex(u'"foo"')[0], String(list(u'foo')))
+            lex(u'"foo"').values[0], String(list(u'foo')))
 
         self.assertEqual(
-            lex(u'"foo\nbar"')[0], String(list(u'foo\nbar')))
+            lex(u'"foo\nbar"').values[0], String(list(u'foo\nbar')))
 
     def test_lex_non_ascii_string(self):
         self.assertEqual(
-            lex(u'"flambé"')[0], String(list(u'flambé')))
+            lex(u'"flambé"').values[0], String(list(u'flambé')))
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u'"\\"')
+        self.assertTrifleError(
+            lex(u'"\\"'), lex_failed)
 
         self.assertEqual(
-            lex(u'"\\\\"')[0], String(list(u'\\')))
+            lex(u'"\\\\"').values[0], String(list(u'\\')))
 
     def test_lex_newline(self):
         self.assertEqual(
-            lex(u'"\n"')[0], String(list(u'\n')))
+            lex(u'"\n"').values[0], String(list(u'\n')))
 
         self.assertEqual(
-            lex(u'"\\n"')[0], String(list(u'\n')))
+            lex(u'"\\n"').values[0], String(list(u'\n')))
 
     def test_lex_escaped_quote(self):
         self.assertEqual(
-            lex(u'"\\""')[0], String(list(u'"')))
+            lex(u'"\\""').values[0], String(list(u'"')))
 
 
 class CharacterLexTest(BuiltInTestCase):
     def test_lex_character(self):
         self.assertEqual(
-            lex(u"'a'")[0], Character(u'a'))
+            lex(u"'a'").values[0], Character(u'a'))
 
     def test_lex_non_ascii_character(self):
         self.assertEqual(
-            lex(u"'é'")[0], Character(u'é'))
+            lex(u"'é'").values[0], Character(u'é'))
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u"'\\'")
+        self.assertTrifleError(
+            lex(u"'\\'"), lex_failed)
 
         self.assertEqual(
-            lex(u"'\\\\'")[0], Character(u'\\'))
+            lex(u"'\\\\'").values[0], Character(u'\\'))
 
     def test_lex_newline(self):
         self.assertEqual(
-            lex(u"'\n'")[0], Character(u'\n'))
+            lex(u"'\n'").values[0], Character(u'\n'))
 
         self.assertEqual(
-            lex(u"'\\n'")[0], Character(u'\n'))
+            lex(u"'\\n'").values[0], Character(u'\n'))
 
     def test_lex_escaped_quote(self):
         self.assertEqual(
-            lex(u"'\\''")[0], Character(u"'"))
+            lex(u"'\\''").values[0], Character(u"'"))
 
 
 class BytestringLexTest(BuiltInTestCase):
     def test_lex_bytestring(self):
         self.assertEqual(
-            lex(u'#bytes("foo")')[0], Bytestring([ord(c) for c in 'foo']))
+            lex(u'#bytes("foo")').values[0], Bytestring([ord(c) for c in 'foo']))
 
     def test_lex_multiple_bytestrings(self):
         self.assertEqual(
-            lex(u'#bytes("foo") #bytes("bar")')[1],
+            lex(u'#bytes("foo") #bytes("bar")').values[1],
             Bytestring([ord(c) for c in 'bar']))
 
     def test_lex_invalid_byte(self):
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("flambé")')
+        self.assertTrifleError(
+            lex(u'#bytes("flambé")'), lex_failed)
 
     def test_lex_backslash(self):
         # Backslashes should be an error if not escaped.
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\")'), lex_failed)
 
         self.assertEqual(
-            lex(u'#bytes("\\\\")')[0], Bytestring([ord('\\')]))
+            lex(u'#bytes("\\\\")').values[0], Bytestring([ord('\\')]))
 
     def test_lex_escaped_byte(self):
         self.assertEqual(
-            lex(u'#bytes("\\xff")')[0], Bytestring([255]))
+            lex(u'#bytes("\\xff")').values[0], Bytestring([255]))
 
         self.assertEqual(
-            lex(u'#bytes("\\xFF")')[0], Bytestring([255]))
+            lex(u'#bytes("\\xFF")').values[0], Bytestring([255]))
 
     def test_lex_invalid_escaped_byte(self):
         # Not hexadecimal characters:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xgg")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xgg")'), lex_failed)
 
         # Not starting with \x
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\yff")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\yff")'), lex_failed)
 
         # Insufficient characters:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xa")')
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\x")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xa")'), lex_failed)
+        self.assertTrifleError(
+            lex(u'#bytes("\\x")'), lex_failed)
             
         # Insufficient characters before next escaped character:
-        with self.assertRaises(LexFailed):
-            lex(u'#bytes("\\xa\\xaa")')
+        self.assertTrifleError(
+            lex(u'#bytes("\\xa\\xaa")'), lex_failed)
 
 
 class BooleanLexTest(BuiltInTestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"#true")[0], TRUE)
+            lex(u"#true").values[0], TRUE)
 
         self.assertEqual(
-            lex(u"#false")[0], FALSE)
+            lex(u"#false").values[0], FALSE)
 
     def test_lex_symbol_leading_bool(self):
         """Ensure that a literal whose prefix is a valid boolean, is still a
         lex error.
 
         """
-        with self.assertRaises(LexFailed):
-            lex(u"#trueish")
+        self.assertTrifleError(
+            lex(u"#trueish"), lex_failed)
 
 
 class NullLexTest(BuiltInTestCase):
     def test_lex_boolean(self):
         self.assertEqual(
-            lex(u"#null")[0], NULL)
+            lex(u"#null").values[0], NULL)
 
 
 class ParsingTest(BuiltInTestCase):
@@ -297,13 +323,7 @@ class ParsingTest(BuiltInTestCase):
                          List([Integer(1), Integer(2)]))
 
 
-class EvaluatingTest(BuiltInTestCase):
-    def test_invalid_function(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(1)")
-
-
-class EvaluatingLiteralsTest(BuiltInTestCase):
+class EvaluatingTypesTest(BuiltInTestCase):
     def test_eval_boolean(self):
         self.assertEqual(
             self.eval(u"#true"),
@@ -352,6 +372,15 @@ class EvaluatingLiteralsTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"'a'"),
             Character(u"a"))
+
+    def test_eval_exception_type(self):
+        self.assertEqual(
+            self.eval(u"error"),
+            error)
+
+    def test_eval_exception_instance(self):
+        result = self.eval(u"(try x :catch no-such-variable e e)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
 
 
 class ReprTest(BuiltInTestCase):
@@ -414,6 +443,10 @@ class ReprTest(BuiltInTestCase):
     def test_null_repr(self):
         self.assertEqual(NULL.repr(), "#null")
 
+    def test_error_type_repr(self):
+        # TODO: unit test error instances too.
+        self.assertEqual(division_by_zero.repr(), '#error-type("division-by-zero")')
+
 
 class EvaluatingLambdaTest(BuiltInTestCase):
     def test_call_lambda(self):
@@ -427,17 +460,17 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             Integer(2))
 
     def test_call_not_lambda(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(1)")
+        self.assertEvalError(
+            u"(1)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(#null)")
+        self.assertEvalError(
+            u"(#null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'("a")')
+        self.assertEvalError(
+            u'("a")', wrong_type)
     
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'((quote (1)))')
+        self.assertEvalError(
+            u'((quote (1)))', wrong_type)
     
     def test_call_lambda_variable_arguments(self):
         expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
@@ -447,28 +480,28 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             expected)
 
     def test_call_lambda_too_few_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda (x) 1))")
+        self.assertEvalError(
+            u"((lambda (x) 1))", wrong_argument_number)
 
     def test_call_lambda_too_few_variable_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda (x y :rest args) x))")
+        self.assertEvalError(
+            u"((lambda (x y :rest args) x))", wrong_argument_number)
 
     def test_call_lambda_too_many_arguments(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"((lambda () 1) 2)")
+        self.assertEvalError(
+            u"((lambda () 1) 2)", wrong_argument_number)
 
     def test_lambda_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(lambda)")
+        self.assertEvalError(
+            u"(lambda)", wrong_argument_number)
 
     def test_lambda_params_not_list(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(lambda foo bar)")
+        self.assertEvalError(
+            u"(lambda foo bar)", wrong_type)
 
     def test_lambda_params_not_symbols(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(lambda (1 2) bar)")
+        self.assertEvalError(
+            u"(lambda (1 2) bar)", wrong_type)
 
     def test_evaluate_lambda(self):
         lambda_obj = self.eval(u"(lambda (x) x)")
@@ -486,8 +519,8 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             self.eval(u"((lambda () (set-symbol! (quote x) 2) x))"),
             Integer(2))
 
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"((lambda () (set-symbol! (quote x) 2)) x)")
+        self.assertEvalError(
+            u"((lambda () (set-symbol! (quote x) 2)) x)", no_such_variable)
 
     def test_closure_variables(self):
         """Ensure that we can update closure variables inside a lambda.
@@ -499,8 +532,8 @@ class EvaluatingLambdaTest(BuiltInTestCase):
 
     # TODO: also test for stack overflow inside macros.
     def test_stack_overflow(self):
-        with self.assertRaises(StackOverflow):
-            self.eval(u"(set-symbol! (quote f) (lambda () (f))) (f)")
+        self.assertEvalError(
+            u"(set-symbol! (quote f) (lambda () (f))) (f)", stack_overflow)
 
 
 class FreshSymbolTest(BuiltInTestCase):
@@ -510,8 +543,8 @@ class FreshSymbolTest(BuiltInTestCase):
             Symbol(u"1-unnamed"))
 
     def test_fresh_symbol_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(fresh-symbol 1)")
+        self.assertEvalError(
+            u"(fresh-symbol 1)", wrong_argument_number)
 
 
 class SetSymbolTest(BuiltInTestCase):
@@ -521,8 +554,8 @@ class SetSymbolTest(BuiltInTestCase):
             Symbol(u"y"))
 
     def test_set_symbol_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1 2)")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1 2)", wrong_argument_number)
 
     def test_set_symbol_returns_null(self):
         self.assertEqual(
@@ -530,8 +563,8 @@ class SetSymbolTest(BuiltInTestCase):
             NULL)
 
     def test_set_symbol_first_arg_symbol(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-symbol! 1 2)")
+        self.assertEvalError(
+            u"(set-symbol! 1 2)", wrong_type)
 
 
 class LetTest(BuiltInTestCase):
@@ -546,19 +579,20 @@ class LetTest(BuiltInTestCase):
             Integer(2))
 
     def test_let_malformed_bindings(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(let (1 1) #null)")
+        self.assertEvalError(
+            u"(let (1 1) #null)", wrong_type)
 
     def test_let_odd_bindings(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(let (x 1 y) #null)")
+        self.assertEvalError(
+            u"(let (x 1 y) #null)", wrong_argument_number)
 
     def test_let_not_bindings(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(let #null #null)")
+        # TODO: these should probably both be syntax errors.
+        self.assertEvalError(
+            u"(let #null #null)", wrong_type)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(let)")
+        self.assertEvalError(
+            u"(let)", wrong_argument_number)
 
     def test_let_shadowing(self):
         """Ensure that variables defined in a let shadow outer variables with
@@ -574,8 +608,8 @@ class LetTest(BuiltInTestCase):
         Regression test for the first variable in the bindings.
 
         """
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"(let (x 1 y 2) #null) x")
+        self.assertEvalError(
+            u"(let (x 1 y 2) #null) x", no_such_variable)
 
     def test_let_not_function_scope(self):
         """Ensure that variables defined with set! are still available outside
@@ -599,11 +633,11 @@ class QuoteTest(BuiltInTestCase):
             expected)
 
     def test_quote_wrong_number_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote foo bar)")
+        self.assertEvalError(
+            u"(quote foo bar)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote)")
+        self.assertEvalError(
+            u"(quote)", wrong_argument_number)
 
     def test_unquote(self):
         self.assertEqual(
@@ -625,22 +659,26 @@ class QuoteTest(BuiltInTestCase):
             expected)
 
     def test_unquote_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1) (quote (unquote x x))")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1) (quote (unquote x x))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote (unquote))")
+        self.assertEvalError(
+            u"(quote (unquote))", wrong_argument_number)
 
     def test_unquote_star_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))")
+        self.assertEvalError(
+            u"(set-symbol! (quote x) 1) (quote (list (unquote* x x)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(quote (list (unquote*)))")
+        self.assertEvalError(
+            u"(quote (list (unquote*)))", wrong_argument_number)
+
+    def test_unquote_star_wrong_type(self):
+        self.assertEvalError(
+            u"(quote (list (unquote* 1)))", wrong_type)
 
     def test_unquote_star_top_level(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(quote (unquote* #null))")
+        self.assertEvalError(
+            u"(quote (unquote* #null))", value_error)
 
     def test_unquote_star_after_unquote(self):
         expected = parse_one(lex(u"(if #true (do 1 2))"))
@@ -684,8 +722,8 @@ class AddTest(BuiltInTestCase):
                          Integer(2))
         
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(+ +)")
+        self.assertEvalError(
+            u"(+ +)", wrong_type)
 
 
 class SubtractTest(BuiltInTestCase):
@@ -726,8 +764,8 @@ class SubtractTest(BuiltInTestCase):
                          Integer(1))
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(- -)")
+        self.assertEvalError(
+            u"(- -)", wrong_type)
 
 
 class MultiplyTest(BuiltInTestCase):
@@ -762,8 +800,8 @@ class MultiplyTest(BuiltInTestCase):
                          Integer(1))
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(* 1 #null)")
+        self.assertEvalError(
+            u"(* 1 #null)", wrong_type)
 
 
 class DivideTest(BuiltInTestCase):
@@ -789,19 +827,19 @@ class DivideTest(BuiltInTestCase):
                          Integer(1))
         
     def test_divide_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(/ 1 0)")
-
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(/ 1.0 0.0)")
-
+        result = self.eval(u"(/ 1 0)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
+            
+        result = self.eval(u"(/ 1.0 0.0)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
+            
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(/ 1 #null)")
+        self.assertEvalError(
+            u"(/ 1 #null)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(/ 1)")
+        self.assertEvalError(
+            u"(/ 1)", wrong_argument_number)
 
 
 class ModTest(BuiltInTestCase):
@@ -810,22 +848,22 @@ class ModTest(BuiltInTestCase):
                          Integer(1))
 
     def test_mod_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(mod 1 0)")
+        self.assertEvalError(
+            u"(mod 1 0)", division_by_zero)
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(mod 1 #null)")
+        self.assertEvalError(
+            u"(mod 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(mod 1 0.5)")
+        self.assertEvalError(
+            u"(mod 1 0.5)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(mod 1)")
+        self.assertEvalError(
+            u"(mod 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(mod 1 2 3)")
+        self.assertEvalError(
+            u"(mod 1 2 3)", wrong_argument_number)
 
 
 class DivTest(BuiltInTestCase):
@@ -837,22 +875,22 @@ class DivTest(BuiltInTestCase):
                          Integer(-3))
 
     def test_div_by_zero(self):
-        with self.assertRaises(DivideByZero):
-            self.eval(u"(div 1 0)")
+        self.assertEvalError(
+            u"(div 1 0)", division_by_zero)
 
     def test_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(div 1 #null)")
+        self.assertEvalError(
+            u"(div 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(div 2.0 1.0)")
+        self.assertEvalError(
+            u"(div 2.0 1.0)", wrong_type)
 
     def test_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(div 1)")
+        self.assertEvalError(
+            u"(div 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(div 1 2 3)")
+        self.assertEvalError(
+            u"(div 1 2 3)", wrong_argument_number)
 
 
 class IfTest(BuiltInTestCase):
@@ -866,8 +904,8 @@ class IfTest(BuiltInTestCase):
             Integer(5))
 
     def test_if_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(if 1 2 3)")
+        self.assertEvalError(
+            u"(if 1 2 3)", wrong_type)
 
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
@@ -875,11 +913,11 @@ class IfTest(BuiltInTestCase):
             Integer(3))
 
     def test_if_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(if #true)")
+        self.assertEvalError(
+            u"(if #true)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(if 1 2 3 4)")
+        self.assertEvalError(
+            u"(if 1 2 3 4)", wrong_argument_number)
 
 
 class WhileTest(BuiltInTestCase):
@@ -901,12 +939,12 @@ class WhileTest(BuiltInTestCase):
             Integer(2))
         
     def test_while_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(while)")
+        self.assertEvalError(
+            u"(while)", wrong_argument_number)
 
     def test_while_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(while 1 (foo))")
+        self.assertEvalError(
+            u"(while 1 (foo))", wrong_type)
 
 
 class PrintTest(BuiltInTestCase):
@@ -938,8 +976,8 @@ class PrintTest(BuiltInTestCase):
         self.assertEqual(mock_stdout.getvalue(), "1\n")
 
     def test_print_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(print! 1 2)")
+        self.assertEvalError(
+            u"(print! 1 2)", wrong_argument_number)
 
 
 class InputTest(BuiltInTestCase):
@@ -955,15 +993,15 @@ class InputTest(BuiltInTestCase):
                 )
 
     def test_input_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(input 1)")
+        self.assertEvalError(
+            u"(input 1)", wrong_type)
 
     def test_input_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(input)")
+        self.assertEvalError(
+            u"(input)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(input \"foo\" 1)")
+        self.assertEvalError(
+            u"(input \"foo\" 1)", wrong_argument_number)
 
 
 class SameTest(BuiltInTestCase):
@@ -1017,11 +1055,11 @@ class SameTest(BuiltInTestCase):
             FALSE)
 
     def test_same_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(same? 1)")
+        self.assertEvalError(
+            u"(same? 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(same? 1 2 3)")
+        self.assertEvalError(
+            u"(same? 1 2 3)", wrong_argument_number)
 
 
 class EqualTest(BuiltInTestCase):
@@ -1148,11 +1186,11 @@ class EqualTest(BuiltInTestCase):
             FALSE)
 
     def test_equal_wrong_number_of_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(equal? 1)")
+        self.assertEvalError(
+            u"(equal? 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(equal? 1 2 3)")
+        self.assertEvalError(
+            u"(equal? 1 2 3)", wrong_argument_number)
 
 
 class LessThanTest(BuiltInTestCase):
@@ -1192,15 +1230,15 @@ class LessThanTest(BuiltInTestCase):
             FALSE)
 
     def test_less_than_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(< #true #false)")
+        self.assertEvalError(
+            u"(< #true #false)", wrong_type)
 
     def test_less_than_insufficient_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(<)")
+        self.assertEvalError(
+            u"(<)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(< 1)")
+        self.assertEvalError(
+            u"(< 1)", wrong_argument_number)
 
 
 class LengthTest(BuiltInTestCase):
@@ -1220,15 +1258,15 @@ class LengthTest(BuiltInTestCase):
             Integer(3))
 
     def test_length_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(length 1)")
+        self.assertEvalError(
+            u"(length 1)", wrong_type)
             
     def test_length_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(length)")
+        self.assertEvalError(
+            u"(length)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u"(length (quote ()) 1)")
+        self.assertEvalError(
+            u"(length (quote ()) 1)", wrong_argument_number)
             
 
 class GetIndexTest(BuiltInTestCase):
@@ -1253,32 +1291,32 @@ class GetIndexTest(BuiltInTestCase):
             Integer(3))
 
     def test_get_index_negative_index_error(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote (2 3)) -3)")
+        self.assertEvalError(
+            u"(get-index (quote (2 3)) -3)", value_error)
 
     def test_get_index_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(get-index #null 0)")
+        self.assertEvalError(
+            u"(get-index #null 0)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(get-index (quote (1)) #false)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) #false)", wrong_type)
 
     def test_get_index_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote ()) 0)")
+        self.assertEvalError(
+            u"(get-index (quote ()) 0)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(get-index (quote (1)) 2)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) 2)", value_error)
 
     def test_get_index_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index)")
+        self.assertEvalError(
+            u"(get-index)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index (quote (1)))")
+        self.assertEvalError(
+            u"(get-index (quote (1)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(get-index (quote (1)) 0 0)")
+        self.assertEvalError(
+            u"(get-index (quote (1)) 0 0)", wrong_argument_number)
 
 
 class SetIndexTest(BuiltInTestCase):
@@ -1304,22 +1342,22 @@ class SetIndexTest(BuiltInTestCase):
             expected)
 
     def test_set_index_bytestring_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! #bytes("a") 0 #null)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 #null)', wrong_type)
         
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! #bytes("a") 0 1.0)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 1.0)', wrong_type)
         
     def test_set_index_string_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-index! "abc" 0 #null)')
+        self.assertEvalError(
+            u'(set-index! "abc" 0 #null)', wrong_type)
         
     def test_set_index_bytestring_range_error(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-index! #bytes("a") 0 -1)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 -1)', value_error)
         
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-index! #bytes("a") 0 256)')
+        self.assertEvalError(
+            u'(set-index! #bytes("a") 0 256)', value_error)
         
     def test_set_index_negative(self):
         expected = List([Integer(10), Integer(1)])
@@ -1334,34 +1372,34 @@ class SetIndexTest(BuiltInTestCase):
             NULL)
 
     def test_set_index_typeerror(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-index! #null 0 0)")
+        self.assertEvalError(
+            u"(set-index! #null 0 0)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(set-index! (quote (1)) #false #false)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) #false #false)", wrong_type)
 
     def test_set_index_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote ()) 0 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote ()) 0 #true)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote (1)) 2 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 2 #true)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(set-index! (quote (1 2 3)) -4 #true)")
+        self.assertEvalError(
+            u"(set-index! (quote (1 2 3)) -4 #true)", value_error)
 
     def test_set_index_wrong_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index!)")
+        self.assertEvalError(
+            u"(set-index!)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)))")
+        self.assertEvalError(
+            u"(set-index! (quote (1)))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)) 0)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 0)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(set-index! (quote (1)) 0 5 6)")
+        self.assertEvalError(
+            u"(set-index! (quote (1)) 0 5 6)", wrong_argument_number)
 
 
 class InsertTest(BuiltInTestCase):
@@ -1385,12 +1423,13 @@ class InsertTest(BuiltInTestCase):
             Bytestring([ord(c) for c in "ab"]))
 
     def test_insert_bytestring_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 #null)',
+            wrong_type)
 
     def test_insert_bytestring_invalid_value(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) #bytes("a")) (insert! x 1 256)', value_error)
 
     def test_insert_string(self):
         self.assertEqual(
@@ -1398,8 +1437,9 @@ class InsertTest(BuiltInTestCase):
             String(list(u"ab")))
 
     def test_insert_string_invalid_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(set-symbol! (quote x) "a") (insert! x 1 #null)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) "a") (insert! x 1 #null)',
+            wrong_type)
 
     def test_insert_returns_null(self):
         self.assertEqual(
@@ -1407,27 +1447,27 @@ class InsertTest(BuiltInTestCase):
             NULL)
 
     def test_insert_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(insert! (quote ()) 0)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(insert! (quote ()) 0 1 2)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0 1 2)", wrong_argument_number)
 
     def test_insert_indexerror(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(insert! (quote ()) 1 #null)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 1 #null)", value_error)
 
-        with self.assertRaises(TrifleValueError):
-            self.eval(u"(insert! (quote (1 2)) -3 0)")
+        self.assertEvalError(
+            u"(insert! (quote (1 2)) -3 0)", value_error)
 
     def test_insert_typeerror(self):
         # first argument must be a sequence
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(insert! #null 0 0)")
+        self.assertEvalError(
+            u"(insert! #null 0 0)", wrong_type)
 
         # second argument must be an integer
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(insert! (quote ()) 0.0 0)")
+        self.assertEvalError(
+            u"(insert! (quote ()) 0.0 0)", wrong_type)
 
 
 class EnvironmentVariablesTest(BuiltInTestCase):
@@ -1439,8 +1479,8 @@ class EnvironmentVariablesTest(BuiltInTestCase):
                          Integer(1))
 
     def test_unbound_variable(self):
-        with self.assertRaises(UnboundVariable):
-            self.eval(u"x")
+        self.assertEvalError(
+            u"x", no_such_variable)
 
 
 class ParseTest(BuiltInTestCase):
@@ -1452,23 +1492,27 @@ class ParseTest(BuiltInTestCase):
             expected)
 
     def test_parse_invalid_parse(self):
-        with self.assertRaises(ParseFailed):
-            self.eval(u'(parse ")")')
+        self.assertEvalError(
+            u'(parse ")")', parse_failed)
 
     def test_parse_invalid_lex(self):
-        with self.assertRaises(LexFailed):
-            self.eval(u'(parse "123abc")')
+        self.assertEvalError(
+            u'(parse "123abc")', lex_failed)
 
     def test_parse_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(parse)")
+        self.assertEvalError(
+            u"(parse)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(parse "()" 1)')
+        self.assertEvalError(
+            u'(parse "()" 1)', wrong_argument_number)
 
     def test_parse_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(parse 123)")
+        self.assertEvalError(
+            u"(parse 123)", wrong_type)
+
+    def test_parse_zero_division_error(self):
+        self.assertEvalError(
+            u'(parse "1/0")', division_by_zero)
 
 
 class CallTest(BuiltInTestCase):
@@ -1500,18 +1544,18 @@ class CallTest(BuiltInTestCase):
         )
 
     def test_call_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(call + (quote (1 2 3)) 1)")
+        self.assertEvalError(
+            u"(call + (quote (1 2 3)) 1)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(call +)")
+        self.assertEvalError(
+            u"(call +)", wrong_argument_number)
 
     def test_call_type(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(call #null (quote (1 2 3)))")
+        self.assertEvalError(
+            u"(call #null (quote (1 2 3)))", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(call + #null)")
+        self.assertEvalError(
+            u"(call + #null)", wrong_type)
 
 
 class EvalTest(BuiltInTestCase):
@@ -1536,12 +1580,12 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         )
 
     def test_call_macro_too_few_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro ignore (x) #null) (ignore 1 2)")
+        self.assertEvalError(
+            u"(macro ignore (x) #null) (ignore 1 2)", wrong_argument_number)
 
     def test_call_macro_too_many_args(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro ignore (x) #null) (ignore)")
+        self.assertEvalError(
+            u"(macro ignore (x) #null) (ignore)", wrong_argument_number)
 
     # TODO: we shouldn't depend on the prelude here.
     # TODO: find a way to just call self.eval.
@@ -1554,21 +1598,22 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         )
 
     def test_macro_bad_args_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro foo)")
+        self.assertEvalError(
+            u"(macro foo)", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(macro foo (bar))")
+        self.assertEvalError(
+            u"(macro foo (bar))", wrong_argument_number)
 
     def test_macro_bad_arg_types(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro foo bar #null)")
+        self.assertEvalError(
+            u"(macro foo bar #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro foo (1) #null)")
+        self.assertEvalError(
+            u"(macro foo (1) #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(macro 123 (bar) #null)")
+    def test_macro_bad_name(self):
+        self.assertEvalError(
+            u"(macro 123 (bar) #null)", wrong_type)
 
 
 class ExpandMacroTest(BuiltInTestCase):
@@ -1591,15 +1636,15 @@ class DefinedTest(BuiltInTestCase):
             FALSE)
 
     def test_defined_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(defined? 1)")
+        self.assertEvalError(
+            u"(defined? 1)", wrong_type)
 
     def test_defined_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(defined?)")
+        self.assertEvalError(
+            u"(defined?)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u"(defined? (quote foo) 1)")
+        self.assertEvalError(
+            u"(defined? (quote foo) 1)", wrong_argument_number)
 
 
 # TODO: error on nonexistent file, or file we can't read/write
@@ -1612,8 +1657,8 @@ class OpenTest(BuiltInTestCase):
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_read_no_such_file(self):
-        with self.assertRaises(FileNotFound):
-            self.eval(u'(open "this_file_doesnt_exist" :read)')
+        self.assertEvalError(
+            u'(open "this_file_doesnt_exist" :read)', file_not_found)
 
     def test_open_write(self):
         result = self.eval(u'(open "/tmp/foo" :write)')
@@ -1621,22 +1666,22 @@ class OpenTest(BuiltInTestCase):
         self.assertTrue(isinstance(result, FileHandle))
 
     def test_open_invalid_flag(self):
-        with self.assertRaises(TrifleValueError):
-            self.eval(u'(open "/tmp/foo" :foo)')
+        self.assertEvalError(
+            u'(open "/tmp/foo" :foo)', value_error)
 
     def test_open_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(open "/foo/bar")')
+        self.assertEvalError(
+            u'(open "/foo/bar")', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(open "/foo/bar" :write :write)')
+        self.assertEvalError(
+            u'(open "/foo/bar" :write :write)', wrong_argument_number)
 
     def test_open_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(open "/foo/bar" #null)')
+        self.assertEvalError(
+            u'(open "/foo/bar" #null)', wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(open #null :write)")
+        self.assertEvalError(
+            u"(open #null :write)", wrong_type)
 
 
 class CloseTest(BuiltInTestCase):
@@ -1646,8 +1691,9 @@ class CloseTest(BuiltInTestCase):
         self.assertTrue(result.file_handle.closed)
 
     def test_close_twice_error(self):
-        with self.assertRaises(UsingClosedFile):
-            self.eval(u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)')
+        self.assertEvalError(
+            u'(set-symbol! (quote x) (open "/tmp/foo" :write)) (close! x) (close! x)',
+            changing_closed_handle)
 
     def test_close_returns_null(self):
         result = self.eval(u'(close! (open "/tmp/foo" :write))')
@@ -1655,15 +1701,15 @@ class CloseTest(BuiltInTestCase):
         self.assertEqual(result, NULL)
 
     def test_close_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(close! (open "/tmp/foo" :write) #null)')
+        self.assertEvalError(
+            u'(close! (open "/tmp/foo" :write) #null)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(close!)')
+        self.assertEvalError(
+            u'(close!)', wrong_argument_number)
 
     def test_close_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(close! #null)')
+        self.assertEvalError(
+            u'(close! #null)', wrong_type)
 
 
 class ReadTest(BuiltInTestCase):
@@ -1679,15 +1725,15 @@ class ReadTest(BuiltInTestCase):
             Bytestring([ord(c) for c in "foo"]))
 
     def test_read_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(read)")
+        self.assertEvalError(
+            u"(read)", wrong_argument_number)
             
-        with self.assertRaises(ArityError):
-            self.eval(u'(read "/etc/foo" :read :read)')
+        self.assertEvalError(
+            u'(read "/etc/foo" :read :read)', wrong_argument_number)
             
     def test_read_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(read #null)")
+        self.assertEvalError(
+            u"(read #null)", wrong_type)
 
 
 class WriteTest(BuiltInTestCase):
@@ -1707,26 +1753,32 @@ class WriteTest(BuiltInTestCase):
 
     # todo: we should also test reading from a write-only handle.
     def test_write_read_only_handle(self):
-        with self.assertRaises(ValueError):
-            self.eval(
-                u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
-                u'(write! f (encode "foo"))')
+        self.assertEvalError(
+            u'(set-symbol! (quote f) (open "/etc/passwd" :read))'
+            u'(write! f (encode "foo"))', value_error)
+
+    def test_write_closed_handle(self):
+        self.assertEvalError(
+            u'(set-symbol! (quote f) (open "foo.txt" :write))'
+            u'(close! f)'
+            u'(write! f (encode "foo"))',
+            changing_closed_handle)
 
     def test_write_arity(self):
         # Too few args.
-        with self.assertRaises(ArityError):
-            self.eval(u'(write! (open "foo.txt" :write))')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write))', wrong_argument_number)
 
         # Too many args.
-        with self.assertRaises(ArityError):
-            self.eval(u'(write! (open "foo.txt" :write) (encode "f") #null)')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write) (encode "f") #null)', wrong_argument_number)
             
     def test_write_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(write! #null (encode "f"))')
+        self.assertEvalError(
+            u'(write! #null (encode "f"))', wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(write! (open "foo.txt" :write) #null)')
+        self.assertEvalError(
+            u'(write! (open "foo.txt" :write) #null)', wrong_type)
 
         os.remove('foo.txt')
 
@@ -1738,15 +1790,15 @@ class EncodeTest(BuiltInTestCase):
             Bytestring([ord(c) for c in b"souffl\xc3\xa9"]))
     
     def test_encode_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(encode #null)')
+        self.assertEvalError(
+            u'(encode #null)', wrong_type)
     
     def test_encode_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(encode)')
+        self.assertEvalError(
+            u'(encode)', wrong_argument_number)
     
-        with self.assertRaises(ArityError):
-            self.eval(u'(encode "foo" 2)')
+        self.assertEvalError(
+            u'(encode "foo" 2)', wrong_argument_number)
     
 
 class DecodeTest(BuiltInTestCase):
@@ -1756,15 +1808,15 @@ class DecodeTest(BuiltInTestCase):
             String(list(u"soufflé")))
 
     def test_encode_type_error(self):
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u'(decode #null)')
+        self.assertEvalError(
+            u'(decode #null)', wrong_type)
     
     def test_encode_arity_error(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(decode)')
+        self.assertEvalError(
+            u'(decode)', wrong_argument_number)
     
-        with self.assertRaises(ArityError):
-            self.eval(u'(decode #bytes("souffl\\xc3\\xa9") 1)')
+        self.assertEvalError(
+            u'(decode #bytes("souffl\\xc3\\xa9") 1)', wrong_argument_number)
     
 
 class ListPredicateTest(BuiltInTestCase):
@@ -1787,11 +1839,11 @@ class ListPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_list_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(list?)')
+        self.assertEvalError(
+            u'(list?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(list? #null #null)')
+        self.assertEvalError(
+            u'(list? #null #null)', wrong_argument_number)
 
 
 class StringPredicateTest(BuiltInTestCase):
@@ -1814,11 +1866,11 @@ class StringPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_string_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(string?)')
+        self.assertEvalError(
+            u'(string?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(string? #null #null)')
+        self.assertEvalError(
+            u'(string? #null #null)', wrong_argument_number)
 
 
 class BytestringPredicateTest(BuiltInTestCase):
@@ -1841,11 +1893,11 @@ class BytestringPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_bytestring_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(bytestring?)')
+        self.assertEvalError(
+            u'(bytestring?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(bytestring? #null #null)')
+        self.assertEvalError(
+            u'(bytestring? #null #null)', wrong_argument_number)
 
 
 class CharacterPredicateTest(BuiltInTestCase):
@@ -1868,14 +1920,170 @@ class CharacterPredicateTest(BuiltInTestCase):
             FALSE)
 
     def test_is_character_arity(self):
-        with self.assertRaises(ArityError):
-            self.eval(u'(character?)')
+        self.assertEvalError(
+            u'(character?)', wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u'(character? #null #null)')
+        self.assertEvalError(
+            u'(character? #null #null)', wrong_argument_number)
 
 
 class ExitTest(BuiltInTestCase):
     def test_exit(self):
         with self.assertRaises(SystemExit):
             self.eval(u'(exit!)')
+
+
+class TryTest(BuiltInTestCase):
+    def test_try_with_matching_error(self):
+        """If an error occurs, we should evaluate the catch block if it
+        matches.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch division-by-zero e #null)"),
+            NULL)
+
+    def test_try_catch_everything(self):
+        """`error` should be a base exception that we can catch in the case of
+        any exception.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch error e #null)"),
+            NULL)
+
+    def test_try_with_matching_error_indirect(self):
+        """We should catch the error even if it occurs lower on the stack.
+
+        """
+        self.assertEqual(
+            self.eval(u"(set-symbol! (quote f) (lambda () (/ 1 0 )))"
+                      u"(try (f) :catch division-by-zero e #null)"),
+            NULL)
+
+    def test_try_without_matching_error(self):
+        """If an error occurs, we should not evaluate the catch block if it
+        does not match.
+
+        """
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch no-such-variable e #null)",
+            division_by_zero)
+
+    def test_try_without_error(self):
+        """If no error occurs, we should not evaluate the catch block.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try 1 :catch no-such-variable e #null)"),
+            Integer(1))
+
+    def test_try_arity(self):
+        # TODO: support multiple catch statements
+
+        # Too few arguments.
+        self.assertEvalError(
+            u"(try x :catch division-by-zero e)", wrong_argument_number)
+
+        # Too many arguments.
+        self.assertEvalError(
+            u"(try x :catch division-by-zero e #null #null)", wrong_argument_number)
+
+    def test_catch_error_propagates(self):
+        """If an error occurs during the evaluation of the catch block, it
+        should propagate as usual.
+
+        """
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch division-by-zero e x)", no_such_variable)
+
+    def test_exception_as_normal_value(self):
+        """If we save an error in a variable, it shouldn't propagate up the
+        stack.
+
+        """
+        self.assertEqual(
+            self.eval(u"(try (/ 1 0) :catch division-by-zero e (same? e 1))"),
+            FALSE)
+
+    def test_catch_error_propagates_same_type(self):
+        """If an error occurs during the evaluation of the catch block, it
+        should propagate as usual, even if it's the type we were catching.
+
+        """
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch division-by-zero e (/ 1 0))",
+            division_by_zero)
+
+    def test_unknown_exception_throws_first(self):
+        """If we reference an unknown variable for our exception type, we
+        should always throw an exception. It signifies a bug, and it's
+        nice to catch it early.
+
+        """
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch i-dont-exist e #null)", no_such_variable)
+
+    def test_try_types(self):
+        # Third argument isn't `:catch`
+        self.assertEvalError(
+            u"(try (/ 1 0) :foo division-by-zero #null 1)",
+            wrong_type)
+        self.assertEvalError(
+            u"(try (/ 1 0) #null division-by-zero e #null)",
+            wrong_type)
+
+        # Fourth argument isn't an exception type
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch #null e 1)",
+            wrong_type)
+
+        # Fifth argument isn't a symbol.
+        self.assertEvalError(
+            u"(try (/ 1 0) :catch division-by-zero #null 1)",
+            wrong_type)
+
+
+class ThrowTest(BuiltInTestCase):
+    def test_arity(self):
+        self.assertEvalError(
+            u'(throw error "foo" #null)',
+            wrong_argument_number)
+        self.assertEvalError(
+            u'(throw error)',
+            wrong_argument_number)
+
+    def test_types(self):
+        self.assertEvalError(
+            u'(throw error #null)',
+            wrong_type)
+        self.assertEvalError(
+            u'(throw #null "foo")',
+            wrong_type)
+
+    def test_exception_thrown(self):
+        self.assertEvalError(
+            u'(throw error "foo")',
+            error)
+
+
+class Message(BuiltInTestCase):
+    def test_arity(self):
+        self.assertEvalError(
+            u'(message)',
+            wrong_argument_number)
+        
+        self.assertEvalError(
+            u'(message 1 1)',
+            wrong_argument_number)
+
+    def test_type(self):
+        self.assertEvalError(
+            u'(message #null)',
+            wrong_type)
+
+    def test_message(self):
+        self.assertEqual(
+            self.eval(u'(try (throw error "foo") :catch error e (message e))'),
+            String(list(u'foo'))
+        )

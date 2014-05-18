@@ -1,11 +1,15 @@
-from trifle_types import (List, Bytestring, Character, Symbol,
-                          Integer, Float, Fraction,
-                          Null, NULL,
-                          Function, FunctionWithEnv, Lambda, Macro, Boolean,
-                          Keyword, String)
-from errors import UnboundVariable, TrifleTypeError, StackOverflow
+from trifle_types import (
+    List, Bytestring, Character, Symbol,
+    Integer, Float, Fraction,
+    Null, NULL,
+    Function, FunctionWithEnv, Lambda, Macro, Boolean,
+    Keyword, String,
+    TrifleExceptionInstance, TrifleExceptionType)
+from errors import (
+    wrong_type, no_such_variable, stack_overflow,
+    ArityError, wrong_argument_number)
 from almost_python import zip
-from environment import Scope, special_expressions
+from environment import Scope, LetScope, special_expressions
 from parameters import is_variable_arity, check_parameters
 
 
@@ -21,9 +25,7 @@ class Stack(object):
         return "<Stack: %r>\n" % "\n".join(map(repr, self.values))
 
     def push(self, value):
-        if len(self.values) > MAX_STACK_DEPTH:
-            raise StackOverflow(u"Stack Overflow")
-        
+        assert len(self.values) <= MAX_STACK_DEPTH + 1, "Stack should be checked for overflow!"
         self.values.append(value)
 
     def pop(self):
@@ -33,7 +35,7 @@ class Stack(object):
         return self.values[-1]
 
     def is_empty(self):
-        return bool(self.values)
+        return not bool(self.values)
 
 
 class Frame(object):
@@ -63,6 +65,9 @@ class Frame(object):
         # last.
         self.as_block = as_block
 
+        # Is this a try expression that will catch certain error types?
+        self.catch_error = None
+
     def __repr__(self):
         return ("expession: %r,\tindex: %d,\tas_block: %s,\tevalled: %r" %
                 (self.expression, self.expression_index, self.as_block,
@@ -81,6 +86,38 @@ def evaluate_all(expressions, environment):
     return result
 
 
+def is_error_instance(error_instance, error_type):
+    """Is the type of error_instance the same as error_type, or inherit from it?
+
+    >>> is_error_instance(division_by_zero_instance, division_by_zero)
+    True
+    >>> is_error_instance(division_by_zero_instance, error)
+    True
+    >>> is_error_instance(division_by_zero_instance, no_such_variable)
+    False
+
+    """
+    if not isinstance(error_instance, TrifleExceptionInstance):
+        return False
+
+    exception_type_found = error_instance.exception_type
+
+    while exception_type_found:
+        if exception_type_found == error_type:
+            return True
+
+        exception_type_found = exception_type_found.parent
+
+    return False
+
+
+def is_thrown_exception(value, exception_type):
+    if not is_error_instance(value, exception_type):
+        return False
+    else:
+        return not value.caught
+
+
 def evaluate(expression, environment):
     """Evaluate the given expression in the given environment.
 
@@ -93,6 +130,12 @@ def evaluate(expression, environment):
     # appropriate. This ensures recursion in the Trifle program does
     # not require recursion in the interpreter.
     while stack:
+        if len(stack.values) > MAX_STACK_DEPTH:
+            return TrifleExceptionInstance(
+                # TODO: write a better exception message.
+                stack_overflow, u"Stack overflow"
+            )
+
         frame = stack.peek()
 
         if isinstance(frame.expression, List):
@@ -103,25 +146,69 @@ def evaluate(expression, environment):
             # Handle special expressions.
             if isinstance(head, Symbol) and head.symbol_name in special_expressions:
                 special_expression = special_expressions[head.symbol_name]
-                result = special_expression.call(raw_arguments, frame.environment, stack)
+
+                try:
+                    result = special_expression.call(raw_arguments, frame.environment, stack)
+                except ArityError as e:
+                    return TrifleExceptionInstance(
+                        wrong_argument_number, e.message)
 
             else:
-                result = evaluate_function_call(stack)
+                try:
+                    result = evaluate_function_call(stack)
+                except ArityError as e:
+                    return TrifleExceptionInstance(
+                        wrong_argument_number,
+                        e.message
+                    )
 
         else:
             result = evaluate_value(frame.expression, frame.environment)
 
-        # Returning None means we have work left to do, but a Triflfe value means
+        # Returning None means we have work left to do, but a Trifle value means
         # we're done with this frame.
         if not result is None:
-            stack.pop()
 
-            if stack.is_empty():
-                frame = stack.peek()
-                frame.evalled.append(result)
+            if isinstance(result, TrifleExceptionInstance) and not result.caught:
+                # We search any try blocks starting from the
+                # innermost, and evaluate the first matching :catch we find.
+
+                while not stack.is_empty():
+                    # TODO: a proper condition system rather than
+                    # always unwinding the stack.
+                    # TODO: disinguish between a function throwing an
+                    # exception and returning it.
+                    frame = stack.pop()
+                    expected_error = frame.catch_error
+
+                    if expected_error and is_thrown_exception(result, expected_error):
+                        result.caught = True
+                        
+                        # Execute the catch body.
+                        exception_symbol = frame.expression.values[4]
+                        catch_body = frame.expression.values[5]
+                        
+                        catch_body_scope = LetScope({
+                            exception_symbol.symbol_name: result
+                        })
+                        catch_env = frame.environment.with_nested_scope(catch_body_scope)
+
+                        stack.push(Frame(catch_body, catch_env))
+                        break
+
+                else:
+                    # Otherwise, just propagate the error to the toplevel.
+                    return result
+
             else:
-                # We evaluated a value at the top level, nothing left to do.
-                return result
+                stack.pop()
+
+                if not stack.is_empty():
+                    frame = stack.peek()
+                    frame.evalled.append(result)
+                else:
+                    # We evaluated a value at the top level, nothing left to do.
+                    return result
 
 
 # todo: this would be simpler if `values` was also a trifle List
@@ -241,8 +328,10 @@ def evaluate_function_call(stack):
 
         else:
             # todoc: this error
-            raise TrifleTypeError(u"You can only call functions or macros, but got: %s"
-                                  % function.repr())
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"You can only call functions or macros, but got: %s"
+                % function.repr())
 
     else:
         # We had a lambda body or expanded macro and we've now evalled
@@ -252,40 +341,34 @@ def evaluate_function_call(stack):
 
 def evaluate_value(value, environment):
     if isinstance(value, Integer):
-        # Integers evaluate to themselves
         return value
     elif isinstance(value, Float):
-        # Floats evaluate to themselves
         return value
     elif isinstance(value, Fraction):
-        # Fractions evaluate to themselves
         return value
     elif isinstance(value, Boolean):
-        # Booleans evaluate to themselves
         return value
     elif isinstance(value, Null):
-        # Null evaluates to itself
         return value
     elif isinstance(value, Keyword):
-        # Keywords evaluate to themselves
         return value
     elif isinstance(value, String):
-        # Strings evaluate to themselves
         return value
     elif isinstance(value, Bytestring):
-        # Bytestrings evaluate to themselves
         return value
     elif isinstance(value, Character):
-        # Characters evaluate to themselves
         return value
     elif isinstance(value, Lambda):
-        # Lambda functions evaluate to themselves
         return value
     elif isinstance(value, Function):
-        # Built-in functions evaluate to themselves
         return value
     elif isinstance(value, Macro):
-        # Macros evaluate to themselves
+        return value
+    elif isinstance(value, TrifleExceptionInstance):
+        return value
+    elif isinstance(value, TrifleExceptionType):
+        return value
+    elif isinstance(value, Macro):
         return value
     elif isinstance(value, Symbol):
         symbol_name = value.symbol_name
@@ -293,7 +376,8 @@ def evaluate_value(value, environment):
             return environment.get(symbol_name)
         else:
             # TODO: suggest variables with similar spelling.
-            raise UnboundVariable(u"No such variable defined: '%s'"
-                                  % symbol_name)
+            return TrifleExceptionInstance(
+                no_such_variable,
+                u"No such variable defined: '%s'" % symbol_name)
     else:
         assert False, "I don't know how to evaluate that value: %s" % value

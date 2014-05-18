@@ -1,13 +1,22 @@
-from built_ins import (Add, Subtract, Multiply, Divide, Mod, Div,
-                       LessThan, Same, Equal,
-                       Quote, SetSymbol, Let, If, While,
-                       LambdaFactory, DefineMacro, ExpandMacro, FreshSymbol,
-                       Length, ListPredicate, StringPredicate,
-                       BytestringPredicate, CharacterPredicate,
-                       GetIndex, SetIndex, Insert,
-                       Print, Input, Exit,
-                       Call, Parse, Eval, Defined,
-                       Open, Close, Read, Write, Encode, Decode)
+from built_ins import (
+    Add, Subtract, Multiply, Divide, Mod, Div,
+    LessThan, Same, Equal,
+    Quote, SetSymbol, Let, If, While,
+    LambdaFactory, DefineMacro, ExpandMacro, FreshSymbol,
+    Length, ListPredicate, StringPredicate,
+    BytestringPredicate, CharacterPredicate,
+    GetIndex, SetIndex, Insert,
+    Print, Input, Exit,
+    Call, Parse, Eval, Defined, Try,
+    Open, Close, Read, Write, Encode, Decode,
+    Throw, Message,
+)
+from errors import (
+    error, stack_overflow, no_such_variable, parse_failed,
+    lex_failed, value_error, wrong_type,
+    wrong_argument_number, division_by_zero,
+    file_not_found, changing_closed_handle,
+)
 
 
 class Scope(object):
@@ -29,6 +38,8 @@ class Scope(object):
         self.bindings[symbol] = value
 
 
+# TODO: This is also used inside try-catch, so we should find a better
+# name for it.
 class LetScope(Scope):
     """Behaves as a normal function scope, but only allows variables to be
     defined inside the first argument to `let`.
@@ -107,6 +118,7 @@ special_expressions = {
     u'macro': DefineMacro(),
     u'expand-macro': ExpandMacro(),
     u'quote': Quote(),
+    u'try': Try(),
 }
 
 
@@ -115,6 +127,7 @@ def fresh_environment():
 
     """
     return Environment([Scope({
+        # Functions.
         u'+': Add(),
         u'-': Subtract(),
         u'*': Multiply(),
@@ -147,4 +160,19 @@ def fresh_environment():
         u'write!': Write(),
         u'encode': Encode(),
         u'decode': Decode(),
+        u'throw': Throw(),
+        u'message': Message(),
+
+        # Exception types.
+        u'error': error,
+        u'stack-overflow': stack_overflow,
+        u'no-such-variable': no_such_variable,
+        u'parse-failed': parse_failed,
+        u'lex-failed': lex_failed,
+        u'value-error': value_error,
+        u'wrong-type': wrong_type,
+        u'wrong-argument-number': wrong_argument_number,
+        u'division-by-zero': division_by_zero,
+        u'file-not-found': file_not_found,
+        u'changing-closed-handle': changing_closed_handle,
     })])

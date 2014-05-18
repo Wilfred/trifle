@@ -1,4 +1,3 @@
-import unittest
 from copy import deepcopy
 
 from trifle_types import (List, Bytestring, String, Character,
@@ -6,13 +5,15 @@ from trifle_types import (List, Bytestring, String, Character,
                           TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
-from errors import TrifleValueError, TrifleTypeError, ArityError
+from errors import (
+    value_error, wrong_type, wrong_argument_number)
 from main import env_with_prelude
 from evaluator import evaluate_all
 
 from test_utils import (
     evaluate_with_prelude
 )
+from built_in_tests import BuiltInTestCase
 
 
 """Unit tests for functions and macros in the prelude. It's easier to
@@ -23,7 +24,7 @@ the prelude very often.
 
 # TODO: we should shell out to the RPython-compiled binary instead of
 # assuming CPython behaves the same.
-class PreludeTestCase(unittest.TestCase):
+class PreludeTestCase(BuiltInTestCase):
     env = env_with_prelude()
     
     def eval(self, program):
@@ -223,9 +224,9 @@ class LastTest(PreludeTestCase):
             Character(u'c'))
 
     def test_last_empty_list(self):
-        # todo: we need a separate index error
-        with self.assertRaises(TrifleValueError):
-            evaluate_with_prelude(parse_one(lex(u"(last (list))")))
+        # TODO: we need a separate index error
+        self.assertEvalError(
+            u"(last (list))", value_error)
 
 
 class AppendTest(PreludeTestCase):
@@ -252,16 +253,16 @@ class AppendTest(PreludeTestCase):
             NULL)
 
     def test_append_arg_number(self):
-        with self.assertRaises(ArityError):
-            self.eval(u"(append! (quote ()))")
+        self.assertEvalError(
+            u"(append! (quote ()))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            self.eval(u"(append! (quote ()) 0 1)")
+        self.assertEvalError(
+            u"(append! (quote ()) 0 1)", wrong_argument_number)
 
     def test_append_typeerror(self):
         # first argument must be a list
-        with self.assertRaises(TrifleTypeError):
-            self.eval(u"(append! #null 0)")
+        self.assertEvalError(
+            u"(append! #null 0)", wrong_type)
 
 
 class PushTest(PreludeTestCase):
@@ -286,19 +287,16 @@ class PushTest(PreludeTestCase):
             NULL)
 
     def test_push_arg_number(self):
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! (quote ()))")))
+        self.assertEvalError(
+            u"(push! (quote ()))", wrong_argument_number)
 
-        with self.assertRaises(ArityError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! (quote ()) 0 1)")))
+        self.assertEvalError(
+            u"(push! (quote ()) 0 1)", wrong_argument_number)
 
     def test_push_typeerror(self):
         # first argument must be a list
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(
-                u"(push! #null 0)")))
+        self.assertEvalError(
+            u"(push! #null 0)", wrong_type)
 
 
 class NotTest(PreludeTestCase):
@@ -420,14 +418,14 @@ class InequalityTest(PreludeTestCase):
         self.assertEvalsTo(u"(<= 2 3)", TRUE)
 
     def test_incomparable_types(self):
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(> 1 #null)")))
+        self.assertEvalError(
+            u"(> 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(>= 1 #null)")))
+        self.assertEvalError(
+            u"(>= 1 #null)", wrong_type)
 
-        with self.assertRaises(TrifleTypeError):
-            evaluate_with_prelude(parse_one(lex(u"(<= 1 #null)")))
+        self.assertEvalError(
+            u"(<= 1 #null)", wrong_type)
 
 
 class SortTest(PreludeTestCase):

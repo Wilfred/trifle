@@ -134,12 +134,20 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
-### v0.8 (unreleased)
+### v0.8
+
+Exceptions: Added an exception system. All errors thrown by all
+built-ins are now exceptions. Added the special expression `try` and
+the built-in functions `throw` and `message`. Defined the built-in
+exceptions `error` (the base exception), `stack-overflow`, `no-such-variable`, `parse-failed`, `lex-failed`,
+`value-error`, `wrong-type`, `wrong-argument-number`,
+`division-by-zero`, `file-not-found`, and `changing-closed-handle`.
 
 Sample programs: Added a factorial program.
 
-Errors: Improved wording on calling non-callables. Arity errors now
-include more information on the number of arguments received.
+Errors messages: Improved wording on calling non-callables. Arity
+errors now include more information on the number of arguments
+received.
 
 Booleans: `if` now always requires three arguments. Added `when` for
 when users don't care about else. `unless` was renamed to `when-not`.

@@ -2,9 +2,12 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, Fraction,
                           List, Keyword,
                           FileHandle, Bytestring, Character,
-                          Boolean, TRUE, FALSE, NULL, Symbol, String)
-from errors import (TrifleTypeError, ArityError, DivideByZero, FileNotFound,
-                    TrifleValueError, UsingClosedFile)
+                          Boolean, TRUE, FALSE, NULL, Symbol, String,
+                          TrifleExceptionInstance, TrifleExceptionType)
+from errors import (
+    ArityError, changing_closed_handle, division_by_zero,
+    wrong_type, file_not_found, value_error,
+)
 from almost_python import deepcopy, copy, raw_input, zip
 from parameters import validate_parameters
 from lexer import lex
@@ -20,7 +23,8 @@ class SetSymbol(FunctionWithEnv):
         variable_value = args[1]
 
         if not isinstance(variable_name, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to set-symbol! must be a symbol, but got: %s"
                 % variable_name.repr())
 
@@ -38,7 +42,8 @@ class Let(Special):
         body = args[1:]
 
         if not isinstance(bindings, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"let requires a list as its first argument, but got: %s"
                 % bindings.repr()
             )
@@ -46,7 +51,8 @@ class Let(Special):
         for index, expression in enumerate(bindings.values):
             if index % 2 == 0:
                 if not isinstance(expression, Symbol):
-                    raise TrifleTypeError(
+                    return TrifleExceptionInstance(
+                        wrong_type,
                         u"Expected a symbol for a let-bound variable, but got: %s"
                         % expression.repr()
                     )
@@ -132,7 +138,9 @@ class LambdaFactory(Special):
 
         parameters = args[0]
 
-        validate_parameters(parameters)
+        error = validate_parameters(parameters)
+        if error:
+            return error
 
         lambda_body = List(args[1:])
         return Lambda(parameters, lambda_body, env)
@@ -152,12 +160,16 @@ class DefineMacro(Special):
         parameters = args[1]
         
         if not isinstance(macro_name, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"macro name should be a symbol, but got: %s" %
                 macro_name.repr())
 
         parameters = args[1]
-        validate_parameters(parameters)
+        error = validate_parameters(parameters)
+
+        if error:
+            return error
 
         macro_body = List(args[2:])
         env.set_global(macro_name.symbol_name,
@@ -181,11 +193,13 @@ class ExpandMacro(Special):
         expr = args[0]
 
         if not isinstance(expr, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to expand-macro must be a list, but got: %s" % args[0].repr())
 
         if not expr.values:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to expand-macro must be a non-empty list.")
 
         macro_name = expr.values[0]
@@ -194,7 +208,8 @@ class ExpandMacro(Special):
         macro = evaluate(macro_name, env)
 
         if not isinstance(macro, Macro):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"Expected a macro, but got: %s" % macro.repr())
 
         macro_args = expr.values[1:]
@@ -261,7 +276,8 @@ class Quote(Special):
                     values_list = evaluate(unquote_argument, env)
 
                     if not isinstance(values_list, List):
-                        raise TrifleTypeError(
+                        return TrifleExceptionInstance(
+                            wrong_type,
                             u"unquote* must be used with a list, but got a %s" % values_list.repr())
 
                     # Splice in the result of evaluating the unquote* argument
@@ -269,7 +285,10 @@ class Quote(Special):
 
                 elif isinstance(item, List):
                     # recurse the nested list
-                    self.evaluate_unquote_calls(item, env, stack)
+                    result = self.evaluate_unquote_calls(item, env, stack)
+
+                    if isinstance(result, TrifleExceptionInstance):
+                        return result
 
         return expression
     
@@ -281,11 +300,16 @@ class Quote(Special):
 
             if isinstance(list_head, Symbol):
                 if list_head.symbol_name == u"unquote*":
-                    raise TrifleValueError(
+                    return TrifleExceptionInstance(
+                        value_error,
                         u"Can't call unquote* at top level of quote expression, you need to be inside a list.")
 
         result = self.evaluate_unquote_calls(List([deepcopy(args[0])]), env, stack)
-        return result.values[0]
+
+        if isinstance(result, TrifleExceptionInstance):
+            return result
+        elif isinstance(result, List):
+            return result.values[0]
 
 
 class If(Special):
@@ -331,8 +355,10 @@ class If(Special):
                 return None
 
             else:
-                raise TrifleTypeError(u"The first argument to if must be a boolean, but got: %s" %
-                                      evalled_condition.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"The first argument to if must be a boolean, but got: %s" %
+                    evalled_condition.repr())
                 
         else:
             # We've evaluated the condition and either 'then' or
@@ -381,8 +407,10 @@ class While(Special):
                 return NULL
 
             else:
-                raise TrifleTypeError(u"The first argument to while must be a boolean, but got: %s" %
-                                      evalled_condition.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"The first argument to while must be a boolean, but got: %s" %
+                    evalled_condition.repr())
         
 
 # todo: implement in prelude in terms of writing to stdout
@@ -407,7 +435,8 @@ class Input(Function):
         prefix = args[0]
 
         if not isinstance(prefix, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"The first argument to input must be a string, but got: %s"
                 % prefix.repr())
 
@@ -585,7 +614,8 @@ class Add(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"+ requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -633,7 +663,8 @@ class Subtract(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"- requires numbers, but got: %s." % arg.repr())
 
         if not args:
@@ -692,7 +723,8 @@ class Multiply(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"* requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -739,7 +771,8 @@ class Divide(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"/ requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -751,7 +784,9 @@ class Divide(Function):
                 try:
                     quotient /= arg.float_value
                 except ZeroDivisionError:
-                    raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                    return TrifleExceptionInstance(
+                        division_by_zero,
+                        u"Divided %f by %s" % (quotient, arg.repr()))
 
             return Float(quotient)
 
@@ -767,7 +802,9 @@ class Divide(Function):
             for arg in args[1:]:
                 if isinstance(arg, Integer):
                     if arg.value == 0:
-                        raise DivideByZero(u"Divided by zero: %s" % arg.repr())
+                        return TrifleExceptionInstance(
+                            division_by_zero,
+                            u"Divided %s by %s" % (quotient.repr(), arg.repr()))
                     
                     quotient = Fraction(
                         quotient.numerator, quotient.denominator * arg.value
@@ -778,8 +815,6 @@ class Divide(Function):
                     # zero division error here.
 
                     # a/b / b/c == ac/bd
-
-                    # 1/3 / 2/5 == 1/3 * 5/2 == 5/6
                     quotient = Fraction(
                         quotient.numerator * arg.denominator,
                         quotient.denominator * arg.numerator,
@@ -798,11 +833,14 @@ class Mod(Function):
 
         for arg in args:
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"mod requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
-            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+            return TrifleExceptionInstance(
+                division_by_zero,
+                u"Divided by zero: %s" % args[1].repr())
 
         return Integer(args[0].value % args[1].value)
 
@@ -820,11 +858,14 @@ class Div(Function):
 
         for arg in args:
             if not isinstance(arg, Integer):
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"div requires integers, but got: %s." % arg.repr())
 
         if args[1].value == 0:
-            raise DivideByZero(u"Divided by zero: %s" % args[1].repr())
+            return TrifleExceptionInstance(
+                division_by_zero,
+                u"Divided by zero: %s" % args[1].repr())
 
         return Integer(args[0].value // args[1].value)
             
@@ -844,7 +885,8 @@ class LessThan(Function):
             elif isinstance(arg, Float):
                 float_args = True
             else:
-                raise TrifleTypeError(
+                return TrifleExceptionInstance(
+                    wrong_type,
                     u"< requires numbers, but got: %s." % arg.repr())
 
         args = coerce_numbers(args)
@@ -944,26 +986,32 @@ class GetIndex(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to get-index must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
         if not sequence_length:
-            raise TrifleValueError(u"can't call get-item on an empty sequence")
+            return TrifleExceptionInstance(
+                value_error,
+                u"can't call get-item on an empty sequence")
 
         # todo: use a separate error class for index errors
         if index.value >= sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"the sequence has %d items, but you asked for index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't get index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -987,7 +1035,8 @@ class Length(Function):
         elif isinstance(sequence, String):
             return Integer(len(sequence.string))
 
-        raise TrifleTypeError(
+        return TrifleExceptionInstance(
+            wrong_type,
             u"the first argument to length must be a sequence, but got: %s"
             % sequence.repr())
 
@@ -1006,27 +1055,33 @@ class SetIndex(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to set-index! must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
         if not sequence_length:
-            raise TrifleValueError(u"can't call set-index! on an empty sequence")
+            return TrifleExceptionInstance(
+                value_error,
+                u"can't call set-index! on an empty sequence")
 
         # todo: use a separate error class for index error
         if index.value >= sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 # TODO: pluralisation (to avoid '1 items')
                 u"the sequence has %d items, but you asked to set index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -1034,18 +1089,24 @@ class SetIndex(Function):
             sequence.values[index.value] = value
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
-                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             if not (0 <= value.value <= 255):
-                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                       % value.repr())
+                return TrifleExceptionInstance(
+                    value_error,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             sequence.byte_value[index.value] = value.value
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
-                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside strings are only characters, but got: %s"
+                    % value.repr())
 
             sequence.string[index.value] = value.character
 
@@ -1066,23 +1127,27 @@ class Insert(Function):
         elif isinstance(sequence, String):
             sequence_length = len(sequence.string)
         else:
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to insert! must be a sequence, but got: %s"
                 % sequence.repr())
 
         if not isinstance(index, Integer):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to insert! must be an integer, but got: %s"
                 % index.repr())
 
         # todo: use a separate error class for index error
         if index.value > sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"the sequence has %d items, but you asked to insert at index %d"
                 % (sequence_length, index.value))
 
         if index.value < -1 * sequence_length:
-            raise TrifleValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"Can't set index %d of a %d element sequence (must be -%d or higher)"
                 % (index.value, sequence_length, sequence_length))
 
@@ -1097,18 +1162,24 @@ class Insert(Function):
             sequence.values.insert(target_index, value)
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
-                raise TrifleTypeError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             if not (0 <= value.value <= 255):
-                raise TrifleValueError(u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
-                                       % value.repr())
+                return TrifleExceptionInstance(
+                    value_error,
+                    u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
+                    % value.repr())
 
             sequence.byte_value.insert(target_index, value.value)
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
-                raise TrifleTypeError(u"Permitted values inside strings are only characters, but got: %s"
-                                      % value.repr())
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Permitted values inside strings are only characters, but got: %s"
+                    % value.repr())
 
             sequence.string.insert(target_index, value.character)
 
@@ -1121,11 +1192,16 @@ class Parse(Function):
         program_string = args[0]
 
         if not isinstance(program_string, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to parse must be a string, but got: %s"
                 % program_string.repr())
 
         tokens = lex(program_string.as_unicode())
+
+        if isinstance(tokens, TrifleExceptionInstance):
+            return tokens
+        
         return parse(tokens)
 
 
@@ -1162,12 +1238,14 @@ class Call(FunctionWithEnv):
         # Sadly, RPython doesn't support isinstance(x, (A, B)).
         if not (isinstance(function, Function) or isinstance(function, FunctionWithEnv)
                 or isinstance(function, Lambda)):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to call must be a function, but got: %s"
                 % function.repr())
 
         if not isinstance(arguments, List):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to call must be a list, but got: %s"
                 % arguments.repr())
 
@@ -1206,7 +1284,8 @@ class Defined(FunctionWithEnv):
         symbol = args[0]
 
         if not isinstance(symbol, Symbol):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to defined? must be a symbol, but got: %s"
                 % symbol.repr())
 
@@ -1222,14 +1301,16 @@ class Open(Function):
         path = args[0]
 
         if not isinstance(path, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to open must be a string, but got: %s"
                 % path.repr())
 
         flag = args[1]
 
         if not isinstance(flag, Keyword):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to open must be a keyword, but got: %s"
                 % flag.repr())
 
@@ -1241,13 +1322,17 @@ class Open(Function):
             except IOError as e:
                 # TODO: Fix RPython error that stops us inspecting .errno.
                 # This will throw on other IOErrors, such as permission problems.
-                raise FileNotFound(u"No file found: %s" % path.as_unicode())
+                return TrifleExceptionInstance(
+                    file_not_found,
+                    u"No file found: %s" % path.as_unicode())
                 # if e.errno == 2:
                 #     raise FileNotFound(u"No file found: %s" % path.as_unicode())
                 # else:
                 #     raise
         else:
-            raise TrifleValueError(u"Invalid flag for open: :%s" % flag.symbol_name)
+            return TrifleExceptionInstance(
+                value_error,
+                u"Invalid flag for open: :%s" % flag.symbol_name)
 
         return FileHandle(path.as_unicode().encode('utf-8'), handle, flag)
 
@@ -1258,12 +1343,15 @@ class Close(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to close! must be a file handle, but got: %s"
                 % handle.repr())
 
         if handle.is_closed:
-            raise UsingClosedFile(u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
+            return TrifleExceptionInstance(
+                changing_closed_handle,
+                u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
         else:
             handle.is_closed = True
             handle.file_handle.close()
@@ -1278,7 +1366,8 @@ class Read(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to read must be a file handle, but got: %s"
                 % handle.repr())
 
@@ -1291,19 +1380,27 @@ class Write(Function):
         handle = args[0]
 
         if not isinstance(handle, FileHandle):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to write! must be a file handle, but got: %s"
                 % handle.repr())
 
         if handle.mode.symbol_name != u"write":
-            raise ValueError(
+            return TrifleExceptionInstance(
+                value_error,
                 u"%s is a read-only file handle, you can't write to it."
                 % handle.repr())
+
+        if handle.is_closed:
+            return TrifleExceptionInstance(
+                changing_closed_handle,
+                u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
 
         to_write = args[1]
 
         if not isinstance(to_write, Bytestring):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
 
@@ -1319,7 +1416,8 @@ class Encode(Function):
         string = args[0]
 
         if not isinstance(string, String):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to encode must be a string, but got: %s"
                 % string.repr())
 
@@ -1335,7 +1433,8 @@ class Decode(Function):
         bytestring = args[0]
 
         if not isinstance(bytestring, Bytestring):
-            raise TrifleTypeError(
+            return TrifleExceptionInstance(
+                wrong_type,
                 u"the first argument to decode must be bytes, but got: %s"
                 % bytestring.repr())
 
@@ -1350,3 +1449,107 @@ class Exit(Function):
     def call(self, args):
         check_args(u'exit!', args, 0, 0)
         raise SystemExit()
+
+
+class Try(Special):
+    def call(self, args, env, stack):
+        # TODO: multiple catch blocks, finally, resuming.
+        check_args(u'try', args, 5, 5)
+
+        body = args[0]
+        catch_keyword = args[1]
+        raw_exception_type = args[2]
+        exception_binding = args[3]
+
+        if not isinstance(catch_keyword, Keyword) or catch_keyword.symbol_name != u"catch":
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The second argument to try must be :catch, but got: %s"
+                % catch_keyword.repr())
+
+        if not isinstance(exception_binding, Symbol):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The fourth argument to try must be a symbol, but got: %s"
+                % exception_binding.repr())
+
+        frame = stack.peek()
+        from evaluator import Frame
+
+        # Note that we increment the expression index even though
+        # we evaluate the expected exception type first.
+        if frame.expression_index == 0:
+            # First, we evaluate the exception type.
+            stack.push(Frame(raw_exception_type, env))
+
+            frame.expression_index = 1
+            return None
+
+        elif frame.expression_index == 1:
+            exception_type = frame.evalled[-1]
+
+            if not isinstance(exception_type, TrifleExceptionType):
+                return TrifleExceptionInstance(
+                    wrong_type,
+                    u"Expected a trifle exception type for :catch, but got: %s"
+                    % exception_type.repr())
+
+            # Mark the current frame as something we can come back to
+            # if we encounter an error.
+            frame.catch_error = exception_type
+
+            # Evaluate the body.
+            stack.push(Frame(body, env))
+
+            frame.expression_index = 2
+            return None
+
+        else:
+            # We've evaluated the body without any errors, just return
+            # the result.
+            return frame.evalled[-1]
+
+
+# TODO: rethrow, to throw an exception but with the stacktrace from
+# the original call site.
+class Throw(Function):
+    def call(self, args):
+        check_args(u'throw', args, 2, 2)
+
+        exception_type = args[0]
+        exception_message = args[1]
+
+        if not isinstance(exception_type, TrifleExceptionType):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The first argument to throw must be an exception type, but got: %s"
+                % exception_type.repr())
+
+        if not isinstance(exception_message, String):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The second argument to throw must be a string, but got: %s"
+                % exception_message.repr())
+
+        return TrifleExceptionInstance(
+            exception_type,
+            exception_message.as_unicode(),
+        )
+
+        return NULL
+
+
+class Message(Function):
+    def call(self, args):
+        check_args(u'message', args, 1, 1)
+
+        exception = args[0]
+        
+        if not isinstance(exception, TrifleExceptionInstance):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The first argument to message must be an exception, but got: %s"
+                % exception.repr())
+
+        # RPython won't let us use list(exception.message) here.
+        return String([x for x in exception.message])

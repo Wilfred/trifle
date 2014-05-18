@@ -13,10 +13,10 @@ from rpython.rtyper.module.ll_os_environ import getenv_llimpl
 
 from lexer import lex
 from trifle_parser import parse
-from evaluator import evaluate_all
-from errors import TrifleError
+from evaluator import evaluate_all, is_thrown_exception
 from environment import fresh_environment
 from almost_python import raw_input
+from errors import error
 
 
 def get_contents(filename):
@@ -55,7 +55,8 @@ def env_with_prelude():
         # permissions/other) and be more helpful.
         print "Could not find prelude.tfl. Have you set TRIFLEPATH?"
         raise
-        
+
+    # TODO: either of these could return errors, and we should handle that.
     lexed_tokens = lex(code)
     parse_tree = parse(lexed_tokens)
 
@@ -96,11 +97,25 @@ def entry_point(argv):
             try:
                 user_input = raw_input(u'> ')
                 lexed_tokens = lex(user_input)
-                parse_tree = parse(lexed_tokens)
 
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
-            except TrifleError as e:
-                print u"Error: %s" % e.message
+                if is_thrown_exception(lexed_tokens, error):
+                    # TODO: a proper stack trace.
+                    print u'Uncaught error: %s: %s' % (
+                        lexed_tokens.exception_type.name,
+                        lexed_tokens.message)
+
+                else:
+                    parse_tree = parse(lexed_tokens)
+                    result = evaluate_all(parse_tree, env)
+
+                    if is_thrown_exception(result, error):
+                        # TODO: a proper stack trace.
+                        print u'Uncaught error: %s: %s' % (
+                            result.exception_type.name,
+                            result.message)
+                    else:
+                        print result.repr().encode('utf-8')
+
             except SystemExit:
                 return 0
     
@@ -118,12 +133,22 @@ def entry_point(argv):
             return 2
         code = get_contents(filename)
         lexed_tokens = lex(code)
+
+        if is_thrown_exception(lexed_tokens, error):
+            print u'Uncaught error: %s: %s' % (
+                lexed_tokens.exception_type.name,
+                lexed_tokens.message)
+            return 1
+
         parse_tree = parse(lexed_tokens)
         try:
-            evaluate_all(parse_tree, env).repr()
-        except TrifleError as e:
-            print u"Error: %s" % e.message
-            return 1
+            result = evaluate_all(parse_tree, env)
+
+            if is_thrown_exception(result, error):
+                # TODO: a proper stack trace.
+                print u'Uncaught error: %s: %s' % (result.exception_type.name,
+                                          result.message)
+                return 1
         except SystemExit:
             return 0
         return 0
@@ -136,13 +161,26 @@ def entry_point(argv):
                 return 2
             code_snippet = argv[2].decode('utf-8')
             lexed_tokens = lex(code_snippet)
+
+            if is_thrown_exception(lexed_tokens, error):
+                print u'Uncaught error: %s: %s' % (
+                    lexed_tokens.exception_type.name,
+                    lexed_tokens.message)
+                return 1
+            
             parse_tree = parse(lexed_tokens)
 
             try:
-                print evaluate_all(parse_tree, env).repr().encode('utf-8')
-            except TrifleError as e:
-                print u"Error: %s" % e.message
-                return 1
+                result = evaluate_all(parse_tree, env)
+
+                if is_thrown_exception(result, error):
+                    # TODO: a proper stack trace.
+                    print u'Uncaught error: %s: %s' % (result.exception_type.name,
+                                              result.message)
+                    return 1
+                else:
+                    print result.repr().encode('utf-8')
+                
             except SystemExit:
                 return 0
             return 0

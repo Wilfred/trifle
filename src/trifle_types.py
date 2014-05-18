@@ -253,7 +253,7 @@ class List(TrifleType):
 
 class Bytestring(TrifleType):
     def __init__(self, byte_value):
-        assert isinstance(byte_value, list)
+        assert isinstance(byte_value, list), "Expected a list, but got: %s" % byte_value
         if byte_value:
             assert isinstance(byte_value[0], int)
         self.byte_value = byte_value
@@ -335,6 +335,49 @@ class Lambda(TrifleType):
     def repr(self):
         # todo: we can be more helpful than this
         return u"<lambda>"
+
+
+# TODO: decide on whether we want to use the term 'error' or
+# 'exception', and use it consistently.
+class TrifleExceptionType(TrifleType):
+    """We catch exceptions by type. An exception type may declare a parent
+    (i.e. single inheritance).
+
+    Catching the parent exception will also catch any exception that
+    inherits from it.
+
+    """
+    def __init__(self, parent, name):
+        assert isinstance(name, unicode), \
+            "Exception type names must be unicode strings, but got %r" % name
+        self.name = name
+
+        if parent is None:
+            self.parent = None
+        else:
+            assert isinstance(parent, TrifleExceptionType)
+            self.parent = parent
+
+    def repr(self):
+        return u'#error-type("%s")' % self.name
+
+
+class TrifleExceptionInstance(TrifleType):
+    def __init__(self, exception_type, message):
+        assert isinstance(exception_type, TrifleExceptionType)
+        self.exception_type = exception_type
+        
+        assert isinstance(message, unicode)
+        self.message = message
+
+        self.caught = False
+
+    def repr(self):
+        # TODO: show the message too.
+        return u'#error(%s)' % self.exception_type.name
+
+    def __repr__(self):
+        return '<%s: %s>' % (self.exception_type.name, self.message)
 
 
 class Macro(TrifleType):
