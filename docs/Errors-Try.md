@@ -14,7 +14,7 @@ If the error raised does not match ERROR, it propagates up the stack
 until another `try` expression is found, otherwise the program
 terminates.
 
-Examples:
+Example:
 
 ```lisp
 > (try
@@ -23,4 +23,20 @@ Examples:
   #null
 )
 #null
+```
+
+If the error thrown is a child exception type of ERROR-TYPE, it is
+also caught. `error` is a parent exception type of all other exception
+types, so you can use it to catch any exception.
+
+Example:
+
+```lisp
+> (try
+  (/ 1 0)
+  :catch e
+  #null
+)
+#null
+
 ```

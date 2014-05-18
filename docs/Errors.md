@@ -14,6 +14,9 @@ Trifle includes an exception system.
 ## Error types
 
 * `error`
+
+All the following error types inherit from `error`.
+
 * `stack-overflow`
 * `no-such-variable`
 * `parse-failed`
