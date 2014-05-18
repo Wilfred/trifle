@@ -2042,3 +2042,26 @@ class TryTest(BuiltInTestCase):
         self.assertEvalError(
             u"(try (/ 1 0) :catch division-by-zero #null 1)",
             wrong_type)
+
+
+class ThrowTest(BuiltInTestCase):
+    def test_arity(self):
+        self.assertEvalError(
+            u'(throw error "foo" #null)',
+            wrong_argument_number)
+        self.assertEvalError(
+            u'(throw error)',
+            wrong_argument_number)
+
+    def test_types(self):
+        self.assertEvalError(
+            u'(throw error #null)',
+            wrong_type)
+        self.assertEvalError(
+            u'(throw #null "foo")',
+            wrong_type)
+
+    def test_exception_thrown(self):
+        self.assertEvalError(
+            u'(throw error "foo")',
+            error)

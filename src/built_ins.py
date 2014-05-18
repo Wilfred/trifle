@@ -1508,3 +1508,32 @@ class Try(Special):
             # We've evaluated the body without any errors, just return
             # the result.
             return frame.evalled[-1]
+
+
+# TODO: rethrow, message
+class Throw(Function):
+    def call(self, args):
+        check_args(u'throw', args, 2, 2)
+
+        exception_type = args[0]
+        exception_message = args[1]
+
+        if not isinstance(exception_type, TrifleExceptionType):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The first argument to throw must be an exception type, but got: %s"
+                % exception_type.repr())
+
+        if not isinstance(exception_message, String):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The second argument to throw must be a string, but got: %s"
+                % exception_message.repr())
+
+        return TrifleExceptionInstance(
+            exception_type,
+            exception_message.as_unicode(),
+        )
+
+        return NULL
+
