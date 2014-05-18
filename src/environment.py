@@ -11,7 +11,10 @@ from built_ins import (
     Open, Close, Read, Write, Encode, Decode,
 )
 from errors import (
-    error, division_by_zero, no_such_variable, wrong_type, wrong_argument_number,
+    error, stack_overflow, no_such_variable, parse_failed,
+    lex_failed, value_error, wrong_type,
+    wrong_argument_number, division_by_zero,
+    file_not_found, changing_closed_handle,
 )
 
 
@@ -123,6 +126,7 @@ def fresh_environment():
 
     """
     return Environment([Scope({
+        # Functions.
         u'+': Add(),
         u'-': Subtract(),
         u'*': Multiply(),
@@ -156,10 +160,16 @@ def fresh_environment():
         u'encode': Encode(),
         u'decode': Decode(),
 
-        # TODOC
+        # Exception types.
         u'error': error,
-        u'division-by-zero': division_by_zero,
+        u'stack-overflow': stack_overflow,
         u'no-such-variable': no_such_variable,
+        u'parse-failed': parse_failed,
+        u'lex-failed': lex_failed,
+        u'value-error': value_error,
         u'wrong-type': wrong_type,
         u'wrong-argument-number': wrong_argument_number,
+        u'division-by-zero': division_by_zero,
+        u'file-not-found': file_not_found,
+        u'changing-closed-handle': changing_closed_handle,
     })])
