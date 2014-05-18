@@ -103,6 +103,14 @@ class ForEachTest(PreludeTestCase):
             total)"""))),
             Integer(10))
 
+    def test_for_each_eval_list_once(self):
+        self.assertEqual(
+            self.eval(
+                u"(set! x 0)"
+                u"(for-each y (do (inc! x) (list 1 2)) y)"
+                u"x"
+            ),
+            Integer(1))
 
 class ListTest(PreludeTestCase):
     def test_list(self):

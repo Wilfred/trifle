@@ -61,11 +61,17 @@ and body BODY."
 )
 
 (macro for-each (name some-list :rest body)
-  (let (index-var (fresh-symbol))
+  "Evaluate BODY once for each item in SOME-LIST
+with NAME bound to the current item."
+  (let (index-var (fresh-symbol)
+        list-var (fresh-symbol)
+       )
     (quote
-      (let ((unquote index-var) 0)
-        (while (< (unquote index-var) (length (unquote some-list)))
-          (let ((unquote name) (get-index (unquote some-list) (unquote index-var)))
+      (let ((unquote index-var) 0
+            (unquote list-var) (unquote some-list)
+           )
+        (while (< (unquote index-var) (length (unquote list-var)))
+          (let ((unquote name) (get-index (unquote list-var) (unquote index-var)))
             (unquote* body)
           )
           (inc! (unquote index-var))
