@@ -1,0 +1,16 @@
+(print! "Trifle interpreter. Type (exit!) to quit.\n")
+
+(while #true
+  (try
+    (for-each expression (parse (input "> "))
+      (print! (eval expression))
+    )
+    :catch error e
+    (do
+      ;; TODO: it would be nice show the type of the exception too.
+      (print! "Unhandled error:")
+      (print! (message e))
+    )
+  )
+  (print! "")
+)
