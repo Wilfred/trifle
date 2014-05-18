@@ -17,7 +17,7 @@ from trifle_types import (
     TrifleExceptionInstance)
 from evaluator import evaluate, evaluate_all
 from errors import (
-    lex_failed, parse_failed,
+    error, lex_failed, parse_failed,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
@@ -318,7 +318,7 @@ class ParsingTest(BuiltInTestCase):
                          List([Integer(1), Integer(2)]))
 
 
-class EvaluatingLiteralsTest(BuiltInTestCase):
+class EvaluatingTypesTest(BuiltInTestCase):
     def test_eval_boolean(self):
         self.assertEqual(
             self.eval(u"#true"),
@@ -367,6 +367,15 @@ class EvaluatingLiteralsTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"'a'"),
             Character(u"a"))
+
+    def test_eval_exception_type(self):
+        self.assertEqual(
+            self.eval(u"error"),
+            error)
+
+    def test_eval_exception_instance(self):
+        result = self.eval(u"(try x :catch no-such-variable e e)")
+        self.assertTrue(isinstance(result, TrifleExceptionInstance))
 
 
 class ReprTest(BuiltInTestCase):

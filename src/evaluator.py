@@ -1,9 +1,10 @@
-from trifle_types import (List, Bytestring, Character, Symbol,
-                          Integer, Float, Fraction,
-                          Null, NULL,
-                          Function, FunctionWithEnv, Lambda, Macro, Boolean,
-                          Keyword, String,
-                          TrifleExceptionInstance)
+from trifle_types import (
+    List, Bytestring, Character, Symbol,
+    Integer, Float, Fraction,
+    Null, NULL,
+    Function, FunctionWithEnv, Lambda, Macro, Boolean,
+    Keyword, String,
+    TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
     wrong_type, no_such_variable, stack_overflow,
     ArityError, wrong_argument_number)
@@ -326,40 +327,34 @@ def evaluate_function_call(stack):
 
 def evaluate_value(value, environment):
     if isinstance(value, Integer):
-        # Integers evaluate to themselves
         return value
     elif isinstance(value, Float):
-        # Floats evaluate to themselves
         return value
     elif isinstance(value, Fraction):
-        # Fractions evaluate to themselves
         return value
     elif isinstance(value, Boolean):
-        # Booleans evaluate to themselves
         return value
     elif isinstance(value, Null):
-        # Null evaluates to itself
         return value
     elif isinstance(value, Keyword):
-        # Keywords evaluate to themselves
         return value
     elif isinstance(value, String):
-        # Strings evaluate to themselves
         return value
     elif isinstance(value, Bytestring):
-        # Bytestrings evaluate to themselves
         return value
     elif isinstance(value, Character):
-        # Characters evaluate to themselves
         return value
     elif isinstance(value, Lambda):
-        # Lambda functions evaluate to themselves
         return value
     elif isinstance(value, Function):
-        # Built-in functions evaluate to themselves
         return value
     elif isinstance(value, Macro):
-        # Macros evaluate to themselves
+        return value
+    elif isinstance(value, TrifleExceptionInstance):
+        return value
+    elif isinstance(value, TrifleExceptionType):
+        return value
+    elif isinstance(value, Macro):
         return value
     elif isinstance(value, Symbol):
         symbol_name = value.symbol_name
