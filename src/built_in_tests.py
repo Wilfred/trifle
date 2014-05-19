@@ -62,6 +62,22 @@ class BuiltInTestCase(unittest.TestCase):
         self.assertFalse(value.caught, "Expected a thrown exception, but this exception has been caught!")
 
 
+class LexTestCase(unittest.TestCase):
+    def assertLexResult(self, program, expected):
+        """Assert that program, when lexed, returns a Trifle type equal to
+        expected.
+
+        Assumes that program is a single expression.
+
+        """
+        result = lex(program)
+
+        if not isinstance(result, List):
+            self.fail("Lexing failed: %r" % result)
+
+        self.assertEqual(result.values[0], expected)
+
+
 class CommentLexTest(BuiltInTestCase):
     def test_lex_comment(self):
         self.assertEqual(
