@@ -1,3 +1,4 @@
+;; TODO: Add commands so a user can type %quit or %help.
 (print! "Trifle interpreter. Type (exit!) to quit.\n")
 
 (loop
