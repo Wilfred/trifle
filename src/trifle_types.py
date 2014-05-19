@@ -208,7 +208,7 @@ class String(TrifleType):
         return u'"%s"' % u"".join(printable_chars)
 
     def __repr__(self):
-        return '<%s: "%s">' % (self.__class__.__name__, "".join(self.string))
+        return '<String: %s>' % self.repr()
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
