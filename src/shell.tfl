@@ -3,7 +3,7 @@
 (while #true
   (try
     (for-each expression (parse (input "> "))
-      (print! (eval expression))
+      (print! (printable (eval expression)))
     )
     :catch error e
     (do
