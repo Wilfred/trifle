@@ -2067,7 +2067,7 @@ class ThrowTest(BuiltInTestCase):
             error)
 
 
-class Message(BuiltInTestCase):
+class MessageTest(BuiltInTestCase):
     def test_arity(self):
         self.assertEvalError(
             u'(message)',
@@ -2087,3 +2087,19 @@ class Message(BuiltInTestCase):
             self.eval(u'(try (throw error "foo") :catch error e (message e))'),
             String(list(u'foo'))
         )
+
+
+class PrintableTest(BuiltInTestCase):
+    def test_arity(self):
+        self.assertEvalError(
+            u'(printable)',
+            wrong_argument_number)
+        
+        self.assertEvalError(
+            u'(printable 1 1)',
+            wrong_argument_number)
+
+    def test_printable(self):
+        self.assertEqual(
+            self.eval(u'(printable "foo")'),
+            String(list(u'"foo"')))

@@ -134,6 +134,10 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.9 (unreleased)
+
+Generic functions: Added the function `printable`.
+
 ### v0.8
 
 Exceptions: Added an exception system. All errors thrown by all

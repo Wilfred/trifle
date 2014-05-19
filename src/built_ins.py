@@ -8,7 +8,7 @@ from errors import (
     ArityError, changing_closed_handle, division_by_zero,
     wrong_type, file_not_found, value_error,
 )
-from almost_python import deepcopy, copy, raw_input, zip
+from almost_python import deepcopy, copy, raw_input, zip, list
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
@@ -1551,5 +1551,10 @@ class Message(Function):
                 u"The first argument to message must be an exception, but got: %s"
                 % exception.repr())
 
-        # RPython won't let us use list(exception.message) here.
-        return String([x for x in exception.message])
+        return String(list(exception.message))
+
+
+class Printable(Function):
+    def call(self, args):
+        check_args(u'printable', args, 1, 1)
+        return String(list(args[0].repr()))

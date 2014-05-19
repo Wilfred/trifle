@@ -55,3 +55,8 @@ def copy(value):
         return List([item for item in value.values])
     else:
         return value
+
+
+# Not sure why RPython doesn't permit list(dynamic_unicode_value).
+def list(value):
+    return [x for x in value]
