@@ -165,6 +165,8 @@ class SymbolLexTest(BuiltInTestCase, LexTestCase):
 
         self.assertLexResult(u"<=", Symbol(u'<='))
 
+        self.assertLexResult(u"_", Symbol(u'_'))
+
     def test_lex_invalid_symbol(self):
         self.assertTrifleError(
             lex(u"\\"), lex_failed)

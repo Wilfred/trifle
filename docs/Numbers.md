@@ -6,6 +6,9 @@ Integer literals are made from digits. Example integers are `0`,
 `1234` and `-999999`. You may also use underscores to group digits,
 e.g. `1_000_000`.
 
+Underscores may occur anywhere in numbers, except at the start. `_1`
+is treated as a symbol, not a number.
+
 Fractions literals are digits with a forward slash. Example fractions
 are `1/2`, `6/5` and `1/1_000`.
 

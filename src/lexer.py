@@ -61,7 +61,7 @@ LEXEMES = [
     (FLOAT, get_code(r"-?[0-9_]+\.[0-9_]+$")),
 
     # TODO: support 0x123, 0o123
-    (INTEGER, get_code('-?[0-9_]+$')),
+    (INTEGER, get_code('-?[0-9][0-9_]*$')),
 
     (FRACTION, get_code('-?[0-9_]+/[0-9_]+$')),
 
