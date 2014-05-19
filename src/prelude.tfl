@@ -81,6 +81,11 @@ with NAME bound to the current item."
   )
 )
 
+(macro loop (:rest body)
+  "Evaluate BODY in an infinite loop."
+  (quote (while #true (unquote* body)))
+)
+
 ; TODO: error on non-sequence
 (function empty? (sequence)
   "Return #true if SEQUENCE contains no elements."

@@ -112,6 +112,21 @@ class ForEachTest(PreludeTestCase):
             ),
             Integer(1))
 
+
+class LoopTest(PreludeTestCase):
+    def test_loop(self):
+        self.assertEqual(
+            self.eval(
+                u"(set! x 0)"
+                u"(try"
+                u'  (loop (if (< x 5) (inc! x) (throw error "done!")))'
+                u"  :catch error e"
+                u"  x"
+                u")"
+            ),
+            Integer(5))
+
+
 class ListTest(PreludeTestCase):
     def test_list(self):
         expected = List([Integer(1), Integer(2), Integer(3)])

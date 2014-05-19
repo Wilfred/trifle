@@ -1,6 +1,6 @@
 (print! "Trifle interpreter. Type (exit!) to quit.\n")
 
-(while #true
+(loop
   (try
     (for-each expression (parse (input "> "))
       (print! (printable (eval expression)))

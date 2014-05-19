@@ -136,6 +136,8 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Loops: Added the macro `loop` for infinite loops.
+
 Generic functions: Added the function `printable`.
 
 ### v0.8

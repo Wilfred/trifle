@@ -10,3 +10,4 @@ times.
 ## Loop macros
 
 1. [for-each](Loops-ForEach.md)
+2. [loop](Loops-Loop.md)
