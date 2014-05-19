@@ -3,7 +3,12 @@
 (loop
   (try
     (for-each expression (parse (input "> "))
-      (print! (printable (eval expression)))
+      ;; TODO: implement a help function that documents us saving _ as the
+      ;; last non-exception result. Add it to docs too.
+      (let (result (eval expression))
+        (set! _ result)
+        (print! result)
+      )
     )
     :catch error e
     (do
