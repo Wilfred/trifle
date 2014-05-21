@@ -136,7 +136,8 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
-Symbols: `_` is now a legal symbol.
+Symbols: `_` is now a legal symbol. Symbols may now include uppercase
+characters.
 
 Loops: Added the macro `loop` for infinite loops.
 

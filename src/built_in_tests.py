@@ -163,6 +163,8 @@ class SymbolLexTest(BuiltInTestCase, LexTestCase):
 
         self.assertLexResult(u"foo_bar", Symbol(u'foo_bar'))
 
+        self.assertLexResult(u"FOOBAR", Symbol(u'FOOBAR'))
+
         self.assertLexResult(u"<=", Symbol(u'<='))
 
         self.assertLexResult(u"_", Symbol(u'_'))
