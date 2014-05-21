@@ -139,6 +139,8 @@ language, we are cheerfully ignoring these questions for now.
 Symbols: `_` is now a legal symbol. Symbols may now include uppercase
 characters.
 
+Strings: Added the constant `VERSION`.
+
 Loops: Added the macro `loop` for infinite loops.
 
 Generic functions: Added the function `printable`.

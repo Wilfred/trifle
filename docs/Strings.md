@@ -48,3 +48,7 @@ Modifying:
 Converting to other types:
 
 1. [encode](Strings-Encode.md)
+
+## String constants:
+
+1. `VERSION` the current version of the Trifle interpreter.

@@ -17,6 +17,7 @@ from errors import (
     wrong_argument_number, division_by_zero,
     file_not_found, changing_closed_handle,
 )
+from trifle_types import String
 
 
 class Scope(object):
@@ -176,4 +177,7 @@ def fresh_environment():
         u'division-by-zero': division_by_zero,
         u'file-not-found': file_not_found,
         u'changing-closed-handle': changing_closed_handle,
+
+        # Constants
+        u'VERSION': String(list(u"0.9")),
     })])
