@@ -18,6 +18,7 @@ from errors import (
     file_not_found, changing_closed_handle,
 )
 from trifle_types import String
+from almost_python import list
 
 
 class Scope(object):
