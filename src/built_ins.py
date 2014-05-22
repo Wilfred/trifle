@@ -1411,6 +1411,27 @@ class Write(Function):
         return NULL
 
 
+class Flush(Function):
+    def call(self, args):
+        check_args(u'flush', args, 1, 1)
+        handle = args[0]
+
+        if not isinstance(handle, FileHandle):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to flush must be a file handle, but got: %s"
+                % handle.repr())
+
+        if handle.is_closed:
+            return TrifleExceptionInstance(
+                changing_closed_handle,
+                u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
+
+        handle.file_handle.close()
+
+        return NULL
+
+
 # TODO: take a second argument that specifies the encoding.
 class Encode(Function):
     def call(self, args):

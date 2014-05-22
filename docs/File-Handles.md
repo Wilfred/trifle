@@ -13,4 +13,5 @@ your program runs for a long time.
 2. [close!](File-Handles-Close.md)
 3. [read](File-Handles-Read.md)
 4. [write!](File-Handles-Write.md)
+5. [flush!](File-Handles-Flush.md)
 

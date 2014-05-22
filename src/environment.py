@@ -8,7 +8,8 @@ from built_ins import (
     GetIndex, SetIndex, Insert,
     Printable, Print, Input, Exit,
     Call, Parse, Eval, Defined, Try,
-    Open, Close, Read, Write, Encode, Decode,
+    Open, Close, Read, Write, Flush,
+    Encode, Decode,
     Throw, Message,
 )
 from errors import (
@@ -161,6 +162,7 @@ def fresh_environment():
         u'close!': Close(),
         u'read': Read(),
         u'write!': Write(),
+        u'flush!': Flush(),
         u'encode': Encode(),
         u'decode': Decode(),
         u'throw': Throw(),

@@ -1766,6 +1766,36 @@ class WriteTest(BuiltInTestCase):
         os.remove('foo.txt')
 
 
+class FlushTest(BuiltInTestCase):
+    def test_flush(self):
+        # TODO: find some more useful things to assert.
+        self.assertEqual(
+            self.eval(
+                u'(set-symbol! (quote f) (open "test.txt" :write))'
+                u'(flush! f)'),
+            NULL)
+
+    def test_write_closed_handle(self):
+        self.assertEvalError(
+            u'(set-symbol! (quote f) (open "foo.txt" :write))'
+            u'(close! f) (flush! f)',
+            changing_closed_handle)
+
+    def test_write_arity(self):
+        # Too few args.
+        self.assertEvalError(
+            u'(flush!)', wrong_argument_number)
+
+        # Too many args.
+        self.assertEvalError(
+            u'(flush! (open "foo.txt" :write) #null)',
+            wrong_argument_number)
+            
+    def test_write_type_error(self):
+        self.assertEvalError(
+            u'(flush! #null)', wrong_type)
+
+
 class EncodeTest(BuiltInTestCase):
     def test_encode(self):
         self.assertEqual(
