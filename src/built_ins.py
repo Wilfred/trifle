@@ -1351,6 +1351,8 @@ class Close(Function):
         if handle.is_closed:
             return TrifleExceptionInstance(
                 changing_closed_handle,
+                # TODO: This assumes the file name is always UTF-8, which may not be
+                # true if the user has chosen a different file system encoding.
                 u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
         else:
             handle.is_closed = True
