@@ -1,8 +1,9 @@
 from copy import deepcopy
 
-from trifle_types import (List, Bytestring, String, Character,
-                          Integer,
-                          TRUE, FALSE, NULL)
+from trifle_types import (
+    List, Bytestring, String, Character,
+    Integer, TrifleExceptionInstance,
+    TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import (
@@ -35,7 +36,11 @@ class PreludeTestCase(BuiltInTestCase):
         # Fresh copy of the environment so tests don't interfere with one another.
         env = deepcopy(self.env)
 
-        return evaluate_all(parse(lex(program)), env)
+        parse_tree = parse(lex(program))
+        if isinstance(parse_tree, TrifleExceptionInstance):
+            self.fail("Parse error on: %r" % program)
+        
+        return evaluate_all(parse_tree, env)
 
     def assertEvalsTo(self, program, expected_result):
         result = self.eval(program)

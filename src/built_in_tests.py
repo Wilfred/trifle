@@ -36,7 +36,12 @@ class BuiltInTestCase(unittest.TestCase):
 
         """
         assert isinstance(program, unicode)
-        return evaluate_all(parse(lex(program)), fresh_environment())
+
+        parse_tree = parse(lex(program))
+        if isinstance(parse_tree, TrifleExceptionInstance):
+            self.fail("Parse error on: %r" % program)
+        
+        return evaluate_all(parse_tree, fresh_environment())
 
     # TODO: It'd be clearer to remove this, requiring callers to use
     # .eval and .assertTrifleError instead.
