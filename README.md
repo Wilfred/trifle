@@ -136,6 +136,8 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+File handles: Added the function `flush!`.
+
 Symbols: `_` is now a legal symbol. Symbols may now include uppercase
 characters.
 
