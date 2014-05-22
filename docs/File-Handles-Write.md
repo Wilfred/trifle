@@ -10,7 +10,7 @@ Examples:
 ```lisp
 > (set! h (open "/tmp/test.txt" :write))
 #null
-> (write! h (encode "hello world")
+> (write! h (encode "hello world"))
 #null
 > (close! h)
 #null
@@ -26,9 +26,9 @@ Example:
 ```lisp
 > (set! h (open "/tmp/test.txt" :write))
 #null
-> (write! h (encode "trifle")
+> (write! h (encode "trifle"))
 #null
-> (write! h (encode "!")
+> (write! h (encode "!"))
 #null
 > (close! h)
 #null
