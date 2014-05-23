@@ -18,7 +18,8 @@ from errors import (
     wrong_argument_number, division_by_zero,
     file_not_found, changing_closed_handle,
 )
-from trifle_types import String
+from trifle_types import (
+    String, Stdout)
 from almost_python import list
 
 
@@ -183,4 +184,7 @@ def fresh_environment():
 
         # Constants
         u'VERSION': String(list(u"0.9")),
+
+        # Standard I/O.
+        u'stdout': Stdout(),
     })])

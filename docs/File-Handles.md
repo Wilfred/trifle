@@ -15,3 +15,6 @@ your program runs for a long time.
 4. [write!](File-Handles-Write.md)
 5. [flush!](File-Handles-Flush.md)
 
+## Built-in file handles
+
+1. `stdout`

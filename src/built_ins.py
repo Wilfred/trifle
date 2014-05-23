@@ -1406,7 +1406,7 @@ class Write(Function):
                 u"the second argument to write! must be a bytes, but got: %s"
                 % to_write.repr())
 
-        handle.file_handle.write("".join([chr(c) for c in to_write.byte_value]))
+        handle.write("".join([chr(c) for c in to_write.byte_value]))
 
         return NULL
 

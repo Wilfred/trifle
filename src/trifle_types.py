@@ -1,3 +1,5 @@
+import os
+
 """Note that 'types' is part of the python standard library, so we're
 forced to name this file trifle_types.
 
@@ -295,8 +297,33 @@ class FileHandle(TrifleType):
         self.file_handle = file_handle
         self.mode = file_mode
 
+    def write(self, string):
+        self.file_handle.write(string)
+
     def repr(self):
         return u'#file-handle("%s")' % self.file_name.decode('utf-8')
+
+
+STDOUT_FILE_DESCRIPTOR = 1
+
+
+class Stdout(FileHandle):
+    
+    def __init__(self):
+        self.file_name = ""
+        self.is_closed = False
+        self.mode = Keyword(u'write')
+
+    def close(self):
+        self.is_closed = True
+        os.close(STDOUT_FILE_DESCRIPTOR)
+
+    def write(self, string):
+        os.write(STDOUT_FILE_DESCRIPTOR, string)
+
+    def repr(self):
+        return u'#file-handle(stdout)'
+
 
 
 class Function(TrifleType):
