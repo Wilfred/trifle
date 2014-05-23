@@ -1355,8 +1355,7 @@ class Close(Function):
                 # true if the user has chosen a different file system encoding.
                 u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
         else:
-            handle.is_closed = True
-            handle.file_handle.close()
+            handle.close()
 
         return NULL
 

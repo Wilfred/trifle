@@ -297,6 +297,10 @@ class FileHandle(TrifleType):
         self.file_handle = file_handle
         self.mode = file_mode
 
+    def close(self):
+        self.is_closed = True
+        self.file_handle.close()
+
     def write(self, string):
         self.file_handle.write(string)
 
