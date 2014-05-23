@@ -301,6 +301,9 @@ class FileHandle(TrifleType):
         self.is_closed = True
         self.file_handle.close()
 
+    def flush(self):
+        self.file_handle.flush()
+
     def write(self, string):
         self.file_handle.write(string)
 
@@ -321,6 +324,16 @@ class Stdout(FileHandle):
     def close(self):
         self.is_closed = True
         os.close(STDOUT_FILE_DESCRIPTOR)
+
+    def flush(self):
+        """This is a Python-specific detail, I believe and we don't need to do
+        anything for stdout. Note that Python doesn't provide
+        os.flush(file_descriptor).
+        
+        TODO: consider removing `flush!` entirely.
+
+        """
+        pass
 
     def write(self, string):
         os.write(STDOUT_FILE_DESCRIPTOR, string)

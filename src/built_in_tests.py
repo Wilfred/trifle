@@ -1775,6 +1775,21 @@ class FlushTest(BuiltInTestCase):
                 u'(flush! f)'),
             NULL)
 
+    def test_can_flush_repeatedly(self):
+        # Regression test.
+        self.assertEqual(
+            self.eval(
+                u'(set-symbol! (quote f) (open "test.txt" :write))'
+                u'(flush! f) (flush! f)'),
+            NULL)
+
+    def test_can_flush_stdout(self):
+        # Regression test.
+        self.assertEqual(
+            self.eval(
+                u'(flush! stdout)'),
+            NULL)
+
     def test_write_closed_handle(self):
         self.assertEvalError(
             u'(set-symbol! (quote f) (open "foo.txt" :write))'

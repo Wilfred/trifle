@@ -1426,7 +1426,7 @@ class Flush(Function):
                 changing_closed_handle,
                 u"File handle for %s is already closed." % handle.file_name.decode('utf-8'))
 
-        handle.file_handle.close()
+        handle.flush()
 
         return NULL
 
