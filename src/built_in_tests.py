@@ -613,9 +613,6 @@ class LetTest(BuiltInTestCase):
             Integer(3))
 
 
-# todo: decide whether quote should construct fresh values each time
-# i.e. (function foo () (set! x (quote ())) (push! x 1) x)
-# what does (do (foo) (foo)) evaluate to?
 class QuoteTest(BuiltInTestCase):
     def test_quote(self):
         expected = parse_one(lex(u"(+ 1 2)"))
@@ -623,6 +620,14 @@ class QuoteTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"(quote (+ 1 2))"),
             expected)
+
+    def test_quote_fresh_copy(self):
+        self.assertEqual(
+            self.eval(
+                u"(set-symbol! (quote new-list) (lambda () (quote ())))"
+                u"(insert! (new-list) 0 1)"
+                u"(new-list)"
+            ), List())
 
     def test_quote_wrong_number_args(self):
         self.assertEvalError(

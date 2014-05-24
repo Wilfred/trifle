@@ -136,6 +136,17 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Literals: Repeatedly evaluating list, string and bytestring literals
+now returns a fresh copy every time. This fixes programs like the
+following:
+
+```
+(function empty-string () "")
+(set! x (empty-string))
+(append! x 'a')
+(empty-string) ; Used to return "a"!
+```
+
 File handles: Added the function `flush!`.
 
 Symbols: `_` is now a legal symbol. Symbols may now include uppercase

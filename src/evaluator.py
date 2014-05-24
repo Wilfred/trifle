@@ -352,10 +352,17 @@ def evaluate_value(value, environment):
         return value
     elif isinstance(value, Keyword):
         return value
+        
+    # String and bytestring literals should evaluate to a copy of
+    # themselves, so we can safely use string literals in function
+    # bodies and then mutate them.
     elif isinstance(value, String):
-        return value
+        char_list = value.string
+        return String([char for char in char_list])
     elif isinstance(value, Bytestring):
-        return value
+        byte_list = value.byte_value
+        return Bytestring([byte for byte in byte_list])
+        
     elif isinstance(value, Character):
         return value
     elif isinstance(value, Lambda):

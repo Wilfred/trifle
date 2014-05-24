@@ -400,6 +400,17 @@ class RestTest(PreludeTestCase):
     def test_rest_empty_list(self):
         self.assertEvalsTo(u"(rest (list))", List())
         
+    def test_rest_fresh_copy(self):
+        self.assertEvalsTo(u"(append! (rest (quote (1))) 2) (rest (quote (3)))", List())
+        
+        self.assertEvalsTo(
+            u"(append! (rest \"a\") 'b') (rest \"c\")",
+            String(list()))
+        
+        self.assertEvalsTo(
+            u"(append! (rest #bytes(\"a\")) 65) (rest #bytes(\"c\"))",
+            Bytestring([]))
+        
         
 class WhenTest(PreludeTestCase):
     def test_when_true(self):
@@ -488,6 +499,14 @@ class EmptyTest(PreludeTestCase):
 
     def test_result_is_copy(self):
         self.assertEvalsTo(u'(set! x "") (same? x (empty x))', FALSE)
+
+    def test_result_is_fresh(self):
+        # Regression test.
+        self.assertEvalsTo(u'(same? (empty "a") (empty "b"))', FALSE)
+
+        self.assertEvalsTo(u'(same? (empty (quote (1))) (empty (quote (2))))', FALSE)
+
+        self.assertEvalsTo(u'(same? (empty #bytes("a")) (empty #bytes("b")))', FALSE)
 
 
 class EmptyPredicateTest(PreludeTestCase):
