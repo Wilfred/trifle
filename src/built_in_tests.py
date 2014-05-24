@@ -15,7 +15,7 @@ from trifle_types import (
     TRUE, FALSE, NULL,
     FileHandle, Bytestring,
     TrifleExceptionInstance)
-from evaluator import evaluate, evaluate_all
+from evaluator import evaluate, evaluate_all, is_thrown_exception
 from errors import (
     error, lex_failed, parse_failed,
     file_not_found, value_error, stack_overflow,
@@ -40,8 +40,17 @@ class BuiltInTestCase(unittest.TestCase):
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
             self.fail("Parse error on: %r" % program)
+
+        env = fresh_environment()
         
-        return evaluate_all(parse_tree, fresh_environment())
+        result = NULL
+        for expression in parse_tree.values:
+            result = evaluate(expression, env)
+
+            if is_thrown_exception(result, error):
+                return result
+
+        return result
 
     # TODO: It'd be clearer to remove this, requiring callers to use
     # .eval and .assertTrifleError instead.

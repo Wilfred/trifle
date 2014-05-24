@@ -7,9 +7,9 @@ from trifle_types import (
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import (
-    value_error, wrong_type, wrong_argument_number)
+    error, value_error, wrong_type, wrong_argument_number)
 from main import env_with_prelude
-from evaluator import evaluate_all
+from evaluator import evaluate, is_thrown_exception
 
 from test_utils import (
     evaluate_with_prelude
@@ -39,8 +39,15 @@ class PreludeTestCase(BuiltInTestCase):
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
             self.fail("Parse error on: %r" % program)
-        
-        return evaluate_all(parse_tree, env)
+
+        result = NULL
+        for expression in parse_tree.values:
+            result = evaluate(expression, env)
+
+            if is_thrown_exception(result, error):
+                return result
+
+        return result
 
     def assertEvalsTo(self, program, expected_result):
         result = self.eval(program)
