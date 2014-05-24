@@ -1,3 +1,4 @@
+import os
 import unittest
 from cStringIO import StringIO
 from contextlib import contextmanager
@@ -72,14 +73,15 @@ class TopLevelSnippetTest(unittest.TestCase):
 
 class TopLevelFileTest(unittest.TestCase):
     def test_eval_file(self):
-        with mock_stdout() as stdout:
-            with NamedTemporaryFile() as f:
-                f.write('(print! "hello world")')
-                f.flush()
-                
-                entry_point(['trifle', f.name])
+        with NamedTemporaryFile() as f:
+            f.write('(set! f (open "foo.txt" :write)) (close! f)')
+            f.flush()
 
-        self.assertEqual(stdout.getvalue(), "hello world\n")
+            entry_point(['trifle', f.name])
+
+        self.assertTrue(os.path.exists("foo.txt"))
+
+        os.remove("foo.txt")
 
     def test_eval_file_error(self):
         with NamedTemporaryFile() as f:
