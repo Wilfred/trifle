@@ -60,6 +60,7 @@ def env_with_prelude():
     lexed_tokens = lex(code)
     parse_tree = parse(lexed_tokens)
 
+    # TODO: This completely ignores errors during prelude.
     env = fresh_environment()
     evaluate_all(parse_tree, env)
 

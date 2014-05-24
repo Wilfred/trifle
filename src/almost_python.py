@@ -47,6 +47,7 @@ def deepcopy(value):
         return value
 
 
+# TODO: what about strings and bytestrings?
 def copy(value):
     """Assumes that the value is a Trifle type.
 
@@ -57,6 +58,6 @@ def copy(value):
         return value
 
 
-# Not sure why RPython doesn't permit list(dynamic_unicode_value).
+# Not sure why RPython doesn't permit list(u"banana").
 def list(value):
     return [x for x in value]
