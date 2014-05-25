@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-from cStringIO import StringIO
-import sys
 import os
 
 from mock import patch, Mock
