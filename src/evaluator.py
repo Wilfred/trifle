@@ -74,6 +74,7 @@ class Frame(object):
                  self.evalled))
 
 
+# TODO: Remove this function, it promotes silently ignoring exceptions.
 def evaluate_all(expressions, environment):
     """Evaluate a trifle List of expressions in the given environment.
 
