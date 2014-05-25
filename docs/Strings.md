@@ -9,6 +9,19 @@ double quotes (including newlines), except backslashes and single
 quotes. The following escaped characters are recognised: `"\\"`,
 `"\""`, `"\n"`.
 
+Evaluating a string literal always returns a fresh
+string. This ensures you can use literals in function bodies
+without creating mutable static variables:
+
+```
+> (function empty-string () "")
+#null
+> (append! (empty-string) 'b')
+#null
+> (empty-string) ; Still returns a fresh mutable string
+""
+```
+
 ## String functions
 
 Predicates:

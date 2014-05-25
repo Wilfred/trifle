@@ -8,6 +8,19 @@ mutable.
 Bytestring literals consist of printable ASCII characters between double
 quotes, e.g. `#bytes("foo")`.
 
+Evaluating a bytestring literal always returns a fresh
+bytestring. This ensures you can use literals in function bodies
+without creating mutable static variables:
+
+```
+> (function empty-bytestring () #bytes(""))
+#null
+> (append! (empty-bytestring) 66)
+#null
+> (empty-bytestring) ; Still returns a fresh mutable bytestring
+#bytes("")
+```
+
 ## Bytestring functions
 
 Predicates:
