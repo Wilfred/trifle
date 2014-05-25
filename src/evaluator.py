@@ -289,6 +289,11 @@ def evaluate_function_call(stack):
         
         if isinstance(evalled_head, Macro):
             expanded = expand_macro(evalled_head, macro_arguments, environment)
+
+            # If macro expansion throws an error, terminate, returning that error.
+            if is_thrown_exception(expanded, error):
+                return expanded
+                
             stack.push(Frame(expanded, environment))
 
             # Ensure we don't evaluate any of arguments to the macro.
