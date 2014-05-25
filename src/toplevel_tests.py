@@ -3,7 +3,7 @@ import unittest
 from tempfile import NamedTemporaryFile
 
 from main import entry_point, USAGE
-from test_utils import mock_stdout, mock_stdout_fd
+from test_utils import mock_stdout
 
 
 class TopLevelWithoutArgsTest(unittest.TestCase):
@@ -41,6 +41,14 @@ class TopLevelSnippetTest(unittest.TestCase):
         return_value = entry_point([
             'trifle', '-i',
             '(try (/ 1 0) :catch error e e)'
+        ])
+        self.assertEqual(return_value, 0)
+
+    def test_snippet_evaluate_empty_list_catch(self):
+        # Regression test.
+        return_value = entry_point([
+            'trifle', '-i',
+            '(try () :catch error e 1)'
         ])
         self.assertEqual(return_value, 0)
 

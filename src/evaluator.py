@@ -145,33 +145,34 @@ def evaluate(expression, environment):
         if isinstance(frame.expression, List):
             list_elements = frame.expression.values
 
-            if not list_elements:
-                return TrifleExceptionInstance(
+            if list_elements:
+                head = list_elements[0]
+                raw_arguments = list_elements[1:]
+
+                # Handle special expressions.
+                if isinstance(head, Symbol) and head.symbol_name in special_expressions:
+                    special_expression = special_expressions[head.symbol_name]
+
+                    try:
+                        result = special_expression.call(raw_arguments, frame.environment, stack)
+                    except ArityError as e:
+                        return TrifleExceptionInstance(
+                            wrong_argument_number, e.message)
+
+                else:
+                    try:
+                        result = evaluate_function_call(stack)
+                    except ArityError as e:
+                        return TrifleExceptionInstance(
+                            wrong_argument_number,
+                            e.message
+                        )
+
+            else:
+                result = TrifleExceptionInstance(
                     value_error, u"Can't evaluate an empty list."
                 )
             
-            head = list_elements[0]
-            raw_arguments = list_elements[1:]
-            
-            # Handle special expressions.
-            if isinstance(head, Symbol) and head.symbol_name in special_expressions:
-                special_expression = special_expressions[head.symbol_name]
-
-                try:
-                    result = special_expression.call(raw_arguments, frame.environment, stack)
-                except ArityError as e:
-                    return TrifleExceptionInstance(
-                        wrong_argument_number, e.message)
-
-            else:
-                try:
-                    result = evaluate_function_call(stack)
-                except ArityError as e:
-                    return TrifleExceptionInstance(
-                        wrong_argument_number,
-                        e.message
-                    )
-
         else:
             result = evaluate_value(frame.expression, frame.environment)
 
