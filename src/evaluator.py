@@ -7,7 +7,7 @@ from trifle_types import (
     TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
     error, wrong_type, no_such_variable, stack_overflow,
-    ArityError, wrong_argument_number)
+    ArityError, wrong_argument_number, value_error)
 from almost_python import zip
 from environment import Scope, LetScope, special_expressions
 from parameters import is_variable_arity, check_parameters
@@ -144,6 +144,12 @@ def evaluate(expression, environment):
 
         if isinstance(frame.expression, List):
             list_elements = frame.expression.values
+
+            if not list_elements:
+                return TrifleExceptionInstance(
+                    value_error, u"Can't evaluate an empty list."
+                )
+            
             head = list_elements[0]
             raw_arguments = list_elements[1:]
             
@@ -265,7 +271,6 @@ def expand_macro(macro, arguments, environment):
     return expression
 
 
-# todo: error on evaluating an empty list
 def evaluate_function_call(stack):
     """Given a stack, where the the top element is a single Trifle call
     (either a function or a macro), execute it iteratively.

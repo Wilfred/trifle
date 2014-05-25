@@ -136,6 +136,8 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Evaluation: Fixed an interpreter crash on evaluating an empty list.
+
 Macros: Fixed an interpreter crash on throwing exception during macro
 expansion.
 

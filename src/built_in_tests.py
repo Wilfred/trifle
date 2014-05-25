@@ -313,6 +313,11 @@ class ParsingTest(BuiltInTestCase):
 
 
 class EvaluatingTypesTest(BuiltInTestCase):
+    # TODO: this should be a syntax error.
+    def test_eval_empty_list(self):
+        self.assertTrifleError(
+            self.eval(u"()"), value_error)
+
     def test_eval_boolean(self):
         self.assertEqual(
             self.eval(u"#true"),
