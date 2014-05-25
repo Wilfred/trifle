@@ -9,7 +9,7 @@
       ;; last non-exception result. Add it to docs too.
       (let (result (eval expression))
         (set! _ result)
-        (print! result)
+        (print! (printable result))
       )
     )
     :catch error e
