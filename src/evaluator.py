@@ -6,7 +6,7 @@ from trifle_types import (
     Keyword, String,
     TrifleExceptionInstance, TrifleExceptionType)
 from errors import (
-    wrong_type, no_such_variable, stack_overflow,
+    error, wrong_type, no_such_variable, stack_overflow,
     ArityError, wrong_argument_number)
 from almost_python import zip
 from environment import Scope, LetScope, special_expressions
@@ -83,6 +83,9 @@ def evaluate_all(expressions, environment):
     
     for expression in expressions.values:
         result = evaluate(expression, environment)
+
+        if is_thrown_exception(result, error):
+            return result
 
     return result
 

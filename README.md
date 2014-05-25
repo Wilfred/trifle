@@ -136,6 +136,9 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Macros: Fixed an interpreter crash on throwing exception during macro
+expansion.
+
 Literals: Repeatedly evaluating list, string and bytestring literals
 now returns a fresh copy every time. This fixes programs like the
 following:

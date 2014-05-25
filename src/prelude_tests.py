@@ -27,7 +27,7 @@ the prelude very often.
 # assuming CPython behaves the same.
 class PreludeTestCase(BuiltInTestCase):
     env = env_with_prelude()
-    
+
     def eval(self, program):
         """Evaluate this program in a fresh environment with the prelude
         already included. Returns the result of the last expression.

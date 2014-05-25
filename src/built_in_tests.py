@@ -1577,6 +1577,10 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         self.assertEvalError(
             u"(macro 123 (bar) #null)", wrong_type)
 
+    def test_macro_throw_error(self):
+        self.assertEvalError(
+            u'(macro foo () (throw error "")) (foo)', error)
+
 
 class ExpandMacroTest(BuiltInTestCase):
     def test_expand_macro(self):
