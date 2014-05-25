@@ -1828,6 +1828,33 @@ class DecodeTest(BuiltInTestCase):
             u'(decode #bytes("souffl\\xc3\\xa9") 1)', wrong_argument_number)
     
 
+class SymbolPredicateTest(BuiltInTestCase):
+    def test_is_symbol(self):
+        self.assertEqual(
+            self.eval(u'(symbol? (quote x))'),
+            TRUE)
+
+    def test_is_not_symbol(self):
+        self.assertEqual(
+            self.eval(u'(symbol? #bytes(""))'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(symbol? #null)'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(symbol? 1.0)'),
+            FALSE)
+
+    def test_is_symbol_arity(self):
+        self.assertEvalError(
+            u'(symbol?)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(symbol? #null #null)', wrong_argument_number)
+
+
 class ListPredicateTest(BuiltInTestCase):
     def test_is_list(self):
         self.assertEqual(

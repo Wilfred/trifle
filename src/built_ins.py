@@ -913,6 +913,17 @@ class LessThan(Function):
             return TRUE
 
 
+class SymbolPredicate(Function):
+    def call(self, args):
+        check_args(u'symbol?', args, 1, 1)
+        value = args[0]
+
+        if isinstance(value, Symbol):
+            return TRUE
+        else:
+            return FALSE
+
+
 class ListPredicate(Function):
     def call(self, args):
         check_args(u'list?', args, 1, 1)

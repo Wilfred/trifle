@@ -150,7 +150,7 @@ following:
 File handles: Added the function `flush!`.
 
 Symbols: `_` is now a legal symbol. Symbols may now include uppercase
-characters.
+characters. Added the function `symbol?`.
 
 Strings: Added the constant `VERSION`.
 
