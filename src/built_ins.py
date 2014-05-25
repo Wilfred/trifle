@@ -913,7 +913,6 @@ class LessThan(Function):
             return TRUE
 
 
-# TODO: name other FOO? functions as FooPredicate, and update doc names accordingly
 class ListPredicate(Function):
     def call(self, args):
         check_args(u'list?', args, 1, 1)
