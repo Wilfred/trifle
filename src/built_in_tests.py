@@ -13,14 +13,13 @@ from trifle_types import (
     TRUE, FALSE, NULL,
     FileHandle, Bytestring,
     TrifleExceptionInstance)
-from evaluator import evaluate, evaluate_all, is_thrown_exception
+from evaluator import evaluate, is_thrown_exception
 from errors import (
     error, lex_failed, parse_failed,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
 from environment import Environment, Scope, fresh_environment
-from main import env_with_prelude
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.
@@ -1549,13 +1548,16 @@ class EvaluatingMacrosTest(BuiltInTestCase):
         self.assertEvalError(
             u"(macro ignore (x) #null) (ignore)", wrong_argument_number)
 
-    # TODO: we shouldn't depend on the prelude here.
-    # TODO: find a way to just call self.eval.
     def test_macro_rest_args(self):
         self.assertEqual(
-            evaluate_all(parse(lex(
-                u"(macro when (condition :rest body) (quote (if (unquote condition) (do (unquote* body)) #null)))"
-                u"(set-symbol! (quote x) 1) (when #true (set-symbol! (quote x) 2)) x")), env_with_prelude()),
+            self.eval(
+                u"(macro when (condition :rest body) "
+                u"  (quote "
+                u"    (if (unquote condition) ((lambda () (unquote* body))) #null)"
+                u"  )"
+                u")"
+                u"(set-symbol! (quote x) 1)"
+                u"(when #true (set-symbol! (quote x) 2)) x"),
             Integer(2)
         )
 
