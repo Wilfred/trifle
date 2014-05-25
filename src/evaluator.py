@@ -268,8 +268,7 @@ def expand_macro(macro, arguments, environment):
     inner_scope = build_scope(macro.name, macro.arguments, arguments)
     macro_env = environment.globals_only().with_nested_scope(inner_scope)
 
-    expression = evaluate_all(macro.body, macro_env)
-    return expression
+    return evaluate_all(macro.body, macro_env)
 
 
 def evaluate_function_call(stack):
