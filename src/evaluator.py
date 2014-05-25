@@ -134,6 +134,7 @@ def evaluate(expression, environment):
     # appropriate. This ensures recursion in the Trifle program does
     # not require recursion in the interpreter.
     while stack:
+        # TODO: ensure we can catch this error.
         if len(stack.values) > MAX_STACK_DEPTH:
             return TrifleExceptionInstance(
                 # TODO: write a better exception message.
