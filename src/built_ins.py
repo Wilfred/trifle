@@ -413,21 +413,6 @@ class While(Special):
                     evalled_condition.repr())
         
 
-# todo: implement in prelude in terms of writing to stdout
-# todo: just print a newline if called without any arguments.
-# todo: allow a separator argument, Python 3 style
-class Print(Function):
-    def call(self, args):
-        check_args(u'print', args, 1, 1)
-
-        if isinstance(args[0], String):
-            print args[0].as_unicode()
-        else:
-            print args[0].repr()
-
-        return NULL
-
-
 # todo: implement in prelude in terms of stdin and stdout
 class Input(Function):
     def call(self, args):

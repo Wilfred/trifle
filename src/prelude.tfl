@@ -303,6 +303,15 @@ for which (FUNC element) is #true."
   )
 )
 
+;; TODO: just print a newline if called without any arguments.
+;; TODO: allow a separator argument, Python 3 style
+(function print! (value)
+  (let (representation (if (string? value) value (printable value)))
+    (write! stdout (encode (join representation "\n")))
+    (flush! stdout)
+  )
+)
+
 ; TODO: < is variadic, but these all only take two arguments.
 (function > (x y)
   "Return #true if X is greater than Y."

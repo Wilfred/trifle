@@ -944,39 +944,6 @@ class WhileTest(BuiltInTestCase):
             u"(while 1 (foo))", wrong_type)
 
 
-class PrintTest(BuiltInTestCase):
-    def test_print_returns_null(self):
-        self.assertEqual(
-            self.eval(u'(print! "foo")'),
-            NULL)
-
-    def test_print_writes_to_stdout(self):
-        mock_stdout = StringIO()
-
-        with patch('sys.stdout', mock_stdout):
-            self.eval(u'(print! "foo")')
-
-        self.assertEqual(mock_stdout.getvalue(), "foo\n")
-
-    def test_print_handles_numbers(self):
-        old_stdout = sys.stdout
-        mock_stdout = StringIO()
-
-        # Monkey-patch stdout.
-        sys.stdout = mock_stdout
-        
-        self.eval(u'(print! 1)')
-
-        # Undo the monkey-patch.
-        sys.stdout = old_stdout
-
-        self.assertEqual(mock_stdout.getvalue(), "1\n")
-
-    def test_print_wrong_arg_number(self):
-        self.assertEvalError(
-            u"(print! 1 2)", wrong_argument_number)
-
-
 class InputTest(BuiltInTestCase):
     def test_input(self):
         mock_read = Mock()

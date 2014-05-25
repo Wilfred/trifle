@@ -12,7 +12,7 @@ from main import env_with_prelude
 from evaluator import evaluate, is_thrown_exception
 
 from test_utils import (
-    evaluate_with_prelude
+    evaluate_with_prelude, mock_stdout_fd
 )
 from built_in_tests import BuiltInTestCase
 
@@ -544,3 +544,26 @@ class JoinTest(PreludeTestCase):
         self.assertEvalsTo(
             u'(join "foo" "bar")',
             String(list(u"foobar")))
+
+
+class PrintTest(PreludeTestCase):
+    def test_print_returns_null(self):
+        self.assertEqual(
+            self.eval(u'(print! "foo")'),
+            NULL)
+
+    def test_print_writes_to_stdout(self):
+        with mock_stdout_fd() as stdout:
+            self.eval(u'(print! "foo")')
+
+        self.assertEqual(stdout.call_args[0][1], "foo\n")
+
+    def test_print_handles_numbers(self):
+        with mock_stdout_fd() as stdout:
+            self.eval(u'(print! 1)')
+
+        self.assertEqual(stdout.call_args[0][1], "1\n")
+
+    def test_print_wrong_arg_number(self):
+        self.assertEvalError(
+            u"(print! 1 2)", wrong_argument_number)

@@ -1,12 +1,9 @@
 import os
 import unittest
-from cStringIO import StringIO
-from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
-from mock import patch
-
 from main import entry_point, USAGE
+from test_utils import mock_stdout, mock_stdout_fd
 
 
 class TopLevelWithoutArgsTest(unittest.TestCase):
@@ -15,25 +12,10 @@ class TopLevelWithoutArgsTest(unittest.TestCase):
         self.assertNotEqual(return_value, 0)
         
     def test_no_args_prints_usage(self):
-        mock_stdout = StringIO()
-
-        with patch('sys.stdout', mock_stdout):
+        with mock_stdout() as stdout:
             entry_point([])
 
-        self.assertEqual(mock_stdout.getvalue(), USAGE + '\n')
-
-
-# TODO: use this for `print!` unit tests too.
-@contextmanager
-def mock_stdout():
-    """Temporarily patch sys.stdout and return the StringIO buffer that
-    was written to.
-
-    """
-    fake_stdout = StringIO()
-
-    with patch('sys.stdout', fake_stdout):
-        yield fake_stdout
+        self.assertEqual(stdout.getvalue(), USAGE + '\n')
 
 
 class TopLevelSnippetTest(unittest.TestCase):
