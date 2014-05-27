@@ -13,6 +13,8 @@
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
+    - [v0.9 (unreleased)](#v09-unreleased)
+    - [v0.8](#v08)
     - [v0.7](#v07)
     - [v0.6](#v06)
     - [v0.5](#v05)
@@ -29,6 +31,7 @@ Current status: Only a very basic interpreter implemented. Please see
 
 [![Build Status](https://travis-ci.org/Wilfred/trifle.png?branch=master)](https://travis-ci.org/Wilfred/trifle)
 [![Coverage Status](https://coveralls.io/repos/Wilfred/trifle/badge.png)](https://coveralls.io/r/Wilfred/trifle)
+[![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master)
 
 ## Goals
 
