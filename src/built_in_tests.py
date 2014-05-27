@@ -68,7 +68,7 @@ class BuiltInTestCase(unittest.TestCase):
 
         self.assertEqual(value.exception_type, expected_error_type,
                          "Expected %s, but got %s" %
-                         (expected_error_type.name, value.exception_type.name))
+                         (expected_error_type.name, value))
 
         self.assertFalse(value.caught, "Expected a thrown exception, but this exception has been caught!")
 
