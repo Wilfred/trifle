@@ -181,7 +181,7 @@ def evaluate(expression, environment):
         # we're done with this frame.
         if not result is None:
 
-            if isinstance(result, TrifleExceptionInstance) and not result.caught:
+            if is_thrown_exception(result, error):
                 # We search any try blocks starting from the
                 # innermost, and evaluate the first matching :catch we find.
 

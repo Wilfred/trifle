@@ -77,6 +77,14 @@ class SetTest(PreludeTestCase):
     def test_set_returns_null(self):
         self.assertEvalsTo(u"(set! x 1)", NULL)
 
+    def test_set_not_symbol(self):
+        result = self.eval(u"(set! 1 2)")
+
+        self.assertTrifleError(result, wrong_type)
+
+        # Our exception message should talk about set!, not set-symbol!.
+        self.assertIn("set!", result.message)
+
 
 class DoTest(PreludeTestCase):
     def test_do(self):

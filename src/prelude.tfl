@@ -12,9 +12,17 @@
 ; TODO: We need to measure branch coverage of prelude code, to ensure
 ; everything is tested.
 
-; todo: macros should check argument types to aid debugging
 (macro set! (symbol value)
   "Set SYMBOL to VALUE in the current scope."
+  ; `when-not` is not yet defined, so we use `if` directly.
+  (if (symbol? symbol)
+    #null
+    ; TODO: This assumes that nothing in the prelude triggers this error, since `join` is not
+    ; defined until later in the prelude.  
+    (throw wrong-type
+      (join "The first argument to set! must be a symbol, but got: " (printable symbol))
+    )
+  )
   (quote
     (set-symbol! (quote (unquote symbol)) (unquote value))
   )
