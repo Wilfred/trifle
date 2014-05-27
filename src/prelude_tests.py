@@ -3,6 +3,7 @@ from copy import deepcopy
 from trifle_types import (
     List, Bytestring, String, Character,
     Integer, TrifleExceptionInstance,
+    TrifleExceptionType,
     TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
@@ -10,6 +11,7 @@ from errors import (
     error, value_error, wrong_type, wrong_argument_number)
 from main import env_with_prelude
 from evaluator import evaluate, is_thrown_exception
+from environment import Environment, Scope
 
 from test_utils import (
     evaluate_with_prelude, mock_stdout_fd
@@ -34,7 +36,14 @@ class PreludeTestCase(BuiltInTestCase):
 
         """
         # Fresh copy of the environment so tests don't interfere with one another.
-        env = deepcopy(self.env)
+        env = Environment([Scope({})])
+        global_scope = self.env.scopes[0]
+        for key, value in global_scope.bindings.iteritems():
+            # TODO: we actually only need deepcopy for mutable types.
+            if isinstance(value, TrifleExceptionType):
+                env.set(key, value)
+            else:
+                env.set(key, deepcopy(value))
 
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
@@ -52,6 +61,13 @@ class PreludeTestCase(BuiltInTestCase):
     def assertEvalsTo(self, program, expected_result):
         result = self.eval(program)
         self.assertEqual(result, expected_result)
+
+    def test_exceptions_equal(self):
+        """Regression test: Ensure we aren't actually creating copies of
+        exception types and breaking equality in tests.
+
+        """
+        self.assertEqual(self.eval(u'error'), error)
 
 
 class SetTest(PreludeTestCase):
