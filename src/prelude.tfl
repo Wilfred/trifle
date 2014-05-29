@@ -12,11 +12,29 @@
 ; TODO: We need to measure branch coverage of prelude code, to ensure
 ; everything is tested.
 
+(macro when (condition :rest body)
+  "Evaluate BODY when CONDITION evaluates to #true."
+  (quote
+    (if (unquote condition)
+      (do (unquote* body))
+      #null
+    )
+  )
+)
+
+(macro when-not (condition :rest body)
+  "Evaluate BODY when CONDITION evaluates to #false."
+  (quote
+    (if (unquote condition)
+      #null
+      (do (unquote* body))
+    )
+  )
+)
+
 (macro set! (symbol value)
   "Set SYMBOL to VALUE in the current scope."
-  ; `when-not` is not yet defined, so we use `if` directly.
-  (if (symbol? symbol)
-    #null
+  (when-not (symbol? symbol)
     ; TODO: This assumes that nothing in the prelude triggers this error, since `join` is not
     ; defined until later in the prelude.  
     (throw wrong-type
@@ -192,26 +210,6 @@ for which (FUNC element) is #true."
 
 (function zero? (x)
   (equal? x 0)
-)
-
-(macro when (condition :rest body)
-  "Evaluate BODY when CONDITION evaluates to #true."
-  (quote
-    (if (unquote condition)
-      (do (unquote* body))
-      #null
-    )
-  )
-)
-
-(macro when-not (condition :rest body)
-  "Evaluate BODY when CONDITION evaluates to #false."
-  (quote
-    (if (unquote condition)
-      #null
-      (do (unquote* body))
-    )
-  )
 )
 
 ; TODO: write in terms of a slice function.
