@@ -39,11 +39,15 @@ class PreludeTestCase(BuiltInTestCase):
         env = Environment([Scope({})])
         global_scope = self.env.scopes[0]
         for key, value in global_scope.bindings.iteritems():
-            # TODO: we actually only need deepcopy for mutable types.
-            if isinstance(value, TrifleExceptionType):
-                env.set(key, value)
-            else:
+            # We do a deep copy of mutable values.
+            if isinstance(value, List):
                 env.set(key, deepcopy(value))
+            elif isinstance(value, String):
+                env.set(key, deepcopy(value))
+            elif isinstance(value, Bytestring):
+                env.set(key, deepcopy(value))
+            else:
+                env.set(key, value)
 
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
