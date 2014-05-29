@@ -2,9 +2,8 @@ from copy import deepcopy
 
 from trifle_types import (
     List, Bytestring, String, Character,
-    Integer, TrifleExceptionInstance,
-    TrifleExceptionType,
-    TRUE, FALSE, NULL)
+    TrifleExceptionInstance,
+    Integer, TRUE, FALSE, NULL)
 from trifle_parser import parse_one, parse
 from lexer import lex
 from errors import (
@@ -88,6 +87,25 @@ class SetTest(PreludeTestCase):
 
         # Our exception message should talk about set!, not set-symbol!.
         self.assertIn("set!", result.message)
+
+
+class FunctionTest(PreludeTestCase):
+    def test_function(self):
+        self.assertEvalsTo(u"(function x () 1) (x)", Integer(1))
+
+    def test_function_returns_null(self):
+        self.assertEvalsTo(u"(function x () 1)", NULL)
+
+    # TODO: it would be nice to assert that these errors happen
+    # at macro expansion, not during evaluation due to lambda being
+    # robust.
+    def test_function_not_symbol(self):
+        result = self.eval(u"(function 1 () 1)")
+        self.assertTrifleError(result, wrong_type)
+
+    def test_function_params_not_list(self):
+        result = self.eval(u"(function x y 1)")
+        self.assertTrifleError(result, wrong_type)
 
 
 class DoTest(PreludeTestCase):

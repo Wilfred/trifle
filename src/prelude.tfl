@@ -46,11 +46,21 @@
   )
 )
 
-; todo: macros should check argument types to aid debugging
-; todo: unit test
 (macro function (name params :rest body)
   "Define a function called NAME with parameters PARAMS
 and body BODY."
+  (when-not (symbol? name)
+    (throw wrong-type
+      (join "The first argument to macro `function` must be a symbol, but got: " (printable name))
+    )
+  )
+  (when-not (list? params)
+    (throw wrong-type
+      (join "The second argument to macro `function` must be a list of symbols, but got: " (printable params))
+    )
+  )
+  ; TODO: also throw an error on invalid parameter lists
+  ; e.g. (x x) or (1 2).
   (quote
     (set! (unquote name)
       (lambda (unquote params) (unquote* body))
@@ -73,6 +83,7 @@ and body BODY."
   (+ x 1)
 )
 
+; TODO: macros should check argument types to aid debugging
 (macro inc! (x)
   (quote (set! (unquote x) (inc (unquote x))))
 )
