@@ -2,12 +2,13 @@
 
 The Trifle interpreter is a program you run from the command line.
 
-If you start the interpreter without any arguments, you will start a
-shell that you can interact with.
+The Trifle source code includes a program `shell.tfl` that gives you
+an interactive shell.
 
 ```
-$ ./trifle
-Trifle interpreter. Press Ctrl-C to exit.
+$ ./trifle shell.tfl
+Trifle 0.9. Type (exit!) to quit.
+
 > (+ 2 3)
 5
 ```

@@ -69,7 +69,6 @@ def env_with_prelude():
 
 
 USAGE = """Usage:
-./trifle
 ./trifle -i <code snippet>
 ./trifle <path to script>"""
 
@@ -81,46 +80,8 @@ def entry_point(argv):
     A code snippet:
     $ ./trifle -i '1 2'
 
-    Or a REPL:
-    $ ./trifle
-
     """
-    if len(argv) == 1:
-        # REPL. Ultimately we will rewrite this as a Trifle program.
-        print "Trifle interpreter. Type (exit!) to exit."
-
-        try:
-            env = env_with_prelude()
-        except OSError:
-            return 2
-            
-        while True:
-            try:
-                user_input = raw_input(u'> ')
-                lexed_tokens = lex(user_input)
-
-                if is_thrown_exception(lexed_tokens, error):
-                    # TODO: a proper stack trace.
-                    print u'Uncaught error: %s: %s' % (
-                        lexed_tokens.exception_type.name,
-                        lexed_tokens.message)
-
-                else:
-                    parse_tree = parse(lexed_tokens)
-                    result = evaluate_all(parse_tree, env)
-
-                    if is_thrown_exception(result, error):
-                        # TODO: a proper stack trace.
-                        print u'Uncaught error: %s: %s' % (
-                            result.exception_type.name,
-                            result.message)
-                    else:
-                        print result.repr().encode('utf-8')
-
-            except SystemExit:
-                return 0
-    
-    elif len(argv) == 2:
+    if len(argv) == 2:
         # open the file
         filename = argv[1]
 
