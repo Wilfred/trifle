@@ -190,9 +190,18 @@ with NAME bound to the current item."
   (or (list? value) (string? value) (bytestring? value))
 )
 
+; TODO: this should be shallow-copy, and copy should be a deep copy.
 (function copy (sequence)
   "Return a fresh copy of SEQUENCE.
 This is a shallow copy operation, so the copy shares the values."
+  ; TODO: we desperately need a `format` function.
+  (when-not (sequence? sequence)
+    (throw wrong-type
+      (join "The function `copy` requires a sequence, but you gave me: "
+        (printable sequence)
+      )
+    )
+  )
   (map identity sequence)
 )
 

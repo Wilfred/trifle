@@ -569,6 +569,10 @@ class CopyTest(PreludeTestCase):
     def test_copy_equal(self):
         self.assertEvalsTo(u"(copy (list 1 2))", List([Integer(1), Integer(2)]))
 
+    def test_copy_not_sequence_error(self):
+        self.assertTrifleError(
+            self.eval(u"(copy #null)"), wrong_type)
+
     def test_copy_not_same(self):
         self.assertEvalsTo(u"(set! x (list)) (same? x (copy x))", FALSE)
 
