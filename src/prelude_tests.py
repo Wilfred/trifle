@@ -492,6 +492,11 @@ class RangeTest(PreludeTestCase):
     def test_range(self):
         self.assertEvalsTo(u"(range 5)", self.eval(u"(list 0 1 2 3 4)"))
 
+    def test_range_(self):
+        self.assertTrifleError(
+            self.eval(u"(range -1)"),
+            value_error)
+
 
 class InequalityTest(PreludeTestCase):
     def test_greater_than(self):

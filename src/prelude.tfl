@@ -295,12 +295,19 @@ for which (FUNC element) is #true."
   )
 )
 
-; TODO: throw an error on max < 0.
+; TODO: once we have default arguments, also specify start and step.
 (function range (max)
   "Return a list of integers from 0 to max - 1."
+  (when (< max 0)
+    (throw value-error
+      (join "The function `range` requires a number greater than 0, but got: "
+        (printable max)
+      )
+    )
+  )
   (let (result (list)
         i 0
-       )
+    )
     (while (< i max)
       (append! result i)
       (inc! i)
