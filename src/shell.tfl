@@ -15,8 +15,9 @@
     ; TODO: For some reason, this doesn't catch arity errors.
     :catch error e
     (do
-      ;; TODO: it would be nice show the type of the exception too.
-      (print! "Unhandled error:")
+      (print!
+        (join "Uncaught exception: " (printable (exception-type e)))
+      )
       (print! (message e))
     )
   )
