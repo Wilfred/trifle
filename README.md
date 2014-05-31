@@ -139,7 +139,9 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
-Exceptions: Added the function `exception-type`.
+Exceptions: Added the function `exception-type`. Fixed a bug where
+`arity-error` or `stack-overflow` couldn't be caught if thrown by a
+built-in function or macro.
 
 [Emacs mode](https://github.com/Wilfred/.emacs.d/blob/gh-pages/user-lisp/trifle-mode.el):
 trifle-mode now understand how to indent Trifle code.

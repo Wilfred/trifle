@@ -12,7 +12,6 @@
         (print! (printable result))
       )
     )
-    ; TODO: For some reason, this doesn't catch arity errors.
     :catch error e
     (do
       (print!

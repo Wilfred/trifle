@@ -134,48 +134,48 @@ def evaluate(expression, environment):
     # appropriate. This ensures recursion in the Trifle program does
     # not require recursion in the interpreter.
     while stack:
-        # TODO: ensure we can catch this error.
+
         if len(stack.values) > MAX_STACK_DEPTH:
-            return TrifleExceptionInstance(
+            result = TrifleExceptionInstance(
                 # TODO: write a better exception message.
                 stack_overflow, u"Stack overflow"
             )
+        else:
+            frame = stack.peek()
 
-        frame = stack.peek()
+            if isinstance(frame.expression, List):
+                list_elements = frame.expression.values
 
-        if isinstance(frame.expression, List):
-            list_elements = frame.expression.values
+                if list_elements:
+                    head = list_elements[0]
+                    raw_arguments = list_elements[1:]
 
-            if list_elements:
-                head = list_elements[0]
-                raw_arguments = list_elements[1:]
+                    # Handle special expressions.
+                    if isinstance(head, Symbol) and head.symbol_name in special_expressions:
+                        special_expression = special_expressions[head.symbol_name]
 
-                # Handle special expressions.
-                if isinstance(head, Symbol) and head.symbol_name in special_expressions:
-                    special_expression = special_expressions[head.symbol_name]
+                        try:
+                            result = special_expression.call(raw_arguments, frame.environment, stack)
+                        except ArityError as e:
+                            result = TrifleExceptionInstance(
+                                wrong_argument_number, e.message)
 
-                    try:
-                        result = special_expression.call(raw_arguments, frame.environment, stack)
-                    except ArityError as e:
-                        return TrifleExceptionInstance(
-                            wrong_argument_number, e.message)
+                    else:
+                        try:
+                            result = evaluate_function_call(stack)
+                        except ArityError as e:
+                            result = TrifleExceptionInstance(
+                                wrong_argument_number,
+                                e.message
+                            )
 
                 else:
-                    try:
-                        result = evaluate_function_call(stack)
-                    except ArityError as e:
-                        return TrifleExceptionInstance(
-                            wrong_argument_number,
-                            e.message
-                        )
+                    result = TrifleExceptionInstance(
+                        value_error, u"Can't evaluate an empty list."
+                    )
 
             else:
-                result = TrifleExceptionInstance(
-                    value_error, u"Can't evaluate an empty list."
-                )
-            
-        else:
-            result = evaluate_value(frame.expression, frame.environment)
+                result = evaluate_value(frame.expression, frame.environment)
 
         # Returning None means we have work left to do, but a Trifle value means
         # we're done with this frame.

@@ -2069,6 +2069,23 @@ class TryTest(BuiltInTestCase):
         self.assertEvalError(
             u"(try (/ 1 0) :catch i-dont-exist e #null)", no_such_variable)
 
+    def test_catch_arity_error(self):
+        # Regression tests.
+        self.assertEqual(
+            self.eval(u"(try (/) :catch error e #null)"),
+            NULL)
+
+        self.assertEqual(
+            self.eval(u"(try (if) :catch error e #null)"),
+            NULL)
+
+    def test_catch_stack_overflow(self):
+        # Regression test.
+        self.assertEqual(
+            self.eval(u"(set-symbol! (quote f) (lambda () (f)))"
+                      u"(try (f) :catch error e #null)"),
+            NULL)
+
     def test_try_types(self):
         # Third argument isn't `:catch`
         self.assertEvalError(
