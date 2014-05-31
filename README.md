@@ -13,7 +13,7 @@
     - [Fast Enough](#fast-enough)
     - [Missing Features](#missing-features)
   - [Release History](#release-history)
-    - [v0.9 (unreleased)](#v09-unreleased)
+    - [v0.9](#v09)
     - [v0.8](#v08)
     - [v0.7](#v07)
     - [v0.6](#v06)
@@ -137,7 +137,7 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
-### v0.9 (unreleased)
+### v0.9
 
 Shell: Added a pure Trifle shell program: `shell.tfl`. The interpreter
 itself now only accepts file paths or `-i` snippets.
