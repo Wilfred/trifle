@@ -613,3 +613,18 @@ class PrintTest(PreludeTestCase):
     def test_print_wrong_arg_number(self):
         self.assertEvalError(
             u"(print! 1 2)", wrong_argument_number)
+
+
+class SequencePredicateTest(PreludeTestCase):
+    def test_sequence(self):
+        self.assertEvalsTo(u"(sequence? (list))", TRUE)
+        self.assertEvalsTo(u'(sequence? "")', TRUE)
+        self.assertEvalsTo(u'(sequence? #bytes(""))', TRUE)
+        self.assertEvalsTo(u"(sequence? #false)", FALSE)
+        self.assertEvalsTo(u"(sequence? #null)", FALSE)
+        
+    def test_sequence_arity(self):
+        self.assertTrifleError(
+            self.eval(u"(sequence?)"), wrong_argument_number)
+        self.assertTrifleError(
+            self.eval(u"(sequence? 0 0)"), wrong_argument_number)

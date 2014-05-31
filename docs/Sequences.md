@@ -7,7 +7,8 @@ index. Lists, strings and bytestrings are all sequences.
 
 Predicates:
 
-1. [empty?](Sequences-EmptyPredicate.md)
+1. [sequence?](Sequences-SequencePredicate.md)
+2. [empty?](Sequences-EmptyPredicate.md)
 
 Creating a new sequence:
 

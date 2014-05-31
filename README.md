@@ -139,6 +139,9 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Sequences: Added a separate docs page for sequences. Added the
+function `sequence?`.
+
 Evaluation: Fixed an interpreter crash on evaluating an empty list.
 
 Macros: Fixed an interpreter crash on throwing exception during macro

@@ -185,6 +185,11 @@ with NAME bound to the current item."
 )
 
 ;TODO: helpful error on non-sequence
+(function sequence? (value)
+  "Return #true if VALUE is a sequence."
+  (or (list? value) (string? value) (bytestring? value))
+)
+
 (function copy (sequence)
   "Return a fresh copy of SEQUENCE.
 This is a shallow copy operation, so the copy shares the values."
