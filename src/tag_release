@@ -6,5 +6,5 @@ if [[ "$#" -ne 1 ]]; then
     exit 1
 fi
 
-git tag -a "$@"
+git tag -a $1 -m "Released v$1, see README.md for changelog."
 git push --tags
