@@ -139,6 +139,9 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+Shell: Added a pure Trifle shell program: `shell.tfl`. The interpreter
+itself now only accepts file paths or `-i` snippets.
+
 Exceptions: Added the function `exception-type`. Fixed a bug where
 `arity-error` or `stack-overflow` couldn't be caught if thrown by a
 built-in function or macro.
