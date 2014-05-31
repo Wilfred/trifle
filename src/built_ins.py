@@ -924,6 +924,7 @@ class SymbolPredicate(Function):
             return FALSE
 
 
+# TODO: Just write a generic function that returns the type of its argument.
 class ListPredicate(Function):
     def call(self, args):
         check_args(u'list?', args, 1, 1)
