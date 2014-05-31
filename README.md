@@ -139,6 +139,9 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.9 (unreleased)
 
+[Emacs mode](https://github.com/Wilfred/.emacs.d/blob/gh-pages/user-lisp/trifle-mode.el):
+trifle-mode now understand how to indent Trifle code.
+
 Sequences: Added a separate docs page for sequences. Added the
 function `sequence?`.
 
