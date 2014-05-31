@@ -74,7 +74,6 @@ USAGE = """Usage:
 ./trifle <path to script>"""
 
 
-# TODO: unit tests for passing a path to the interpreter, and ideally the REPL too.
 def entry_point(argv):
     """Either a file name:
     $ ./trifle ~/files/foo.tfl
