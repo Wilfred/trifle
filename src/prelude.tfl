@@ -78,6 +78,42 @@ and body BODY."
   items
 )
 
+(function not (value)
+  (if value #false #true)
+)
+
+(macro and (:rest values)
+  (if (not (empty? values))
+    (let (symbol (fresh-symbol))
+      (quote
+        (let ((unquote symbol) (unquote (first values)))
+          (if (unquote symbol)
+            (and (unquote* (rest values)))
+            (unquote symbol)
+          )
+        )
+      )
+    )
+    #true
+  )
+)
+
+(macro or (:rest values)
+  (if (not (empty? values))
+    (let (symbol (fresh-symbol))
+      (quote
+        (let ((unquote symbol) (unquote (first values)))
+          (if (unquote symbol)
+            (unquote symbol)
+            (or (unquote* (rest values)))
+          )
+        )
+      )
+    )
+    #false
+  )
+)
+
 (function inc (x)
   "Add one to X."
   (+ x 1)
@@ -281,42 +317,6 @@ for which (FUNC element) is #true."
   (if (not (empty? args))
     (last args)
     #null
-  )
-)
-
-(function not (value)
-  (if value #false #true)
-)
-
-(macro and (:rest values)
-  (if (not (empty? values))
-    (let (symbol (fresh-symbol))
-      (quote
-        (let ((unquote symbol) (unquote (first values)))
-          (if (unquote symbol)
-            (and (unquote* (rest values)))
-            (unquote symbol)
-          )
-        )
-      )
-    )
-    #true
-  )
-)
-
-(macro or (:rest values)
-  (if (not (empty? values))
-    (let (symbol (fresh-symbol))
-      (quote
-        (let ((unquote symbol) (unquote (first values)))
-          (if (unquote symbol)
-            (unquote symbol)
-            (or (unquote* (rest values)))
-          )
-        )
-      )
-    )
-    #false
   )
 )
 
