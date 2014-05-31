@@ -2148,3 +2148,24 @@ class PrintableTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u'(printable "foo")'),
             String(list(u'"foo"')))
+
+
+class ExceptionTypeTest(BuiltInTestCase):
+    def test_arity(self):
+        self.assertEvalError(
+            u'(exception-type)',
+            wrong_argument_number)
+        
+        self.assertEvalError(
+            u'(exception-type (try x :catch error e e) #null)',
+            wrong_argument_number)
+
+    def test_wrong_type(self):
+        self.assertEvalError(
+            u'(exception-type #null)',
+            wrong_type)
+
+    def test_exception_type(self):
+        self.assertEqual(
+            self.eval(u'(exception-type (try (/ 1 0) :catch error e e))'),
+            division_by_zero)

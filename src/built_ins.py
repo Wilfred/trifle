@@ -1572,6 +1572,21 @@ class Message(Function):
         return String(list(exception.message))
 
 
+class ExceptionType(Function):
+    def call(self, args):
+        check_args(u'exception-type', args, 1, 1)
+
+        exception = args[0]
+        
+        if not isinstance(exception, TrifleExceptionInstance):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"The first argument to function `exception-type` must be an exception, but got: %s"
+                % exception.repr())
+
+        return exception.exception_type
+
+
 class Printable(Function):
     def call(self, args):
         check_args(u'printable', args, 1, 1)

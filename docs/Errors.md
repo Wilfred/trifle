@@ -10,6 +10,7 @@ Trifle includes an exception system.
 
 1. [throw](Errors-Throw.md)
 2. [message](Errors-Message.md)
+3. [exception-type](Errors-ExceptionType.md)
 
 ## Error types
 
