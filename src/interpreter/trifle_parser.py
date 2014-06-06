@@ -13,7 +13,12 @@ def parse_inner(tokens, top_level):
         token = tokens.pop(0)
 
         if isinstance(token, OpenParen):
-            parse_tree.append(parse_inner(tokens, top_level=False))
+            parsed = parse_inner(tokens, top_level=False)
+
+            if isinstance(parsed, TrifleExceptionInstance):
+                return parsed
+                
+            parse_tree.append(parsed)
         elif isinstance(token, CloseParen):
             if top_level:
                 return TrifleExceptionInstance(

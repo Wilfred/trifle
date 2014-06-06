@@ -1469,6 +1469,9 @@ class ParseTest(BuiltInTestCase):
         self.assertEvalError(
             u'(parse ")")', parse_failed)
 
+        self.assertEvalError(
+            u'(parse "(")', parse_failed)
+
     def test_parse_invalid_lex(self):
         self.assertEvalError(
             u'(parse "123abc")', lex_failed)

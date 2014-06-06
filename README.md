@@ -137,6 +137,11 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.10 (unreleased)
+
+Parsing: Fixed a bug with `parse` where it sometimes returned a list
+of one error instead of throwing an error on invalid input.
+
 ### v0.9
 
 Shell: Added a pure Trifle shell program: `shell.tfl`. The interpreter
