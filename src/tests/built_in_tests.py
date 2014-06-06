@@ -377,6 +377,10 @@ class EvaluatingTypesTest(BuiltInTestCase):
         result = self.eval(u"(try x :catch no-such-variable e e)")
         self.assertTrue(isinstance(result, TrifleExceptionInstance))
 
+    def test_eval_function(self):
+        result = self.eval(u"(lambda (x) x)")
+        self.assertTrue(isinstance(result, Lambda))
+
 
 class ReprTest(BuiltInTestCase):
     def test_list_repr(self):
