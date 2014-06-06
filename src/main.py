@@ -11,11 +11,11 @@ import os
 
 from rpython.rtyper.module.ll_os_environ import getenv_llimpl
 
-from lexer import lex
-from trifle_parser import parse
-from evaluator import evaluate_all, is_thrown_exception
-from environment import fresh_environment
-from errors import error
+from interpreter.lexer import lex
+from interpreter.trifle_parser import parse
+from interpreter.evaluator import evaluate_all, is_thrown_exception
+from interpreter.environment import fresh_environment
+from interpreter.errors import error
 
 
 def get_contents(filename):

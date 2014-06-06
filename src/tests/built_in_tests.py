@@ -4,22 +4,22 @@ import os
 
 from mock import patch, Mock
 
-from lexer import lex
-from trifle_parser import parse_one, parse
-from trifle_types import (
+from interpreter.lexer import lex
+from interpreter.trifle_parser import parse_one, parse
+from interpreter.trifle_types import (
     List, Integer, Float, Fraction,
     Symbol, Keyword, String, Character,
     Lambda,
     TRUE, FALSE, NULL,
     FileHandle, Bytestring,
     TrifleExceptionInstance)
-from evaluator import evaluate, is_thrown_exception
-from errors import (
+from interpreter.evaluator import evaluate, is_thrown_exception
+from interpreter.errors import (
     error, lex_failed, parse_failed,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
-from environment import Environment, Scope, fresh_environment
+from interpreter.environment import Environment, Scope, fresh_environment
 
 """Trifle unit tests. These are intended to be run with CPython, and
 no effort has been made to make them RPython friendly.

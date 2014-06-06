@@ -1,16 +1,16 @@
 from copy import deepcopy
 
-from trifle_types import (
+from interpreter.trifle_types import (
     List, Bytestring, String, Character,
     TrifleExceptionInstance,
     Integer, TRUE, FALSE, NULL)
-from trifle_parser import parse_one, parse
-from lexer import lex
-from errors import (
+from interpreter.trifle_parser import parse_one, parse
+from interpreter.lexer import lex
+from interpreter.errors import (
     error, value_error, wrong_type, wrong_argument_number)
+from interpreter.evaluator import evaluate, is_thrown_exception
+from interpreter.environment import Environment, Scope
 from main import env_with_prelude
-from evaluator import evaluate, is_thrown_exception
-from environment import Environment, Scope
 
 from test_utils import (
     evaluate_with_prelude, mock_stdout_fd

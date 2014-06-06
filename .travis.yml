@@ -8,7 +8,7 @@ install:
   - pip install -q -r src/requirements.pip
 script:
   # Run our unit tests.
-  - PYTHONPATH=src/pypy TRIFLEPATH=src coverage run --omit='src/pypy*,*site-packages*' src/tests.py
+  - PYTHONPATH=src/pypy TRIFLEPATH=src coverage run --omit='src/pypy*,*site-packages*' src/tests/tests.py
   # Ensure that we can build the binary (i.e. our source is RPython friendly).
   - python2 src/pypy/rpython/bin/rpython --batch src/main.py
 after_success:

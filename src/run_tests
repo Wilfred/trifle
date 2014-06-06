@@ -5,7 +5,7 @@
 # --with-id allows you to run `./run_tests --failed` to only re-run
 # failed tests.
 #
-# --processes=4 parallelises the tests. Note Jenkins does not run the
-# test in parallel, to ensure determinism if we accidentally write
+# --processes=4 parallelises the tests. Note Travis does not run the
+# tests in parallel, to ensure determinism if we accidentally write
 # impure tests (which should be fixed).
-PYTHONPATH=pypy nosetests tests.py --with-id --processes=`nproc` "$@"
+PYTHONPATH=pypy nosetests tests.py --with-id --processes=`nproc` --traverse-namespace "$@"

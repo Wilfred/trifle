@@ -11,7 +11,7 @@ pypy: pypy-src.tar.bz2
 	rm pypy-src.tar
 	mv pypy-$(PYPY_VERSION)-src pypy
 
-trifle: pypy main.py lexer.py trifle_types.py trifle_parser.py evaluator.py built_ins.py environment.py
+trifle: pypy $(wildcard interpreter/*.py)
 	./rpython main.py
 	mv main-c trifle
 

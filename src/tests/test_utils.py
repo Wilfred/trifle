@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from mock import patch
 
-from evaluator import evaluate
+from interpreter.evaluator import evaluate
 from main import env_with_prelude
 
 
