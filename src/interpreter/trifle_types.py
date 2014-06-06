@@ -26,10 +26,6 @@ class Boolean(TrifleType):
             return u"#false"
 
     def __eq__(self, other):
-        """We deliberately treat Integer(1) as different to Float(1.0) since
-        this magic method is only used in tests and it avoids confusion.
-
-        """
         if self.__class__ != other.__class__:
             return False
 
@@ -64,6 +60,10 @@ class Integer(TrifleType):
         return u"%d" % self.value
 
     def __eq__(self, other):
+        """We deliberately treat Integer(1) as different to Float(1.0) since
+        this magic method is only used in tests and it avoids confusion.
+
+        """
         if self.__class__ != other.__class__:
             return False
 
