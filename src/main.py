@@ -15,7 +15,6 @@ from lexer import lex
 from trifle_parser import parse
 from evaluator import evaluate_all, is_thrown_exception
 from environment import fresh_environment
-from almost_python import raw_input
 from errors import error
 
 
