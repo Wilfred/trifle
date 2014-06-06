@@ -6,6 +6,7 @@ from mock import patch, Mock
 
 from interpreter.lexer import lex
 from interpreter.trifle_parser import parse_one, parse
+from interpreter.built_ins import Add, SetSymbol, If
 from interpreter.trifle_types import (
     List, Integer, Float, Fraction,
     Symbol, Keyword, String, Character,
@@ -440,6 +441,13 @@ class ReprTest(BuiltInTestCase):
     def test_error_type_repr(self):
         # TODO: unit test error instances too.
         self.assertEqual(division_by_zero.repr(), '#error-type("division-by-zero")')
+
+    def test_built_in_function_repr(self):
+        self.assertEqual(SetSymbol().repr(), u"<built-in function>")
+        self.assertEqual(Add().repr(), u"<built-in function>")
+
+    def test_built_special_repr(self):
+        self.assertEqual(If().repr(), u"<special expression>")
 
 
 class EvaluatingLambdaTest(BuiltInTestCase):
