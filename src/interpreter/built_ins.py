@@ -1556,8 +1556,6 @@ class Throw(Function):
             exception_message.as_unicode(),
         )
 
-        return NULL
-
 
 class Message(Function):
     def call(self, args):
