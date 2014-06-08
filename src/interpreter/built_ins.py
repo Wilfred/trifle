@@ -1270,12 +1270,9 @@ class Call(FunctionWithEnv):
             # Call the function.
             stack.push(new_frame)
 
+            # Increment expression_index to show there's nothing left to do here.
             frame.expression_index += 1
             return None
-
-        else:
-            # Done evaluating, return the result.
-            return frame.evalled[-1]
 
 
 # todo: rename to DefinedPredicate
