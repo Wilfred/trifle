@@ -1219,20 +1219,16 @@ class Eval(FunctionWithEnv):
 
         # Note that the expression index will already be 2, since
         # evaluate_function_call will have iterated over our
-        # arguments. We just increment from there.
+        # arguments.
         from evaluator import Frame
 
-        if frame.expression_index == 2:
-            # Evaluate our argument.
-            stack.push(Frame(args[0], env))
+        # Evaluate our argument.
+        stack.push(Frame(args[0], env))
 
-            frame.expression_index += 1
-            return None
-
-        else:
-            # We've evaluated our argument, just return it.
-            return frame.evalled[-1]
-
+        # Incrementing the expression_index will result in evaluate()
+        # just returning frame.evalled, so Eval.call will not be called again.
+        frame.expression_index += 1
+        return None
 
 class Call(FunctionWithEnv):
     def call(self, args, env, stack):
