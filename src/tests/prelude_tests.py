@@ -75,7 +75,7 @@ class PreludeTestCase(BuiltInTestCase):
 
 class SetTest(PreludeTestCase):
     def test_set(self):
-        self.assertEvalsTo(u"(set! x 1) x", Integer(1))
+        self.assertEvalsTo(u"(set! x 1) x", Integer.fromint(1))
 
     def test_set_returns_null(self):
         self.assertEvalsTo(u"(set! x 1)", NULL)
@@ -91,7 +91,7 @@ class SetTest(PreludeTestCase):
 
 class FunctionTest(PreludeTestCase):
     def test_function(self):
-        self.assertEvalsTo(u"(function x () 1) (x)", Integer(1))
+        self.assertEvalsTo(u"(function x () 1) (x)", Integer.fromint(1))
 
     def test_function_returns_null(self):
         self.assertEvalsTo(u"(function x () 1)", NULL)
@@ -110,7 +110,7 @@ class FunctionTest(PreludeTestCase):
 
 class DoTest(PreludeTestCase):
     def test_do(self):
-        self.assertEvalsTo(u"(do 1 2)", Integer(2))
+        self.assertEvalsTo(u"(do 1 2)", Integer.fromint(2))
 
     def test_do_no_args(self):
         self.assertEvalsTo(u"(do)", NULL)
@@ -118,15 +118,15 @@ class DoTest(PreludeTestCase):
 
 class IdentityTest(PreludeTestCase):
     def test_identity(self):
-        self.assertEvalsTo(u"(identity 123)", Integer(123))
+        self.assertEvalsTo(u"(identity 123)", Integer.fromint(123))
 
 
 class IncTest(PreludeTestCase):
     def test_inc(self):
-        self.assertEvalsTo(u"(inc 5)", Integer(6))
+        self.assertEvalsTo(u"(inc 5)", Integer.fromint(6))
 
     def test_inc_macro(self):
-        self.assertEvalsTo(u"(set! x 2) (inc! x) x", Integer(3))
+        self.assertEvalsTo(u"(set! x 2) (inc! x) x", Integer.fromint(3))
 
 
 class ZeroPredicateTest(PreludeTestCase):
@@ -147,10 +147,10 @@ class ZeroPredicateTest(PreludeTestCase):
 
 class DecTest(PreludeTestCase):
     def test_dec(self):
-        self.assertEvalsTo(u"(dec 5)", Integer(4))
+        self.assertEvalsTo(u"(dec 5)", Integer.fromint(4))
 
     def test_dec_macro(self):
-        self.assertEvalsTo(u"(set! x 2) (dec! x) x", Integer(1))
+        self.assertEvalsTo(u"(set! x 2) (dec! x) x", Integer.fromint(1))
 
 
 class ForEachTest(PreludeTestCase):
@@ -159,7 +159,7 @@ class ForEachTest(PreludeTestCase):
             evaluate_with_prelude(parse_one(lex(u"""(let (total 0 numbers (list 1 2 3 4))
             (for-each number numbers (set! total (+ total number)))
             total)"""))),
-            Integer(10))
+            Integer.fromint(10))
 
     def test_for_each_eval_list_once(self):
         self.assertEqual(
@@ -168,7 +168,7 @@ class ForEachTest(PreludeTestCase):
                 u"(for-each y (do (inc! x) (list 1 2)) y)"
                 u"x"
             ),
-            Integer(1))
+            Integer.fromint(1))
 
 
 class LoopTest(PreludeTestCase):
@@ -182,18 +182,18 @@ class LoopTest(PreludeTestCase):
                 u"  x"
                 u")"
             ),
-            Integer(5))
+            Integer.fromint(5))
 
 
 class ListTest(PreludeTestCase):
     def test_list(self):
-        expected = List([Integer(1), Integer(2), Integer(3)])
+        expected = List([Integer.fromint(1), Integer.fromint(2), Integer.fromint(3)])
         self.assertEvalsTo(u"(list 1 2 3)", expected)
 
 
 class MapTest(PreludeTestCase):
     def test_map(self):
-        expected = List([Integer(2), Integer(3), Integer(4)])
+        expected = List([Integer.fromint(2), Integer.fromint(3), Integer.fromint(4)])
         self.assertEvalsTo(u"(map (lambda (x) (+ x 1)) (list 1 2 3))", expected)
 
     def test_map_bytestring(self):
@@ -210,7 +210,7 @@ class MapTest(PreludeTestCase):
 class FilterTest(PreludeTestCase):
     def test_filter(self):
         self.assertEvalsTo(u"(filter (lambda (x) (equal? x 2)) (list 1 2 3))",
-                           List([Integer(2)]))
+                           List([Integer.fromint(2)]))
 
     def test_map_bytestring(self):
         self.assertEqual(
@@ -225,12 +225,12 @@ class FilterTest(PreludeTestCase):
 
 class NthItemTest(PreludeTestCase):
     def test_first(self):
-        self.assertEvalsTo(u"(first (list 1 2 3 4 5))", Integer(1))
+        self.assertEvalsTo(u"(first (list 1 2 3 4 5))", Integer.fromint(1))
         
     def test_first_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(first #bytes("abc"))'))),
-            Integer(97))
+            Integer.fromint(97))
         
     def test_first_string(self):
         self.assertEqual(
@@ -238,12 +238,12 @@ class NthItemTest(PreludeTestCase):
             Character(u'a'))
         
     def test_second(self):
-        self.assertEvalsTo(u"(second (list 1 2 3 4 5))", Integer(2))
+        self.assertEvalsTo(u"(second (list 1 2 3 4 5))", Integer.fromint(2))
         
     def test_second_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(second #bytes("abc"))'))),
-            Integer(98))
+            Integer.fromint(98))
         
     def test_second_string(self):
         self.assertEqual(
@@ -251,12 +251,12 @@ class NthItemTest(PreludeTestCase):
             Character(u'b'))
         
     def test_third(self):
-        self.assertEvalsTo(u"(third (list 1 2 3 4 5))", Integer(3))
+        self.assertEvalsTo(u"(third (list 1 2 3 4 5))", Integer.fromint(3))
         
     def test_third_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(third #bytes("abc"))'))),
-            Integer(99))
+            Integer.fromint(99))
         
     def test_third_string(self):
         self.assertEqual(
@@ -264,12 +264,12 @@ class NthItemTest(PreludeTestCase):
             Character(u'c'))
         
     def test_fourth(self):
-        self.assertEvalsTo(u"(fourth (list 1 2 3 4 5))", Integer(4))
+        self.assertEvalsTo(u"(fourth (list 1 2 3 4 5))", Integer.fromint(4))
         
     def test_fourth_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(fourth #bytes("abcd"))'))),
-            Integer(100))
+            Integer.fromint(100))
         
     def test_fourth_string(self):
         self.assertEqual(
@@ -277,12 +277,12 @@ class NthItemTest(PreludeTestCase):
             Character(u'd'))
         
     def test_fifth(self):
-        self.assertEvalsTo(u"(fifth (list 1 2 3 4 5))", Integer(5))
+        self.assertEvalsTo(u"(fifth (list 1 2 3 4 5))", Integer.fromint(5))
 
     def test_fifth_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(fifth #bytes("abcde"))'))),
-            Integer(101))
+            Integer.fromint(101))
         
     def test_fifth_string(self):
         self.assertEqual(
@@ -292,12 +292,12 @@ class NthItemTest(PreludeTestCase):
 
 class LastTest(PreludeTestCase):
     def test_last(self):
-        self.assertEvalsTo(u"(last (list 1 2 3 4 5))", Integer(5))
+        self.assertEvalsTo(u"(last (list 1 2 3 4 5))", Integer.fromint(5))
 
     def test_last_bytestring(self):
         self.assertEqual(
             evaluate_with_prelude(parse_one(lex(u'(last #bytes("abc"))'))),
-            Integer(99))
+            Integer.fromint(99))
 
     def test_last_string(self):
         self.assertEqual(
@@ -312,7 +312,7 @@ class LastTest(PreludeTestCase):
 
 class AppendTest(PreludeTestCase):
     def test_append(self):
-        expected = List([Integer(1), Integer(2)])
+        expected = List([Integer.fromint(1), Integer.fromint(2)])
 
         self.assertEvalsTo(
             u"(set-symbol! (quote x) (quote (1))) (append! x 2) x",
@@ -348,7 +348,7 @@ class AppendTest(PreludeTestCase):
 
 class PushTest(PreludeTestCase):
     def test_push_list(self):
-        expected = List([Integer(1)])
+        expected = List([Integer.fromint(1)])
         self.assertEvalsTo(u"(set-symbol! (quote x) (quote ())) (push! x 1) x", expected)
 
     def test_push_bytestring(self):
@@ -405,7 +405,7 @@ class AndTest(PreludeTestCase):
             (u"(set! x 0)"
              u"(and (do (inc! x) #true))"
              u"x"),
-            Integer(1))
+            Integer.fromint(1))
 
 
 class OrTest(PreludeTestCase):
@@ -426,12 +426,12 @@ class OrTest(PreludeTestCase):
             (u"(set! x 0)"
              u"(or (do (inc! x) #true))"
              u"x"),
-            Integer(1))
+            Integer.fromint(1))
 
 
 class RestTest(PreludeTestCase):
     def test_rest(self):
-        self.assertEvalsTo(u"(rest (list 1 2 3))", List([Integer(2), Integer(3)]))
+        self.assertEvalsTo(u"(rest (list 1 2 3))", List([Integer.fromint(2), Integer.fromint(3)]))
         
     def test_rest_bytestring(self):
         self.assertEqual(
@@ -460,7 +460,7 @@ class RestTest(PreludeTestCase):
         
 class WhenTest(PreludeTestCase):
     def test_when_true(self):
-        self.assertEvalsTo(u"(when #true 1)", Integer(1))
+        self.assertEvalsTo(u"(when #true 1)", Integer.fromint(1))
         
     def test_when_false(self):
         self.assertEvalsTo(u"(when #false 1 2)", NULL)
@@ -471,21 +471,21 @@ class WhenNotTest(PreludeTestCase):
         self.assertEvalsTo(u"(when-not #true 1)", NULL)
         
     def test_when_not_false(self):
-        self.assertEvalsTo(u"(when-not #false 1 2)", Integer(2))
+        self.assertEvalsTo(u"(when-not #false 1 2)", Integer.fromint(2))
 
 
 class CaseTest(PreludeTestCase):
     def test_case_true(self):
-        self.assertEvalsTo(u"(case (#true 1))", Integer(1))
+        self.assertEvalsTo(u"(case (#true 1))", Integer.fromint(1))
 
     def test_case_first_match(self):
-        self.assertEvalsTo(u"(case (#true 1) (#true 2))", Integer(1))
+        self.assertEvalsTo(u"(case (#true 1) (#true 2))", Integer.fromint(1))
 
     def test_case_second_match(self):
-        self.assertEvalsTo(u"(case (#false 1) (#true 2))", Integer(2))
+        self.assertEvalsTo(u"(case (#false 1) (#true 2))", Integer.fromint(2))
 
     def test_clause_body_in_correct_scope(self):
-        self.assertEvalsTo(u"(let (x 2) (case (#false 1) (#true x)))", Integer(2))
+        self.assertEvalsTo(u"(let (x 2) (case (#false 1) (#true x)))", Integer.fromint(2))
 
 
 class RangeTest(PreludeTestCase):
@@ -531,7 +531,7 @@ class SortTest(PreludeTestCase):
 
     def test_sort_list(self):
         self.assertEvalsTo(u"(sort (list 5 4 3 2 1))",
-            List([Integer(1), Integer(2), Integer(3), Integer(4), Integer(5)])
+            List([Integer.fromint(1), Integer.fromint(2), Integer.fromint(3), Integer.fromint(4), Integer.fromint(5)])
         )
 
 
@@ -572,7 +572,7 @@ class EmptyPredicateTest(PreludeTestCase):
 
 class CopyTest(PreludeTestCase):
     def test_copy_equal(self):
-        self.assertEvalsTo(u"(copy (list 1 2))", List([Integer(1), Integer(2)]))
+        self.assertEvalsTo(u"(copy (list 1 2))", List([Integer.fromint(1), Integer.fromint(2)]))
 
     def test_copy_not_sequence_error(self):
         self.assertTrifleError(
@@ -586,14 +586,14 @@ class JoinMutateTest(PreludeTestCase):
     def test_join(self):
         self.assertEvalsTo(
             u"(set! x (list 1)) (join! x (list 2)) x",
-            List([Integer(1), Integer(2)]))
+            List([Integer.fromint(1), Integer.fromint(2)]))
 
 
 class JoinTest(PreludeTestCase):
     def test_join(self):
         self.assertEvalsTo(
             u"(join (list 1) (list) (list 2 3))",
-            List([Integer(1), Integer(2), Integer(3)]))
+            List([Integer.fromint(1), Integer.fromint(2), Integer.fromint(3)]))
 
     def test_join_string(self):
         self.assertEvalsTo(

@@ -1,5 +1,5 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
-                          Integer, Float, Fraction,
+                          Integer, Float, Fraction, RBigInt,
                           List, Keyword,
                           FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
@@ -465,16 +465,17 @@ def is_equal(x, y):
             return x.float_value == y.float_value
 
         elif isinstance(y, Integer):
-            return x.float_value == float(y.value)        
+            # TODO: potentially y could be too big for floats.
+            return x.float_value == y.bigint_value.tofloat()
 
         return False
 
     elif isinstance(x, Integer):
         if isinstance(y, Integer):
-            return x.value == y.value
+            return x.bigint_value.eq(y.bigint_value)
 
         elif isinstance(y, Float):
-            return float(x.value) == y.float_value
+            return x.bigint_value.tofloat() == y.float_value
 
         return False
 
@@ -542,8 +543,8 @@ def coerce_numbers(nums):
 
     Assumes all elements are numbers.
 
-    >>> coerce_numbers([Integer(1)])
-    [Integer(1)]
+    >>> coerce_numbers([Integer.fromint(1)])
+    [Integer.fromint(1)]
     >>> coerce_numbers([Fraction(1, 2), Float(1.0)])
     [Float(0.5), Float(1.0)]
 
@@ -565,7 +566,7 @@ def coerce_numbers(nums):
             if isinstance(num, Integer):
                 # TODO: This could overflow if the integer is outside
                 # the range of acceptable floats.
-                result.append(Float(float(num.value)))
+                result.append(Float(float(num.bigint_value.toint())))
             elif isinstance(num, Fraction):
                 result.append(Float(num.numerator * 1.0 / num.denominator))
             elif isinstance(num, Float):
@@ -576,7 +577,8 @@ def coerce_numbers(nums):
     elif contains_fractions:
         for num in nums:
             if isinstance(num, Integer):
-                result.append(Fraction(num.value, 1))
+                # TODO: we need abitrary sized fractions too.
+                result.append(Fraction(num.bigint_value.toint(), 1))
             elif isinstance(num, Fraction):
                 result.append(num)
 
@@ -623,15 +625,15 @@ class Add(Function):
                 )
 
             if total.denominator == 1:
-                return Integer(total.numerator)
+                return Integer.fromint(total.numerator)
 
             return total
 
         else:
             # Just integers.
-            total = 0
+            total = RBigInt.fromint(0)
             for arg in args:
-                total += arg.value
+                total = total.add(arg.bigint_value)
             return Integer(total)
 
 
@@ -653,11 +655,11 @@ class Subtract(Function):
                     u"- requires numbers, but got: %s." % arg.repr())
 
         if not args:
-            return Integer(0)
+            return Integer.fromint(0)
 
         if len(args) == 1:
             if isinstance(args[0], Integer):
-                return Integer(-args[0].value)
+                return Integer(args[0].bigint_value.neg())
             elif isinstance(args[0], Fraction):
                 return Fraction(-args[0].numerator, args[0].denominator)
             else:
@@ -684,14 +686,14 @@ class Subtract(Function):
                 )
 
             if total.denominator == 1:
-                return Integer(total.numerator)
+                return Integer.fromint(total.numerator)
 
             return total
 
         else:
-            total = args[0].value
+            total = args[0].bigint_value
             for arg in args[1:]:
-                total -= arg.value
+                total = total.sub(arg.bigint_value)
             return Integer(total)
 
 
@@ -731,14 +733,14 @@ class Multiply(Function):
                 )
 
             if product.denominator == 1:
-                return Integer(product.numerator)
+                return Integer.fromint(product.numerator)
 
             return product
 
         else:
-            product = 1
+            product = RBigInt.fromint(1)
             for arg in args:
-                product *= arg.value
+                product = product.mul(arg.bigint_value)
             return Integer(product)
 
 
@@ -777,7 +779,7 @@ class Divide(Function):
 
         else:
             if isinstance(args[0], Integer):
-                quotient = Fraction(args[0].value, 1)
+                quotient = Fraction(args[0].bigint_value.toint(), 1)
             elif isinstance(args[0], Fraction):
                 quotient = args[0]
             else:
@@ -786,13 +788,13 @@ class Divide(Function):
                 
             for arg in args[1:]:
                 if isinstance(arg, Integer):
-                    if arg.value == 0:
+                    if arg.bigint_value.eq(RBigInt.fromint(0)):
                         return TrifleExceptionInstance(
                             division_by_zero,
                             u"Divided %s by %s" % (quotient.repr(), arg.repr()))
                     
                     quotient = Fraction(
-                        quotient.numerator, quotient.denominator * arg.value
+                        quotient.numerator, quotient.denominator * arg.bigint_value.toint()
                     )
 
                 elif isinstance(arg, Fraction):
@@ -806,7 +808,7 @@ class Divide(Function):
                     )
 
             if quotient.denominator == 1:
-                return Integer(quotient.numerator)
+                return Integer.fromint(quotient.numerator)
 
             return quotient
             
@@ -822,12 +824,12 @@ class Mod(Function):
                     wrong_type,
                     u"mod requires integers, but got: %s." % arg.repr())
 
-        if args[1].value == 0:
+        if args[1].bigint_value.eq(RBigInt.fromint(0)):
             return TrifleExceptionInstance(
                 division_by_zero,
                 u"Divided by zero: %s" % args[1].repr())
 
-        return Integer(args[0].value % args[1].value)
+        return Integer(args[0].bigint_value.mod(args[1].bigint_value))
 
 
 class Div(Function):
@@ -847,12 +849,12 @@ class Div(Function):
                     wrong_type,
                     u"div requires integers, but got: %s." % arg.repr())
 
-        if args[1].value == 0:
+        if args[1].bigint_value.eq(RBigInt.fromint(0)):
             return TrifleExceptionInstance(
                 division_by_zero,
                 u"Divided by zero: %s" % args[1].repr())
 
-        return Integer(args[0].value // args[1].value)
+        return Integer(args[0].bigint_value.floordiv(args[1].bigint_value))
             
 
 class LessThan(Function):
@@ -905,7 +907,7 @@ class LessThan(Function):
         else:
             # Only integers.
             for arg in args[1:]:
-                if not previous_number.value < arg.value:
+                if not previous_number.bigint_value.lt(arg.bigint_value):
                     return FALSE
 
                 previous_number = arg
@@ -976,11 +978,11 @@ class GetIndex(Function):
         index = args[1]
 
         if isinstance(sequence, List):
-            sequence_length = len(sequence.values)
+            sequence_length = RBigInt.fromint(len(sequence.values))
         elif isinstance(sequence, Bytestring):
-            sequence_length = len(sequence.byte_value)
+            sequence_length = RBigInt.fromint(len(sequence.byte_value))
         elif isinstance(sequence, String):
-            sequence_length = len(sequence.string)
+            sequence_length = RBigInt.fromint(len(sequence.string))
         else:
             return TrifleExceptionInstance(
                 wrong_type,
@@ -993,30 +995,30 @@ class GetIndex(Function):
                 u"the second argument to get-index must be an integer, but got: %s"
                 % index.repr())
 
-        if not sequence_length:
+        if sequence_length.eq(RBigInt.fromint(0)):
             return TrifleExceptionInstance(
                 value_error,
                 u"can't call get-item on an empty sequence")
 
         # todo: use a separate error class for index errors
-        if index.value >= sequence_length:
+        if index.bigint_value.ge(sequence_length):
             return TrifleExceptionInstance(
                 value_error,
-                u"the sequence has %d items, but you asked for index %d"
-                % (sequence_length, index.value))
+                u"the sequence has %s items, but you asked for index %s"
+                % (unicode(sequence_length.str()), index.repr()))
 
-        if index.value < -1 * sequence_length:
+        if index.bigint_value.lt(sequence_length.neg()):
             return TrifleExceptionInstance(
                 value_error,
-                u"Can't get index %d of a %d element sequence (must be -%d or higher)"
-                % (index.value, sequence_length, sequence_length))
+                u"Can't get index %s of a %s element sequence (must be -%s or higher)"
+                % (index.repr(), unicode(sequence_length.str()), unicode(sequence_length.str())))
 
         if isinstance(sequence, List):
-            return sequence.values[index.value]
+            return sequence.values[index.bigint_value.toint()]
         elif isinstance(sequence, Bytestring):
-            return Integer(sequence.byte_value[index.value])
+            return Integer.fromint(sequence.byte_value[index.bigint_value.toint()])
         elif isinstance(sequence, String):
-            return Character(sequence.string[index.value])
+            return Character(sequence.string[index.bigint_value.toint()])
 
 
 class Length(Function):
@@ -1025,11 +1027,11 @@ class Length(Function):
         sequence = args[0]
 
         if isinstance(sequence, List):
-            return Integer(len(sequence.values))
+            return Integer.fromint(len(sequence.values))
         elif isinstance(sequence, Bytestring):
-            return Integer(len(sequence.byte_value))
+            return Integer.fromint(len(sequence.byte_value))
         elif isinstance(sequence, String):
-            return Integer(len(sequence.string))
+            return Integer.fromint(len(sequence.string))
 
         return TrifleExceptionInstance(
             wrong_type,
@@ -1045,11 +1047,11 @@ class SetIndex(Function):
         value = args[2]
 
         if isinstance(sequence, List):
-            sequence_length = len(sequence.values)
+            sequence_length = RBigInt.fromint(len(sequence.values))
         elif isinstance(sequence, Bytestring):
-            sequence_length = len(sequence.byte_value)
+            sequence_length = RBigInt.fromint(len(sequence.byte_value))
         elif isinstance(sequence, String):
-            sequence_length = len(sequence.string)
+            sequence_length = RBigInt.fromint(len(sequence.string))
         else:
             return TrifleExceptionInstance(
                 wrong_type,
@@ -1062,27 +1064,27 @@ class SetIndex(Function):
                 u"the second argument to set-index! must be an integer, but got: %s"
                 % index.repr())
 
-        if not sequence_length:
+        if sequence_length.eq(RBigInt.fromint(0)):
             return TrifleExceptionInstance(
                 value_error,
                 u"can't call set-index! on an empty sequence")
 
-        # todo: use a separate error class for index error
-        if index.value >= sequence_length:
+        # TODO: use a separate error class for index error
+        if index.bigint_value.ge(sequence_length):
             return TrifleExceptionInstance(
                 value_error,
                 # TODO: pluralisation (to avoid '1 items')
-                u"the sequence has %d items, but you asked to set index %d"
-                % (sequence_length, index.value))
+                u"the sequence has %s items, but you asked to set index %s"
+                % (unicode(sequence_length.str()), index.repr()))
 
-        if index.value < -1 * sequence_length:
+        if index.bigint_value.lt(sequence_length.neg()):
             return TrifleExceptionInstance(
                 value_error,
-                u"Can't set index %d of a %d element sequence (must be -%d or higher)"
-                % (index.value, sequence_length, sequence_length))
+                u"Can't set index %s of a %s element sequence (must be -%s or higher)"
+                % (index.repr(), unicode(sequence_length.str()), unicode(sequence_length.str())))
 
         if isinstance(sequence, List):
-            sequence.values[index.value] = value
+            sequence.values[index.bigint_value.toint()] = value
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
                 return TrifleExceptionInstance(
@@ -1090,13 +1092,13 @@ class SetIndex(Function):
                     u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                     % value.repr())
 
-            if not (0 <= value.value <= 255):
+            if value.bigint_value.lt(RBigInt.fromint(0)) or value.bigint_value.gt(RBigInt.fromint(255)):
                 return TrifleExceptionInstance(
                     value_error,
                     u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                     % value.repr())
 
-            sequence.byte_value[index.value] = value.value
+            sequence.byte_value[index.bigint_value.toint()] = value.bigint_value.toint()
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
                 return TrifleExceptionInstance(
@@ -1104,7 +1106,9 @@ class SetIndex(Function):
                     u"Permitted values inside strings are only characters, but got: %s"
                     % value.repr())
 
-            sequence.string[index.value] = value.character
+            # TODO: what if the list contains more than 2 ** 32 items?
+            # We should remove all uses of .toint, it's risky.
+            sequence.string[index.bigint_value.toint()] = value.character
 
         return NULL
 
@@ -1117,11 +1121,12 @@ class Insert(Function):
         value = args[2]
 
         if isinstance(sequence, List):
-            sequence_length = len(sequence.values)
+            # TODO: what if the sequence has more than 2**32 items?
+            sequence_length = RBigInt.fromint(len(sequence.values))
         elif isinstance(sequence, Bytestring):
-            sequence_length = len(sequence.byte_value)
+            sequence_length = RBigInt.fromint(len(sequence.byte_value))
         elif isinstance(sequence, String):
-            sequence_length = len(sequence.string)
+            sequence_length = RBigInt.fromint(len(sequence.string))
         else:
             return TrifleExceptionInstance(
                 wrong_type,
@@ -1135,27 +1140,31 @@ class Insert(Function):
                 % index.repr())
 
         # todo: use a separate error class for index error
-        if index.value > sequence_length:
+        if index.bigint_value.gt(sequence_length):
             return TrifleExceptionInstance(
                 value_error,
-                u"the sequence has %d items, but you asked to insert at index %d"
-                % (sequence_length, index.value))
+                u"the sequence has %s items, but you asked to insert at index %s"
+                % (unicode(sequence_length.str()), index.repr()))
 
-        if index.value < -1 * sequence_length:
+        if index.bigint_value.lt(sequence_length.neg()):
             return TrifleExceptionInstance(
                 value_error,
-                u"Can't set index %d of a %d element sequence (must be -%d or higher)"
-                % (index.value, sequence_length, sequence_length))
+                u"Can't set index %s of a %s element sequence (must be -%s or higher)"
+                % (index.repr(), unicode(sequence_length.str()), unicode(sequence_length.str())))
 
-        target_index = index.value
-        if target_index < 0:
-            target_index = target_index % sequence_length
+        target_index = index.bigint_value
+        if target_index.lt(RBigInt.fromint(0)):
+            target_index = target_index.mod(sequence_length)
 
-        if target_index < 0: # Never true, but need to keep RPython happy
-            target_index = 0
+        target_index_int = target_index.toint()
+        # We know that this is always non-negative, but RPython
+        # cannot prove it. This if statement is just to keep
+        # RPython happy.
+        if target_index_int < 0:
+            target_index_int = 0
 
         if isinstance(sequence, List):
-            sequence.values.insert(target_index, value)
+            sequence.values.insert(target_index_int, value)
         elif isinstance(sequence, Bytestring):
             if not isinstance(value, Integer):
                 return TrifleExceptionInstance(
@@ -1163,13 +1172,13 @@ class Insert(Function):
                     u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                     % value.repr())
 
-            if not (0 <= value.value <= 255):
+            if value.bigint_value.lt(RBigInt.fromint(0)) or value.bigint_value.gt(RBigInt.fromint(255)):
                 return TrifleExceptionInstance(
                     value_error,
                     u"Permitted values inside bytestrings are only integers between 0 and 255, but got: %s"
                     % value.repr())
 
-            sequence.byte_value.insert(target_index, value.value)
+            sequence.byte_value.insert(target_index_int, value.bigint_value.toint())
         elif isinstance(sequence, String):
             if not isinstance(value, Character):
                 return TrifleExceptionInstance(
@@ -1177,7 +1186,7 @@ class Insert(Function):
                     u"Permitted values inside strings are only characters, but got: %s"
                     % value.repr())
 
-            sequence.string.insert(target_index, value.character)
+            sequence.string.insert(target_index_int, value.character)
 
         return NULL
 

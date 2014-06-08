@@ -1,4 +1,5 @@
 import os
+from rpython.rlib.rbigint import rbigint as RBigInt
 
 """Note that 'types' is part of the python standard library, so we're
 forced to name this file trifle_types.
@@ -57,7 +58,7 @@ NULL = Null()
 
 class Integer(TrifleType):
     def repr(self):
-        return u"%d" % self.value
+        return unicode(self.bigint_value.str())
 
     def __eq__(self, other):
         """We deliberately treat Integer(1) as different to Float(1.0) since
@@ -67,11 +68,20 @@ class Integer(TrifleType):
         if self.__class__ != other.__class__:
             return False
 
-        return self.value == other.value
+        return self.bigint_value.eq(other.bigint_value)
 
     def __init__(self, value):
-        assert isinstance(value, int)
-        self.value = value
+        assert isinstance(value, RBigInt)
+        self.bigint_value = value
+
+    @staticmethod
+    def fromstr(s):
+        return Integer(RBigInt.fromdecimalstr(s))
+
+    @staticmethod
+    def fromint(num):
+        assert isinstance(num, int), "Expected Python int but got: %s" % num
+        return Integer(RBigInt.fromint(num))
 
 
 def greatest_common_divisor(a, b):

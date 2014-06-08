@@ -93,25 +93,25 @@ class LexTestCase(unittest.TestCase):
 class CommentLexTest(BuiltInTestCase):
     def test_lex_comment(self):
         self.assertEqual(
-            lex(u"1 ; 2 \n 3"), List([Integer(1), Integer(3)]))
+            lex(u"1 ; 2 \n 3"), List([Integer.fromstr("1"), Integer.fromstr("3")]))
 
 
 class IntegerLexTest(BuiltInTestCase, LexTestCase):
     def test_lex_positive_number(self):
-        self.assertLexResult(u"123", Integer(123))
+        self.assertLexResult(u"123", Integer.fromstr("123"))
 
-        self.assertLexResult(u"0123", Integer(123))
+        self.assertLexResult(u"0123", Integer.fromstr("123"))
 
     def test_lex_negative_number(self):
-        self.assertLexResult(u"-123", Integer(-123))
+        self.assertLexResult(u"-123", Integer.fromstr("-123"))
 
     def test_lex_number_with_underscores(self):
-        self.assertLexResult(u"1_000", Integer(1000))
+        self.assertLexResult(u"1_000", Integer.fromstr("1000"))
 
     def test_lex_zero(self):
-        self.assertLexResult(u"0", Integer(0))
+        self.assertLexResult(u"0", Integer.fromstr("0"))
 
-        self.assertLexResult(u"-0", Integer(0))
+        self.assertLexResult(u"-0", Integer.fromstr("0"))
 
     def test_lex_invalid_number(self):
         self.assertTrifleError(
@@ -148,8 +148,8 @@ class FractionLexTest(BuiltInTestCase, LexTestCase):
         self.assertLexResult(u"1/3_0", Fraction(1, 30))
 
     def test_lex_fraction_to_integer(self):
-        self.assertLexResult(u"2/1", Integer(2))
-        self.assertLexResult(u"3/3", Integer(1))
+        self.assertLexResult(u"2/1", Integer.fromstr("2"))
+        self.assertLexResult(u"3/3", Integer.fromstr("1"))
 
     def test_lex_fraction_zero_denominator(self):
         self.assertTrifleError(
@@ -310,7 +310,7 @@ class NullLexTest(BuiltInTestCase, LexTestCase):
 class ParsingTest(BuiltInTestCase):
     def test_parse_list(self):
         self.assertEqual(parse_one(lex(u"(1 2)")),
-                         List([Integer(1), Integer(2)]))
+                         List([Integer.fromstr("1"), Integer.fromstr("2")]))
 
 
 class EvaluatingTypesTest(BuiltInTestCase):
@@ -331,7 +331,7 @@ class EvaluatingTypesTest(BuiltInTestCase):
     def test_eval_integer(self):
         self.assertEqual(
             self.eval(u"123"),
-            Integer(123))
+            Integer.fromstr("123"))
 
     def test_eval_float(self):
         self.assertEqual(
@@ -384,7 +384,7 @@ class EvaluatingTypesTest(BuiltInTestCase):
 
 class ReprTest(BuiltInTestCase):
     def test_list_repr(self):
-        list_val = List([Integer(1)])
+        list_val = List([Integer.fromstr("1")])
         self.assertEqual(list_val.repr(), '(1)')
 
     def test_bytes_repr(self):
@@ -411,8 +411,12 @@ class ReprTest(BuiltInTestCase):
         self.assertEqual(string_val.repr(), '"\\\\"')
 
     def test_integer_repr(self):
-        val = Integer(12)
+        val = Integer.fromstr("12")
         self.assertEqual(val.repr(), '12')
+
+    def test_big_integer_repr(self):
+        val = Integer.fromstr("12345678901234567890")
+        self.assertEqual(val.repr(), '12345678901234567890')
 
     def test_fraction_repr(self):
         val = Fraction(1, 12)
@@ -458,12 +462,12 @@ class EvaluatingLambdaTest(BuiltInTestCase):
     def test_call_lambda(self):
         self.assertEqual(
             self.eval(u"((lambda (x) x) 1)"),
-            Integer(1))
+            Integer.fromstr("1"))
 
     def test_call_lambda_last_value(self):
         self.assertEqual(
             self.eval(u"((lambda () 1 2))"),
-            Integer(2))
+            Integer.fromstr("2"))
 
     def test_call_not_lambda(self):
         self.assertEvalError(
@@ -479,7 +483,7 @@ class EvaluatingLambdaTest(BuiltInTestCase):
             u'((quote (1)))', wrong_type)
     
     def test_call_lambda_variable_arguments(self):
-        expected = List([Integer(1), Integer(2), Integer(3), Integer(4)])
+        expected = List([Integer.fromstr("1"), Integer.fromstr("2"), Integer.fromstr("3"), Integer.fromstr("4")])
         
         self.assertEqual(
             self.eval(u"((lambda (:rest args) args) 1 2 3 4)"),
@@ -523,7 +527,7 @@ class EvaluatingLambdaTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"((lambda () (set-symbol! (quote x) 2) x))"),
-            Integer(2))
+            Integer.fromstr("2"))
 
         self.assertEvalError(
             u"((lambda () (set-symbol! (quote x) 2)) x)", no_such_variable)
@@ -534,7 +538,7 @@ class EvaluatingLambdaTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) 1) ((lambda () (set-symbol! (quote x) 2))) x"),
-            Integer(2))
+            Integer.fromstr("2"))
 
     # TODO: also test for stack overflow inside macros.
     def test_stack_overflow(self):
@@ -577,12 +581,12 @@ class LetTest(BuiltInTestCase):
     def test_let(self):
         self.assertEqual(
             self.eval(u"(let (x 1) x)"),
-            Integer(1))
+            Integer.fromstr("1"))
 
     def test_let_access_previous_bindings(self):
         self.assertEqual(
             self.eval(u"(let (x 1 y (+ x 1)) y)"),
-            Integer(2))
+            Integer.fromstr("2"))
 
     def test_let_malformed_bindings(self):
         self.assertEvalError(
@@ -607,7 +611,7 @@ class LetTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) 1) (let (x 2) (set-symbol! (quote x) 3)) x"),
-            Integer(1))
+            Integer.fromstr("1"))
 
     def test_let_variables_dont_leak(self):
         """Ensure that variables defined in a let are undefined in the global scope.
@@ -624,7 +628,7 @@ class LetTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(let () (set-symbol! (quote x) 3)) x"),
-            Integer(3))
+            Integer.fromstr("3"))
 
 
 class QuoteTest(BuiltInTestCase):
@@ -653,10 +657,10 @@ class QuoteTest(BuiltInTestCase):
     def test_unquote(self):
         self.assertEqual(
             self.eval(u"(quote (unquote (+ 1 2)))"),
-            Integer(3))
+            Integer.fromstr("3"))
 
     def test_unquote_nested(self):
-        expected = List([Symbol(u'x'), Integer(1)])
+        expected = List([Symbol(u'x'), Integer.fromstr("1")])
         
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) 1) (quote (x (unquote x)))"),
@@ -704,13 +708,13 @@ class QuoteTest(BuiltInTestCase):
 class AddTest(BuiltInTestCase):
     def test_add_integers(self):
         self.assertEqual(self.eval(u"(+)"),
-                         Integer(0))
+                         Integer.fromstr("0"))
         
         self.assertEqual(self.eval(u"(+ 1)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
         
         self.assertEqual(self.eval(u"(+ 1 2)"),
-                         Integer(3))
+                         Integer.fromstr("3"))
 
     def test_add_floats(self):
         self.assertEqual(self.eval(u"(+ 1.0 2.0)"),
@@ -730,7 +734,7 @@ class AddTest(BuiltInTestCase):
                          Fraction(3, 2))
         
         self.assertEqual(self.eval(u"(+ 3/2 1/2)"),
-                         Integer(2))
+                         Integer.fromstr("2"))
         
     def test_invalid_type(self):
         self.assertEvalError(
@@ -740,13 +744,13 @@ class AddTest(BuiltInTestCase):
 class SubtractTest(BuiltInTestCase):
     def test_subtract(self):
         self.assertEqual(self.eval(u"(-)"),
-                         Integer(0))
+                         Integer.fromstr("0"))
         
         self.assertEqual(self.eval(u"(- 1)"),
-                         Integer(-1))
+                         Integer.fromstr("-1"))
         
         self.assertEqual(self.eval(u"(- 5 2)"),
-                         Integer(3))
+                         Integer.fromstr("3"))
 
     def test_subtract_floats(self):
         self.assertEqual(self.eval(u"(- 1.0)"),
@@ -772,7 +776,7 @@ class SubtractTest(BuiltInTestCase):
                          Fraction(1, 4))
 
         self.assertEqual(self.eval(u"(- 3/2 1/2)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
 
     def test_invalid_type(self):
         self.assertEvalError(
@@ -782,13 +786,13 @@ class SubtractTest(BuiltInTestCase):
 class MultiplyTest(BuiltInTestCase):
     def test_multiply(self):
         self.assertEqual(self.eval(u"(*)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
         
         self.assertEqual(self.eval(u"(* 2)"),
-                         Integer(2))
+                         Integer.fromstr("2"))
         
         self.assertEqual(self.eval(u"(* 2 3)"),
-                         Integer(6))
+                         Integer.fromstr("6"))
 
     def test_multiply_floats(self):
         self.assertEqual(self.eval(u"(* 2.0 3.0)"),
@@ -808,7 +812,7 @@ class MultiplyTest(BuiltInTestCase):
                          Fraction(2, 3))
         
         self.assertEqual(self.eval(u"(* 2 1/2)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
 
     def test_invalid_type(self):
         self.assertEvalError(
@@ -835,7 +839,7 @@ class DivideTest(BuiltInTestCase):
                          Fraction(3, 2))
         
         self.assertEqual(self.eval(u"(/ 1/2 1/2)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
         
     def test_divide_by_zero(self):
         result = self.eval(u"(/ 1 0)")
@@ -856,7 +860,7 @@ class DivideTest(BuiltInTestCase):
 class ModTest(BuiltInTestCase):
     def test_mod(self):
         self.assertEqual(self.eval(u"(mod 11 10)"),
-                         Integer(1))
+                         Integer.fromstr("1"))
 
     def test_mod_by_zero(self):
         self.assertEvalError(
@@ -880,10 +884,10 @@ class ModTest(BuiltInTestCase):
 class DivTest(BuiltInTestCase):
     def test_div(self):
         self.assertEqual(self.eval(u"(div 5 2)"),
-                         Integer(2))
+                         Integer.fromstr("2"))
 
         self.assertEqual(self.eval(u"(div -5 2)"),
-                         Integer(-3))
+                         Integer.fromstr("-3"))
 
     def test_div_by_zero(self):
         self.assertEvalError(
@@ -908,11 +912,11 @@ class IfTest(BuiltInTestCase):
     def test_if(self):
         self.assertEqual(
             self.eval(u"(if #true 2 3)"),
-            Integer(2))
+            Integer.fromstr("2"))
 
         self.assertEqual(
             self.eval(u"(if #false 4 5)"),
-            Integer(5))
+            Integer.fromstr("5"))
 
     def test_if_type_error(self):
         self.assertEvalError(
@@ -921,7 +925,7 @@ class IfTest(BuiltInTestCase):
     def test_if_two_args_evals_condition(self):
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) #false) (if x 2 3)"),
-            Integer(3))
+            Integer.fromstr("3"))
 
     def test_if_wrong_number_of_args(self):
         self.assertEvalError(
@@ -947,7 +951,7 @@ class WhileTest(BuiltInTestCase):
                 u"(set-symbol! (quote x) #true) (set-symbol! (quote y) 1)"
                 u"(while x (set-symbol! (quote x) #false) (set-symbol! (quote y) 2))"
                 u"y"),
-            Integer(2))
+            Integer.fromstr("2"))
         
     def test_while_wrong_number_of_args(self):
         self.assertEvalError(
@@ -1223,17 +1227,17 @@ class LengthTest(BuiltInTestCase):
     def test_length_list(self):
         self.assertEqual(
             self.eval(u"(length (quote (2 3)))"),
-            Integer(2))
+            Integer.fromstr("2"))
 
     def test_length_list_string(self):
         self.assertEqual(
             self.eval(u'(length "abc")'),
-            Integer(3))
+            Integer.fromstr("3"))
 
     def test_length_bytestring(self):
         self.assertEqual(
             self.eval(u'(length #bytes("abc"))'),
-            Integer(3))
+            Integer.fromstr("3"))
 
     def test_length_typeerror(self):
         self.assertEvalError(
@@ -1251,12 +1255,12 @@ class GetIndexTest(BuiltInTestCase):
     def test_get_index_list(self):
         self.assertEqual(
             self.eval(u"(get-index (quote (2 3)) 0)"),
-            Integer(2))
+            Integer.fromstr("2"))
 
     def test_get_index_bytestring(self):
         self.assertEqual(
             self.eval(u'(get-index #bytes("abc") 0)'),
-            Integer(97))
+            Integer.fromstr("97"))
 
     def test_get_index_string(self):
         self.assertEqual(
@@ -1266,7 +1270,7 @@ class GetIndexTest(BuiltInTestCase):
     def test_get_index_negative_index(self):
         self.assertEqual(
             self.eval(u"(get-index (quote (2 3)) -1)"),
-            Integer(3))
+            Integer.fromstr("3"))
 
     def test_get_index_negative_index_error(self):
         self.assertEvalError(
@@ -1299,7 +1303,7 @@ class GetIndexTest(BuiltInTestCase):
 
 class SetIndexTest(BuiltInTestCase):
     def test_set_index_list(self):
-        expected = List([Integer(1)])
+        expected = List([Integer.fromstr("1")])
         
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) (quote (0))) (set-index! x 0 1) x"),
@@ -1338,7 +1342,7 @@ class SetIndexTest(BuiltInTestCase):
             u'(set-index! #bytes("a") 0 256)', value_error)
         
     def test_set_index_negative(self):
-        expected = List([Integer(10), Integer(1)])
+        expected = List([Integer.fromstr("10"), Integer.fromstr("1")])
         
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) (quote (10 20))) (set-index! x -1 1) x"),
@@ -1382,14 +1386,14 @@ class SetIndexTest(BuiltInTestCase):
 
 class InsertTest(BuiltInTestCase):
     def test_insert(self):
-        expected = List([Integer(1), Integer(2)])
+        expected = List([Integer.fromstr("1"), Integer.fromstr("2")])
         
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) (quote (1))) (insert! x 1 2) x"),
             expected)
 
     def test_insert_negative(self):
-        expected = List([Integer(1), Integer(5), Integer(2)])
+        expected = List([Integer.fromstr("1"), Integer.fromstr("5"), Integer.fromstr("2")])
         
         self.assertEqual(
             self.eval(u"(set-symbol! (quote x) (quote (1 2))) (insert! x -1 5) x"),
@@ -1451,10 +1455,10 @@ class InsertTest(BuiltInTestCase):
 class EnvironmentVariablesTest(BuiltInTestCase):
     def test_evaluate_variable(self):
         env = Environment([Scope({
-            u'x': Integer(1),
+            u'x': Integer.fromstr("1"),
         })])
         self.assertEqual(evaluate(parse_one(lex(u"x")), env),
-                         Integer(1))
+                         Integer.fromstr("1"))
 
     def test_unbound_variable(self):
         self.assertEvalError(
@@ -1500,7 +1504,7 @@ class CallTest(BuiltInTestCase):
     def test_call_builtin_function(self):
         self.assertEqual(
             self.eval(u"(call + (quote (1 2 3)))"),
-            Integer(6)
+            Integer.fromstr("6")
         )
 
     def test_call_function_with_env(self):
@@ -1512,7 +1516,7 @@ class CallTest(BuiltInTestCase):
     def test_call_lambda_literal(self):
         self.assertEqual(
             self.eval(u"(call (lambda (x) x) (quote (1)))"),
-            Integer(1)
+            Integer.fromstr("1")
         )
 
     def test_call_evals_once(self):
@@ -1543,13 +1547,13 @@ class EvalTest(BuiltInTestCase):
     def test_eval(self):
         self.assertEqual(
             self.eval(u"(eval (quote (+ 1 2 3)))"),
-            Integer(6)
+            Integer.fromstr("6")
         )
 
     def test_eval_modifies_scope(self):
         self.assertEqual(
             self.eval(u'(set-symbol! (quote x) 0) (eval (quote (set-symbol! (quote x) 1))) x'),
-            Integer(1)
+            Integer.fromstr("1")
         )
 
 
@@ -1557,7 +1561,7 @@ class EvaluatingMacrosTest(BuiltInTestCase):
     def test_macro(self):
         self.assertEqual(
             self.eval(u"(macro just-x (ignored-arg) (quote x)) (set-symbol! (quote x) 1) (just-x y)"),
-            Integer(1)
+            Integer.fromstr("1")
         )
 
     def test_call_macro_too_few_args(self):
@@ -1578,7 +1582,7 @@ class EvaluatingMacrosTest(BuiltInTestCase):
                 u")"
                 u"(set-symbol! (quote x) 1)"
                 u"(when #true (set-symbol! (quote x) 2)) x"),
-            Integer(2)
+            Integer.fromstr("2")
         )
 
     def test_macro_bad_args_number(self):
@@ -2036,7 +2040,7 @@ class TryTest(BuiltInTestCase):
         """
         self.assertEqual(
             self.eval(u"(try 1 :catch no-such-variable e #null)"),
-            Integer(1))
+            Integer.fromstr("1"))
 
     def test_try_arity(self):
         # TODO: support multiple catch statements

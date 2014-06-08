@@ -226,11 +226,9 @@ def _lex(tokens):
                     
                 elif lexeme_name == INTEGER:
                     integer_string = remove_char(token, "_")
-                    try:
-                        lexed_tokens.append(Integer(int(integer_string)))
-                    except ValueError:
-                        return TrifleExceptionInstance(
-                            lex_failed, u"Invalid integer: '%s'" % token)
+
+                    # TODO: valid that the integer string is only numbers
+                    lexed_tokens.append(Integer.fromstr(integer_string))
                         
                 elif lexeme_name == FLOAT:
                     float_string = remove_char(token, "_")
@@ -261,7 +259,7 @@ def _lex(tokens):
                     fraction = Fraction(numerator, denominator)
 
                     if fraction.denominator == 1:
-                        lexed_tokens.append(Integer(fraction.numerator))
+                        lexed_tokens.append(Integer.fromint(fraction.numerator))
                     else:
                         lexed_tokens.append(fraction)
 
