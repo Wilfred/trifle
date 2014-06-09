@@ -37,6 +37,13 @@ Current status: Only a very basic interpreter implemented. Please see
 
 Trifle is:
 
+### Prototypes to Products
+
+Trifle will let users write a quick and dirty script that uses global
+variables and mutable state everywhere. Trifle will also let users unit
+test, lint, type check and add contracts to their code. Users will be
+able to choose how much safety they want.
+
 ### Modular
 
 Trifle actively avoids including a standard library. Instead, it opts
