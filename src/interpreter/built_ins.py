@@ -545,7 +545,7 @@ def coerce_numbers(nums):
 
     >>> coerce_numbers([Integer.fromint(1)])
     [Integer.fromint(1)]
-    >>> coerce_numbers([Fraction(1, 2), Float(1.0)])
+    >>> coerce_numbers([Fraction(RBigInt.fromint(1), RBigInt.fromint(2)), Float(1.0)])
     [Float(0.5), Float(1.0)]
 
     """
@@ -566,9 +566,11 @@ def coerce_numbers(nums):
             if isinstance(num, Integer):
                 # TODO: This could overflow if the integer is outside
                 # the range of acceptable floats.
-                result.append(Float(float(num.bigint_value.toint())))
+                result.append(Float(num.bigint_value.tofloat()))
             elif isinstance(num, Fraction):
-                result.append(Float(num.numerator * 1.0 / num.denominator))
+                # TODO: Carefully document and unit test the corner cases
+                # here.
+                result.append(Float(num.numerator.tofloat() / num.denominator.toint()))
             elif isinstance(num, Float):
                 result.append(num)
 
@@ -578,7 +580,7 @@ def coerce_numbers(nums):
         for num in nums:
             if isinstance(num, Integer):
                 # TODO: we need abitrary sized fractions too.
-                result.append(Fraction(num.bigint_value.toint(), 1))
+                result.append(Fraction(num.bigint_value, RBigInt.fromint(1)))
             elif isinstance(num, Fraction):
                 result.append(num)
 
@@ -615,17 +617,17 @@ class Add(Function):
             return Float(total)
 
         elif fraction_args:
-            total = Fraction(0, 1)
+            total = Fraction(RBigInt.fromint(0), RBigInt.fromint(1))
 
             for arg in args:
                 # a/b + c/d == (ad + bc) / bd
                 total = Fraction(
-                    total.numerator * arg.denominator + arg.numerator * total.denominator,
-                    arg.denominator * total.denominator
+                    total.numerator.mul(arg.denominator).add(arg.numerator.mul(total.denominator)),
+                    arg.denominator.mul(total.denominator)
                 )
 
-            if total.denominator == 1:
-                return Integer.fromint(total.numerator)
+            if total.denominator.eq(RBigInt.fromint(1)):
+                return Integer(total.numerator)
 
             return total
 
@@ -661,7 +663,7 @@ class Subtract(Function):
             if isinstance(args[0], Integer):
                 return Integer(args[0].bigint_value.neg())
             elif isinstance(args[0], Fraction):
-                return Fraction(-args[0].numerator, args[0].denominator)
+                return Fraction(args[0].numerator.neg(), args[0].denominator)
             else:
                 return Float(-args[0].float_value)
 
@@ -681,12 +683,12 @@ class Subtract(Function):
             for arg in args[1:]:
                 # a/b - c/d == (ad - bc) / bd
                 total = Fraction(
-                    total.numerator * arg.denominator - arg.numerator * total.denominator,
-                    arg.denominator * total.denominator
+                    total.numerator.mul(arg.denominator).sub(arg.numerator.mul(total.denominator)),
+                    arg.denominator.mul(total.denominator)
                 )
 
-            if total.denominator == 1:
-                return Integer.fromint(total.numerator)
+            if total.denominator.eq(RBigInt.fromint(1)):
+                return Integer(total.numerator)
 
             return total
 
@@ -724,16 +726,18 @@ class Multiply(Function):
             return Float(product)
 
         elif fraction_args:
-            product = Fraction(1, 1)
+            product = Fraction(RBigInt.fromint(1), RBigInt.fromint(1))
 
             for arg in args:
                 product = Fraction(
-                    product.numerator * arg.numerator,
-                    product.denominator * arg.denominator,
+                    product.numerator.mul(arg.numerator),
+                    product.denominator.mul(arg.denominator),
                 )
 
-            if product.denominator == 1:
-                return Integer.fromint(product.numerator)
+            # TODO: It would be convenient to have RBIGINT_ZERO and RBIGINT_ONE
+            # even if we don't cache small numbers the way Python does.
+            if product.denominator.eq(RBigInt.fromint(1)):
+                return Integer(product.numerator)
 
             return product
 
@@ -779,12 +783,12 @@ class Divide(Function):
 
         else:
             if isinstance(args[0], Integer):
-                quotient = Fraction(args[0].bigint_value.toint(), 1)
+                quotient = Fraction(args[0].bigint_value, RBigInt.fromint(1))
             elif isinstance(args[0], Fraction):
                 quotient = args[0]
             else:
                 # Never happens, but to keep RPython happy.
-                quotient = Fraction(1, 1)
+                quotient = Fraction(RBigInt.fromint(1), RBigInt.fromint(1))
                 
             for arg in args[1:]:
                 if isinstance(arg, Integer):
@@ -794,7 +798,7 @@ class Divide(Function):
                             u"Divided %s by %s" % (quotient.repr(), arg.repr()))
                     
                     quotient = Fraction(
-                        quotient.numerator, quotient.denominator * arg.bigint_value.toint()
+                        quotient.numerator, quotient.denominator.mul(arg.bigint_value)
                     )
 
                 elif isinstance(arg, Fraction):
@@ -803,12 +807,12 @@ class Divide(Function):
 
                     # a/b / b/c == ac/bd
                     quotient = Fraction(
-                        quotient.numerator * arg.denominator,
-                        quotient.denominator * arg.numerator,
+                        quotient.numerator.mul(arg.denominator),
+                        quotient.denominator.mul(arg.numerator),
                     )
 
-            if quotient.denominator == 1:
-                return Integer.fromint(quotient.numerator)
+            if quotient.denominator.eq(RBigInt.fromint(1)):
+                return Integer(quotient.numerator)
 
             return quotient
             
@@ -894,10 +898,10 @@ class LessThan(Function):
             for arg in args[1:]:
                 # To find out if a/b is less than c/d, we compare whether
                 # ad < bc. This is safe because b and d are always positive.
-                ad = previous_number.numerator * arg.denominator
-                bc = arg.numerator * previous_number.denominator
+                ad = previous_number.numerator.mul(arg.denominator)
+                bc = arg.numerator.mul(previous_number.denominator)
 
-                if not ad < bc:
+                if not ad.lt(bc):
                     return FALSE
 
                 previous_number = arg

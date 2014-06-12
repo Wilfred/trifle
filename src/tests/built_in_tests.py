@@ -2,6 +2,8 @@
 import unittest
 import os
 
+from rpython.rlib.rbigint import rbigint as RBigInt
+
 from mock import patch, Mock
 
 from interpreter.lexer import lex
@@ -142,10 +144,10 @@ class FloatLexTest(BuiltInTestCase, LexTestCase):
 
 class FractionLexTest(BuiltInTestCase, LexTestCase):
     def test_lex_fraction(self):
-        self.assertLexResult(u"1/3", Fraction(1, 3))
+        self.assertLexResult(u"1/3", Fraction(RBigInt.fromint(1), RBigInt.fromint(3)))
 
     def test_lex_fraction_underscore(self):
-        self.assertLexResult(u"1/3_0", Fraction(1, 30))
+        self.assertLexResult(u"1/3_0", Fraction(RBigInt.fromint(1), RBigInt.fromint(30)))
 
     def test_lex_fraction_to_integer(self):
         self.assertLexResult(u"2/1", Integer.fromstr("2"))
@@ -156,7 +158,7 @@ class FractionLexTest(BuiltInTestCase, LexTestCase):
             lex(u"1/0"), division_by_zero)
 
     def test_lex_fraction_not_simplified(self):
-        self.assertLexResult(u"2/6", Fraction(1, 3))
+        self.assertLexResult(u"2/6", Fraction(RBigInt.fromint(1), RBigInt.fromint(3)))
 
     def test_lex_invalid_fraction(self):
         self.assertTrifleError(
@@ -341,7 +343,7 @@ class EvaluatingTypesTest(BuiltInTestCase):
     def test_eval_fraction(self):
         self.assertEqual(
             self.eval(u"1/4"),
-            Fraction(1, 4))
+            Fraction(RBigInt.fromint(1), RBigInt.fromint(4)))
 
     def test_eval_null(self):
         self.assertEqual(
@@ -419,7 +421,7 @@ class ReprTest(BuiltInTestCase):
         self.assertEqual(val.repr(), '12345678901234567890')
 
     def test_fraction_repr(self):
-        val = Fraction(1, 12)
+        val = Fraction(RBigInt.fromint(1), RBigInt.fromint(12))
         self.assertEqual(val.repr(), '1/12')
 
     def test_float_repr(self):
@@ -728,10 +730,10 @@ class AddTest(BuiltInTestCase):
 
     def test_add_fractions(self):
         self.assertEqual(self.eval(u"(+ 1/3 1/2)"),
-                         Fraction(5, 6))
+                         Fraction(RBigInt.fromint(5), RBigInt.fromint(6)))
         
         self.assertEqual(self.eval(u"(+ 1 1/2)"),
-                         Fraction(3, 2))
+                         Fraction(RBigInt.fromint(3), RBigInt.fromint(2)))
         
         self.assertEqual(self.eval(u"(+ 3/2 1/2)"),
                          Integer.fromstr("2"))
@@ -770,10 +772,10 @@ class SubtractTest(BuiltInTestCase):
         
     def test_subtract_fractions(self):
         self.assertEqual(self.eval(u"(- 1/2)"),
-                         Fraction(-1, 2))
+                         Fraction(RBigInt.fromint(-1), RBigInt.fromint(2)))
 
         self.assertEqual(self.eval(u"(- 1/2 1/4)"),
-                         Fraction(1, 4))
+                         Fraction(RBigInt.fromint(1), RBigInt.fromint(4)))
 
         self.assertEqual(self.eval(u"(- 3/2 1/2)"),
                          Integer.fromstr("1"))
@@ -806,10 +808,10 @@ class MultiplyTest(BuiltInTestCase):
 
     def test_multiply_fractions(self):
         self.assertEqual(self.eval(u"(* 1/2 3/5)"),
-                         Fraction(3, 10))
+                         Fraction(RBigInt.fromint(3), RBigInt.fromint(10)))
         
         self.assertEqual(self.eval(u"(* 1/3 2)"),
-                         Fraction(2, 3))
+                         Fraction(RBigInt.fromint(2), RBigInt.fromint(3)))
         
         self.assertEqual(self.eval(u"(* 2 1/2)"),
                          Integer.fromstr("1"))
@@ -822,10 +824,10 @@ class MultiplyTest(BuiltInTestCase):
 class DivideTest(BuiltInTestCase):
     def test_divide(self):
         self.assertEqual(self.eval(u"(/ 1 2)"),
-                         Fraction(1, 2))
+                         Fraction(RBigInt.fromint(1), RBigInt.fromint(2)))
 
         self.assertEqual(self.eval(u"(/ 1 2 2)"),
-                         Fraction(1, 4))
+                         Fraction(RBigInt.fromint(1), RBigInt.fromint(4)))
 
     def test_divide_floats(self):
         self.assertEqual(self.eval(u"(/ 1.0 2)"),
@@ -836,7 +838,7 @@ class DivideTest(BuiltInTestCase):
         
     def test_divide_fractions(self):
         self.assertEqual(self.eval(u"(/ 1/2 1/3)"),
-                         Fraction(3, 2))
+                         Fraction(RBigInt.fromint(3), RBigInt.fromint(2)))
         
         self.assertEqual(self.eval(u"(/ 1/2 1/2)"),
                          Integer.fromstr("1"))
