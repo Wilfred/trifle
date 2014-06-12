@@ -1,30 +1,5 @@
-**Table of Contents** *generated with [autotoc](https://github.com/Wilfred/autotoc)*
-
-- [Trifle Lisp](#trifle-lisp)
-  - [Goals](#goals)
-    - [Modular](#modular)
-    - [Iterating](#iterating)
-    - [Self-documenting](#self-documenting)
-    - [Documented](#documented)
-    - [Expressive](#expressive)
-    - [Re-Examined](#re-examined)
-    - [Accessible](#accessible)
-    - [Friendly](#friendly)
-    - [Fast Enough](#fast-enough)
-    - [Missing Features](#missing-features)
-  - [Release History](#release-history)
-    - [v0.9](#v09)
-    - [v0.8](#v08)
-    - [v0.7](#v07)
-    - [v0.6](#v06)
-    - [v0.5](#v05)
-    - [v0.4](#v04)
-    - [v0.3](#v03)
-    - [v0.2](#v02)
-    - [v0.1](#v01)
-
 # Trifle Lisp
-#### *A sweet and friendly lisp*
+*A sweet and friendly lisp*
 
 Current status: Only a very basic interpreter implemented. Please see
 [the docs](docs/Introduction.md) to see what's available.
@@ -32,6 +7,36 @@ Current status: Only a very basic interpreter implemented. Please see
 [![Build Status](https://travis-ci.org/Wilfred/trifle.png?branch=master)](https://travis-ci.org/Wilfred/trifle)
 [![Coverage Status](https://coveralls.io/repos/Wilfred/trifle/badge.png)](https://coveralls.io/r/Wilfred/trifle)
 [![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master)
+
+<!-- markdown-toc start - Don't edit this section. Run M-x mardown-toc/generate-toc again -->
+**Table of Contents**
+
+- [Trifle Lisp](#trifle-lisp)
+    - [Goals](#goals)
+        - [Prototypes to Products](#prototypes-to-products)
+        - [Modular](#modular)
+        - [Iterating](#iterating)
+        - [Self-documenting](#self-documenting)
+        - [Documented](#documented)
+        - [Expressive](#expressive)
+        - [Re-Examined](#re-examined)
+        - [Accessible](#accessible)
+        - [Friendly](#friendly)
+        - [Fast Enough](#fast-enough)
+        - [Missing Features](#missing-features)
+    - [Release History](#release-history)
+        - [v0.10 (unreleased)](#v0.10-(unreleased))
+        - [v0.9](#v0.9)
+        - [v0.8](#v0.8)
+        - [v0.7](#v0.7)
+        - [v0.6](#v0.6)
+        - [v0.5](#v0.5)
+        - [v0.4](#v0.4)
+        - [v0.3](#v0.3)
+        - [v0.2](#v0.2)
+        - [v0.1](#v0.1)
+
+<!-- markdown-toc end -->
 
 ## Goals
 
