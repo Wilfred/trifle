@@ -90,9 +90,9 @@ def greatest_common_divisor(a, b):
     http://en.wikipedia.org/wiki/Euclidean_algorithm
 
     """
-    while b != 0:
+    while not b.eq(RBigInt.fromint(0)):
        temp = b
-       b = a % b
+       b = a.mod(b)
        a = temp
 
     return a
@@ -100,7 +100,8 @@ def greatest_common_divisor(a, b):
 
 class Fraction(TrifleType):
     def repr(self):
-        return u"%d/%d" % (self.numerator, self.denominator)
+        return u"%s/%s" % (unicode(self.numerator.str()),
+                           unicode(self.denominator.str()))
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:
@@ -110,16 +111,16 @@ class Fraction(TrifleType):
                 self.denominator == other.denominator)
 
     def __init__(self, numerator, denominator):
-        assert isinstance(numerator, int)
-        assert isinstance(denominator, int)
+        assert isinstance(numerator, RBigInt)
+        assert isinstance(denominator, RBigInt)
 
-        assert denominator > 0
+        assert denominator.gt(RBigInt.fromint(0))
 
         common_factor = greatest_common_divisor(
-            abs(numerator), abs(denominator))
-        if common_factor != 1:
-            numerator = numerator / common_factor
-            denominator = denominator / common_factor
+            numerator.abs(), denominator.abs())
+        if common_factor.ne(RBigInt.fromint(1)):
+            numerator = numerator.div(common_factor)
+            denominator = denominator.div(common_factor)
         
         self.numerator = numerator
         self.denominator = denominator

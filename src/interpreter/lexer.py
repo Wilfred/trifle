@@ -1,6 +1,7 @@
 # Sadly, re isn't available in rpython.
 from rpython.rlib.rsre import rsre_core
 from rpython.rlib.rsre.rpy import get_code
+from rpython.rlib.rbigint import rbigint as RBigInt
 
 from trifle_types import (
     OpenParen, CloseParen,
@@ -227,7 +228,7 @@ def _lex(tokens):
                 elif lexeme_name == INTEGER:
                     integer_string = remove_char(token, "_")
 
-                    # TODO: valid that the integer string is only numbers
+                    # TODO: validate that the integer string is only numbers
                     lexed_tokens.append(Integer.fromstr(integer_string))
                         
                 elif lexeme_name == FLOAT:
@@ -244,22 +245,19 @@ def _lex(tokens):
                     numerator = fraction_parts[0]
                     denominator = fraction_parts[1]
 
-                    try:
-                        numerator = int(numerator)
-                        denominator = int(denominator)
-                    except ValueError:
-                        return TrifleExceptionInstance(
-                            lex_failed, u"Invalid fraction: '%s'" % token)
+                    # TODO: validate that the fraction string is only numbers
+                    numerator = RBigInt.fromstr(numerator)
+                    denominator = RBigInt.fromstr(denominator)
 
-                    if denominator == 0:
+                    if denominator.eq(RBigInt.fromint(0)):
                         return TrifleExceptionInstance(
                             division_by_zero,
                             u"Can't have fraction denominator of zero: '%s'" % token)
 
                     fraction = Fraction(numerator, denominator)
 
-                    if fraction.denominator == 1:
-                        lexed_tokens.append(Integer.fromint(fraction.numerator))
+                    if fraction.denominator.eq(RBigInt.fromint(1)):
+                        lexed_tokens.append(Integer(fraction.numerator))
                     else:
                         lexed_tokens.append(fraction)
 

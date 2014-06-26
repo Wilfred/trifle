@@ -151,9 +151,12 @@ language, we are cheerfully ignoring these questions for now.
 
 ### v0.10 (unreleased)
 
+Fractions: Fraction numerator and denominators are now arbitrary size
+and never overflow. They were previously limited to 32 bits.
+
 Integers: Integers are now arbitrary size and never overflow. They
-were previously limited to 32 bits. Note that indexing into sequences
-above 2 ** 32 will not yet work.
+were also previously limited to 32 bits. Note that indexing into
+sequences above 2 ** 32 will not yet work.
 
 Parsing: Fixed a bug with `parse` where it sometimes returned a list
 of one error instead of throwing an error on invalid input.
