@@ -25,7 +25,7 @@ Current status: Only a very basic interpreter implemented. Please see
         - [Fast Enough](#fast-enough)
         - [Missing Features](#missing-features)
     - [Release History](#release-history)
-        - [v0.10 (unreleased)](#v0.10-(unreleased))
+        - [v0.10](#v0.10)
         - [v0.9](#v0.9)
         - [v0.8](#v0.8)
         - [v0.7](#v0.7)
@@ -149,7 +149,7 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
-### v0.10 (unreleased)
+### v0.10
 
 Fractions: Fraction numerator and denominators are now arbitrary size
 and never overflow. They were previously limited to 32 bits.
