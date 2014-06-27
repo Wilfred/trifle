@@ -2,4 +2,4 @@
 
 set -x
 
-PYTHONPATH=pypy nosetests prelude_tests.py --with-id --processes=`nproc` "$@"
+PYTHONPATH=pypy nosetests prelude_tests.py --with-yanc --with-id --processes=`nproc` "$@"
