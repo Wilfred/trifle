@@ -4,8 +4,8 @@
 Current status: Only a very basic interpreter implemented. Please see
 [the docs](docs/Introduction.md) to see what's available.
 
-[![Build Status](https://travis-ci.org/Wilfred/trifle.png?branch=master)](https://travis-ci.org/Wilfred/trifle)
-[![Coverage Status](https://coveralls.io/repos/Wilfred/trifle/badge.png)](https://coveralls.io/r/Wilfred/trifle)
+[![Build Status](https://img.shields.io/travis/Wilfred/trifle/master.svg)](https://travis-ci.org/Wilfred/trifle)
+[![Coverage Status](http://img.shields.io/coveralls/Wilfred/trifle/master.svg)](https://coveralls.io/r/Wilfred/trifle)
 [![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x mardown-toc/generate-toc again -->
