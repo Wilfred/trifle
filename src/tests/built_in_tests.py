@@ -1046,6 +1046,10 @@ class SameTest(BuiltInTestCase):
             self.eval(u"(same? #true (quote ()))"),
             FALSE)
 
+        self.assertEqual(
+            self.eval(u"(same? (quote foo) #true)"),
+            FALSE)
+
     def test_same_wrong_number_of_args(self):
         self.assertEvalError(
             u"(same? 1)", wrong_argument_number)
