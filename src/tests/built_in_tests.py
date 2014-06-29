@@ -1123,6 +1123,11 @@ class EqualTest(BuiltInTestCase):
             self.eval(u"(equal? (quote (1 (2))) (quote (1)))"),
             FALSE)
 
+        # Different types.
+        self.assertEqual(
+            self.eval(u"(equal? (quote ()) #null)"),
+            FALSE)
+
     def test_bytes_equal(self):
         self.assertEqual(
             self.eval(u'(equal? #bytes("foo") #bytes("foo"))'),
