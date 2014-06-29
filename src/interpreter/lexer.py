@@ -317,9 +317,6 @@ def _lex(tokens):
 def lex(text):
     try:
         raw_tokens = split_tokens(text)
-        if isinstance(raw_tokens, TrifleExceptionInstance):
-            return raw_tokens
-
         return _lex(raw_tokens)
     except LexFailed as e:
         return TrifleExceptionInstance(
