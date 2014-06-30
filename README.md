@@ -8,7 +8,7 @@ Current status: Only a very basic interpreter implemented. Please see
 [![Coverage Status](http://img.shields.io/coveralls/Wilfred/trifle/master.svg)](https://coveralls.io/r/Wilfred/trifle)
 [![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master)
 
-<!-- markdown-toc start - Don't edit this section. Run M-x mardown-toc/generate-toc again -->
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
 
 - [Trifle Lisp](#trifle-lisp)
