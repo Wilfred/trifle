@@ -48,6 +48,7 @@ no_such_variable = TrifleExceptionType(error, u"no-such-variable")
 
 # TODO: parse and lex errors should distinuish between bad input and
 # incomplete input, so our REPL knows when input is incomplete.
+# TODO: parse and lexing should inherit from a syntax error.
 parse_failed = TrifleExceptionType(error, u"parse-failed")
 
 

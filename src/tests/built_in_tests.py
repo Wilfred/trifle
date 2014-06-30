@@ -10,7 +10,7 @@ from interpreter.lexer import lex
 from interpreter.trifle_parser import parse_one, parse
 from interpreter.built_ins import Add, SetSymbol, If
 from interpreter.trifle_types import (
-    List, Integer, Float, Fraction,
+    Hashmap, List, Integer, Float, Fraction,
     Symbol, Keyword, String, Character,
     Lambda, Boolean,
     TRUE, FALSE, NULL,
@@ -197,6 +197,63 @@ class KeywordLexTest(BuiltInTestCase, LexTestCase):
         self.assertTrifleError(
             lex(u":123"), lex_failed)
 
+
+class HashmapParseTest(BuiltInTestCase, LexTestCase):
+    def test_parse_empty_hashmap(self):
+        self.assertEqual(parse_one(lex(u"{}")),
+                         Hashmap())
+
+    def test_parse_hashmap(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(2)
+        expected.dict[Integer.fromint(3)] = Integer.fromint(4)
+        
+        self.assertEqual(parse_one(lex((u"{1 2 3 4}"))), expected)
+
+    # TODOC the ability to use commas.
+    def test_parse_hashmap_comma(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(2)
+        expected.dict[Integer.fromint(3)] = Integer.fromint(4)
+        
+        self.assertEqual(parse_one(lex(u"{1 2, 3 4}")), expected)
+        
+    def test_hashmap_mismatched_curly_parens(self):
+        self.assertTrifleError(
+            parse_one(lex(u"{")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"(}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"{)")), parse_failed)
+
+    def test_hashmap_odd_number_elements(self):
+        self.assertTrifleError(
+            parse_one(lex(u"{1}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"{1 2 3}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"(1 {2})")), parse_failed)
+
+    def test_hashmap_duplicate_keys(self):
+        # Silly, but harmless. Last one wins.
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(3)
+        
+        self.assertEqual(parse_one(lex(u"{1 2, 1 3}")), expected)
+
+    def test_hashmap_unhashable_keys(self):
+        # TODO: add immutable strings.
+        self.assertTrifleError(
+            parse_one(lex(u'{"foo" 1}')), wrong_type)
+
+        
 class StringLexTest(BuiltInTestCase, LexTestCase):
     def test_lex_string(self):
         self.assertLexResult(u'"foo"', String(list(u'foo')))
@@ -396,6 +453,12 @@ class ReprTest(BuiltInTestCase):
     def test_list_repr(self):
         list_val = List([Integer.fromint(1)])
         self.assertEqual(list_val.repr(), '(1)')
+
+    def test_hashmap_repr(self):
+        hashmap_val = Hashmap()
+        hashmap_val.dict[Integer.fromint(1)] = Integer.fromint(2)
+        hashmap_val.dict[Integer.fromint(3)] = Integer.fromint(4)
+        self.assertEqual(hashmap_val.repr(), '{1 2, 3 4}')
 
     def test_bytes_repr(self):
         bytes_val = Bytestring([ord(c) for c in "\\ souffl\xc3\xa9"])
@@ -1185,6 +1248,27 @@ class EqualTest(BuiltInTestCase):
         # Different types.
         self.assertEqual(
             self.eval(u"(equal? (quote ()) #null)"),
+            FALSE)
+
+    def test_hashmaps_equal(self):
+        # Equal
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 2})"),
+            TRUE)
+
+        # Same length, different values.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 3})"),
+            FALSE)
+
+        # Different lengths.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 2, 3 4})"),
+            FALSE)
+
+        # Different types.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} #null)"),
             FALSE)
 
     def test_bytes_equal(self):

@@ -26,9 +26,10 @@ the data types they take as arguments.
 2.5. [Lists](Lists.md)  
 2.6. [Strings](Strings.md)  
 2.7. [Bytestrings](Bytestrings.md)  
-2.8. [Sequences](Sequences.md)  
-2.9. [File handles](File-Handles.md)  
-2.10. [Generic functions](Generic-Functions.md)
+2.8. [Hashmaps](Hashmaps.md)  
+2.9. [Sequences](Sequences.md)  
+2.10. [File handles](File-Handles.md)  
+2.11. [Generic functions](Generic-Functions.md)
 
 2.11. [Functions](Functions.md)  
 2.12. [Macros](Macros.md)

@@ -1,44 +1,107 @@
 # There's already a 'parser' in the Python standard library, so we're
 # forced to call this trifle_parser.py.
 
-from trifle_types import List, OpenParen, CloseParen, TrifleExceptionInstance
-from errors import parse_failed
+from trifle_types import (
+    List, Hashmap, Integer,
+    OpenParen, CloseParen, OpenCurlyParen, CloseCurlyParen,
+    TrifleExceptionInstance)
+from errors import parse_failed, wrong_type
 
 
-def parse_inner(tokens, top_level):
-    parse_tree = List()
+def list_to_hashmap(trifle_list):
+    """Convert (1 2 3 4) to {1 2, 3 4}, checking all the corner cases.
+
+    """
+    if len(trifle_list.values) % 2 != 0:
+        # TODO: This should be a syntax error.
+        return TrifleExceptionInstance(
+            parse_failed,
+            u'Hashmaps must have an even number of elements, but got %d!' % len(trifle_list.values))
+
+    # TODO: Once we have immutable containers, we should allow these as keys too.
+    keys = []
+    values = []
+    for i in range(len(trifle_list.values) / 2):
+        keys.append(trifle_list.values[2 * i])
+        values.append(trifle_list.values[2 * i + 1])
+
+    for key in keys:
+        if not isinstance(key, Integer):
+            # TODO: we may want a more specific error here too.
+            # TODO: add support for more types (at least symbols, chars and other types of number)
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"You can't use %s as a hashmap key. Keys must be integers" % key.repr()
+            )
+
+    hashmap = Hashmap()
+    for i in range(len(keys)):
+        hashmap.dict[keys[i]] = values[i]
+
+    return hashmap
+
+
+def parse_inner(tokens, top_level, expecting_list):
+    parsed_expressions = List()
     saw_closing_paren = False
 
+    # TODO: This could cause a stack overflow for deeply nested literals.
     while tokens:
         token = tokens.pop(0)
 
         if isinstance(token, OpenParen):
-            parsed = parse_inner(tokens, top_level=False)
+            parsed = parse_inner(tokens, top_level=False, expecting_list=True)
+
+            if isinstance(parsed, TrifleExceptionInstance):
+                return parsed
+
+            parsed_expressions.append(parsed)
+        elif isinstance(token, OpenCurlyParen):
+            parsed = parse_inner(tokens, top_level=False, expecting_list=False)
 
             if isinstance(parsed, TrifleExceptionInstance):
                 return parsed
                 
-            parse_tree.append(parsed)
+            parsed_expressions.append(parsed)
         elif isinstance(token, CloseParen):
             if top_level:
                 return TrifleExceptionInstance(
                     parse_failed,
-                    u'Closing paren does not have matching open paren.')
+                    u'Closing ) has no matching opening (.')
+            elif not expecting_list:
+                return TrifleExceptionInstance(
+                    parse_failed,
+                    u'Closing ) does not match opening {.')
+            else:
+                saw_closing_paren = True
+                break
+        elif isinstance(token, CloseCurlyParen):
+            if top_level:
+                return TrifleExceptionInstance(
+                    parse_failed,
+                    u'Closing } has no matching opening {.')
+            elif expecting_list:
+                return TrifleExceptionInstance(
+                    parse_failed,
+                    u'Closing } does not match opening (.')
             else:
                 saw_closing_paren = True
                 break
         else:
-            parse_tree.append(token)
+            parsed_expressions.append(token)
 
     if not top_level and not saw_closing_paren:
         return TrifleExceptionInstance(
             parse_failed, u'Open paren was not closed.')
 
-    return parse_tree
+    if expecting_list:
+        return parsed_expressions
+    else:
+        return list_to_hashmap(parsed_expressions)
 
 
 def parse(tokens):
-    return parse_inner(tokens.values, True)
+    return parse_inner(tokens.values, top_level=True, expecting_list=True)
 
 
 def parse_one(tokens):

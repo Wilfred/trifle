@@ -4,7 +4,7 @@ from rpython.rlib.rsre.rpy import get_code
 from rpython.rlib.rbigint import rbigint as RBigInt
 
 from trifle_types import (
-    OpenParen, CloseParen,
+    OpenParen, CloseParen, OpenCurlyParen, CloseCurlyParen,
     Integer, Float, Fraction,
     TrifleExceptionInstance,
     Symbol, Keyword, List,
@@ -19,6 +19,8 @@ WHITESPACE = 'whitespace'
 COMMENT = 'comment'
 OPEN_PAREN = 'open-paren'
 CLOSE_PAREN = 'close-paren'
+OPEN_CURLY_PAREN = 'open-curly-paren'
+CLOSE_CURLY_PAREN = 'close-curly-paren'
 INTEGER = 'integer'
 FRACTION = 'fraction'
 SYMBOL = 'symbol'
@@ -38,6 +40,8 @@ TOKENS = [
     (COMMENT, get_code(";[^\n]*")),
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
+    (OPEN_CURLY_PAREN, get_code(r"\{")),
+    (CLOSE_CURLY_PAREN, get_code(r"\}")),
 
     (ATOM, get_code('[:a-zA-Z0-9*/+?!<>=_.-]+')),
     (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"')),
@@ -52,6 +56,8 @@ TOKENS = [
 LEXEMES = [
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
+    (OPEN_CURLY_PAREN, get_code(r"\{")),
+    (CLOSE_CURLY_PAREN, get_code(r"\}")),
 
     (STRING, get_code(r'"([^"\\]|\\\\|\\n|\\")*\"$')),
     (BYTESTRING, get_code(r'#bytes\("[a-zA-Z0-9\\]*"\)')),
@@ -217,6 +223,11 @@ def _lex(tokens):
                 elif lexeme_name == CLOSE_PAREN:
                     lexed_tokens.append(CloseParen())
                     
+                elif lexeme_name == OPEN_CURLY_PAREN:
+                    lexed_tokens.append(OpenCurlyParen())
+                elif lexeme_name == CLOSE_CURLY_PAREN:
+                    lexed_tokens.append(CloseCurlyParen())
+
                 elif lexeme_name == BOOLEAN:
                     if token == u'#true':
                         lexed_tokens.append(TRUE)
