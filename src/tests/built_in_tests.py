@@ -521,6 +521,12 @@ class EvaluatingLambdaTest(BuiltInTestCase):
         self.assertTrue(isinstance(lambda_obj, Lambda),
                         "Expected a lambda object but got a %s" % lambda_obj.__class__)
 
+    def test_call_lambda_repeated_args(self):
+        # TODO: this should be a syntax error
+        # TODO: ideally this would happen without calling the lambda
+        self.assertEvalError(
+            u"((lambda (x x) 1) 1 2)",
+            value_error)
 
     def test_lambda_scope_doesnt_leak(self):
         """Ensure that defining a variable inside a lambda is accessible

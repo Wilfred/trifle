@@ -149,6 +149,11 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.11 (unreleased)
+
+It's now an error to repeat parameters (e.g. calling
+`(lambda (x x) #null)`) in a function or macro.
+
 ### v0.10
 
 Fractions: Fraction numerator and denominators are now arbitrary size

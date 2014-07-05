@@ -1,8 +1,7 @@
 from trifle_types import List, Symbol, Keyword, TrifleExceptionInstance
-from errors import ArityError, wrong_type
+from errors import ArityError, wrong_type, value_error
 
 
-# TODO: (lambda (x x) 1) should be an error.
 def validate_parameters(parameter_list):
     """Ensure that parameter_list is a trifle list that only contains
     variables, or :rest in the correct position.
@@ -13,10 +12,22 @@ def validate_parameters(parameter_list):
             wrong_type,
             u"Parameter lists must be lists, but got: %s"
             % parameter_list.repr())
+
+    # Poor man's set: RPython doesn't support proper sets:
+    # http://stackoverflow.com/q/4741058
+    seen_symbols = {}
     
     for index, param in enumerate(parameter_list.values):
         if isinstance(param, Symbol):
-            continue
+
+            if param.symbol_name in seen_symbols:
+                return TrifleExceptionInstance(
+                    value_error,
+                    u"Repeated parameter in parameter list: %s" %
+                    param.repr())
+            else:
+                seen_symbols[param.symbol_name] = True
+                continue
 
         if isinstance(param, Keyword):
             if param.symbol_name == u'rest':
