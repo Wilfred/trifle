@@ -202,6 +202,8 @@ class StringLexTest(BuiltInTestCase, LexTestCase):
 
         self.assertLexResult(u'"foo\nbar"', String(list(u'foo\nbar')))
 
+        self.assertLexResult(u'"foo,"', String(list(u'foo,')))
+
     def test_lex_non_ascii_string(self):
         self.assertLexResult(u'"flambé"', String(list(u'flambé')))
 
