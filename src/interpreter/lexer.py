@@ -34,7 +34,7 @@ HASH_LITERAL = 'hash_literal'
 
 # Tokens are used to split strings into coarse categories.
 TOKENS = [
-    (WHITESPACE, get_code(r"\s+")),
+    (WHITESPACE, get_code(r"(,|\s)+")),
     (COMMENT, get_code(";[^\n]*")),
     (OPEN_PAREN, get_code(r"\(")),
     (CLOSE_PAREN, get_code(r"\)")),
