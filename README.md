@@ -25,6 +25,7 @@ Current status: Only a very basic interpreter implemented. Please see
         - [Fast Enough](#fast-enough)
         - [Missing Features](#missing-features)
     - [Release History](#release-history)
+        - [v0.11 (unreleased)](#v011-unreleased)
         - [v0.10](#v010)
         - [v0.9](#v09)
         - [v0.8](#v08)
@@ -153,6 +154,9 @@ language, we are cheerfully ignoring these questions for now.
 
 It's now an error to repeat parameters (e.g. calling
 `(lambda (x x) #null)`) in a function or macro.
+
+Commas are now treated as whitespace, so `(1, 2, 3)` is a valid list
+literal.
 
 ### v0.10
 

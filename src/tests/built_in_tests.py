@@ -314,6 +314,11 @@ class ParsingTest(BuiltInTestCase):
         self.assertEqual(parse_one(lex(u"(1 2)")),
                          List([Integer.fromint(1), Integer.fromint(2)]))
 
+    def test_parse_list_with_commas(self):
+        self.assertEqual(parse_one(lex(u"(1, 2, 3,)")),
+                         List([Integer.fromint(1), Integer.fromint(2),
+                               Integer.fromint(3)]))
+
 
 class EvaluatingTypesTest(BuiltInTestCase):
     # TODO: this should be a syntax error.
