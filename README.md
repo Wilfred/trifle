@@ -158,6 +158,9 @@ It's now an error to repeat parameters (e.g. calling
 Commas are now treated as whitespace, so `(1, 2, 3)` is a valid list
 literal.
 
+Fixed equality bugs in fractions and keywords. Fixed an equality bug
+with booleans returned from `defined?`.
+
 ### v0.10
 
 Fractions: Fraction numerator and denominators are now arbitrary size
