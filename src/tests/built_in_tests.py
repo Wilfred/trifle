@@ -18,7 +18,7 @@ from interpreter.trifle_types import (
     TrifleExceptionInstance)
 from interpreter.evaluator import evaluate, is_thrown_exception
 from interpreter.errors import (
-    error, lex_failed, parse_failed,
+    error, lex_failed, parse_failed, missing_key,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
@@ -35,7 +35,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
-        assert isinstance(program, unicode)
+        assert isinstance(program, unicode), "Source code must be unicode, not %s." % type(program)
 
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
@@ -1614,6 +1614,28 @@ class InsertTest(BuiltInTestCase):
             u"(insert! (quote ()) 0.0 0)", wrong_type)
 
 
+class GetKeyTest(BuiltInTestCase):
+    def test_get_key_present(self):
+        self.assertEqual(
+            self.eval(u"(get-key {1 2} 1)"),
+            Integer.fromint(2))
+
+    def test_get_key_missing(self):
+        self.assertEvalError(
+            u"(get-key {1 2} 0)", missing_key)
+
+    def test_get_key_wrong_type(self):
+        self.assertEvalError(
+            u'(get-key #null 0)', wrong_type)
+
+    def test_get_key_arity(self):
+        self.assertEvalError(
+            u'(get-key {})', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(get-key {} 0 0)', wrong_argument_number)
+
+
 class EnvironmentVariablesTest(BuiltInTestCase):
     def test_evaluate_variable(self):
         env = Environment([Scope({
@@ -2070,6 +2092,33 @@ class ListPredicateTest(BuiltInTestCase):
 
         self.assertEvalError(
             u'(list? #null #null)', wrong_argument_number)
+
+
+class HashmapPredicateTest(BuiltInTestCase):
+    def test_is_hashmap(self):
+        self.assertEqual(
+            self.eval(u'(hashmap? {})'),
+            TRUE)
+
+    def test_is_not_hashmap(self):
+        self.assertEqual(
+            self.eval(u'(hashmap? #bytes(""))'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(hashmap? #null)'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(hashmap? 1.0)'),
+            FALSE)
+
+    def test_is_hashmap_arity(self):
+        self.assertEvalError(
+            u'(hashmap?)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(hashmap? #null #null)', wrong_argument_number)
 
 
 class StringPredicateTest(BuiltInTestCase):

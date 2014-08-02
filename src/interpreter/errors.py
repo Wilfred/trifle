@@ -56,6 +56,7 @@ lex_failed = TrifleExceptionType(error, u"lex-failed")
 
 
 # TODO: this name is a Pythonism, can we do better?
+# TODO: we need a separate index-out-of-range-error.
 value_error = TrifleExceptionType(error, u"value-error")
 
 
@@ -65,6 +66,9 @@ wrong_type = TrifleExceptionType(error, u"wrong-type")
 
 
 wrong_argument_number = TrifleExceptionType(error, u"wrong-argument-number")
+
+
+missing_key = TrifleExceptionType(error, u"missing-key")
 
 
 division_by_zero = TrifleExceptionType(error, u"division-by-zero")
