@@ -1,5 +1,6 @@
 import os
 from rpython.rlib.rbigint import rbigint as RBigInt
+from rpython.rlib.objectmodel import r_dict
 
 """Note that 'types' is part of the python standard library, so we're
 forced to name this file trifle_types.
@@ -12,7 +13,8 @@ for convenience when testing.
 def is_equal(x, y):
     """Return True if x and y are equal.
 
-    TODO: fix the potential stack overflow here for deep lists.
+    TODO: fix the potential stack overflow here for deeply nested
+    lists and hashmaps.
 
     """
     # TODO: Once we have proper interning, we should be able to use `x
@@ -86,6 +88,23 @@ def is_equal(x, y):
             for i in range(len(x.values)):
                 if not is_equal(x.values[i], y.values[i]):
                     return False
+            return True
+
+        return False
+
+    elif isinstance(x, Hashmap):
+        if isinstance(y, Hashmap):
+            if len(x.dict.keys()) != len(y.dict.keys()):
+                return False
+
+            for key, x_value in x.dict.iteritems():
+                y_value = y.dict.get(key, None)
+
+                if y_value is None:
+                    return False
+                elif not is_equal(x_value, y_value):
+                    return False
+
             return True
 
         return False
@@ -268,6 +287,29 @@ class Character(TrifleType):
         self.character = character
 
 
+def hash_trifle_type(trifle_value):
+    if isinstance(trifle_value, Integer):
+        return trifle_value.bigint_value.hash()
+    else:
+        assert False, "TODO: hash more Trifle types."
+
+
+class Hashmap(TrifleType):
+    def __init__(self):
+        self.dict = r_dict(is_equal, hash_trifle_type)
+
+    def __eq__(self, other):
+        return is_equal(self, other)
+
+    def __repr__(self):
+        return self.repr()
+
+    # TODO: fix infinite loop for hashmaps that contain themselves.
+    def repr(self):
+        element_reprs = [key.repr() + u" " + value.repr() for key, value in self.dict.iteritems()]
+        return u"{%s}" % u", ".join(element_reprs)
+
+
 class String(TrifleType):
     def repr(self):
         printable_chars = []
@@ -309,7 +351,7 @@ class List(TrifleType):
     def append(self, value):
         self.values.append(value)
 
-    # todo: fix infinite loop for lists that contain themselves
+    # TODO: fix infinite loop for lists that contain themselves
     def repr(self):
         element_reprs = [element.repr() for element in self.values]
         return u"(%s)" % u" ".join(element_reprs)
@@ -516,4 +558,12 @@ class OpenParen(TrifleType):
 
 
 class CloseParen(TrifleType):
+    pass
+
+
+class OpenCurlyParen(TrifleType):
+    pass
+
+
+class CloseCurlyParen(TrifleType):
     pass

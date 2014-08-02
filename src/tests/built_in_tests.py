@@ -10,7 +10,7 @@ from interpreter.lexer import lex
 from interpreter.trifle_parser import parse_one, parse
 from interpreter.built_ins import Add, SetSymbol, If
 from interpreter.trifle_types import (
-    List, Integer, Float, Fraction,
+    Hashmap, List, Integer, Float, Fraction,
     Symbol, Keyword, String, Character,
     Lambda, Boolean,
     TRUE, FALSE, NULL,
@@ -18,7 +18,7 @@ from interpreter.trifle_types import (
     TrifleExceptionInstance)
 from interpreter.evaluator import evaluate, is_thrown_exception
 from interpreter.errors import (
-    error, lex_failed, parse_failed,
+    error, lex_failed, parse_failed, missing_key,
     file_not_found, value_error, stack_overflow,
     division_by_zero, wrong_type, no_such_variable,
     changing_closed_handle, wrong_argument_number)
@@ -35,7 +35,7 @@ class BuiltInTestCase(unittest.TestCase):
         the last expression.
 
         """
-        assert isinstance(program, unicode)
+        assert isinstance(program, unicode), "Source code must be unicode, not %s." % type(program)
 
         parse_tree = parse(lex(program))
         if isinstance(parse_tree, TrifleExceptionInstance):
@@ -197,6 +197,63 @@ class KeywordLexTest(BuiltInTestCase, LexTestCase):
         self.assertTrifleError(
             lex(u":123"), lex_failed)
 
+
+class HashmapParseTest(BuiltInTestCase, LexTestCase):
+    def test_parse_empty_hashmap(self):
+        self.assertEqual(parse_one(lex(u"{}")),
+                         Hashmap())
+
+    def test_parse_hashmap(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(2)
+        expected.dict[Integer.fromint(3)] = Integer.fromint(4)
+        
+        self.assertEqual(parse_one(lex((u"{1 2 3 4}"))), expected)
+
+    # TODOC the ability to use commas.
+    def test_parse_hashmap_comma(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(2)
+        expected.dict[Integer.fromint(3)] = Integer.fromint(4)
+        
+        self.assertEqual(parse_one(lex(u"{1 2, 3 4}")), expected)
+        
+    def test_hashmap_mismatched_curly_parens(self):
+        self.assertTrifleError(
+            parse_one(lex(u"{")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"(}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"{)")), parse_failed)
+
+    def test_hashmap_odd_number_elements(self):
+        self.assertTrifleError(
+            parse_one(lex(u"{1}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"{1 2 3}")), parse_failed)
+
+        self.assertTrifleError(
+            parse_one(lex(u"(1 {2})")), parse_failed)
+
+    def test_hashmap_duplicate_keys(self):
+        # Silly, but harmless. Last one wins.
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(3)
+        
+        self.assertEqual(parse_one(lex(u"{1 2, 1 3}")), expected)
+
+    def test_hashmap_unhashable_keys(self):
+        # TODO: add immutable strings.
+        self.assertTrifleError(
+            parse_one(lex(u'{"foo" 1}')), wrong_type)
+
+        
 class StringLexTest(BuiltInTestCase, LexTestCase):
     def test_lex_string(self):
         self.assertLexResult(u'"foo"', String(list(u'foo')))
@@ -396,6 +453,12 @@ class ReprTest(BuiltInTestCase):
     def test_list_repr(self):
         list_val = List([Integer.fromint(1)])
         self.assertEqual(list_val.repr(), '(1)')
+
+    def test_hashmap_repr(self):
+        hashmap_val = Hashmap()
+        hashmap_val.dict[Integer.fromint(1)] = Integer.fromint(2)
+        hashmap_val.dict[Integer.fromint(3)] = Integer.fromint(4)
+        self.assertEqual(hashmap_val.repr(), '{1 2, 3 4}')
 
     def test_bytes_repr(self):
         bytes_val = Bytestring([ord(c) for c in "\\ souffl\xc3\xa9"])
@@ -1187,6 +1250,27 @@ class EqualTest(BuiltInTestCase):
             self.eval(u"(equal? (quote ()) #null)"),
             FALSE)
 
+    def test_hashmaps_equal(self):
+        # Equal
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 2})"),
+            TRUE)
+
+        # Same length, different values.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 3})"),
+            FALSE)
+
+        # Different lengths.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} {1 2, 3 4})"),
+            FALSE)
+
+        # Different types.
+        self.assertEqual(
+            self.eval(u"(equal? {1 2} #null)"),
+            FALSE)
+
     def test_bytes_equal(self):
         self.assertEqual(
             self.eval(u'(equal? #bytes("foo") #bytes("foo"))'),
@@ -1528,6 +1612,75 @@ class InsertTest(BuiltInTestCase):
         # second argument must be an integer
         self.assertEvalError(
             u"(insert! (quote ()) 0.0 0)", wrong_type)
+
+
+class GetKeyTest(BuiltInTestCase):
+    def test_get_key_present(self):
+        self.assertEqual(
+            self.eval(u"(get-key {1 2} 1)"),
+            Integer.fromint(2))
+
+    def test_get_key_missing(self):
+        self.assertEvalError(
+            u"(get-key {1 2} 0)", missing_key)
+
+    def test_get_key_wrong_type(self):
+        self.assertEvalError(
+            u'(get-key #null 0)', wrong_type)
+
+    def test_get_key_arity(self):
+        self.assertEvalError(
+            u'(get-key {})', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(get-key {} 0 0)', wrong_argument_number)
+
+
+class SetKeyTest(BuiltInTestCase):
+    def test_set_key(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(3)
+        
+        self.assertEqual(
+            self.eval(u"(set-symbol! (quote x) {1 2}) (set-key! x 1 3) x"), expected)
+
+    def test_set_key_returns_null(self):
+        self.assertEqual(
+            self.eval(u"(set-key! {} 1 3)"), NULL)
+
+    def test_set_key_wrong_type(self):
+        self.assertEvalError(
+            u'(set-key! #null 0 1)', wrong_type)
+
+    def test_set_key_unhashable_type(self):
+        self.assertEvalError(
+            u'(set-key! {} "foo" 1)', wrong_type)
+
+    def test_set_key_arity(self):
+        self.assertEvalError(
+            u'(set-key! {} 0)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(set-key! {} 0 0 0)', wrong_argument_number)
+
+
+class GetItemsTest(BuiltInTestCase):
+    def test_get_items(self):
+        expected = self.eval(u"(quote ((1 2)))")
+        
+        self.assertEqual(
+            self.eval(u"(get-items {1 2})"), expected)
+
+    def test_get_items_wrong_type(self):
+        self.assertEvalError(
+            u'(get-items #null)', wrong_type)
+
+    def test_get_items_arity(self):
+        self.assertEvalError(
+            u'(get-items)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(get-items {} 0)', wrong_argument_number)
 
 
 class EnvironmentVariablesTest(BuiltInTestCase):
@@ -1986,6 +2139,33 @@ class ListPredicateTest(BuiltInTestCase):
 
         self.assertEvalError(
             u'(list? #null #null)', wrong_argument_number)
+
+
+class HashmapPredicateTest(BuiltInTestCase):
+    def test_is_hashmap(self):
+        self.assertEqual(
+            self.eval(u'(hashmap? {})'),
+            TRUE)
+
+    def test_is_not_hashmap(self):
+        self.assertEqual(
+            self.eval(u'(hashmap? #bytes(""))'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(hashmap? #null)'),
+            FALSE)
+
+        self.assertEqual(
+            self.eval(u'(hashmap? 1.0)'),
+            FALSE)
+
+    def test_is_hashmap_arity(self):
+        self.assertEvalError(
+            u'(hashmap?)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(hashmap? #null #null)', wrong_argument_number)
 
 
 class StringPredicateTest(BuiltInTestCase):

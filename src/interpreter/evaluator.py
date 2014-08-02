@@ -1,5 +1,5 @@
 from trifle_types import (
-    List, Bytestring, Character, Symbol,
+    List, Bytestring, Hashmap, Character, Symbol,
     Integer, Float, Fraction,
     Null, NULL,
     Function, FunctionWithEnv, Lambda, Macro, Boolean,
@@ -375,6 +375,12 @@ def evaluate_value(value, environment):
     elif isinstance(value, Bytestring):
         byte_list = value.byte_value
         return Bytestring([byte for byte in byte_list])
+    # Likewise for hashmap literals.
+    # TODO: Should this be a deep copy?
+    elif isinstance(value, Hashmap):
+        hashmap = Hashmap()
+        hashmap.dict = value.dict.copy()
+        return hashmap
         
     elif isinstance(value, Character):
         return value

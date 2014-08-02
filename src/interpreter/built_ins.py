@@ -1,19 +1,20 @@
 from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           Integer, Float, Fraction, RBigInt,
-                          List, Keyword,
+                          List, Hashmap, Keyword,
                           FileHandle, Bytestring, Character,
-                          Boolean, TRUE, FALSE, NULL, Symbol, String,
+                          TRUE, FALSE, NULL, Symbol, String,
                           TrifleExceptionInstance, TrifleExceptionType,
                           is_equal)
 from errors import (
     ArityError, changing_closed_handle, division_by_zero,
-    wrong_type, file_not_found, value_error,
+    wrong_type, file_not_found, value_error, missing_key,
 )
 from almost_python import deepcopy, copy, raw_input, list
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
 from arguments import check_args
+from hashable import check_hashable
 
 
 class SetSymbol(FunctionWithEnv):
@@ -879,6 +880,17 @@ class ListPredicate(Function):
             return FALSE
 
 
+class HashmapPredicate(Function):
+    def call(self, args):
+        check_args(u'hashmap?', args, 1, 1)
+        value = args[0]
+
+        if isinstance(value, Hashmap):
+            return TRUE
+        else:
+            return FALSE
+
+
 class StringPredicate(Function):
     def call(self, args):
         check_args(u'string?', args, 1, 1)
@@ -960,6 +972,68 @@ class GetIndex(Function):
             return Integer.fromint(sequence.byte_value[index.bigint_value.toint()])
         elif isinstance(sequence, String):
             return Character(sequence.string[index.bigint_value.toint()])
+
+
+class GetKey(Function):
+    def call(self, args):
+        check_args(u'get-key', args, 2, 2)
+        hashmap = args[0]
+        key = args[1]
+
+        if not isinstance(hashmap, Hashmap):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to get-key must be a hashmap, but got: %s"
+                % hashmap.repr())
+
+        value = hashmap.dict.get(key, None)
+
+        if value is None:
+            return TrifleExceptionInstance(
+                missing_key,
+                u"Key %s not found in hashmap" % key.repr()
+            )
+
+        return value
+
+
+class SetKey(Function):
+    def call(self, args):
+        check_args(u'set-key!', args, 3, 3)
+        hashmap = args[0]
+        key = args[1]
+        value = args[2]
+
+        if not isinstance(hashmap, Hashmap):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to set-key! must be a hashmap, but got: %s"
+                % hashmap.repr())
+
+        is_hashable_error = check_hashable([key])
+        if isinstance(is_hashable_error, TrifleExceptionInstance):
+            return is_hashable_error
+
+        hashmap.dict[key] = value
+        return NULL
+
+
+class GetItems(Function):
+    def call(self, args):
+        check_args(u'get-items', args, 1, 1)
+        hashmap = args[0]
+
+        if not isinstance(hashmap, Hashmap):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to get-items must be a hashmap, but got: %s"
+                % hashmap.repr())
+
+        items = List()
+        for key, value in hashmap.dict.iteritems():
+            items.append(List([key, value]))
+
+        return items
 
 
 class Length(Function):
