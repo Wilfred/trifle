@@ -83,6 +83,8 @@ class Environment(object):
         return Environment([self.scopes[0]])
 
     def set(self, symbol, value):
+        assert isinstance(symbol, unicode)
+        
         # If the variable is already defined, update it in the
         # innermost scope that it is defined in.
         for scope in reversed(self.scopes):
