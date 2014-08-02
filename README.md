@@ -25,7 +25,7 @@ Current status: Only a very basic interpreter implemented. Please see
         - [Fast Enough](#fast-enough)
         - [Missing Features](#missing-features)
     - [Release History](#release-history)
-        - [v0.11 (unreleased)](#v011-unreleased)
+        - [v0.11](#v011)
         - [v0.10](#v010)
         - [v0.9](#v09)
         - [v0.8](#v08)
@@ -150,7 +150,7 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
-### v0.11 (unreleased)
+### v0.11
 
 Added hashmaps, e.g. `{1 2, 3 4}`. Please see the docs for a full
 description. Added the functions `hashmap?`, `get-key`, `get-items`
