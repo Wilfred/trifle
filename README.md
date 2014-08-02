@@ -22,7 +22,7 @@ Current status: Only a basic interpreter implemented. Please see
         - [Re-Examined](#re-examined)
         - [Accessible](#accessible)
         - [Friendly](#friendly)
-        - [Fast Enough](#fast-enough)
+        - [Human Focused Performance](#human-focused-performance)
         - [Missing Features](#missing-features)
     - [Release History](#release-history)
         - [v0.11](#v011)
