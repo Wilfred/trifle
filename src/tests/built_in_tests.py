@@ -1636,6 +1636,34 @@ class GetKeyTest(BuiltInTestCase):
             u'(get-key {} 0 0)', wrong_argument_number)
 
 
+class SetKeyTest(BuiltInTestCase):
+    def test_set_key(self):
+        expected = Hashmap()
+        expected.dict[Integer.fromint(1)] = Integer.fromint(3)
+        
+        self.assertEqual(
+            self.eval(u"(set-symbol! (quote x) {1 2}) (set-key! x 1 3) x"), expected)
+
+    def test_set_key_returns_null(self):
+        self.assertEqual(
+            self.eval(u"(set-key! {} 1 3)"), NULL)
+
+    def test_set_key_wrong_type(self):
+        self.assertEvalError(
+            u'(set-key! #null 0 1)', wrong_type)
+
+    def test_set_key_unhashable_type(self):
+        self.assertEvalError(
+            u'(set-key! {} "foo" 1)', wrong_type)
+
+    def test_set_key_arity(self):
+        self.assertEvalError(
+            u'(set-key! {} 0)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(set-key! {} 0 0 0)', wrong_argument_number)
+
+
 class GetItemsTest(BuiltInTestCase):
     def test_get_items(self):
         expected = self.eval(u"(quote ((1 2)))")

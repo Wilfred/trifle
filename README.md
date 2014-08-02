@@ -153,7 +153,8 @@ language, we are cheerfully ignoring these questions for now.
 ### v0.11 (unreleased)
 
 Added hashmaps, e.g. `{1 2, 3 4}`. Please see the docs for a full
-description. Added the functions `hashmap?`, `get-key` and `get-items`.
+description. Added the functions `hashmap?`, `get-key`, `get-items`
+and `set-key!`.
 
 It's now an error to repeat parameters (e.g. calling
 `(lambda (x x) #null)`) in a function or macro.

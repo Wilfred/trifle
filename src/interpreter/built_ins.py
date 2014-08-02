@@ -14,6 +14,7 @@ from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
 from arguments import check_args
+from hashable import check_hashable
 
 
 class SetSymbol(FunctionWithEnv):
@@ -994,6 +995,27 @@ class GetKey(Function):
             )
 
         return value
+
+
+class SetKey(Function):
+    def call(self, args):
+        check_args(u'set-key!', args, 3, 3)
+        hashmap = args[0]
+        key = args[1]
+        value = args[2]
+
+        if not isinstance(hashmap, Hashmap):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to set-key! must be a hashmap, but got: %s"
+                % hashmap.repr())
+
+        is_hashable_error = check_hashable([key])
+        if isinstance(is_hashable_error, TrifleExceptionInstance):
+            return is_hashable_error
+
+        hashmap.dict[key] = value
+        return NULL
 
 
 class GetItems(Function):

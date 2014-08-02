@@ -23,3 +23,7 @@ Accessing:
 1. [get-key](Hashmaps-GetKey.md)
 2. [get-items](Hashmaps-GetItems.md)
 
+Modifying:
+
+1. [set-key!](Hashmaps-SetKey.md)
+

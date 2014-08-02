@@ -2,10 +2,11 @@
 # forced to call this trifle_parser.py.
 
 from trifle_types import (
-    List, Hashmap, Integer,
+    List, Hashmap,
     OpenParen, CloseParen, OpenCurlyParen, CloseCurlyParen,
     TrifleExceptionInstance)
-from errors import parse_failed, wrong_type
+from errors import parse_failed
+from interpreter.hashable import check_hashable
 
 
 def list_to_hashmap(trifle_list):
@@ -25,14 +26,9 @@ def list_to_hashmap(trifle_list):
         keys.append(trifle_list.values[2 * i])
         values.append(trifle_list.values[2 * i + 1])
 
-    for key in keys:
-        if not isinstance(key, Integer):
-            # TODO: we may want a more specific error here too.
-            # TODO: add support for more types (at least symbols, chars and other types of number)
-            return TrifleExceptionInstance(
-                wrong_type,
-                u"You can't use %s as a hashmap key. Keys must be integers" % key.repr()
-            )
+    is_hashable_error = check_hashable(keys)
+    if isinstance(is_hashable_error, TrifleExceptionInstance):
+        return is_hashable_error
 
     hashmap = Hashmap()
     for i in range(len(keys)):
