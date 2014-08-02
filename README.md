@@ -1,7 +1,7 @@
 # Trifle Lisp
 *A sweet and friendly lisp*
 
-Current status: Only a very basic interpreter implemented. Please see
+Current status: Only a basic interpreter implemented. Please see
 [the docs](docs/Introduction.md) to see what's available.
 
 [![Build Status](https://img.shields.io/travis/Wilfred/trifle/master.svg)](https://travis-ci.org/Wilfred/trifle)
