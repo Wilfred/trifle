@@ -9,7 +9,103 @@ for convenience when testing.
 
 """
 
+def is_equal(x, y):
+    """Return True if x and y are equal.
+
+    TODO: fix the potential stack overflow here for deep lists.
+
+    """
+    # TODO: Once we have proper interning, we should be able to use `x
+    # is y` for symbols and keywords.
+    if isinstance(x, Symbol):
+        if isinstance(y, Symbol):
+            return x.symbol_name == y.symbol_name
+
+        return False
+
+    elif isinstance(x, Keyword):
+        if isinstance(y, Keyword):
+            return x.symbol_name == y.symbol_name
+
+        return False
+
+    elif isinstance(x, Float):
+        if isinstance(y, Float):
+            return x.float_value == y.float_value
+
+        elif isinstance(y, Integer):
+            # TODO: potentially y could be too big for floats.
+            return x.float_value == y.bigint_value.tofloat()
+
+        return False
+
+    elif isinstance(x, Integer):
+        if isinstance(y, Integer):
+            return x.bigint_value.eq(y.bigint_value)
+
+        elif isinstance(y, Float):
+            return x.bigint_value.tofloat() == y.float_value
+
+        return False
+
+    elif isinstance(x, Fraction):
+        if isinstance(y, Fraction):
+            return (x.numerator == y.numerator and
+                    x.denominator == y.denominator)
+
+        elif isinstance(y, Float):
+            # TODO: Document the corner cases here when our fractions
+            # are bigger than the largest legal float, or can't be represented exactly.
+            return is_equal(Float(x.numerator.tofloat() / x.denominator.toint()), y)
+
+        return False
+
+    elif isinstance(x, Character):
+        if isinstance(y, Character):
+            return x.character == y.character
+
+        return False
+
+    elif isinstance(x, String):
+        if isinstance(y, String):
+            return x.string == y.string
+
+        return False
+
+    elif isinstance(x, Bytestring):
+        if isinstance(y, Bytestring):
+            return x.byte_value == y.byte_value
+
+        return False
+
+    elif isinstance(x, List):
+        if isinstance(y, List):
+            if len(x.values) != len(y.values):
+                return False
+
+            for i in range(len(x.values)):
+                if not is_equal(x.values[i], y.values[i]):
+                    return False
+            return True
+
+        return False
+
+    # In principle, we should only have one instance of #true and of
+    # #false. This ensures boolean equality still works even if
+    # built-in functions instantiate fresh booleans.
+    elif isinstance(x, Boolean):
+        if isinstance(y, Boolean):
+            return x.value == y.value
+
+        return False
+
+    return x is y
+
+
 class TrifleType(object):
+    def __eq__(self, other):
+        return is_equal(self, other)
+    
     def __repr__(self):
         """We can't override __repr__ in rpython, so this is only useful when
         debugging with CPython.
@@ -26,12 +122,6 @@ class Boolean(TrifleType):
         else:
             return u"#false"
 
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.value == other.value
-
     def __init__(self, value):
         self.value = value
 
@@ -45,12 +135,6 @@ FALSE = Boolean(False)
 class Null(TrifleType):
     def repr(self):
         return u"#null"
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return True
 
 
 NULL = Null()
@@ -103,13 +187,6 @@ class Fraction(TrifleType):
         return u"%s/%s" % (unicode(self.numerator.str()),
                            unicode(self.denominator.str()))
 
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return (self.numerator == other.numerator and
-                self.denominator == other.denominator)
-
     def __init__(self, numerator, denominator):
         assert isinstance(numerator, RBigInt)
         assert isinstance(denominator, RBigInt)
@@ -131,6 +208,10 @@ class Float(TrifleType):
         return u"%f" % self.float_value
 
     def __eq__(self, other):
+        """We deliberately treat Integer(1) as different to Float(1.0) since
+        this magic method is only used in tests and it avoids confusion.
+
+        """
         if self.__class__ != other.__class__:
             return False
 
@@ -148,12 +229,6 @@ class Symbol(TrifleType):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
 
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.symbol_name == other.symbol_name
-
     def __init__(self, symbol_name):
         assert isinstance(symbol_name, unicode)
         self.symbol_name = symbol_name
@@ -166,12 +241,6 @@ class Keyword(TrifleType):
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.symbol_name)
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.symbol_name == other.symbol_name
 
     def __init__(self, symbol_name):
         assert isinstance(symbol_name, unicode)
@@ -191,12 +260,6 @@ class Character(TrifleType):
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.character)
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.character == other.character
 
     def __init__(self, character):
         assert isinstance(character, unicode)
@@ -222,12 +285,6 @@ class String(TrifleType):
 
     def __repr__(self):
         return '<String: %s>' % self.repr()
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.string == other.string
 
     def as_unicode(self):
         return u"".join(self.string)
@@ -257,12 +314,6 @@ class List(TrifleType):
         element_reprs = [element.repr() for element in self.values]
         return u"(%s)" % u" ".join(element_reprs)
 
-    def __eq__(self, other):
-        if not isinstance(other, List):
-            return False
-        else:
-            return self.values == other.values
-
 
 class Bytestring(TrifleType):
     def __init__(self, byte_value):
@@ -270,12 +321,6 @@ class Bytestring(TrifleType):
         if byte_value:
             assert isinstance(byte_value[0], int)
         self.byte_value = byte_value
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-
-        return self.byte_value == other.byte_value
 
     def repr(self):
         SMALLEST_PRINTABLE_CHAR = ' '

@@ -12,7 +12,7 @@ from interpreter.built_ins import Add, SetSymbol, If
 from interpreter.trifle_types import (
     List, Integer, Float, Fraction,
     Symbol, Keyword, String, Character,
-    Lambda,
+    Lambda, Boolean,
     TRUE, FALSE, NULL,
     FileHandle, Bytestring,
     TrifleExceptionInstance)
@@ -30,7 +30,7 @@ no effort has been made to make them RPython friendly.
 """
 
 class BuiltInTestCase(unittest.TestCase):
-    def eval(self, program):
+    def eval(self, program, env=None):
         """Evaluate this program in a fresh environment. Returns the result of
         the last expression.
 
@@ -41,7 +41,8 @@ class BuiltInTestCase(unittest.TestCase):
         if isinstance(parse_tree, TrifleExceptionInstance):
             self.fail("Parse error on: %r" % program)
 
-        env = fresh_environment()
+        if env is None:
+            env = fresh_environment()
         
         result = NULL
         for expression in parse_tree.values:
@@ -1081,6 +1082,25 @@ class EqualTest(BuiltInTestCase):
             self.eval(u"(equal? #false #false)"),
             TRUE)
 
+    def test_fresh_booleans_equal(self):
+        """Ensure that we treat booleans as equal even if they aren't the same
+        instance. This is for robustness, functions should avoid doing this.
+
+        """
+        env = fresh_environment()
+        env.set(u'true1', Boolean(True))
+        env.set(u'true2', Boolean(True))
+        env.set(u'false1', Boolean(False))
+        env.set(u'false2', Boolean(False))
+        
+        self.assertEqual(
+            self.eval(u"(equal? true1 true2)", env),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(equal? false1 false2)", env),
+            TRUE)
+
     def test_booleans_different(self):
         self.assertEqual(
             self.eval(u"(equal? #true #false)"),
@@ -1101,6 +1121,19 @@ class EqualTest(BuiltInTestCase):
             self.eval(u"(equal? 1.0 1.0)"),
             TRUE)
 
+    def test_fractions_same(self):
+        self.assertEqual(
+            self.eval(u"(equal? 1/2 2/4)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 1/2 0.5)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 1/1 1)"),
+            TRUE)
+
     def test_numbers_same(self):
         self.assertEqual(
             self.eval(u"(equal? 1.0 1)"),
@@ -1108,6 +1141,10 @@ class EqualTest(BuiltInTestCase):
 
         self.assertEqual(
             self.eval(u"(equal? 1 1.0)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(equal? 1 1/1)"),
             TRUE)
 
     def test_null_equal(self):
@@ -1119,6 +1156,15 @@ class EqualTest(BuiltInTestCase):
         self.assertEqual(
             self.eval(u"(equal? (quote a) (quote a))"),
             TRUE)
+
+    def test_keywords_equal(self):
+        self.assertEqual(
+            self.eval(u"(equal? :x :x)"),
+            TRUE)
+
+        self.assertEqual(
+            self.eval(u"(equal? :x :y)"),
+            FALSE)
 
     def test_list_equal(self):
         # Equal

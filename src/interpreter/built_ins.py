@@ -3,12 +3,13 @@ from trifle_types import (Function, FunctionWithEnv, Lambda, Macro, Special,
                           List, Keyword,
                           FileHandle, Bytestring, Character,
                           Boolean, TRUE, FALSE, NULL, Symbol, String,
-                          TrifleExceptionInstance, TrifleExceptionType)
+                          TrifleExceptionInstance, TrifleExceptionType,
+                          is_equal)
 from errors import (
     ArityError, changing_closed_handle, division_by_zero,
     wrong_type, file_not_found, value_error,
 )
-from almost_python import deepcopy, copy, raw_input, zip, list
+from almost_python import deepcopy, copy, raw_input, list
 from parameters import validate_parameters
 from lexer import lex
 from trifle_parser import parse
@@ -446,70 +447,6 @@ class Same(Function):
             return TRUE
         else:
             return FALSE
-
-
-def is_equal(x, y):
-    """Return True if x and y are equal.
-
-    TODO: fix the potential stack overflow here for deep lists.
-
-    """
-    if isinstance(x, Symbol):
-        if isinstance(y, Symbol):
-            return x.symbol_name == y.symbol_name
-
-        return False
-
-    elif isinstance(x, Float):
-        if isinstance(y, Float):
-            return x.float_value == y.float_value
-
-        elif isinstance(y, Integer):
-            # TODO: potentially y could be too big for floats.
-            return x.float_value == y.bigint_value.tofloat()
-
-        return False
-
-    elif isinstance(x, Integer):
-        if isinstance(y, Integer):
-            return x.bigint_value.eq(y.bigint_value)
-
-        elif isinstance(y, Float):
-            return x.bigint_value.tofloat() == y.float_value
-
-        return False
-
-    elif isinstance(x, Character):
-        if isinstance(y, Character):
-            return x.character == y.character
-
-        return False
-
-    elif isinstance(x, String):
-        if isinstance(y, String):
-            return x.string == y.string
-
-        return False
-
-    elif isinstance(x, Bytestring):
-        if isinstance(y, Bytestring):
-            return x.byte_value == y.byte_value
-
-        return False
-
-    elif isinstance(x, List):
-        if isinstance(y, List):
-            if len(x.values) != len(y.values):
-                return False
-
-            for x_element, y_element in zip(x.values, y.values):
-                if not is_equal(x_element, y_element):
-                    return False
-            return True
-
-        return False
-
-    return x is y
 
 
 # TODO: Is there a better place in the docs for this, rather than under booleans?
@@ -1291,7 +1228,10 @@ class Defined(FunctionWithEnv):
                 u"the first argument to defined? must be a symbol, but got: %s"
                 % symbol.repr())
 
-        return Boolean(env.contains(symbol.symbol_name))
+        if env.contains(symbol.symbol_name):
+            return TRUE
+        else:
+            return FALSE
 
 
 # TODO: error on a file we can't write to
