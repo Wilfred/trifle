@@ -134,10 +134,15 @@ coexist.
 
 Influences: Rust/CoffeeScript on GitHub
 
-### Fast Enough
+### Human Focused Performance
 
-The Trifle interpreter is implemented in RPython so gets a JIT for
-free. The language provides also provides basic TCO.
+When Trifle features have to decide between helping the user and
+helping the machine, Trifle sides with the user every time.
+
+That said, Trifle seeks to provide a fast implementation for this
+human-focused feature set. We do this by implementing the intepreter
+in RPython, giving us a JIT with little work. The language provides
+also provides opt-in TCO.
 
 Influences: Pypy, Scheme
 
