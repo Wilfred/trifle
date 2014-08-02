@@ -6,6 +6,11 @@ accessed by index.
 Lists in Trifle are implemented as dynamic arrays, with O(1) access
 and updating.
 
+List literals are written with brackets, e.g. `(1 2 3)`. Commas a
+treated as whitespace, so this may be written as `(1, 2, 3)`. The
+interpreter evaluates lists as expressions, so you will need to use
+`quote` to obtain a simple list, or use the `list` function.
+
 ## List functions
 
 Predicates:
