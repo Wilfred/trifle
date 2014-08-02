@@ -1636,6 +1636,25 @@ class GetKeyTest(BuiltInTestCase):
             u'(get-key {} 0 0)', wrong_argument_number)
 
 
+class GetItemsTest(BuiltInTestCase):
+    def test_get_items(self):
+        expected = self.eval(u"(quote ((1 2)))")
+        
+        self.assertEqual(
+            self.eval(u"(get-items {1 2})"), expected)
+
+    def test_get_items_wrong_type(self):
+        self.assertEvalError(
+            u'(get-items #null)', wrong_type)
+
+    def test_get_items_arity(self):
+        self.assertEvalError(
+            u'(get-items)', wrong_argument_number)
+
+        self.assertEvalError(
+            u'(get-items {} 0)', wrong_argument_number)
+
+
 class EnvironmentVariablesTest(BuiltInTestCase):
     def test_evaluate_variable(self):
         env = Environment([Scope({

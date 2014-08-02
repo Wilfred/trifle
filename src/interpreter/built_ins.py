@@ -996,6 +996,24 @@ class GetKey(Function):
         return value
 
 
+class GetItems(Function):
+    def call(self, args):
+        check_args(u'get-items', args, 1, 1)
+        hashmap = args[0]
+
+        if not isinstance(hashmap, Hashmap):
+            return TrifleExceptionInstance(
+                wrong_type,
+                u"the first argument to get-items must be a hashmap, but got: %s"
+                % hashmap.repr())
+
+        items = List()
+        for key, value in hashmap.dict.iteritems():
+            items.append(List([key, value]))
+
+        return items
+
+
 class Length(Function):
     def call(self, args):
         check_args(u'length', args, 1, 1)
