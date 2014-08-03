@@ -155,6 +155,10 @@ language, we are cheerfully ignoring these questions for now.
 
 ## Release History
 
+### v0.12 (not yet released)
+
+Fixed `VERSION` which hadn't been updated since version 0.9.
+
 ### v0.11
 
 Added hashmaps, e.g. `{1 2, 3 4}`. Please see the docs for a full

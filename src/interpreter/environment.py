@@ -192,7 +192,7 @@ def fresh_environment():
         u'changing-closed-handle': changing_closed_handle,
 
         # Constants
-        u'VERSION': String(list(u"0.9")),
+        u'VERSION': String(list(u"0.12")),
 
         # Standard I/O.
         u'stdout': Stdout(),
