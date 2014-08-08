@@ -1,12 +1,9 @@
-# Trifle Lisp
+# Trifle Lisp [![Build Status](https://img.shields.io/travis/Wilfred/trifle/master.svg)](https://travis-ci.org/Wilfred/trifle) [![Coverage Status](http://img.shields.io/coveralls/Wilfred/trifle/master.svg)](https://coveralls.io/r/Wilfred/trifle) [![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Wilfred/trifle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Wilfred/trifle/?branch=master) [![Code Health](https://landscape.io/github/Wilfred/trifle/master/landscape.png)](https://landscape.io/github/Wilfred/trifle/master)
+
 *A sweet and friendly lisp*
 
 Current status: Only a basic interpreter implemented. Please see
 [the docs](docs/Introduction.md) to see what's available.
-
-[![Build Status](https://img.shields.io/travis/Wilfred/trifle/master.svg)](https://travis-ci.org/Wilfred/trifle)
-[![Coverage Status](http://img.shields.io/coveralls/Wilfred/trifle/master.svg)](https://coveralls.io/r/Wilfred/trifle)
-[![Requirements Status](https://requires.io/github/Wilfred/trifle/requirements.png?branch=master)](https://requires.io/github/Wilfred/trifle/requirements/?branch=master)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
 **Table of Contents**
