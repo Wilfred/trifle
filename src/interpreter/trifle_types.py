@@ -194,9 +194,9 @@ def greatest_common_divisor(a, b):
 
     """
     while not b.eq(RBigInt.fromint(0)):
-       temp = b
-       b = a.mod(b)
-       a = temp
+        temp = b
+        b = a.mod(b)
+        a = temp
 
     return a
 
