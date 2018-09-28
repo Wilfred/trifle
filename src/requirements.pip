@@ -1,6 +1,6 @@
 PyYAML==3.13
 coverage==4.5.1
-coveralls==1.5.0
+coveralls==1.5.1
 docopt==0.6.2
 ipdb==0.11
 ipython==7.0.1
